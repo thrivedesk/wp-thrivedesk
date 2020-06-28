@@ -16,6 +16,9 @@
  * Tested up to      : 5.4
  */
 
+use ThriveDesk\Admin;
+use ThriveDesk\Api;
+
 // Exit if accessed directly.
 if (!defined('ABSPATH'))  exit;
 
@@ -64,10 +67,10 @@ final class ThriveDesk
 
             self::$instance = new self();
 
-            // self::$instance->api = Api::instance();
+            self::$instance->api = Api::instance();
 
             if (is_admin()) {
-                // self::$instance->admin = Admin::instance();
+                self::$instance->admin = Admin::instance();
             }
         }
 
