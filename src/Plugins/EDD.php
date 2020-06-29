@@ -2,17 +2,21 @@
 
 namespace ThriveDesk\Plugins;
 
+use ThriveDesk\Plugin;
+
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
 
-final class EDD
+final class EDD extends Plugin
 {
     /**
      * The single instance of this class
      */
     private static $instance = null;
+
+    public $customer_email = '';
 
     /**
      * Construct EDD class.
@@ -43,33 +47,49 @@ final class EDD
         return self::$instance;
     }
 
-    public function prepare_data()
+    public function is_plugin_active(): bool
     {
-        $data = [
-            "customer_since" => "06 Mar 2020",
-            "lifetime_order" => "$100.00",
-            "this_year_order" => "$100.00",
-            "avg_order" => "$100.00",
-            "orders" => [
-                [
-                    "order_id" => "1345",
-                    "amount" => "$45.00",
-                    "order_date" => "06 Mar 2020",
-                    "order_status" => "Completed"
-                ], [
-                    "order_id" => "1345",
-                    "amount" => "$45.00",
-                    "order_date" => "06 Mar 2020",
-                    "order_status" => "Completed"
-                ], [
-                    "order_id" => "1345",
-                    "amount" => "$45.00",
-                    "order_date" => "06 Mar 2020",
-                    "order_status" => "Completed"
-                ]
-            ]
-        ];
+        if (!function_exists('EDD')) return false;
 
-        return $data;
+        return true;
+    }
+
+    public function customer_exist(): bool
+    {
+        // TODO: Check customer
+        if ($this->customer_email === 'alaminfirdows@gmail.com') return true;
+
+        return false;
+    }
+
+    public function get_customer(): array
+    {
+        return [
+            'name' => 'alamin',
+            'registered_at' => '10 Jun 2020'
+        ];
+    }
+
+    public function get_orders(): array
+    {
+        return [[
+            "order_id" => "1345",
+            "amount" => "10",
+            "amount_formated" => "$10",
+            "date" => "06 Mar 2020",
+            "order_status" => "Completed"
+        ], [
+            "order_id" => "1345",
+            "amount" => "25.10",
+            "amount_formated" => "$25",
+            "date" => "06 Mar 2020",
+            "order_status" => "Completed"
+        ], [
+            "order_id" => "1345",
+            "amount" => "55",
+            "amount_formated" => "$55",
+            "date" => "21 Jun 2019",
+            "order_status" => "Completed"
+        ]];
     }
 }

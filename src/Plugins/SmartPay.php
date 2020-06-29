@@ -2,12 +2,14 @@
 
 namespace ThriveDesk\Plugins;
 
+use ThriveDesk\Plugin;
+
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
     exit;
 }
 
-final class SmartPay
+final class SmartPay extends Plugin
 {
     /**
      * The single instance of this class
@@ -41,5 +43,33 @@ final class SmartPay
         }
 
         return self::$instance;
+    }
+
+    public function is_plugin_active(): bool
+    {
+        if (!function_exists('EDD')) return false;
+
+        return true;
+    }
+
+    public function customer_exist(): bool
+    {
+        // TODO: Check customer
+        if ($this->customer_email === 'alaminfirdows@gmail.com') return true;
+
+        return false;
+    }
+
+    public function get_customer(): array
+    {
+        return [
+            'name' => 'alamin',
+            'registered_at' => '5 Jun 2020'
+        ];
+    }
+
+    public function get_orders(): array
+    {
+        return [];
     }
 }
