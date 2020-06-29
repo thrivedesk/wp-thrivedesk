@@ -24,6 +24,8 @@ final class Admin
     {
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
+        add_action('admin_init', [$this, 'process_admin_setting']);
+
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
     }
 
@@ -46,6 +48,13 @@ final class Admin
         return self::$instance;
     }
 
+    /**
+     * Admin sub menu page
+     *
+     * @since 0.0.1
+     * @access public
+     * @return void
+     */
     public function admin_menu()
     {
         add_submenu_page(
@@ -58,6 +67,29 @@ final class Admin
                 return thrivedesk_view('setting');
             }
         );
+    }
+
+    /**
+     * Process save admin setting
+     *
+     * @since 0.0.1
+     * @access public
+     * @return void
+     */
+    public function process_admin_setting()
+    {
+        if (!isset($_POST['thrivedesk_save_settings']) || !wp_verify_nonce($_POST['thrivedesk_save_settings'], 'thrivedesk_save_settings')) return;
+
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+
+        if (isset($_POST['api_token'])) {
+
+            $thrivedesk_options['api_token'] = sanitize_text_field($_POST['api_token']);
+
+            update_option('thrivedesk_options', $thrivedesk_options);
+        }
+
+        // TODO: Add admin notice
     }
 
     /**
@@ -79,8 +111,8 @@ final class Admin
             // Set plugin version
             update_option('thrivedesk_version', THRIVEDESK_VERSION);
 
-            // Create thrivedesk_options option
-            if (false == get_option('thrivedesk_options')) add_option('thrivedesk_options');
+            // Create thrivedesk_options
+            if (false == get_option('thrivedesk_options')) add_option('thrivedesk_options', []);
 
             $thrivedesk_options = get_option('thrivedesk_options', []);
 
