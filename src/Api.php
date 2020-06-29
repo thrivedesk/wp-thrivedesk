@@ -47,6 +47,17 @@ final class Api
     }
 
     /**
+     * Available pulings
+     *
+     * @since 0.0.1
+     * @return array
+     */
+    private function _available_plugins(): array
+    {
+        return ['woo' => 'WooCommerce', 'edd' => 'EDD', 'smartpay' => 'SmartPay'];
+    }
+
+    /**
      * Api listener
      *
      * @since 0.0.1
@@ -54,42 +65,50 @@ final class Api
      */
     public function api_listener()
     {
-        if (!isset($_GET['listener']) || 'thrivedesk' !== $_GET['listener'] || !isset($_REQUEST['token'])) return;
+        if (!isset($_GET['listener']) || 'thrivedesk' !== $_GET['listener']) return;
+
+        $token  = $_REQUEST['token'] ?? '';
+        $plugin = $_REQUEST['plugin'] ?? 'woo';
+        $email  = $_REQUEST['email'] ?? '';
+
+        $thrivedesk_options = thrivedesk_options();
+
+        // Plugin settings token
+        $api_token = $thrivedesk_options['api_token'] ?? '';
 
         $apiResponse = new Response();
 
-        $token = $_REQUEST['token'] ?? '';
+        // API token not configured response
+        if (empty($api_token))
+            $apiResponse->error(401, 'The API token isn\'t configured on wp plugin yet.');
 
-        if ('abc' !== $token) {
-            $apiResponse->error(401, 'Token invalid');
-            wp_die();
+        // Token invalid response
+        else if ($api_token !== $token)
+            $apiResponse->error(401, 'Token isn\'t valid.');
+
+        // Plugin invalid response
+        else if (!in_array(strtolower($plugin), array_keys($this->_available_plugins())))
+            $apiResponse->error(401, 'Plugin isn\'t valid or not available now.');
+
+        // Email invalid token
+        else if (!is_email($email))
+            $apiResponse->error(401, 'Email isn\'t valid.');
+
+        $data = [];
+
+        try {
+            $plugin_class_name = 'ThriveDesk\\Plugins\\' . $this->_available_plugins()[$plugin] ?? 'WooCommerce';
+
+            if (!class_exists($plugin_class_name))
+                $apiResponse->error(500, "Class not found for the '{$plugin}' plugin");
+
+            else if (!method_exists($plugin_class_name, 'prepare_data'))
+                $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+
+            $data = ($plugin_class_name::instance())->prepare_data();
+        } catch (\Exception $e) {
+            $apiResponse->error(500, 'Can\'t not prepare data');
         }
-
-        $data = [
-            "service" => "WooCommerce",
-            "customer_since" => "06 Mar 2020",
-            "lifetime_order_value" => "$100.00",
-            "this_year_order_value" => "$100.00",
-            "avg_order_value" => "$100.00",
-            "recent_orders" => [
-                [
-                    "order_id" => "#1345",
-                    "amount" => "$45.00",
-                    "order_date" => "06 Mar 2020",
-                    "order_status" => "Completed"
-                ], [
-                    "order_id" => "#1345",
-                    "amount" => "$45.00",
-                    "order_date" => "06 Mar 2020",
-                    "order_status" => "Completed"
-                ], [
-                    "order_id" => "#1345",
-                    "amount" => "$45.00",
-                    "order_date" => "06 Mar 2020",
-                    "order_status" => "Completed"
-                ]
-            ]
-        ];
 
         $apiResponse->success(200, $data, 'Success');
         wp_die();
