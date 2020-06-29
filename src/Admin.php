@@ -23,6 +23,8 @@ final class Admin
     private function __construct()
     {
         add_action('admin_menu', [$this, 'admin_menu'], 10);
+
+        register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
     }
 
     /**
@@ -53,8 +55,38 @@ final class Admin
             'manage_options',
             'thrivedesk-setting',
             function () {
-                return tdesk_view('setting');
+                return thrivedesk_view('setting');
             }
         );
+    }
+
+    /**
+     * Plugin activate.
+     *
+     * @since 0.0.1
+     * @access public
+     * @return void
+     */
+    public function activate()
+    {
+        $installed = get_option('thrivedesk_installed');
+
+        // If not installed then run installation process
+        if (!$installed) {
+            // Set installation time
+            update_option('thrivedesk_installed', time());
+
+            // Set plugin version
+            update_option('thrivedesk_version', THRIVEDESK_VERSION);
+
+            // Create thrivedesk_settings option
+            if (false == get_option('thrivedesk_settings')) add_option('thrivedesk_settings');
+
+            $thrivedesk_settings = get_option('thrivedesk_settings', []);
+
+            $options = ['api_token' => ''];
+
+            update_option('thrivedesk_settings', array_merge($thrivedesk_settings, $options));
+        }
     }
 }
