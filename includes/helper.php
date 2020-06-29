@@ -1,8 +1,8 @@
 <?php
 
-function tdesk_view(string $file, array $data = [])
+function thrivedesk_view(string $file, array $data = [])
 {
-    $file = TDESK_DIR . '/includes/views/' . $file . '.php';
+    $file = THRIVEDESK_DIR . '/includes/views/' . $file . '.php';
     if (file_exists($file)) {
         if (is_array($data)) {
             extract($data);
@@ -12,4 +12,9 @@ function tdesk_view(string $file, array $data = [])
     } else {
         wp_die('View not found');
     }
+}
+
+function thrivedesk_settings()
+{
+    return get_option('thrivedesk_settings', []);
 }

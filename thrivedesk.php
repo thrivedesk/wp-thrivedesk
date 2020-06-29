@@ -96,11 +96,11 @@ final class ThriveDesk
      */
     private function define_constants(): void
     {
-        $this->define('TDESK_VERSION', $this->version);
-        $this->define('TDESK_FILE', __FILE__);
-        $this->define('TDESK_DIR', dirname(__FILE__));
-        $this->define('TDESK_INC_DIR', dirname(__FILE__) . '/includes');
-        $this->define('TDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
+        $this->define('THRIVEDESK_VERSION', $this->version);
+        $this->define('THRIVEDESK_FILE', __FILE__);
+        $this->define('THRIVEDESK_DIR', dirname(__FILE__));
+        $this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
+        $this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
     }
 
     /**
