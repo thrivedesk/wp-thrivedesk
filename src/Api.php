@@ -83,34 +83,48 @@ final class Api
             $apiResponse->error(401, 'The API token isn\'t configured on wp plugin yet.');
 
         // Token invalid response
-        else if ($api_token !== $token)
-            $apiResponse->error(401, 'Token isn\'t valid.');
+        if ($api_token !== $token)
+            $apiResponse->error(401, 'Token is invalid.');
 
         // Plugin invalid response
-        else if (!in_array(strtolower($plugin), array_keys($this->_available_plugins())))
-            $apiResponse->error(401, 'Plugin isn\'t valid or not available now.');
+        if (!in_array(strtolower($plugin), array_keys($this->_available_plugins())))
+            $apiResponse->error(401, 'Plugin is invalid or not available now.');
 
         // Email invalid token
-        else if (!is_email($email))
-            $apiResponse->error(401, 'Email isn\'t valid.');
+        if (!is_email($email))
+            $apiResponse->error(401, 'Email is invalid.');
 
         $data = [];
 
         try {
-            $plugin_class_name = 'ThriveDesk\\Plugins\\' . $this->_available_plugins()[$plugin] ?? 'WooCommerce';
+            $plugin_name = $this->_available_plugins()[$plugin] ?? 'WooCommerce';
+            $plugin_class_name = 'ThriveDesk\\Plugins\\' .  $plugin_name;
 
             if (!class_exists($plugin_class_name))
-                $apiResponse->error(500, "Class not found for the '{$plugin}' plugin");
+                $apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
 
-            else if (!method_exists($plugin_class_name, 'prepare_data'))
+            $pluginObj = $plugin_class_name::instance();
+
+            if (!method_exists($plugin_class_name, 'is_plugin_active'))
                 $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
 
-            $data = ($plugin_class_name::instance())->prepare_data();
+            if (!$pluginObj->is_plugin_active())
+                $apiResponse->error(500, "The plugin '{$plugin_name}' isn't installed or active.");
+
+            if (!method_exists($plugin_class_name, 'prepare_data'))
+                $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+
+            $pluginObj->customer_email = $email;
+
+            if (!$pluginObj->customer_exist())
+                $apiResponse->error(404, "No customer found for the email '{$email}'.");
+
+            $data = $pluginObj->prepare_data();
+
+            $apiResponse->success(200, $data, 'Success');
         } catch (\Exception $e) {
             $apiResponse->error(500, 'Can\'t not prepare data');
         }
-
-        $apiResponse->success(200, $data, 'Success');
         wp_die();
     }
 }
