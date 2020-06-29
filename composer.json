@@ -12,7 +12,10 @@
 	"require": {},
 	"autoload": {
 		"psr-4": {
-			"ThriveDesk\\": "src/"
+			"ThriveDesk\\": [
+				"src/",
+				"src/Abstracts"
+			]
 		},
 		"files": [
 			"includes/helper.php"
