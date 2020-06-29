@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * Render a view file
+ *
+ * @since 0.0.1
+ * @access public
+ * @param string $file view file name to render
+ * @param array $data data to use on view file
+ * @return void
+ */
 function thrivedesk_view(string $file, array $data = [])
 {
     $file = THRIVEDESK_DIR . '/includes/views/' . $file . '.php';
@@ -14,7 +23,16 @@ function thrivedesk_view(string $file, array $data = [])
     }
 }
 
+/**
+ * Thrivedesk options
+ *
+ * @since 0.0.1
+ * @access public
+ * @return void
+ */
 function thrivedesk_options()
 {
-    return get_option('thrivedesk_options', []);
+    $options = get_option('thrivedesk_options', []);
+
+    return is_array($options) ? $options : [];
 }
