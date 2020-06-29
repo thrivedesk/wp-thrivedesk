@@ -14,7 +14,7 @@ function thrivedesk_view(string $file, array $data = [])
     }
 }
 
-function thrivedesk_settings()
+function thrivedesk_options()
 {
-    return get_option('thrivedesk_settings', []);
+    return get_option('thrivedesk_options', []);
 }

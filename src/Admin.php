@@ -79,14 +79,14 @@ final class Admin
             // Set plugin version
             update_option('thrivedesk_version', THRIVEDESK_VERSION);
 
-            // Create thrivedesk_settings option
-            if (false == get_option('thrivedesk_settings')) add_option('thrivedesk_settings');
+            // Create thrivedesk_options option
+            if (false == get_option('thrivedesk_options')) add_option('thrivedesk_options');
 
-            $thrivedesk_settings = get_option('thrivedesk_settings', []);
+            $thrivedesk_options = get_option('thrivedesk_options', []);
 
             $options = ['api_token' => ''];
 
-            update_option('thrivedesk_settings', array_merge($thrivedesk_settings, $options));
+            update_option('thrivedesk_options', array_merge($thrivedesk_options, $options));
         }
     }
 }
