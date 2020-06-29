@@ -124,4 +124,4 @@ function ThriveDesk()
 {
     return ThriveDesk::instance();
 }
-add_action('plugins_loaded', 'ThriveDesk');
+ThriveDesk();
