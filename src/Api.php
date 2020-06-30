@@ -68,7 +68,7 @@ final class Api
         if (!isset($_GET['listener']) || 'thrivedesk' !== $_GET['listener']) return;
 
         $token  = $_REQUEST['token'] ?? '';
-        $plugin = $_REQUEST['plugin'] ?? 'woo';
+        $plugin = strtolower($_REQUEST['plugin']) ?? 'woo';
         $email  = $_REQUEST['email'] ?? '';
 
         $thrivedesk_options = thrivedesk_options();
@@ -87,7 +87,7 @@ final class Api
             $apiResponse->error(401, 'Token is invalid.');
 
         // Plugin invalid response
-        if (!in_array(strtolower($plugin), array_keys($this->_available_plugins())))
+        if (!in_array($plugin, array_keys($this->_available_plugins())))
             $apiResponse->error(401, 'Plugin is invalid or not available now.');
 
         // Email invalid token
