@@ -3,6 +3,7 @@
 namespace ThriveDesk\Plugins;
 
 use ThriveDesk\Plugin;
+use SmartPay\Customers\SmartPay_Customer;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -24,6 +25,7 @@ final class SmartPay extends Plugin
      */
     private function __construct()
     {
+        //
     }
 
     /**
@@ -45,31 +47,90 @@ final class SmartPay extends Plugin
         return self::$instance;
     }
 
+    /**
+     * Check if plugin active or not
+     *
+     * @return boolean
+     */
     public function is_plugin_active(): bool
     {
-        if (!function_exists('EDD')) return false;
+        if (!function_exists('SmartPay') || !class_exists('SmartPay', false)) return false;
 
         return true;
     }
 
+    /**
+     * Check if customer exist or not
+     *
+     * @return boolean
+     */
     public function customer_exist(): bool
     {
-        // TODO: Check customer
-        if ($this->customer_email === 'alaminfirdows@gmail.com') return true;
+        if (!$this->customer_email) return false;
 
-        return false;
+        if (!$this->customer)
+            $this->customer = new SmartPay_Customer($this->customer_email);
+
+        if (!$this->customer->ID) return false;
+
+        return true;
     }
 
+    /**
+     * Get the customer data
+     *
+     * @return array
+     */
     public function get_customer(): array
     {
+        if (!$this->customer_email) return [];
+
+        if (!$this->customer)
+            $this->customer = new SmartPay_Customer($this->customer_email);
+
+        if (!$this->customer->ID) return [];
+
         return [
-            'name' => 'alamin',
-            'registered_at' => '5 Jun 2020'
+            'name' => $this->customer->name ?? '',
+            'registered_at' => date('d F Y', strtotime($this->customer->created_at)) ?? ''
         ];
     }
 
+    /**
+     * Get the formated amount
+     *
+     * @param float $amount
+     * @return string
+     */
+    public function get_formated_amount(float $amount): string
+    {
+        return smartpay_amount_format($amount);
+    }
+
+    /**
+     * Get the customer orders
+     *
+     * @return array
+     */
     public function get_orders(): array
     {
-        return [];
+        $orders = [];
+
+        if (!$this->customer_exist()) return $orders;
+
+        foreach ($this->customer->all_payments() as $order) {
+
+            if ('live' != $order->mode) continue;
+
+            array_push($orders, [
+                'order_id'        => $order->ID,
+                'amount'          => (float) $order->amount,
+                'amount_formated' => $this->get_formated_amount((float) $order->amount),
+                'date'            => date('d F Y', strtotime($order->date)),
+                'order_status'    => $order->status_nicename
+            ]);
+        }
+
+        return $orders;
     }
 }
