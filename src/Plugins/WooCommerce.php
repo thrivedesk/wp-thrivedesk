@@ -24,6 +24,7 @@ final class WooCommerce extends Plugin
      */
     private function __construct()
     {
+        //
     }
 
     /**
@@ -45,43 +46,92 @@ final class WooCommerce extends Plugin
         return self::$instance;
     }
 
+    /**
+     * Check if plugin active or not
+     *
+     * @return boolean
+     */
     public function is_plugin_active(): bool
     {
-        if (!function_exists('EDD')) return false;
+        if (!function_exists('WC') || !class_exists('WooCommerce', false)) return false;
 
         return true;
     }
 
+    /**
+     * Check if customer exist or not
+     *
+     * @return boolean
+     */
     public function customer_exist(): bool
     {
-        // TODO: Check customer
-        if ($this->customer_email === 'alaminfirdows@gmail.com') return true;
+        if (!$this->customer_email) return false;
 
-        return false;
+        if (!$this->customer) {
+            $user_id = get_user_by('email', $this->customer_email)->ID ?? 0;
+            $this->customer = new \WC_Customer($user_id);
+        }
+
+        if (!$this->customer->get_id()) return false;
+
+        return true;
     }
 
+    /**
+     * Get the customer data
+     *
+     * @return array
+     */
     public function get_customer(): array
     {
+        if (!$this->customer_email) return [];
+
+        if (!$this->customer) {
+            $user_id = get_user_by('email', $this->customer_email)->ID ?? 0;
+            $this->customer = new \WC_Customer($user_id);
+        }
+
+        if (!$this->customer->get_id()) return [];
+
         return [
-            'name' => 'alamin',
-            'registered_at' => '10 Jun 2020'
+            'name' => $this->customer->get_display_name() ?? '',
+            'registered_at' => date('d F Y', strtotime($this->customer->get_date_created())) ?? ''
         ];
     }
 
+    /**
+     * Get the formated amount
+     *
+     * @param float $amount
+     * @return string
+     */
+    public function get_formated_amount(float $amount): string
+    {
+        return get_woocommerce_currency_symbol() . $amount;
+    }
+
+    /**
+     * Get the customer orders
+     *
+     * @return array
+     */
     public function get_orders(): array
     {
-        return [[
-            "order_id" => "1345",
-            "amount" => "10",
-            "amount_formated" => "$10",
-            "date" => "06 Mar 2020",
-            "order_status" => "Completed"
-        ], [
-            "order_id" => "1345",
-            "amount" => "25.10",
-            "amount_formated" => "$25",
-            "date" => "06 Mar 2020",
-            "order_status" => "Completed"
-        ]];
+        $orders = [];
+
+        if (!$this->customer_exist()) return $orders;
+
+        foreach (wc_get_orders('user_id', 1) as $order) {
+
+            array_push($orders, [
+                'order_id'        => $order->get_id(),
+                'amount'          => (float) $order->get_total(),
+                'amount_formated' => $this->get_formated_amount($order->get_total()),
+                'date'            => date('d F Y', strtotime($order->get_date_created())),
+                'order_status'    => ucfirst($order->get_status())
+            ]);
+        }
+
+        return $orders;
     }
 }
