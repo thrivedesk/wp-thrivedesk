@@ -116,7 +116,7 @@ final class Api
 
             $pluginObj->customer_email = $email;
 
-            if (!$pluginObj->customer_exist())
+            if (!$pluginObj->is_customer_exist())
                 $apiResponse->error(404, "No customer found for the email '{$email}'.");
 
             $data = $pluginObj->prepare_data();

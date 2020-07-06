@@ -64,7 +64,7 @@ final class SmartPay extends Plugin
      *
      * @return boolean
      */
-    public function customer_exist(): bool
+    public function is_customer_exist(): bool
     {
         if (!$this->customer_email) return false;
 
@@ -126,7 +126,7 @@ final class SmartPay extends Plugin
     {
         $orders = [];
 
-        if (!$this->customer_exist()) return $orders;
+        if (!$this->is_customer_exist()) return $orders;
 
         foreach ($this->customer->all_payments() as $order) {
 

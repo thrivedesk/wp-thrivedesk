@@ -35,7 +35,7 @@ abstract class Plugin
      *
      * @return boolean
      */
-    abstract public function customer_exist(): bool;
+    abstract public function is_customer_exist(): bool;
 
     /**
      * Get the accepted payment statuses of this plugin

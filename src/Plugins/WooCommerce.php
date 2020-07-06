@@ -63,7 +63,7 @@ final class WooCommerce extends Plugin
      *
      * @return boolean
      */
-    public function customer_exist(): bool
+    public function is_customer_exist(): bool
     {
         if (!$this->customer_email) return false;
 
@@ -129,7 +129,7 @@ final class WooCommerce extends Plugin
     {
         $orders = [];
 
-        if (!$this->customer_exist()) return $orders;
+        if (!$this->is_customer_exist()) return $orders;
 
         foreach (wc_get_orders('user_id', 1) as $order) {
 
