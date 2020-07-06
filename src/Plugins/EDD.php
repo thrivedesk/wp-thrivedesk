@@ -75,6 +75,16 @@ final class EDD extends Plugin
     }
 
     /**
+     * The accepted payment statuses of this plugin
+     *
+     * @return array
+     */
+    public function accepted_statuses(): array
+    {
+        return ['Complete'];
+    }
+
+    /**
      * Get the customer data
      *
      * @return array

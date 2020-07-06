@@ -28,33 +28,28 @@ abstract class Plugin
      *
      * @return boolean
      */
-    public function is_plugin_active(): bool
-    {
-        return false;
-    }
+    abstract public function is_plugin_active(): bool;
 
     /**
      * Check if customer exist or not
      *
      * @return boolean
      */
-    public function customer_exist(): bool
-    {
-        return false;
-    }
+    abstract public function customer_exist(): bool;
+
+    /**
+     * Get the accepted payment statuses of this plugin
+     *
+     * @return array
+     */
+    abstract public function accepted_statuses(): array;
 
     /**
      * Get the customer data
      *
      * @return array
      */
-    public function get_customer(): array
-    {
-        return [
-            'name' => '',
-            'registered_at' => ''
-        ];
-    }
+    abstract public function get_customer(): array;
 
     /**
      * Get the formated amount
@@ -72,9 +67,20 @@ abstract class Plugin
      *
      * @return array
      */
-    public function get_orders(): array
+    abstract public function get_orders(): array;
+
+    /**
+     * Get the accepted orders only
+     *
+     * @return array
+     */
+    public function filter_accepted_orders(array $orders): array
     {
-        return [];
+        $accepted_statuses = $this->accepted_statuses() ?? [];
+
+        return array_filter($orders, function ($order) use ($accepted_statuses) {
+            return in_array($order['order_status'], $accepted_statuses);
+        });
     }
 
     /**
@@ -121,11 +127,13 @@ abstract class Plugin
 
         $orders = $this->get_orders();
 
-        $this_year_order = $this->get_this_year_order($orders);
+        $accepted_orders = $this->filter_accepted_orders($orders);
 
-        $lifetime_order = $this->get_lifetime_order($orders);
+        $this_year_order = $this->get_this_year_order($accepted_orders);
 
-        $avg_order = $lifetime_order ? ($lifetime_order / count($orders)) : 0;
+        $lifetime_order = $this->get_lifetime_order($accepted_orders);
+
+        $avg_order = $lifetime_order ? ($lifetime_order / count($accepted_orders)) : 0;
 
         $data = [
             "customer_since" => $customer['registered_at'] ?? '',
