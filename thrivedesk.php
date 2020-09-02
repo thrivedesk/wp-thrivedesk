@@ -1,26 +1,26 @@
 <?php
 
 /**
- * Plugin Name: Thrive Desk
- * Description: Thrive Desk description here.
- * Plugin URI:  https://thrivedesk.com/
+ * Plugin Name: ThriveDesk
+ * Description: Customer Support & Helpdesk Software for WordPress Startups
+ * Plugin URI:  https://thrivedesk.io/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:        thrivedesk,
- * Version:     0.0.1
- * Author:      Thrive Desk
- * Author URI:  https://thrivedesk.com/
+ * Version:     0.1
+ * Author:      ThriveDesk
+ * Author URI:  https://profiles.wordpress.org/thrivedesk/
  * Text Domain: thrivedesk
  * Domain Path: languages
  * 
  * Requires PHP      : 7.0.0
  * Requires at least : 4.9
- * Tested up to      : 5.4
+ * Tested up to      : 5.5
  *
- * WP ThriveDesk is free software: you can redistribute it and/or modify
+ * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * any later version.
  *
- * WP ThriveDesk is distributed in the hope that it will be useful,
+ * hriveDesk is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
@@ -42,7 +42,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '0.0.1';
+    public $version = '0.1';
 
     /**
      * The single instance of this class
