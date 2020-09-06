@@ -65,11 +65,12 @@ final class Api
      */
     public function api_listener()
     {
-        if (!isset($_GET['listener']) || 'thrivedesk' !== $_GET['listener']) return;
+        $listener = sanitize_key($_GET['listener'] ?? '');
+        if (!isset($listener) || 'thrivedesk' !== $listener) return;
 
-        $token  = $_REQUEST['token'] ?? '';
-        $plugin = strtolower($_REQUEST['plugin']) ?? 'woo';
-        $email  = $_REQUEST['email'] ?? '';
+        $token  = sanitize_key($_REQUEST['token'] ?? '');
+        $plugin = strtolower(sanitize_key($_REQUEST['plugin'] ?? 'woo'));
+        $email  = sanitize_email($_REQUEST['email'] ?? '');
 
         $thrivedesk_options = thrivedesk_options();
 
