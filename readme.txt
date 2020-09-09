@@ -4,7 +4,7 @@ Tags: customer support, helpdesk, shared inbox, knowledge base, customer service
 Requires at least: 4.9
 Tested up to: 5.5
 Requires PHP: 7.0.0
-Stable Tag: 0.1
+Stable Tag: 0.2
 License: GNU Version 2 or later
 
 Helping WordPress startups thriving customer support through shared inbox, knowledge base and powerful automations.
