@@ -88,8 +88,8 @@ class Response
     public function send(): void
     {
         $response = [
-            'status'    => $this->status,
-            'code'      => $this->status_code,
+            'success'    => $this->status,
+            'code'       => $this->status_code,
             'message'    => $this->message
         ];
 

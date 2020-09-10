@@ -22,10 +22,6 @@ final class Admin
      */
     private function __construct()
     {
-        add_action('admin_menu', [$this, 'admin_menu'], 10);
-
-        add_action('admin_init', [$this, 'process_admin_setting']);
-
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
     }
 
@@ -49,27 +45,6 @@ final class Admin
     }
 
     /**
-     * Admin sub menu page
-     *
-     * @since 0.0.1
-     * @access public
-     * @return void
-     */
-    public function admin_menu()
-    {
-        add_submenu_page(
-            'options-general.php',
-            'ThriveDesk - Settings',
-            'ThriveDesk',
-            'manage_options',
-            'thrivedesk-setting',
-            function () {
-                return thrivedesk_view('setting');
-            }
-        );
-    }
-
-    /**
      * Process save admin setting
      *
      * @since 0.0.1
@@ -78,18 +53,18 @@ final class Admin
      */
     public function process_admin_setting()
     {
-        if (!isset($_POST['thrivedesk_save_settings']) || !wp_verify_nonce($_POST['thrivedesk_save_settings'], 'thrivedesk_save_settings')) return;
-
-        $thrivedesk_options = get_option('thrivedesk_options', []);
-
-        if (isset($_POST['api_token'])) {
-
-            $thrivedesk_options['api_token'] = sanitize_text_field($_POST['api_token']);
-
-            update_option('thrivedesk_options', $thrivedesk_options);
+        if (!isset($_POST['generate_thrivedesk_key']) || !wp_verify_nonce($_POST['generate_thrivedesk_key'], 'generate_thrivedesk_key')) {
+            return;
         }
 
-        // TODO: Add admin notice
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['api_token'] = thrivedesk_generate_api_token();
+
+        update_option('thrivedesk_options', $thrivedesk_options);
+
+        add_action( 'admin_notices', function() {
+            sprintf('<div class="notice notice-success"><p>%s</p></div>', __('Your API token has been regenerated.', 'thrivedesk'));
+        });
     }
 
     /**
@@ -103,22 +78,12 @@ final class Admin
     {
         $installed = get_option('thrivedesk_installed');
 
-        // If not installed then run installation process
         if (!$installed) {
             // Set installation time
             update_option('thrivedesk_installed', time());
 
             // Set plugin version
             update_option('thrivedesk_version', THRIVEDESK_VERSION);
-
-            // Create thrivedesk_options
-            if (false == get_option('thrivedesk_options')) add_option('thrivedesk_options', []);
-
-            $thrivedesk_options = get_option('thrivedesk_options', []);
-
-            $options = ['api_token' => ''];
-
-            update_option('thrivedesk_options', array_merge($thrivedesk_options, $options));
         }
     }
 }

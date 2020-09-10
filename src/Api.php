@@ -54,7 +54,11 @@ final class Api
      */
     private function _available_plugins(): array
     {
-        return ['woo' => 'WooCommerce', 'edd' => 'EDD', 'smartpay' => 'SmartPay'];
+        return [
+            'woo' => 'WooCommerce',
+            'edd' => 'EDD',
+            'smartpay' => 'SmartPay'
+        ];
     }
 
     /**
@@ -65,67 +69,81 @@ final class Api
      */
     public function api_listener()
     {
-        $listener = sanitize_key($_GET['listener'] ?? '');
-        if (!isset($listener) || 'thrivedesk' !== $listener) return;
+        if ('thrivedesk' !== sanitize_key($_GET['listener'] ?? '')) {
+            return;
+        }
 
-        $token  = sanitize_key($_REQUEST['token'] ?? '');
-        $plugin = strtolower(sanitize_key($_REQUEST['plugin'] ?? 'woo'));
-        $email  = sanitize_email($_REQUEST['email'] ?? '');
+        $plugin     = strtolower(sanitize_key($_REQUEST['plugin'] ?? ''));
+        $email      = sanitize_email($_REQUEST['email'] ?? '');
+        $api_token  = $_SERVER['HTTP_X_TD_API_TOKEN'] ?? '';
 
-        $thrivedesk_options = thrivedesk_options();
+        $token_verified = $this->verify_token(http_build_query(['email' => $email, 'plugin' => $plugin]), $api_token);
 
-        // Plugin settings token
-        $api_token = $thrivedesk_options['api_token'] ?? '';
+        $api_response = new Response();
 
-        $apiResponse = new Response();
+        if (!$token_verified) {
+            return $api_response->error(401, 'API token is invalid.');
+        }
 
-        // API token not configured response
-        if (empty($api_token))
-            $apiResponse->error(401, 'The API token isn\'t configured on wp plugin yet.');
+        // Plugin invalid
+        if (!in_array($plugin, array_keys($this->_available_plugins()))) {
+            return $api_response->error(401, 'Plugin is invalid or not available now.');
+        }
 
-        // Token invalid response
-        if ($api_token !== $token)
-            $apiResponse->error(401, 'Token is invalid.');
-
-        // Plugin invalid response
-        if (!in_array($plugin, array_keys($this->_available_plugins())))
-            $apiResponse->error(401, 'Plugin is invalid or not available now.');
-
-        // Email invalid token
-        if (!is_email($email))
-            $apiResponse->error(401, 'Email is invalid.');
-
-        $data = [];
+        // Email invalid
+        if (!is_email($email)) {
+            return $api_response->error(401, 'Email is invalid.');
+        }
 
         try {
-            $plugin_name = $this->_available_plugins()[$plugin] ?? 'WooCommerce';
+            $plugin_name = $this->_available_plugins()[$plugin];
             $plugin_class_name = 'ThriveDesk\\Plugins\\' .  $plugin_name;
 
-            if (!class_exists($plugin_class_name))
-                $apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
+            if (!class_exists($plugin_class_name)) {
+                return $api_response->error(500, "Class not found for the '{$plugin_name}' plugin");
+            }
 
             $pluginObj = $plugin_class_name::instance();
 
-            if (!method_exists($plugin_class_name, 'is_plugin_active'))
-                $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+            if (!method_exists($plugin_class_name, 'is_plugin_active')) {
+                return $api_response->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+            }
 
-            if (!$pluginObj->is_plugin_active())
-                $apiResponse->error(500, "The plugin '{$plugin_name}' isn't installed or active.");
+            if (!$pluginObj->is_plugin_active()) {
+                return $api_response->error(500, "The plugin '{$plugin_name}' isn't installed or active.");
+            }
 
-            if (!method_exists($plugin_class_name, 'prepare_data'))
-                $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+            if (!method_exists($plugin_class_name, 'prepare_data')) {
+                return $api_response->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+            }
 
             $pluginObj->customer_email = $email;
 
-            if (!$pluginObj->is_customer_exist())
-                $apiResponse->error(404, "No customer found for the email '{$email}'.");
+            if (!$pluginObj->is_customer_exist()) {
+                return $api_response->error(404, "No customer found for the email '{$email}'.");
+            }
 
-            $data = $pluginObj->prepare_data();
-
-            $apiResponse->success(200, $data, 'Success');
+            return $api_response->success(200, $pluginObj->prepare_data(), 'Success');
         } catch (\Exception $e) {
-            $apiResponse->error(500, 'Can\'t not prepare data');
+            return $api_response->error(500, 'Can\'t not prepare data');
         }
         wp_die();
+    }
+
+    /**
+     * Verify api token
+     * @since 0.0.3
+     * 
+     * @param string $data
+     * @param string $api_token
+     * @return boolean
+     */
+    private function verify_token(string $data, string $api_token)
+    {
+        if (!$data || !$api_token) {
+            return;
+        }
+
+        return hash_hmac('sha1', $data, 'thrivedesk') === $api_token;
     }
 }
