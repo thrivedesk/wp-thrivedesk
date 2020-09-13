@@ -73,7 +73,7 @@ final class Admin
 
     public function admin_scripts()
     {
-        // wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.min.css', '', THRIVEDESK_VERSION);
+        wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.min.css', '', THRIVEDESK_VERSION);
 
         wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
 
@@ -93,14 +93,19 @@ final class Admin
         $api_token = md5(time());
 
         $thrivedesk_options = get_option('thrivedesk_options', []);
-        $thrivedesk_options['api_tokens'] = $thrivedesk_options['api_tokens'] ?? [];
-        $thrivedesk_options['api_tokens'][$plugin] = $api_token;
+        $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
+        $thrivedesk_options[$plugin] = [
+            'api_token' => $api_token,
+            'activated' => false,
+        ];
 
         update_option('thrivedesk_options', $thrivedesk_options);
 
         $hash = base64_encode(json_encode([
-            'site_url' =>  get_bloginfo('url'),
-            'api_token' => $api_token,
+            'store_url'     => get_bloginfo('url'),
+            'api_token'     => $api_token,
+            'cancel_url'    => admin_url('options-general.php?page=thrivedesk-setting&plugin=edd&td-activated=false'),
+            'success_url'   => admin_url('options-general.php?page=thrivedesk-setting&plugin=edd&td-activated=true')
         ]));
 
         echo THRIVEDESK_APP_URL . '/apps/' . $plugin . '?connect=' . $hash;

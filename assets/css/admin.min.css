@@ -1,0 +1,31 @@
+.thrivedesk-plugins {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.thrivedesk-plugins td, .thrivedesk-plugins th {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+.thrivedesk-plugins th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background: #23282D;
+    color: #fff;
+}
+
+.thrivedesk-plugins td button {
+    border: none;
+    outline: none;
+    padding: 8px 15px;
+    background: #00AADC;
+    color: #fff;
+    border-radius: 3px;
+    transition: .2s linear;
+}
+
+.thrivedesk-plugins td button:hover {
+    background: #0073AA;
+}

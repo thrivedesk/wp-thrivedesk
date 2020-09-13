@@ -13,7 +13,7 @@ $nonce = wp_create_nonce('thrivedesk-connect-plugin');
     <h1><?php _e('Thrive Desk Settings', 'thrivedesk') ?></h1>
 
     <div class="thrivedesk">
-        <table>
+        <table class="thrivedesk-plugins">
             <tbody>
                 <tr>
                     <th><?php _e('Plugin', 'thrivedesk') ?></th>
