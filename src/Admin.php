@@ -24,9 +24,11 @@ final class Admin
     {
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
-        add_action('admin_init', [$this, 'process_admin_setting']);
+        add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
+
+        add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
     }
 
     /**
@@ -69,27 +71,41 @@ final class Admin
         );
     }
 
-    /**
-     * Process save admin setting
-     *
-     * @since 0.0.1
-     * @access public
-     * @return void
-     */
-    public function process_admin_setting()
+    public function admin_scripts()
     {
-        if (!isset($_POST['thrivedesk_save_settings']) || !wp_verify_nonce($_POST['thrivedesk_save_settings'], 'thrivedesk_save_settings')) return;
+        // wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.min.css', '', THRIVEDESK_VERSION);
+
+        wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+
+        wp_localize_script(
+            'thrivedesk-admin-script',
+            'thrivedesk',
+            array('ajax_url' => admin_url('admin-ajax.php'))
+        );
+    }
+
+    public function ajax_connect_plugin()
+    {
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-connect-plugin'))  die;
+
+        $plugin = sanitize_key($_POST['data']['plugin']);
+
+        $api_token = md5(time());
 
         $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['api_tokens'] = $thrivedesk_options['api_tokens'] ?? [];
+        $thrivedesk_options['api_tokens'][$plugin] = $api_token;
 
-        if (isset($_POST['api_token'])) {
+        update_option('thrivedesk_options', $thrivedesk_options);
 
-            $thrivedesk_options['api_token'] = sanitize_text_field($_POST['api_token']);
+        $hash = base64_encode(json_encode([
+            'site_url' =>  get_bloginfo('url'),
+            'api_token' => $api_token,
+        ]));
 
-            update_option('thrivedesk_options', $thrivedesk_options);
-        }
+        echo THRIVEDESK_APP_URL . '/apps/' . $plugin . '?connect=' . $hash;
 
-        // TODO: Add admin notice
+        die();
     }
 
     /**
@@ -116,7 +132,7 @@ final class Admin
 
             $thrivedesk_options = get_option('thrivedesk_options', []);
 
-            $options = ['api_token' => ''];
+            $options = ['api_token' => []];
 
             update_option('thrivedesk_options', array_merge($thrivedesk_options, $options));
         }

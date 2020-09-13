@@ -28,7 +28,7 @@ abstract class Plugin
      *
      * @return boolean
      */
-    abstract public function is_plugin_active(): bool;
+    abstract public static function is_plugin_active(): bool;
 
     /**
      * Check if customer exist or not

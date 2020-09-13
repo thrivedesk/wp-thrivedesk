@@ -50,7 +50,7 @@ final class EDD extends Plugin
      *
      * @return boolean
      */
-    public function is_plugin_active(): bool
+    public static function is_plugin_active(): bool
     {
         if (!function_exists('EDD')) return false;
 

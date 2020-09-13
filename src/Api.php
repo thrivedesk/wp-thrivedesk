@@ -54,7 +54,7 @@ final class Api
      */
     private function _available_plugins(): array
     {
-        return ['woo' => 'WooCommerce', 'edd' => 'EDD', 'smartpay' => 'SmartPay'];
+        return ['woocommerce' => 'WooCommerce', 'edd' => 'EDD', 'smartpay' => 'SmartPay'];
     }
 
     /**
@@ -94,8 +94,6 @@ final class Api
         // Email invalid token
         if (!is_email($email))
             $apiResponse->error(401, 'Email is invalid.');
-
-        $data = [];
 
         try {
             $plugin_name = $this->_available_plugins()[$plugin] ?? 'WooCommerce';

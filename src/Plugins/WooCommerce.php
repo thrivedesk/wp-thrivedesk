@@ -51,7 +51,7 @@ final class WooCommerce extends Plugin
      *
      * @return boolean
      */
-    public function is_plugin_active(): bool
+    public static function is_plugin_active(): bool
     {
         if (!function_exists('WC') || !class_exists('WooCommerce', false)) return false;
 
