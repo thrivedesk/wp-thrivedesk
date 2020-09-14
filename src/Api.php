@@ -96,7 +96,7 @@ final class Api
 
             $this->plugin = $plugin_class_name::instance();
 
-            if (!method_exists($plugin_class_name, 'is_plugin_active')) {
+            if (!method_exists($this->plugin, 'is_plugin_active')) {
                 $this->apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
             }
 
@@ -138,35 +138,16 @@ final class Api
 
     public function plugin_data_action_handler()
     {
-        $plugin = strtolower(sanitize_key($_REQUEST['plugin'] ?? 'woo'));
         $email  = sanitize_email($_REQUEST['email'] ?? '');
 
-        // Plugin settings token
-        $api_token = $thrivedesk_options['api_token'] ?? '';
-
-        $plugin     = strtolower(sanitize_key($_REQUEST['plugin'] ?? ''));
-        $email      = sanitize_email($_REQUEST['email'] ?? '');
-        $api_token  = $_SERVER['HTTP_X_TD_API_TOKEN'] ?? '';
-
-        $token_verified = $this->verify_token(http_build_query(['email' => $email, 'plugin' => $plugin]), $api_token);
-
-        // Token invalid response
-        // if ($api_token !== $token)
-        //     $apiResponse->error(401, 'Token is invalid.');
-
-
-        // Plugin invalid
-        if (!in_array($plugin, array_keys($this->_available_plugins()))) {
-            return $this->apiResponse->error(401, 'Plugin is invalid or not available now.');
+        if (!method_exists($this->plugin, 'prepare_data')) {
+            $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
         }
-
-        // if (!method_exists($plugin_class_name, 'prepare_data'))
-        //     $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
 
         $this->plugin->customer_email = $email;
 
         if (!$this->plugin->is_customer_exist())
-            $this->apiResponse->error(404, "No customer found for the email '{$email}'.");
+            $this->apiResponse->error(404, "Customer not found.");
 
         $data = $this->plugin->prepare_data();
 
