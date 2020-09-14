@@ -52,7 +52,7 @@ final class SmartPay extends Plugin
      *
      * @return boolean
      */
-    public function is_plugin_active(): bool
+    public static function is_plugin_active(): bool
     {
         if (!function_exists('SmartPay') || !class_exists('SmartPay', false)) return false;
 
@@ -142,5 +142,37 @@ final class SmartPay extends Plugin
         }
 
         return $orders;
+    }
+
+    public function plugin_data(string $key = '')
+    {
+        $thrivedesk_options = thrivedesk_options();
+
+        $options = $thrivedesk_options['smartpay'] ?? [];
+
+        return $key ? ($options[$key] ?? '') : $options;
+    }
+
+    public function connect()
+    {
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['smartpay'] = $thrivedesk_options['smartpay'] ?? [];
+
+        $thrivedesk_options['smartpay']['connected'] = true;
+
+        update_option('thrivedesk_options', $thrivedesk_options);
+    }
+
+    public function disconnect()
+    {
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['smartpay'] = $thrivedesk_options['smartpay'] ?? [];
+
+        $thrivedesk_options['smartpay'] = [
+            'api_token' => '',
+            'connected' => false,
+        ];
+
+        update_option('thrivedesk_options', $thrivedesk_options);
     }
 }

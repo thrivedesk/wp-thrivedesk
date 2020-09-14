@@ -28,7 +28,7 @@ abstract class Plugin
      *
      * @return boolean
      */
-    abstract public function is_plugin_active(): bool;
+    abstract public static function is_plugin_active(): bool;
 
     /**
      * Check if customer exist or not
@@ -50,6 +50,12 @@ abstract class Plugin
      * @return array
      */
     abstract public function get_customer(): array;
+
+    abstract public function plugin_data(string $key = '');
+
+    abstract public function connect();
+
+    abstract public function disconnect();
 
     /**
      * Get the formated amount

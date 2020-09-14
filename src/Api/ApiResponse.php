@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Response
+class ApiResponse
 {
     /**
      * Response status
@@ -47,13 +47,6 @@ class Response
     {
     }
 
-    public function status(bool $status): object
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
     public function status_code(int $status_code): object
     {
         $this->status_code = $status_code;
@@ -77,23 +70,21 @@ class Response
 
     public function error(int $status_code, string $message = '')
     {
-        return $this->status(false)->status_code($status_code)->message($message)->send();
+        return $this->status_code($status_code)->message($message)->send();
     }
 
-    public function success(int $status_code, array $data = [], string $message = '')
+    public function success(int $status_code = 200, array $data = [], string $message = '')
     {
-        return $this->status(true)->status_code($status_code)->data($data)->message($message)->send();
+        return $this->status_code($status_code)->data($data)->message($message)->send();
     }
 
     public function send(): void
     {
         $response = [
-            'success'    => $this->status,
-            'code'       => $this->status_code,
-            'message'    => $this->message
+            'message' => $this->message
         ];
 
-        if (true === $this->status) {
+        if (true === $this->status && $this->data) {
             $response['data'] = $this->data;
         }
 

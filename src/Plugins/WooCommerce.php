@@ -51,7 +51,7 @@ final class WooCommerce extends Plugin
      *
      * @return boolean
      */
-    public function is_plugin_active(): bool
+    public static function is_plugin_active(): bool
     {
         if (!function_exists('WC') || !class_exists('WooCommerce', false)) return false;
 
@@ -143,5 +143,37 @@ final class WooCommerce extends Plugin
         }
 
         return $orders;
+    }
+
+    public function plugin_data(string $key = '')
+    {
+        $thrivedesk_options = thrivedesk_options();
+
+        $options = $thrivedesk_options['woocommerce'] ?? [];
+
+        return $key ? ($options[$key] ?? '') : $options;
+    }
+
+    public function connect()
+    {
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['woocommerce'] = $thrivedesk_options['woocommerce'] ?? [];
+
+        $thrivedesk_options['woocommerce']['connected'] = true;
+
+        update_option('thrivedesk_options', $thrivedesk_options);
+    }
+
+    public function disconnect()
+    {
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['woocommerce'] = $thrivedesk_options['woocommerce'] ?? [];
+
+        $thrivedesk_options['woocommerce'] = [
+            'api_token' => '',
+            'connected' => false,
+        ];
+
+        update_option('thrivedesk_options', $thrivedesk_options);
     }
 }

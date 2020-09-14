@@ -50,7 +50,7 @@ final class EDD extends Plugin
      *
      * @return boolean
      */
-    public function is_plugin_active(): bool
+    public static function is_plugin_active(): bool
     {
         if (!function_exists('EDD')) return false;
 
@@ -140,5 +140,37 @@ final class EDD extends Plugin
         }
 
         return $orders;
+    }
+
+    public function plugin_data(string $key = '')
+    {
+        $thrivedesk_options = thrivedesk_options();
+
+        $options = $thrivedesk_options['edd'] ?? [];
+
+        return $key ? ($options[$key] ?? '') : $options;
+    }
+
+    public function connect()
+    {
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['edd'] = $thrivedesk_options['edd'] ?? [];
+
+        $thrivedesk_options['edd']['connected'] = true;
+
+        update_option('thrivedesk_options', $thrivedesk_options);
+    }
+
+    public function disconnect()
+    {
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options['edd'] = $thrivedesk_options['edd'] ?? [];
+
+        $thrivedesk_options['edd'] = [
+            'api_token' => '',
+            'connected' => false,
+        ];
+
+        update_option('thrivedesk_options', $thrivedesk_options);
     }
 }
