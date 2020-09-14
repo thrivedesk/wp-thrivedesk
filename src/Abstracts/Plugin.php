@@ -51,6 +51,12 @@ abstract class Plugin
      */
     abstract public function get_customer(): array;
 
+    abstract public function plugin_data(string $key = '');
+
+    abstract public function connect();
+
+    abstract public function disconnect();
+
     /**
      * Get the formated amount
      *

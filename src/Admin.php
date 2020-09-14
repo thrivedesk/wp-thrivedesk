@@ -29,6 +29,7 @@ final class Admin
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
 
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
+        add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
     }
 
     /**
@@ -96,7 +97,7 @@ final class Admin
         $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
         $thrivedesk_options[$plugin] = [
             'api_token' => $api_token,
-            'activated' => false,
+            'connected' => false,
         ];
 
         update_option('thrivedesk_options', $thrivedesk_options);
@@ -109,6 +110,26 @@ final class Admin
         ]));
 
         echo THRIVEDESK_APP_URL . '/apps/' . $plugin . '?connect=' . $hash;
+
+        die();
+    }
+
+    public function ajax_disconnect_plugin()
+    {
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-connect-plugin'))  die;
+
+        $plugin = sanitize_key($_POST['data']['plugin']);
+
+        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
+        $thrivedesk_options[$plugin] = [
+            'api_token' => '',
+            'connected' => false,
+        ];
+
+        update_option('thrivedesk_options', $thrivedesk_options);
+
+        echo 1;
 
         die();
     }
@@ -133,13 +154,7 @@ final class Admin
             update_option('thrivedesk_version', THRIVEDESK_VERSION);
 
             // Create thrivedesk_options
-            if (false == get_option('thrivedesk_options')) add_option('thrivedesk_options', []);
-
-            $thrivedesk_options = get_option('thrivedesk_options', []);
-
-            $options = ['api_token' => []];
-
-            update_option('thrivedesk_options', array_merge($thrivedesk_options, $options));
+            if (false == get_option('thrivedesk_options')) update_option('thrivedesk_options', []);
         }
     }
 }

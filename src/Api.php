@@ -2,6 +2,7 @@
 
 namespace ThriveDesk;
 
+use ThriveDesk\Api\ApiResponse;
 use ThriveDesk\Api\Response;
 
 // Exit if accessed directly.
@@ -16,6 +17,10 @@ final class Api
      */
     private static $instance = null;
 
+    private $apiResponse;
+
+    private $plugin = null;
+
     /**
      * Construct Api class.
      *
@@ -25,7 +30,10 @@ final class Api
     private function __construct()
     {
         add_action('init', [$this, 'api_listener']);
+
+        $this->apiResponse = new ApiResponse();
     }
+
 
     /**
      * Main Api Instance.
@@ -66,13 +74,72 @@ final class Api
     public function api_listener()
     {
         $listener = sanitize_key($_GET['listener'] ?? '');
-        if (!isset($listener) || 'thrivedesk' !== $listener) return;
+        if (!isset($listener) || 'thrivedesk' !== $listener) {
+            return;
+        }
 
-        $token  = sanitize_key($_REQUEST['token'] ?? '');
+        try {
+            $action = strtolower(sanitize_key($_GET['action'] ?? ''));
+            $plugin = strtolower(sanitize_key($_GET['plugin'] ?? 'edd'));
+
+            // Plugin invalid response
+            if (!in_array($plugin, array_keys($this->_available_plugins()))) {
+                $this->apiResponse->error(401, 'Plugin is invalid or not available now.');
+            }
+
+            $plugin_name = $this->_available_plugins()[$plugin] ?? 'EDD';
+            $plugin_class_name = 'ThriveDesk\\Plugins\\' .  $plugin_name;
+
+            if (!class_exists($plugin_class_name)) {
+                $this->apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
+            }
+
+            $this->plugin = $plugin_class_name::instance();
+
+            if (!method_exists($plugin_class_name, 'is_plugin_active')) {
+                $this->apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+            }
+
+            if (!$this->plugin->is_plugin_active()) {
+                $this->apiResponse->error(500, "The plugin '{$plugin_name}' isn't installed or active.");
+            }
+
+            if (!$this->verify_token()) {
+                $this->apiResponse->error(401, 'Request unauthorized');
+            }
+
+            if (isset($action) && 'connect' === $action) {
+                $this->connect_action_handler();
+            } else if (isset($action) && 'disconnect' === $action) {
+                $this->disconnect_action_handler();
+            } else {
+                $this->plugin_data_action_handler();
+            }
+        } catch (\Exception $e) {
+            $this->apiResponse->error(500, 'Can\'t not prepare data');
+        }
+
+        wp_die();
+    }
+
+    public function connect_action_handler()
+    {
+        $this->plugin->connect();
+
+        $this->apiResponse->success(200, [], 'Site connected successfully');
+    }
+
+    public function disconnect_action_handler()
+    {
+        $this->plugin->disconnect();
+
+        $this->apiResponse->success(200, [], 'Site has been disconnected');
+    }
+
+    public function plugin_data_action_handler()
+    {
         $plugin = strtolower(sanitize_key($_REQUEST['plugin'] ?? 'woo'));
         $email  = sanitize_email($_REQUEST['email'] ?? '');
-
-        $thrivedesk_options = thrivedesk_options();
 
         // Plugin settings token
         $api_token = $thrivedesk_options['api_token'] ?? '';
@@ -84,46 +151,34 @@ final class Api
             $apiResponse->error(401, 'The API token isn\'t configured on wp plugin yet.');
 
         // Token invalid response
-        if ($api_token !== $token)
-            $apiResponse->error(401, 'Token is invalid.');
+        // if ($api_token !== $token)
+        //     $apiResponse->error(401, 'Token is invalid.');
 
-        // Plugin invalid response
-        if (!in_array($plugin, array_keys($this->_available_plugins())))
-            $apiResponse->error(401, 'Plugin is invalid or not available now.');
 
         // Email invalid token
         if (!is_email($email))
             $apiResponse->error(401, 'Email is invalid.');
 
-        try {
-            $plugin_name = $this->_available_plugins()[$plugin] ?? 'WooCommerce';
-            $plugin_class_name = 'ThriveDesk\\Plugins\\' .  $plugin_name;
 
-            if (!class_exists($plugin_class_name))
-                $apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
 
-            $pluginObj = $plugin_class_name::instance();
+        // if (!method_exists($plugin_class_name, 'prepare_data'))
+        //     $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
 
-            if (!method_exists($plugin_class_name, 'is_plugin_active'))
-                $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+        $this->plugin->customer_email = $email;
 
-            if (!$pluginObj->is_plugin_active())
-                $apiResponse->error(500, "The plugin '{$plugin_name}' isn't installed or active.");
+        if (!$this->plugin->is_customer_exist())
+            $apiResponse->error(404, "No customer found for the email '{$email}'.");
 
-            if (!method_exists($plugin_class_name, 'prepare_data'))
-                $apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+        $data = $this->plugin->prepare_data();
 
-            $pluginObj->customer_email = $email;
+        $apiResponse->success(200, $data, 'Success');
+    }
 
-            if (!$pluginObj->is_customer_exist())
-                $apiResponse->error(404, "No customer found for the email '{$email}'.");
+    private function verify_token()
+    {
+        $api_token = $this->plugin->plugin_data('api_token');
+        $signature  = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-            $data = $pluginObj->prepare_data();
-
-            $apiResponse->success(200, $data, 'Success');
-        } catch (\Exception $e) {
-            $apiResponse->error(500, 'Can\'t not prepare data');
-        }
-        wp_die();
+        return hash_equals(hash_hmac('SHA1', json_encode($_REQUEST), $api_token), $signature);
     }
 }
