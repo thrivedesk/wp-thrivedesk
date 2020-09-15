@@ -33,7 +33,9 @@ jQuery(document).ready(($) => {
 				},
 				(response) => {
 					if (response) {
-						window.location.href = response;
+						setTimeout(() => {
+							window.location.href = response;
+						}, 750);
 					} else {
 						alert('Failed to create plugin connect url');
 					}
