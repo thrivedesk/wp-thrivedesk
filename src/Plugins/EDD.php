@@ -8,7 +8,6 @@ use ThriveDesk\Plugin;
 if (!defined('ABSPATH')) {
     exit;
 }
-
 final class EDD extends Plugin
 {
     /**
@@ -24,6 +23,7 @@ final class EDD extends Plugin
      */
     private function __construct()
     {
+        //
     }
 
     /**
@@ -142,7 +142,8 @@ final class EDD extends Plugin
         return $orders;
     }
 
-    public function plugin_data(string $key = '')
+    // TODO: Move to parent class
+    public function get_plugin_data(string $key = '')
     {
         $thrivedesk_options = thrivedesk_options();
 

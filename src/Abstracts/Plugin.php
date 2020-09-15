@@ -19,7 +19,7 @@ abstract class Plugin
     /**
      * Customer data
      *
-     * @var object|EDD_Customer
+     * @var object
      */
     public $customer = null;
 
@@ -51,10 +51,26 @@ abstract class Plugin
      */
     abstract public function get_customer(): array;
 
-    abstract public function plugin_data(string $key = '');
+    /**
+     * Get plugin data
+     *
+     * @param string $key
+     * @return mixed
+     */
+    abstract public function get_plugin_data(string $key = '');
 
+    /**
+     * Update plugin connect information
+     *
+     * @return void
+     */
     abstract public function connect();
 
+    /**
+     * Update plugin disconnect information
+     *
+     * @return void
+     */
     abstract public function disconnect();
 
     /**

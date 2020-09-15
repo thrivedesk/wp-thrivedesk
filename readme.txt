@@ -4,7 +4,7 @@ Tags: customer support, helpdesk, shared inbox, knowledge base, customer service
 Requires at least: 4.9
 Tested up to: 5.5.1
 Requires PHP: 7.0.0
-Stable Tag: 0.0.3
+Stable Tag: 0.0.4
 License: GNU Version 2 or later
 
 Helping WordPress startups thriving customer support through shared inbox, knowledge base and powerful automations.
@@ -59,6 +59,11 @@ The easiest way to install ThriveDesk is to search for it via your site’s Dash
 == Screenshots ==
 
 == Changelog ==
+
+= [0.0.4] =
+* Added plugin connect and disconnect status
+* Added available integrations page
+* Updated API request validation
 
 = [0.0.3] =
 * Improved API request & response security

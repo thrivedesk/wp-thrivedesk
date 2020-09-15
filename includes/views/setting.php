@@ -1,8 +1,8 @@
 <?php
 
 $edd = ThriveDesk\Plugins\EDD::instance();
-$woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
-$smartpay = ThriveDesk\Plugins\SmartPay::instance();
+// $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
+// $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
     [
@@ -10,25 +10,23 @@ $plugins = [
         'namespace' => 'edd',
         'image'     => 'edd.png',
         'installed' => $edd->is_plugin_active(),
-        'connected' => $edd->plugin_data('connected'),
+        'connected' => $edd->get_plugin_data('connected'),
     ],
-    [
-        'name'      => __('WooCommerce', 'thrivedesk'),
-        'namespace' => 'woocommerce',
-        'image'     => 'woocommerce.png',
-        'installed' => $woocommerce->is_plugin_active(),
-        'connected' => $woocommerce->plugin_data('connected'),
-    ],
-    [
-        'name'      => __('SmartPay', 'thrivedesk'),
-        'namespace' => 'smartpay',
-        'image'     => 'smartpay.png',
-        'installed' => $smartpay->is_plugin_active(),
-        'connected' => $smartpay->plugin_data('connected'),
-    ],
+    // [
+    //     'name'      => __('WooCommerce', 'thrivedesk'),
+    //     'namespace' => 'woocommerce',
+    //     'image'     => 'woocommerce.png',
+    //     'installed' => $woocommerce->is_plugin_active(),
+    //     'connected' => $woocommerce->get_plugin_data('connected'),
+    // ],
+    // [
+    //     'name'      => __('SmartPay', 'thrivedesk'),
+    //     'namespace' => 'smartpay',
+    //     'image'     => 'smartpay.png',
+    //     'installed' => $smartpay->is_plugin_active(),
+    //     'connected' => $smartpay->get_plugin_data('connected'),
+    // ],
 ];
-
-// var_dump($plugins);
 
 $nonce = wp_create_nonce('thrivedesk-connect-plugin');
 ?>

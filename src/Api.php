@@ -3,7 +3,6 @@
 namespace ThriveDesk;
 
 use ThriveDesk\Api\ApiResponse;
-use ThriveDesk\Api\Response;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -62,7 +61,9 @@ final class Api
      */
     private function _available_plugins(): array
     {
-        return ['woocommerce' => 'WooCommerce', 'edd' => 'EDD', 'smartpay' => 'SmartPay'];
+        return [
+            'edd' => 'EDD',
+        ];
     }
 
     /**
@@ -71,7 +72,7 @@ final class Api
      * @since 0.0.1
      * @return void
      */
-    public function api_listener()
+    public function api_listener(): void
     {
         $listener = sanitize_key($_GET['listener'] ?? '');
         if (!isset($listener) || 'thrivedesk' !== $listener) {
@@ -122,23 +123,41 @@ final class Api
         wp_die();
     }
 
-    public function connect_action_handler()
+    /**
+     * Handle plugin connect request
+     * 
+     * @since 0.0.4
+     * @return void
+     */
+    public function connect_action_handler(): void
     {
         $this->plugin->connect();
 
         $this->apiResponse->success(200, [], 'Site connected successfully');
     }
 
-    public function disconnect_action_handler()
+    /**
+     * Handle plugin disconnect request
+     * 
+     * @since 0.0.4
+     * @return void
+     */
+    public function disconnect_action_handler(): void
     {
         $this->plugin->disconnect();
 
         $this->apiResponse->success(200, [], 'Site has been disconnected');
     }
 
+    /**
+     * Handle plugin data request
+     * 
+     * @since 0.0.4
+     * @return void
+     */
     public function plugin_data_action_handler()
     {
-        $email  = sanitize_email($_REQUEST['email'] ?? '');
+        $email = sanitize_email($_REQUEST['email'] ?? '');
 
         if (!method_exists($this->plugin, 'prepare_data')) {
             $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
@@ -154,9 +173,15 @@ final class Api
         $this->apiResponse->success(200, $data, 'Success');
     }
 
-    private function verify_token()
+    /**
+     * Verify api request token
+     *
+     * @since 0.0.4
+     * @return boolean
+     */
+    private function verify_token(): bool
     {
-        $api_token = $this->plugin->plugin_data('api_token');
+        $api_token = $this->plugin->get_plugin_data('api_token');
         $signature  = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
         return hash_equals(hash_hmac('SHA1', json_encode($_REQUEST), $api_token), $signature);
