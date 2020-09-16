@@ -156,11 +156,10 @@ final class EDD extends Plugin
         return array_map(function ($download) use ($order) {
             $edd_download = edd_get_download($download['id']);
             $option_name = edd_get_price_option_name($download['id'], $download['options']['price_id']);
-            $price = edd_get_price_option_amount($download['id'], $download['options']['price_id']);
 
             $download_item = [
-                'title' => $edd_download->get_name() . ($option_name ? ' - ' . $option_name : ''),
-                'price' => $price ?? $edd_download->price ?? 0,
+                'title'       => $edd_download->get_name(),
+                'option_name' => $option_name ?? '',
             ];
 
             if (function_exists('edd_software_licensing')) {
@@ -168,14 +167,14 @@ final class EDD extends Plugin
 
                 $download_item = array_merge($download_item, [
                     'license' => [
-                        'key'                   => $license->license_key ?? '',
-                        'activation_limit'      => $license->activation_limit ?? 0,
-                        'sites'                 => $license->sites ?? [],
-                        'activation_count'      => $license->activation_count ?? 0,
-                        'date_created'          => $license->date_created ?? '',
-                        'expiration'            => $license->expiration ?? '',
-                        'is_lifetime'           => $license->is_lifetime ?? '',
-                        'status'                => $license->status ?? '',
+                        'key'              => $license->license_key ?? '',
+                        'activation_limit' => $license->activation_limit ?? '',
+                        'sites'            => $license->sites ?? [],
+                        'activation_count' => $license->activation_count ?? 0,
+                        'date_created'     => $license->date_created ?? '',
+                        'expiration'       => $license->expiration ?? '',
+                        'is_lifetime'      => $license->is_lifetime,
+                        'status'           => $license->status ?? '',
                     ]
                 ]);
             }
