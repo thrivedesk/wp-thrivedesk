@@ -100,7 +100,7 @@ final class EDD extends Plugin
 
         return [
             'name' => $this->customer->name ?? '',
-            'registered_at' => date('d F Y', strtotime($this->customer->date_created)) ?? ''
+            'registered_at' => date('d M Y', strtotime($this->customer->date_created)) ?? ''
         ];
     }
 
@@ -134,13 +134,56 @@ final class EDD extends Plugin
                 'order_id'        => $order->number,
                 'amount'          => (float) $order->total,
                 'amount_formated' => $this->get_formated_amount($order->total),
-                'date'            => date('d F Y', strtotime($order->date)),
-                'order_status'    => $order->status_nicename
+                'date'            => date('d M Y', strtotime($order->date)),
+                'order_status'    => $order->status_nicename,
+                'downloads'       => $this->get_order_items($order),
             ]);
         }
 
         return $orders;
     }
+
+    /**
+     * Get order items
+     *
+     * @since x.x.x
+     * 
+     * @param object $order
+     * @return array
+     */
+    private function get_order_items($order): array
+    {
+        return array_map(function ($download) use ($order) {
+            $edd_download = edd_get_download($download['id']);
+            $option_name = edd_get_price_option_name($download['id'], $download['options']['price_id']);
+            $price = edd_get_price_option_amount($download['id'], $download['options']['price_id']);
+
+            $download_item = [
+                'title' => $edd_download->get_name() . ($option_name ? ' - ' . $option_name : ''),
+                'price' => $price ?? $edd_download->price ?? 0,
+            ];
+
+            if (function_exists('edd_software_licensing')) {
+                $license = edd_software_licensing()->get_license_by_purchase($order->number, $download['id']) ?? [];
+
+                $download_item = array_merge($download_item, [
+                    'license' => [
+                        'key'                   => $license->license_key ?? '',
+                        'activation_limit'      => $license->activation_limit ?? 0,
+                        'sites'                 => $license->sites ?? [],
+                        'activation_count'      => $license->activation_count ?? 0,
+                        'date_created'          => $license->date_created ?? '',
+                        'expiration'            => $license->expiration ?? '',
+                        'is_lifetime'           => $license->is_lifetime ?? '',
+                        'status'                => $license->status ?? '',
+                    ]
+                ]);
+            }
+
+            return $download_item;
+        }, $order->downloads ?? []);
+    }
+
 
     // TODO: Move to parent class
     public function get_plugin_data(string $key = '')
