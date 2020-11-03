@@ -5,7 +5,7 @@
  * Description: Customer Support & Helpdesk Software for WordPress Startups
  * Plugin URI:  https://thrivedesk.io/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:        thrivedesk,
- * Version:     0.0.4
+ * Version:     0.0.5
  * Author:      ThriveDesk
  * Author URI:  https://profiles.wordpress.org/thrivedesk/
  * Text Domain: thrivedesk
@@ -13,7 +13,7 @@
  * 
  * Requires PHP      : 7.0.0
  * Requires at least : 4.9
- * Tested up to      : 5.5
+ * Tested up to      : 5.5.3
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '0.0.4';
+    public $version = '0.0.5';
 
     /**
      * The single instance of this class
