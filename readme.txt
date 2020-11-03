@@ -2,9 +2,9 @@
 Contributors: thrivedesk
 Tags: customer support, helpdesk, shared inbox, knowledge base, customer service software, WooCommerce, Easy Digital Downloads, Envato, Slack, webhook
 Requires at least: 4.9
-Tested up to: 5.5.1
+Tested up to: 5.5.3
 Requires PHP: 7.0.0
-Stable Tag: 0.0.4
+Stable Tag: 0.0.5
 License: GNU Version 2 or later
 
 Helping WordPress startups thriving customer support through shared inbox, knowledge base and powerful automations.
@@ -59,6 +59,9 @@ The easiest way to install ThriveDesk is to search for it via your site’s Dash
 == Screenshots ==
 
 == Changelog ==
+
+= [0.0.5] =
+* Added support for EDD Software License
 
 = [0.0.4] =
 * Added plugin connect and disconnect status

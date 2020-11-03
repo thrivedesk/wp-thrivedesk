@@ -146,7 +146,7 @@ final class EDD extends Plugin
     /**
      * Get order items
      *
-     * @since x.x.x
+     * @since 0.0.5
      * 
      * @param object $order
      * @return array
