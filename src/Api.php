@@ -63,6 +63,7 @@ final class Api
     {
         return [
             'edd' => 'EDD',
+            'woocommerce' => 'WooCommerce',
         ];
     }
 

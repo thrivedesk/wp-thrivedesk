@@ -1,7 +1,7 @@
 <?php
 
 $edd = ThriveDesk\Plugins\EDD::instance();
-// $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
+$woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
@@ -12,13 +12,13 @@ $plugins = [
         'installed' => $edd->is_plugin_active(),
         'connected' => $edd->get_plugin_data('connected'),
     ],
-    // [
-    //     'name'      => __('WooCommerce', 'thrivedesk'),
-    //     'namespace' => 'woocommerce',
-    //     'image'     => 'woocommerce.png',
-    //     'installed' => $woocommerce->is_plugin_active(),
-    //     'connected' => $woocommerce->get_plugin_data('connected'),
-    // ],
+     [
+         'name'      => __('WooCommerce', 'thrivedesk'),
+         'namespace' => 'woocommerce',
+         'image'     => 'woocommerce.png',
+         'installed' => $woocommerce->is_plugin_active(),
+         'connected' => $woocommerce->get_plugin_data('connected'),
+     ],
     // [
     //     'name'      => __('SmartPay', 'thrivedesk'),
     //     'namespace' => 'smartpay',

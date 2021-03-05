@@ -105,7 +105,7 @@ final class WooCommerce extends Plugin
 
         return [
             'name' => $this->customer->get_display_name() ?? '',
-            'registered_at' => date('d F Y', strtotime($this->customer->get_date_created())) ?? ''
+            'registered_at' => date('d M Y', strtotime($this->customer->get_date_created())) ?? ''
         ];
     }
 
@@ -130,22 +130,38 @@ final class WooCommerce extends Plugin
         $orders = [];
 
         if (!$this->is_customer_exist()) return $orders;
+        $user = get_user_by('email',$this->customer_email);
+        $customer_orders = wc_get_orders( array(
+            ‘meta_key’ => ‘_customer_user’,
+            ‘meta_value’ => $user->ID,
+            ‘post_status’ => ['wc-completed'],
+            ‘numberposts’ => -1
+        ) );
 
-        foreach (wc_get_orders('user_id', 1) as $order) {
+        foreach ($customer_orders as $order) {
 
             array_push($orders, [
                 'order_id'        => $order->get_id(),
                 'amount'          => (float) $order->get_total(),
                 'amount_formated' => $this->get_formated_amount($order->get_total()),
-                'date'            => date('d F Y', strtotime($order->get_date_created())),
-                'order_status'    => ucfirst($order->get_status())
+                'date'            => date('d M Y', strtotime($order->get_date_created())),
+                'order_status'    => ucfirst($order->get_status()),
+                'items'          => $this->get_order_items($order->get_items()),
             ]);
         }
 
         return $orders;
     }
 
-    public function plugin_data(string $key = '')
+    public function get_order_items( $order ) {
+        $data = [];
+        foreach ( $order as $single ) {
+            array_push($data,$single['qty']);
+        }
+        return $data;
+    }
+
+    public function get_plugin_data(string $key = '')
     {
         $thrivedesk_options = thrivedesk_options();
 
