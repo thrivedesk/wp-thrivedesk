@@ -3,6 +3,7 @@
 namespace ThriveDesk\Plugins;
 
 use ThriveDesk\Plugin;
+use WC_Order_Query;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -84,7 +85,7 @@ final class WooCommerce extends Plugin
      */
     public function accepted_statuses(): array
     {
-        return ['Complete'];
+        return ['Completed'];
     }
 
     /**
@@ -130,35 +131,39 @@ final class WooCommerce extends Plugin
         $orders = [];
 
         if (!$this->is_customer_exist()) return $orders;
+
         $user = get_user_by('email',$this->customer_email);
-        $customer_orders = wc_get_orders( array(
-            ‘meta_key’ => ‘_customer_user’,
-            ‘meta_value’ => $user->ID,
-            ‘post_status’ => ['wc-completed'],
-            ‘numberposts’ => -1
-        ) );
+
+        $query = new WC_Order_Query();
+        $query->set( 'customer', $this->customer_email );
+        $customer_orders = $query->get_orders();
 
         foreach ($customer_orders as $order) {
-
             array_push($orders, [
                 'order_id'        => $order->get_id(),
                 'amount'          => (float) $order->get_total(),
                 'amount_formated' => $this->get_formated_amount($order->get_total()),
                 'date'            => date('d M Y', strtotime($order->get_date_created())),
                 'order_status'    => ucfirst($order->get_status()),
-                'items'          => $this->get_order_items($order->get_items()),
+                'downloads'          => $this->get_order_items($order),
             ]);
         }
 
         return $orders;
     }
 
-    public function get_order_items( $order ) {
-        $data = [];
-        foreach ( $order as $single ) {
-            array_push($data,$single['qty']);
+    public function get_order_items( $order ): array
+    {
+        $download_item = [];
+        foreach ($order->get_items() as $item_id => $item)
+        {
+            array_push($download_item, [
+                'title'       => $item->get_name(),
+                'option_name' => $item->get_variation_id(),
+            ]);
         }
-        return $data;
+        return $download_item;
+
     }
 
     public function get_plugin_data(string $key = '')
