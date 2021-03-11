@@ -145,11 +145,29 @@ final class WooCommerce extends Plugin
                 'amount_formated' => $this->get_formated_amount($order->get_total()),
                 'date'            => date('d M Y', strtotime($order->get_date_created())),
                 'order_status'    => ucfirst($order->get_status()),
-                'downloads'          => $this->get_order_items($order),
+                'shipping'        => $this->get_shipping_details($order),
+//                'downloads'          => $this->get_order_items($order),
             ]);
         }
 
         return $orders;
+    }
+
+    public function get_shipping_details($order): array
+    {
+        $states = WC()->countries->get_states( $order->get_shipping_country() );
+        $state  = ! empty( $states[ $order->get_shipping_state() ] ) ? $states[ $order->get_shipping_state() ] : '';
+
+        $shipping_details = [];
+
+        array_push($shipping_details, [
+            'street'    => $order->get_shipping_address_1() ?? '',
+            'city'      => $order->get_shipping_city() ?? '',
+            'zip'       => $order->get_shipping_postcode() ?? '',
+            'state'     => $state,
+            'country'   => WC()->countries->countries[ $order->get_shipping_country() ] ?? '',
+        ]);
+        return $shipping_details;
     }
 
     public function get_order_items( $order ): array
@@ -163,7 +181,6 @@ final class WooCommerce extends Plugin
             ]);
         }
         return $download_item;
-
     }
 
     public function get_plugin_data(string $key = '')
