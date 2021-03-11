@@ -83,6 +83,7 @@ final class Api
         try {
             $action = strtolower(sanitize_key($_GET['action'] ?? ''));
             $plugin = strtolower(sanitize_key($_GET['plugin'] ?? 'edd'));
+//            echo json_encode($listener . $action . $plugin);
 
             // Plugin invalid response
             if (!in_array($plugin, array_keys($this->_available_plugins()))) {
@@ -114,6 +115,8 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
+            } else if (isset($action) && 'update_status' === $action){
+                $this->update_status_handler($action);
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -122,6 +125,14 @@ final class Api
         }
 
         wp_die();
+    }
+
+    public function update_status_handler($action): void
+    {
+        $order = wc_get_order(53);
+        $order->update_status('cancel');
+        echo json_encode($order . '=====');
+        $this->apiResponse->success(200, [], 'Success');
     }
 
     /**
