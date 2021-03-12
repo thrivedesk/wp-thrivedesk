@@ -116,7 +116,7 @@ final class Api
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
             } else if (isset($action) && 'update_status' === $action){
-                $this->update_status_handler($action);
+                $this->update_status_handler();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -127,11 +127,11 @@ final class Api
         wp_die();
     }
 
-    public function update_status_handler($action): void
+    public function update_status_handler(): void
     {
-        $order = wc_get_order(53);
-        $order->update_status('cancel');
-        echo json_encode($order . '=====');
+        $order = wc_get_order($_GET['order_id']);
+        $order->update_status($_GET['status'], $_GET['note']);
+
         $this->apiResponse->success(200, [], 'Success');
     }
 
