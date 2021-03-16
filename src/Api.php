@@ -129,10 +129,14 @@ final class Api
 
     public function update_status_handler(): void
     {
-        $order = wc_get_order($_GET['order_id']);
-        $order->update_status($_GET['status'], $_GET['note']);
+        try {
+            $order = wc_get_order($_GET['order_id']);
+            $order->update_status($_GET['order_status'], $_GET['note']);
 
-        $this->apiResponse->success(200, [], 'Success');
+            $this->apiResponse->success(200, [], 'Success');
+        } catch (\Exception $e) {
+            $this->apiResponse->error(401, 'Request Failed');
+        }
     }
 
     /**
