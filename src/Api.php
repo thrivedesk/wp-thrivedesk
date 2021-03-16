@@ -83,7 +83,6 @@ final class Api
         try {
             $action = strtolower(sanitize_key($_GET['action'] ?? ''));
             $plugin = strtolower(sanitize_key($_GET['plugin'] ?? 'edd'));
-//            echo json_encode($listener . $action . $plugin);
 
             // Plugin invalid response
             if (!in_array($plugin, array_keys($this->_available_plugins()))) {
