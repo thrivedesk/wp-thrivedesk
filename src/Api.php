@@ -196,9 +196,23 @@ final class Api
      */
     private function verify_token(): bool
     {
+        $payload = [];
+        foreach ($_REQUEST as $key => $value) {
+            switch(strtolower($value)) {
+                case 'true':
+                case 'false':
+                case '0':
+                case '1':
+                    $payload[$key] = (bool) $value;
+            break;
+                default:
+                    $payload[$key] = $value;
+            }
+        }
         $api_token = $this->plugin->get_plugin_data('api_token');
+
         $signature  = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-        return hash_equals(hash_hmac('SHA1', json_encode($_REQUEST), $api_token), $signature);
+        return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
     }
 }
