@@ -4,6 +4,7 @@ namespace ThriveDesk\Plugins;
 
 use ThriveDesk\Plugin;
 use WC_Order_Query;
+use WOO_SL_functions;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -146,7 +147,7 @@ final class WooCommerce extends Plugin
                 'date'            => date('d M Y', strtotime($order->get_date_created())),
                 'order_status'    => ucfirst($order->get_status()),
                 'shipping'        => $this->get_shipping_details($order),
-//                'downloads'          => $this->get_order_items($order),
+                'downloads'          => $this->get_order_items($order),
             ]);
         }
 
@@ -170,15 +171,20 @@ final class WooCommerce extends Plugin
         return $shipping_details;
     }
 
-    public function get_order_items( $order ): array
+    public function get_order_items( $order )
     {
         $download_item = [];
-        foreach ($order->get_items() as $item_id => $item)
-        {
-            array_push($download_item, [
-                'title'       => $item->get_name(),
-                'option_name' => $item->get_variation_id(),
-            ]);
+
+        $orderLicenseDetails = WOO_SL_functions::get_order_licence_details($order->get_id());
+
+        foreach ($orderLicenseDetails as $orderLicenses) {
+            foreach ($orderLicenses as $orderLicense) {
+                array_push($download_item, WOO_SL_functions::get_order_product_generated_keys(
+                    $orderLicense->order_id,
+                    $orderLicense->order_item_id,
+                    $orderLicense->group_id
+                ));
+            }
         }
         return $download_item;
     }
