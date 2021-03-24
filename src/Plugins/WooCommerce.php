@@ -185,6 +185,7 @@ final class WooCommerce extends Plugin
         $items = $order->get_items();
 
         $download_item = [];
+        $license_info = [];
 
         $orderLicenseDetails = WOO_SL_functions::get_order_licence_details($order->get_id());
 
@@ -202,27 +203,44 @@ final class WooCommerce extends Plugin
                 $key_instances = WOO_SL_functions::get_license_key_instances(
                     $license->licence,
                     $license->order_id,
-                    $license->order_item_id
+                    $license->order_item_id,
                 );
 
                 $sites = [];
 
+                $expire_date = intval(WOO_SL_functions::get_order_item_meta($orderLicense->order_item_id,  '_woo_sl_licensing_expire_at') ?? '');
+                $expire_date = $expire_date == 0 ? '' : date("d M Y", $expire_date);
+
                 foreach ($key_instances as $key_instance){
-                    array_push($sites, $key_instance->active_domain);
+                    if ($key_instance->active_domain){
+                        array_push($sites, $key_instance->active_domain);
+                    }
                 }
 
-                array_push($download_item, [
-                    'title'     => $item["name"],
-                    'license'   =>  [
-                        'key'                => $license->licence ?? '',
-                        'activation_limit'   => $orderLicense->license_data["max_instances_per_key"],
-                        'sites'              => $sites,
-                        'date_created'       => $license->created ?? '',
-                        'expiration'         => date_i18n( get_option( 'date_format' ), WOO_SL_functions::get_order_item_meta($orderLicense->order_item_id,  '_woo_sl_licensing_expire_at')) ?? '',
-                        'is_lifetime'        => $orderLicense->license_data['product_use_expire'] == 'no',
-                        'status'             => WOO_SL_functions::get_licence_key_status($license->id) ?? '',
-                    ],
-                ]);
+                $license_info[$license->order_item_id] = [
+                    'key'                => $license->licence ?? '',
+                    'activation_limit'   => $orderLicense->license_data["max_instances_per_key"],
+                    'sites'              => $sites,
+                    'date_created'       => $license->created ?? '',
+                    'expiration'         => $expire_date,
+                    'is_lifetime'        => $orderLicense->license_data['product_use_expire'] == 'no',
+                    'status'             => WOO_SL_functions::get_licence_key_status($license->id) ?? '',
+                ];
+            }
+        }
+
+        foreach ($items as $item)
+        {
+            if(array_key_exists($item->get_id(), $license_info)){
+                array_push($download_item, array(
+                    "title"     => $item["name"],
+                    "license"   => $license_info[$item->get_id()],
+                ));
+            }
+            else{
+                array_push($download_item, array(
+                    "title"     => $item["name"],
+                ));
             }
         }
 
