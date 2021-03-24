@@ -157,6 +157,8 @@ abstract class Plugin
 
         $avg_order = $lifetime_order ? ($lifetime_order / count($accepted_orders)) : 0;
 
+        $avg_order = number_format((float)$avg_order, 2, '.', '');
+
         $data = [
             "customer_since" => $customer['registered_at'] ?? '',
             "lifetime_order" => $this->get_formated_amount($lifetime_order),
