@@ -3,7 +3,7 @@ jQuery(document).ready(($) => {
 		e.preventDefault();
 
 		if (1 == $(e.target).data('connected')) {
-			alert('Are you sure to disconnect?');
+			alert('Are you sure to disconnect this integration?');
 			jQuery.post(
 				thrivedesk.ajax_url,
 				{
@@ -37,7 +37,7 @@ jQuery(document).ready(($) => {
 							window.location.href = response;
 						}, 750);
 					} else {
-						alert('Failed to create plugin connect url');
+						alert('Unable to connect with ThriveDesk. Make sure you are using this plugin on a live site.');
 					}
 				}
 			);
