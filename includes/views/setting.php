@@ -1,10 +1,19 @@
 <?php
 
 $edd = ThriveDesk\Plugins\EDD::instance();
-// $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
+$woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
+    [
+         'namespace' => 'woocommerce',
+         'name'      => __('WooCommerce', 'thrivedesk'),
+         'description'   => __('Share purcahse data, shipping details and license information realtime with ThriveDesk.'),
+         'image'     => 'woocommerce.png',
+         'category'      => 'ecommerce',
+         'installed' => $woocommerce->is_plugin_active(),
+         'connected' => $woocommerce->get_plugin_data('connected'),
+     ],
     [
         'namespace'     => 'edd',
         'name'          => __('Easy Digital Downloads', 'thrivedesk'),
@@ -14,15 +23,6 @@ $plugins = [
         'installed'     => $edd->is_plugin_active(),
         'connected'     => $edd->get_plugin_data('connected'),
     ],
-    // [
-    //     'namespace' => 'woocommerce',
-    //     'name'      => __('WooCommerce', 'thrivedesk'),
-    //     'description'   => __('Customer purcahse data, shipping details and license information realtime with ThriveDesk.'),
-    //     'image'     => 'woocommerce.png',
-    //     'category'      => 'ecommerce',
-    //     'installed' => $woocommerce->is_plugin_active(),
-    //     'connected' => $woocommerce->get_plugin_data('connected'),
-    // ],
     // [
     //     'name'      => __('SmartPay', 'thrivedesk'),
     //     'namespace' => 'smartpay',
@@ -35,7 +35,7 @@ $plugins = [
 $nonce = wp_create_nonce('thrivedesk-connect-plugin');
 ?>
 
-<div class="wrap">
+<div class="wrap thrivedesk">
     <!-- header  -->
     <div class="bg-white -mt-2 -mx-5 shadow mb-6">
         <div class="flex items-center justify-between py-3 px-6 border-b">
@@ -80,7 +80,7 @@ $nonce = wp_create_nonce('thrivedesk-connect-plugin');
                         <?php else: ?>
                             <button 
                                 data-plugin="<?php echo $plugin['namespace']; ?>" data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo $nonce; ?>" 
-                                class="inline-flex items-center space-x-2 py-1.5 px-3 rounded-full bg-gray-200 text-gray-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
+                                class="connect inline-flex items-center space-x-2 py-1.5 px-3 rounded-full bg-gray-200 text-gray-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4" viewBox="0 0 16 16">
                                         <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5zm6-8V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2V6a2 2 0 0 1 2-2h5z"/>
                                     </svg>

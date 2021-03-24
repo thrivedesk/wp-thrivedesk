@@ -3,6 +3,8 @@
 namespace ThriveDesk\Plugins;
 
 use ThriveDesk\Plugin;
+use WC_Order_Query;
+use WOO_SL_functions;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -84,7 +86,7 @@ final class WooCommerce extends Plugin
      */
     public function accepted_statuses(): array
     {
-        return ['Complete'];
+        return ['Completed'];
     }
 
     /**
@@ -105,7 +107,7 @@ final class WooCommerce extends Plugin
 
         return [
             'name' => $this->customer->get_display_name() ?? '',
-            'registered_at' => date('d F Y', strtotime($this->customer->get_date_created())) ?? ''
+            'registered_at' => date('d M Y', strtotime($this->customer->get_date_created())) ?? ''
         ];
     }
 
@@ -131,21 +133,63 @@ final class WooCommerce extends Plugin
 
         if (!$this->is_customer_exist()) return $orders;
 
-        foreach (wc_get_orders('user_id', 1) as $order) {
+        $user = get_user_by('email',$this->customer_email);
 
+        $query = new WC_Order_Query();
+        $query->set( 'customer', $this->customer_email );
+        $customer_orders = $query->get_orders();
+
+        foreach ($customer_orders as $order) {
             array_push($orders, [
                 'order_id'        => $order->get_id(),
                 'amount'          => (float) $order->get_total(),
                 'amount_formated' => $this->get_formated_amount($order->get_total()),
-                'date'            => date('d F Y', strtotime($order->get_date_created())),
-                'order_status'    => ucfirst($order->get_status())
+                'date'            => date('d M Y', strtotime($order->get_date_created())),
+                'order_status'    => ucfirst($order->get_status()),
+                'shipping'        => $this->get_shipping_details($order),
+                'downloads'          => $this->get_order_items($order),
             ]);
         }
 
         return $orders;
     }
 
-    public function plugin_data(string $key = '')
+    public function get_shipping_details($order): array
+    {
+        $states = WC()->countries->get_states( $order->get_shipping_country() );
+        $state  = ! empty( $states[ $order->get_shipping_state() ] ) ? $states[ $order->get_shipping_state() ] : '';
+
+        $shipping_details = [];
+
+        array_push($shipping_details, [
+            'street'    => $order->get_shipping_address_1() ?? '',
+            'city'      => $order->get_shipping_city() ?? '',
+            'zip'       => $order->get_shipping_postcode() ?? '',
+            'state'     => $state,
+            'country'   => WC()->countries->countries[ $order->get_shipping_country() ] ?? '',
+        ]);
+        return $shipping_details;
+    }
+
+    public function get_order_items( $order )
+    {
+        $download_item = [];
+
+        $orderLicenseDetails = WOO_SL_functions::get_order_licence_details($order->get_id());
+
+        foreach ($orderLicenseDetails as $orderLicenses) {
+            foreach ($orderLicenses as $orderLicense) {
+                array_push($download_item, WOO_SL_functions::get_order_product_generated_keys(
+                    $orderLicense->order_id,
+                    $orderLicense->order_item_id,
+                    $orderLicense->group_id
+                ));
+            }
+        }
+        return $download_item;
+    }
+
+    public function get_plugin_data(string $key = '')
     {
         $thrivedesk_options = thrivedesk_options();
 

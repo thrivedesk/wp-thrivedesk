@@ -63,6 +63,7 @@ final class Api
     {
         return [
             'edd' => 'EDD',
+            'woocommerce' => 'WooCommerce',
         ];
     }
 
@@ -113,6 +114,8 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
+            } else if (isset($action) && 'update_status' === $action){
+                $this->update_status_handler();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -121,6 +124,18 @@ final class Api
         }
 
         wp_die();
+    }
+
+    public function update_status_handler(): void
+    {
+        try {
+            $order = wc_get_order($_GET['order_id']);
+            $order->update_status($_GET['order_status'], $_GET['note']);
+
+            $this->apiResponse->success(200, [], 'Success');
+        } catch (\Exception $e) {
+            $this->apiResponse->error(401, 'Request Failed');
+        }
     }
 
     /**
@@ -181,9 +196,23 @@ final class Api
      */
     private function verify_token(): bool
     {
+        $payload = [];
+        foreach ($_REQUEST as $key => $value) {
+            switch(strtolower($value)) {
+                case 'true':
+                case 'false':
+                case '0':
+                case '1':
+                    $payload[$key] = (bool) $value;
+            break;
+                default:
+                    $payload[$key] = $value;
+            }
+        }
         $api_token = $this->plugin->get_plugin_data('api_token');
+
         $signature  = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-        return hash_equals(hash_hmac('SHA1', json_encode($_REQUEST), $api_token), $signature);
+        return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
     }
 }

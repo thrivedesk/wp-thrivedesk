@@ -1,5 +1,5 @@
 jQuery(document).ready(($) => {
-	$(document.body).on('click', '.thrivedesk button.connect-plugin', (e) => {
+	$(document.body).on('click', '.thrivedesk button.connect', (e) => {
 		e.preventDefault();
 
 		if (1 == $(e.target).data('connected')) {
