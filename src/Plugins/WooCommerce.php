@@ -133,8 +133,6 @@ final class WooCommerce extends Plugin
 
         if (!$this->is_customer_exist()) return $orders;
 
-        $user = get_user_by('email',$this->customer_email);
-
         $query = new WC_Order_Query();
         $query->set( 'customer', $this->customer_email );
         $customer_orders = $query->get_orders();
@@ -147,13 +145,19 @@ final class WooCommerce extends Plugin
                 'date'            => date('d M Y', strtotime($order->get_date_created())),
                 'order_status'    => ucfirst($order->get_status()),
                 'shipping'        => $this->get_shipping_details($order),
-                'downloads'          => $this->get_order_items($order),
+                'downloads'       => $this->get_order_items($order),
             ]);
         }
 
         return $orders;
     }
 
+
+    /**
+     * get order shipping details
+     * @param $order
+     * @return array
+     */
     public function get_shipping_details($order): array
     {
         $states = WC()->countries->get_states( $order->get_shipping_country() );
@@ -171,21 +175,57 @@ final class WooCommerce extends Plugin
         return $shipping_details;
     }
 
-    public function get_order_items( $order )
+    /**
+     * get order items license details
+     * @param $order
+     * @return array
+     */
+    public function get_order_items($order): array
     {
+        $items = $order->get_items();
+
         $download_item = [];
 
         $orderLicenseDetails = WOO_SL_functions::get_order_licence_details($order->get_id());
 
         foreach ($orderLicenseDetails as $orderLicenses) {
             foreach ($orderLicenses as $orderLicense) {
-                array_push($download_item, WOO_SL_functions::get_order_product_generated_keys(
+
+                $item = $items[$orderLicense->order_item_id];
+
+                $license = WOO_SL_functions::get_order_product_generated_keys(
                     $orderLicense->order_id,
                     $orderLicense->order_item_id,
                     $orderLicense->group_id
-                ));
+                )[0];
+
+                $key_instances = WOO_SL_functions::get_license_key_instances(
+                    $license->licence,
+                    $license->order_id,
+                    $license->order_item_id
+                );
+
+                $sites = [];
+
+                foreach ($key_instances as $key_instance){
+                    array_push($sites, $key_instance->active_domain);
+                }
+
+                array_push($download_item, [
+                    'title'     => $item["name"],
+                    'license'   =>  [
+                        'key'                => $license->licence ?? '',
+                        'activation_limit'   => $orderLicense->license_data["max_instances_per_key"],
+                        'sites'              => $sites,
+                        'date_created'       => $license->created ?? '',
+                        'expiration'         => date_i18n( get_option( 'date_format' ), WOO_SL_functions::get_order_item_meta($orderLicense->order_item_id,  '_woo_sl_licensing_expire_at')) ?? '',
+                        'is_lifetime'        => $orderLicense->license_data['product_use_expire'] == 'no',
+                        'status'             => WOO_SL_functions::get_licence_key_status($license->id) ?? '',
+                    ],
+                ]);
             }
         }
+
         return $download_item;
     }
 
