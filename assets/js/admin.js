@@ -4,8 +4,6 @@ jQuery(document).ready(($) => {
 
 		let $target = $(this);
 
-		console.log($target);
-
 		if (1 == $target.data('connected')) {
 			alert('Are you sure to disconnect this integration?');
 			jQuery.post(
@@ -36,7 +34,6 @@ jQuery(document).ready(($) => {
 					},
 				},
 				(response) => {
-					console.log('TD:' + response);
 					if (response) {
 						setTimeout(() => {
 							window.location.href = response;
