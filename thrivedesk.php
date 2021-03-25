@@ -101,8 +101,8 @@ final class ThriveDesk
         $this->define('THRIVEDESK_DIR', dirname(__FILE__));
         $this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
         $this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
-
-        $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.io/');
+        // Url with no ending /
+        $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.io');
     }
 
     /**
