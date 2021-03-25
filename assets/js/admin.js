@@ -1,16 +1,20 @@
 jQuery(document).ready(($) => {
-	$(document.body).on('click', '.thrivedesk button.connect', (e) => {
+	$('.thrivedesk button.connect').on('click', function (e) {
 		e.preventDefault();
 
-		if (1 == $(e.target).data('connected')) {
+		let $target = $(this);
+
+		console.log($target);
+
+		if (1 == $target.data('connected')) {
 			alert('Are you sure to disconnect this integration?');
 			jQuery.post(
 				thrivedesk.ajax_url,
 				{
 					action: 'thrivedesk_disconnect_plugin',
 					data: {
-						plugin: $(e.target).data('plugin'),
-						nonce: $(e.target).data('nonce'),
+						plugin: $target.data('plugin'),
+						nonce: $target.data('nonce'),
 					},
 				},
 				(response) => {
@@ -27,8 +31,8 @@ jQuery(document).ready(($) => {
 				{
 					action: 'thrivedesk_connect_plugin',
 					data: {
-						plugin: $(e.target).data('plugin'),
-						nonce: $(e.target).data('nonce'),
+						plugin: $target.data('plugin'),
+						nonce: $target.data('nonce'),
 					},
 				},
 				(response) => {
@@ -37,7 +41,9 @@ jQuery(document).ready(($) => {
 							window.location.href = response;
 						}, 750);
 					} else {
-						alert('Unable to connect with ThriveDesk. Make sure you are using this plugin on a live site.');
+						alert(
+							'Unable to connect with ThriveDesk. Make sure you are using this plugin on a live site.'
+						);
 					}
 				}
 			);
