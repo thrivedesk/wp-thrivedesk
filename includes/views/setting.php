@@ -73,7 +73,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
     <!-- body  -->
     <div class="px-1.5">
         <div class="mb-4 text-lg"><?php _e('Integrations', 'thrivedesk') ?></div>
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+        <div class="sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
             <?php foreach ($plugins as $plugin) : ?>
             <div class="border rounded-md p-4 bg-white transition hover:shadow-lg">
                 <!-- title  -->
