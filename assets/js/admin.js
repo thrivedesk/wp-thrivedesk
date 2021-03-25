@@ -1,16 +1,16 @@
 jQuery(document).ready(($) => {
-	$(document.body).on('click', '.thrivedesk button.connect', (e) => {
+	$('.thrivedesk button.connect').on('click', function(e) {
 		e.preventDefault();
 
-		if (1 == $(e.target).data('connected')) {
+		if (1 == $(this).data('connected')) {
 			alert('Are you sure to disconnect this integration?');
 			jQuery.post(
 				thrivedesk.ajax_url,
 				{
 					action: 'thrivedesk_disconnect_plugin',
 					data: {
-						plugin: $(e.target).data('plugin'),
-						nonce: $(e.target).data('nonce'),
+						plugin: $(this).data('plugin'),
+						nonce: $(this).data('nonce'),
 					},
 				},
 				(response) => {
@@ -27,11 +27,12 @@ jQuery(document).ready(($) => {
 				{
 					action: 'thrivedesk_connect_plugin',
 					data: {
-						plugin: $(e.target).data('plugin'),
-						nonce: $(e.target).data('nonce'),
+						plugin: $(this).data('plugin'),
+						nonce: $(this).data('nonce'),
 					},
 				},
 				(response) => {
+					console.log('TD:' + response);
 					if (response) {
 						setTimeout(() => {
 							window.location.href = response;
