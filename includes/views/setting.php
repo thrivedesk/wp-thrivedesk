@@ -64,6 +64,10 @@ $nonce = wp_create_nonce('thrivedesk-connect-plugin');
             </div>
         </div>
     </div>
+
+    <!-- reposition error info from header -->
+    <h1></h1>
+
     <!-- body  -->
     <div class="px-1.5">
         <div class="mb-4 text-lg"><?php _e('Integrations', 'thrivedesk') ?></div>
