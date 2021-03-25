@@ -36,6 +36,7 @@ jQuery(document).ready(($) => {
 					},
 				},
 				(response) => {
+					console.log('TD:' + response);
 					if (response) {
 						setTimeout(() => {
 							window.location.href = response;

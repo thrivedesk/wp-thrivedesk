@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: live chat, chatbot, knowledge base, helpdesk, support, woocommerce, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 5.7
-Stable Tag: 0.6.1
+Stable Tag: 0.6.2
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -11,13 +11,13 @@ Add ThriveDesk Live Chat to your WordPress to answer customers' questions, engag
 
 == Description ==
 
-= Live Chat Plugin For WordPress =
+### Live Chat Plugin For WordPress ###
 
 [ThriveDesk](https://www.thrivedesk.com) is arguably the best live chat software for WordPress. It's simple, straightforward, and easy to use. Lightest, fastest live chat assistant that will work to attract customers without slowing down your website.
 
 We designed ThriveDesk Live Chat to protect users' privacy and aligned with the GDPR rules.
 
-### 💬 Live Chat Features ###
+= 💬 Live Chat Features =
 
 - Chatbots
 - Proactive messaging
@@ -32,7 +32,7 @@ We designed ThriveDesk Live Chat to protect users' privacy and aligned with the 
 - Seamless integration with other CRM
 - And much more...
 
-= Helpdesk & Support Ticket Plugin for WordPress =
+### Helpdesk & Support Ticket Plugin for WordPress ###
 
 Manage all customer conversations through Thrivedesk's Shared Inbox(aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
 
@@ -50,7 +50,7 @@ https://www.youtube.com/watch?v=ODV2Hi2MabI
 ✅ Better integration
 ✅ Seamless customer experience
 
-### 🌟 Helpdesk Features ###
+= 🌟 Helpdesk Features =
 - Assignments
 - Collision Detection
 - Canned replies
@@ -69,13 +69,13 @@ https://www.youtube.com/watch?v=ODV2Hi2MabI
 - WooCommerce, Easy Digital Downloads, Envato, and more integrations
 - And much more...
 
-= Create Stunning Knowledge Base To Scale Customer Support(Coming soon) =
+### Create Stunning Knowledge Base To Scale Customer Support(Coming soon) ###
 
 Reduce ticket inflow, avoid repetitive incident logs, facilitate self-service on the portal, and improve resolution times with a repository of articles that can help the customers find answers to their problems. 
 
 Knowledge Base is a self-service system that works perfectly with the Live Chat and Ticket system.
 
-= WooCommerce Integration =
+### WooCommerce Integration ###
 
 If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a Thrivedesk. 
 
@@ -96,11 +96,11 @@ You can check the total number of orders, order details, shipping information ri
 - Paddle (coming soon)
 - Custom Apps 
 
-= Advanced reporting =
+### Advanced reporting ###
 
 Thrivedesk's Reporting tool helps you make data-driven decisions to support and delight your customers. 
 
-### 📈 Reporting Features ###
+= 📈 Reporting Features =
 
 - Conversations reporting
 - Company reporting
@@ -162,6 +162,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.6.2 =
+- Fixed ThriveDesk connection error
+- Fixed link color overriding by plugin
 
 = 0.6 =
 - NEW plugin design 
