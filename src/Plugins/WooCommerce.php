@@ -155,6 +155,7 @@ final class WooCommerce extends Plugin
 
     /**
      * get order shipping details
+     *
      * @param $order
      * @return array
      */
@@ -176,7 +177,20 @@ final class WooCommerce extends Plugin
     }
 
     /**
+     * check if site url starts with http:// or https://
+     *
+     * @param $site_url
+     * @return bool
+     */
+    public function check_site_url($site_url): bool
+    {
+        return substr($site_url, 0, 7) === "http://" ||
+               substr($site_url, 0, 8) === "https://";
+    }
+
+    /**
      * get order items license details
+     *
      * @param $order
      * @return array
      */
@@ -209,9 +223,14 @@ final class WooCommerce extends Plugin
                 $expire_date = intval(WOO_SL_functions::get_order_item_meta($orderLicense->order_item_id,  '_woo_sl_licensing_expire_at') ?? '');
                 $expire_date = $expire_date == 0 ? '' : date("d M Y", $expire_date);
 
+                $woo_site_url = '';
+
                 foreach ($key_instances as $key_instance){
                     if ($key_instance->active_domain){
-                        array_push($sites, $key_instance->active_domain);
+                        $this->check_site_url($key_instance->active_domain) ?
+                            $woo_site_url = $key_instance->active_domain :
+                            $woo_site_url = "http://".$key_instance->active_domain;
+                        array_push($sites, $woo_site_url);
                     }
                 }
 
