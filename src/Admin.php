@@ -87,7 +87,7 @@ final class Admin
 
     public function ajax_connect_plugin()
     {
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-connect-plugin'))  die;
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-plugin-action'))  die;
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
@@ -116,7 +116,7 @@ final class Admin
 
     public function ajax_disconnect_plugin()
     {
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-connect-plugin'))  die;
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-plugin-action'))  die;
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
