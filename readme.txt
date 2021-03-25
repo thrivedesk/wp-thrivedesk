@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: live chat, chatbot, knowledge base, helpdesk, support, woocommerce, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 5.7
-Stable Tag: 0.6
+Stable Tag: 0.6.1
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 

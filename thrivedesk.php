@@ -2,10 +2,10 @@
 
 /**
  * Plugin Name: ThriveDesk
- * Description: Customer Support & Helpdesk Software for WordPress Startups
- * Plugin URI:  https://thrivedesk.io/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
+ * Description: Live Chat, Chatbots, Knowledge Base & Helpdesk for WordPress
+ * Plugin URI:  https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:        thrivedesk,
- * Version:     0.0.5
+ * Version:     0.6.1
  * Author:      ThriveDesk
  * Author URI:  https://profiles.wordpress.org/thrivedesk/
  * Text Domain: thrivedesk
@@ -13,7 +13,7 @@
  * 
  * Requires PHP      : 7.0.0
  * Requires at least : 4.9
- * Tested up to      : 5.5.3
+ * Tested up to      : 5.7
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ final class ThriveDesk
         $this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
         $this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
 
-        $this->define('THRIVEDESK_APP_URL', 'http://localhost:4200/');
+        $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.io/');
     }
 
     /**
