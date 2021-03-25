@@ -192,8 +192,6 @@ final class WooCommerce extends Plugin
         foreach ($orderLicenseDetails as $orderLicenses) {
             foreach ($orderLicenses as $orderLicense) {
 
-                $item = $items[$orderLicense->order_item_id];
-
                 $license = WOO_SL_functions::get_order_product_generated_keys(
                     $orderLicense->order_id,
                     $orderLicense->order_item_id,
