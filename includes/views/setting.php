@@ -2,17 +2,18 @@
 
 $edd = ThriveDesk\Plugins\EDD::instance();
 $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
+$fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
     [
-        'namespace' => 'woocommerce',
-        'name'      => __('WooCommerce', 'thrivedesk'),
+        'namespace'     => 'woocommerce',
+        'name'          => __('WooCommerce', 'thrivedesk'),
         'description'   => __('Share purchase data, shipping details and license information realtime with ThriveDesk.'),
-        'image'     => 'woocommerce.png',
+        'image'         => 'woocommerce.png',
         'category'      => 'ecommerce',
-        'installed' => $woocommerce->is_plugin_active(),
-        'connected' => $woocommerce->get_plugin_data('connected'),
+        'installed'     => $woocommerce->is_plugin_active(),
+        'connected'     => $woocommerce->get_plugin_data('connected'),
     ],
     [
         'namespace'     => 'edd',
@@ -22,6 +23,15 @@ $plugins = [
         'category'      => 'ecommerce',
         'installed'     => $edd->is_plugin_active(),
         'connected'     => $edd->get_plugin_data('connected'),
+    ],
+    [
+        'namespace'     => 'fluentcrm',
+        'name'          => __('FluentCRM', 'thrivedesk'),
+        'description'   => __('Share customer data with ThriveDesk.'),
+        'image'         => 'fluentcrm.png',
+        'category'      => 'crm',
+        'installed'     => $fluentcrm->is_plugin_active(),
+        'connected'     => $fluentcrm->get_plugin_data('connected'),
     ],
     // [
     //     'name'      => __('SmartPay', 'thrivedesk'),
