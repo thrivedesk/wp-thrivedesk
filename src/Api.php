@@ -40,9 +40,9 @@ final class Api
      * Ensures that only one instance of Api exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @since 0.0.1
      * @return object|Api
      * @access public
+     * @since 0.0.1
      */
     public static function instance(): object
     {
@@ -56,22 +56,23 @@ final class Api
     /**
      * Available pulings
      *
-     * @since 0.0.1
      * @return array
+     * @since 0.0.1
      */
     private function _available_plugins(): array
     {
         return [
-            'edd' => 'EDD',
-            'woocommerce' => 'WooCommerce',
+            'edd'           => 'EDD',
+            'woocommerce'   => 'WooCommerce',
+            'fluentcrm'     => 'FluentCRM',
         ];
     }
 
     /**
      * Api listener
      *
-     * @since 0.0.1
      * @return void
+     * @since 0.0.1
      */
     public function api_listener(): void
     {
@@ -90,7 +91,7 @@ final class Api
             }
 
             $plugin_name = $this->_available_plugins()[$plugin] ?? 'EDD';
-            $plugin_class_name = 'ThriveDesk\\Plugins\\' .  $plugin_name;
+            $plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
 
             if (!class_exists($plugin_class_name)) {
                 $this->apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
@@ -114,7 +115,7 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
-            } else if (isset($action) && 'update_status' === $action){
+            } else if (isset($action) && 'update_status' === $action) {
                 $this->update_status_handler();
             } else {
                 $this->plugin_data_action_handler();
@@ -140,9 +141,9 @@ final class Api
 
     /**
      * Handle plugin connect request
-     * 
-     * @since 0.0.4
+     *
      * @return void
+     * @since 0.0.4
      */
     public function connect_action_handler(): void
     {
@@ -153,9 +154,9 @@ final class Api
 
     /**
      * Handle plugin disconnect request
-     * 
-     * @since 0.0.4
+     *
      * @return void
+     * @since 0.0.4
      */
     public function disconnect_action_handler(): void
     {
@@ -166,9 +167,9 @@ final class Api
 
     /**
      * Handle plugin data request
-     * 
-     * @since 0.0.4
+     *
      * @return void
+     * @since 0.0.4
      */
     public function plugin_data_action_handler()
     {
@@ -191,27 +192,27 @@ final class Api
     /**
      * Verify api request token
      *
-     * @since 0.0.4
      * @return boolean
+     * @since 0.0.4
      */
     private function verify_token(): bool
     {
         $payload = [];
         foreach ($_REQUEST as $key => $value) {
-            switch(strtolower($value)) {
+            switch (strtolower($value)) {
                 case 'true':
                 case 'false':
                 case '0':
                 case '1':
-                    $payload[$key] = (bool) $value;
-            break;
+                    $payload[$key] = (bool)$value;
+                    break;
                 default:
                     $payload[$key] = $value;
             }
         }
         $api_token = $this->plugin->get_plugin_data('api_token');
 
-        $signature  = $_SERVER['HTTP_X_TD_SIGNATURE'];
+        $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
         return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
     }
