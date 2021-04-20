@@ -119,6 +119,7 @@ final class FluentCRM extends Plugin
 
     /**
      * get customer tags
+     *
      * @return array
      */
     public function get_customer_tags(): array
@@ -128,6 +129,20 @@ final class FluentCRM extends Plugin
             array_push($tags, $tag->title);
         }
         return $tags;
+    }
+
+    /**
+     * get customer lists
+     *
+     * @return array
+     */
+    public function get_customer_lists(): array
+    {
+        $lists = [];
+        foreach ($this->customer->lists as $list) {
+            array_push($lists, $list->title);
+        }
+        return $lists;
     }
 
     /**
@@ -154,6 +169,7 @@ final class FluentCRM extends Plugin
             'status'        => $this->customer->status ?: '',
             'contact_type'  => $this->customer->contact_type ?: '',
             'tags'          => $this->get_customer_tags(),
+            'lists'         => $this->get_customer_lists(),
             'photo'         => $this->customer->photo ?: '',
             'last_activity' => $this->customer->last_activity ?: '',
             'updated_at'    => date('d M Y', strtotime($this->customer->updated_at)) ?: '',
