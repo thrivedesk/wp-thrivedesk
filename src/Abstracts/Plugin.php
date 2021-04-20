@@ -169,4 +169,14 @@ abstract class Plugin
 
         return $data;
     }
+
+    /**
+     * Prepare data for FluentCRM api response
+     *
+     * @return array
+     */
+    public function prepare_fluentcrm_data(): array
+    {
+        return $this->get_customer();
+    }
 }

@@ -115,8 +115,8 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
-            } else if (isset($action) && 'update_status' === $action) {
-                $this->update_status_handler();
+            } else if (isset($action) && 'get_fluentcrm_data' === $action) {
+                $this->fluentcrm_data_handler();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -125,6 +125,29 @@ final class Api
         }
 
         wp_die();
+    }
+
+    /**
+     * data handler for FluentCRM
+     *
+     * @return void
+     */
+    public function fluentcrm_data_handler(): void
+    {
+        $email = sanitize_email($_REQUEST['email'] ?? '');
+
+        if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
+            $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
+        }
+
+        $this->plugin->customer_email = $email;
+
+        if (!$this->plugin->is_customer_exist())
+            $this->apiResponse->error(404, "Customer not found.");
+
+        $data = $this->plugin->prepare_fluentcrm_data();
+
+        $this->apiResponse->success(200, $data, 'Success');
     }
 
     public function update_status_handler(): void
