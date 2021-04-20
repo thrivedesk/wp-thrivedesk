@@ -44,6 +44,15 @@ final class FluentCRM extends Plugin
      */
     public function is_customer_exist(): bool
     {
+        if (!$this->customer_email) return false;
+
+        if (!$this->customer && function_exists('FluentCrmApi')) {
+            $contactApi = FluentCrmApi('contacts');
+            $this->customer = $contactApi->getContact($this->customer_email);
+        }
+
+        if (!$this->customer->id) return false;
+
         return true;
     }
 
@@ -96,9 +105,7 @@ final class FluentCRM extends Plugin
      */
     public function get_orders(): array
     {
-        $orders = [];
-
-        return $orders;
+        return [];
     }
 
     public function get_plugin_data(string $key = '')
@@ -108,6 +115,19 @@ final class FluentCRM extends Plugin
         $options = $thrivedesk_options['fluentcrm'] ?: [];
 
         return $key ? ($options[$key] ?: '') : $options;
+    }
+
+    /**
+     * get customer tags
+     * @return array
+     */
+    public function get_customer_tags(): array
+    {
+        $tags = [];
+        foreach ($this->customer->tags as $tag) {
+            array_push($tags, $tag->title);
+        }
+        return $tags;
     }
 
     /**
@@ -133,9 +153,10 @@ final class FluentCRM extends Plugin
             'phone'         => $this->customer->phone ?: '',
             'status'        => $this->customer->status ?: '',
             'contact_type'  => $this->customer->contact_type ?: '',
+            'tags'          => $this->get_customer_tags(),
             'photo'         => $this->customer->photo ?: '',
             'last_activity' => $this->customer->last_activity ?: '',
-            'updated_at'    => $this->customer->updated_at ?: '',
+            'updated_at'    => date('d M Y', strtotime($this->customer->updated_at)) ?: '',
             'created_at'    => date('d M Y', strtotime($this->customer->created_at)) ?: ''
         ];
     }
