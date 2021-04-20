@@ -29,7 +29,8 @@ final class FluentCRM extends Plugin
      */
     public static function is_plugin_active(): bool
     {
-        if (is_plugin_active('fluent-crm/fluent-crm.php')){
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        if (is_plugin_active('fluent-crm/fluent-crm.php')) {
             return true;
         }
 
@@ -43,7 +44,6 @@ final class FluentCRM extends Plugin
      */
     public function is_customer_exist(): bool
     {
-
         return true;
     }
 
@@ -53,9 +53,9 @@ final class FluentCRM extends Plugin
      * Ensures that only one instance of WooCommerce exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @since 0.0.1
      * @return object|WooCommerce
      * @access public
+     * @since 0.0.1
      */
     public static function instance()
     {
@@ -69,7 +69,7 @@ final class FluentCRM extends Plugin
     public function connect()
     {
         $thrivedesk_options = get_option('thrivedesk_options', []);
-        $thrivedesk_options['fluentcrm'] = $thrivedesk_options['fluentcrm'] ?? [];
+        $thrivedesk_options['fluentcrm'] = $thrivedesk_options['fluentcrm'] ?: [];
 
         $thrivedesk_options['fluentcrm']['connected'] = true;
 
@@ -79,7 +79,7 @@ final class FluentCRM extends Plugin
     public function disconnect()
     {
         $thrivedesk_options = get_option('thrivedesk_options', []);
-        $thrivedesk_options['fluentcrm'] = $thrivedesk_options['fluentcrm'] ?? [];
+        $thrivedesk_options['fluentcrm'] = $thrivedesk_options['fluentcrm'] ?: [];
 
         $thrivedesk_options['fluentcrm'] = [
             'api_token' => '',
@@ -98,7 +98,6 @@ final class FluentCRM extends Plugin
     {
         $orders = [];
 
-
         return $orders;
     }
 
@@ -106,9 +105,9 @@ final class FluentCRM extends Plugin
     {
         $thrivedesk_options = thrivedesk_options();
 
-        $options = $thrivedesk_options['fluentcrm'] ?? [];
+        $options = $thrivedesk_options['fluentcrm'] ?: [];
 
-        return $key ? ($options[$key] ?? '') : $options;
+        return $key ? ($options[$key] ?: '') : $options;
     }
 
     /**
@@ -118,8 +117,26 @@ final class FluentCRM extends Plugin
      */
     public function get_customer(): array
     {
+        if (!$this->customer_email) return [];
+
+        if (!$this->customer && function_exists('FluentCrmApi')) {
+            $contactApi = FluentCrmApi('contacts');
+            $this->customer = $contactApi->getContact($this->customer_email);
+        }
+
+        if (!$this->customer->id) return [];
 
         return [
+            'first_name'    => $this->customer->first_name ?: '',
+            'last_name'     => $this->customer->last_name ?: '',
+            'email'         => $this->customer->email ?: '',
+            'phone'         => $this->customer->phone ?: '',
+            'status'        => $this->customer->status ?: '',
+            'contact_type'  => $this->customer->contact_type ?: '',
+            'photo'         => $this->customer->photo ?: '',
+            'last_activity' => $this->customer->last_activity ?: '',
+            'updated_at'    => $this->customer->updated_at ?: '',
+            'created_at'    => date('d M Y', strtotime($this->customer->created_at)) ?: ''
         ];
     }
 }
