@@ -171,7 +171,7 @@ final class FluentCRM extends Plugin
             'tags'          => $this->get_customer_tags(),
             'lists'         => $this->get_customer_lists(),
             'photo'         => $this->customer->photo ?: '',
-            'last_activity' => $this->customer->last_activity ?: '',
+            'last_activity' => date('d M Y', strtotime($this->customer->last_activity)) ?: '',
             'updated_at'    => date('d M Y', strtotime($this->customer->updated_at)) ?: '',
             'created_at'    => date('d M Y', strtotime($this->customer->created_at)) ?: ''
         ];
