@@ -51,7 +51,7 @@ final class FluentCRM extends Plugin
             $this->customer = $contactApi->getContact($this->customer_email);
         }
 
-        if (!$this->customer->id) return false;
+        if (!$this->customer) return false;
 
         return true;
     }
