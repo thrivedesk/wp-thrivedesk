@@ -116,7 +116,10 @@ final class Api
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
             } else if (isset($action) && 'get_fluentcrm_data' === $action) {
-                $this->fluentcrm_data_handler();
+                $this->fluentcrm_data_handler(
+                    strtolower(sanitize_key($_GET['create_new_contact'] ?: false)),
+                    strtolower(sanitize_key($_GET['contact_name'] ?: ''))
+                );
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -132,7 +135,7 @@ final class Api
      *
      * @return void
      */
-    public function fluentcrm_data_handler(): void
+    public function fluentcrm_data_handler($create_new_contact, $contact_name): void
     {
         $email = sanitize_email($_REQUEST['email'] ?? '');
 
@@ -141,6 +144,8 @@ final class Api
         }
 
         $this->plugin->customer_email = $email;
+        $this->plugin->create_new_contact = $create_new_contact;
+        $this->plugin->contact_name = $contact_name;
 
         if (!$this->plugin->is_customer_exist())
             $this->apiResponse->error(404, "Customer not found.");

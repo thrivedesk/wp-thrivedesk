@@ -17,6 +17,10 @@ final class FluentCRM extends Plugin
      */
     private static $instance = null;
 
+    public bool $create_new_contact = false;
+
+    public string $contact_name = '';
+
     public function accepted_statuses(): array
     {
         return [];
@@ -51,7 +55,11 @@ final class FluentCRM extends Plugin
             $this->customer = $contactApi->getContact($this->customer_email);
         }
 
-        if (!$this->customer) return false;
+        if (!$this->customer) {
+            if (!$this->create_new_contact) return false;
+
+            $this->createNewContact();
+        }
 
         return true;
     }
@@ -171,9 +179,29 @@ final class FluentCRM extends Plugin
             'tags'          => $this->get_customer_tags(),
             'lists'         => $this->get_customer_lists(),
             'photo'         => $this->customer->photo ?: '',
-            'last_activity' => date('d M Y', strtotime($this->customer->last_activity)) ?: '',
-            'updated_at'    => date('d M Y', strtotime($this->customer->updated_at)) ?: '',
-            'created_at'    => date('d M Y', strtotime($this->customer->created_at)) ?: ''
+            'last_activity' => $this->customer->last_activity? date('d M Y', strtotime($this->customer->last_activity)) : '',
+            'updated_at'    => $this->customer->updated_at ? date('d M Y', strtotime($this->customer->updated_at)) : '',
+            'created_at'    => $this->customer->created_at ? date('d M Y', strtotime($this->customer->created_at)) : ''
         ];
+    }
+
+    /**
+     * create new contact
+     *
+     * @return void
+     */
+    public function createNewContact(): void
+    {
+        if (function_exists('FluentCrmApi')) {
+            $contactApi = FluentCrmApi('contacts');
+
+            $data = [
+                'email'         => $this->customer_email,
+                'first_name'    => $this->contact_name,
+                'status'        => 'pending',
+            ];
+
+            $contactApi->createOrUpdate($data);
+        }
     }
 }
