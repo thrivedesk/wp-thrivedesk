@@ -135,10 +135,11 @@ final class Api
     public function fluentcrm_data_handler(): void
     {
         $sync_type = strtolower(sanitize_key($_GET['sync_type'] ?? ''));
+        $stripped_td_conversation_title = $_GET['td_conversation_subject'] ?? '';
 
         $td_conversation = [
             'id'            => $_GET['td_conversation_id'] ?? '',
-            'title'         => $_GET['td_conversation_subject'] ?? '',
+            'title'         => substr($stripped_td_conversation_title, 0, 180),
             'ticket_id'     => $_GET['td_conversation_ticket_id'] ?? '',
             'inbox_id'      => $_GET['td_conversation_inbox_id'] ?? '',
             'contact'       => $_GET['td_conversation_contact'] ?? '',
@@ -158,10 +159,10 @@ final class Api
 
         $data = $this->plugin->prepare_fluentcrm_data();
 
-        if(!$sync_type)
+        if($sync_type)
         {
             $this->plugin->td_conversation = $td_conversation;
-            $this->plugin->syncTypeHandler('delete_conversation');
+            $this->plugin->syncTypeHandler($sync_type);
         }
         $this->apiResponse->success(200, $data, 'Success');
 
