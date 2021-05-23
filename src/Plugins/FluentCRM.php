@@ -185,7 +185,7 @@ final class FluentCRM extends Plugin
             'tags'          => $this->get_customer_tags(),
             'lists'         => $this->get_customer_lists(),
             'photo'         => $this->customer->photo ?? '',
-            'last_activity' => $this->customer->last_activity? date('d M Y', strtotime($this->customer->last_activity)) : '',
+            'last_activity' => $this->customer->last_activity ? date('d M Y', strtotime($this->customer->last_activity)) : '',
             'updated_at'    => $this->customer->updated_at ? date('d M Y', strtotime($this->customer->updated_at)) : '',
             'created_at'    => $this->customer->created_at ? date('d M Y', strtotime($this->customer->created_at)) : ''
         ];
@@ -210,30 +210,38 @@ final class FluentCRM extends Plugin
         }
     }
 
+    /**
+     * ThriveDesk conversation sync handler
+     *
+     * @param $sync_type
+     */
     public function syncTypeHandler($sync_type)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'td_conversations';
 
-        if ($sync_type == self::CREATE_CONVERSATION)
-        {
+        if ($sync_type == self::CREATE_CONVERSATION) {
             $wpdb->replace(
                 $table_name,
                 $this->td_conversation
             );
-        }
-        elseif ($sync_type == self::DELETE_CONVERSATION)
-        {
+        } elseif ($sync_type == self::DELETE_CONVERSATION) {
             $wpdb->delete(
-              $table_name,
-              array(
-                  'id' => $this->td_conversation['id'] ?? '',
-              )
+                $table_name,
+                array(
+                    'id' => $this->td_conversation['id'] ?? '',
+                )
             );
-        }
-        elseif ($sync_type == self::UPDATE_CONVERSATION_STATUS)
-        {
-
+        } elseif ($sync_type == self::UPDATE_CONVERSATION_STATUS) {
+            $wpdb->update(
+                $table_name,
+                array(
+                    'status' => $this->td_conversation['status'] ?? '',
+                ),
+                array(
+                    'id' => $this->td_conversation['id'] ?? '',
+                )
+            );
         }
     }
 }

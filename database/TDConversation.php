@@ -7,6 +7,9 @@ $td_db_version = '1.0';
 
 class TDConversation
 {
+    /**
+     * migration for ThriveDesk Conversation
+     */
     public static function migrate()
     {
         global $wpdb;
