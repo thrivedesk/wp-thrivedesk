@@ -173,21 +173,42 @@ final class FluentCRM extends Plugin
             $this->customer = $contactApi->getContact($this->customer_email);
         }
 
+        $customer_formatted_country = $this->customer->country ?? '';
+
+        if (function_exists('FluentCrm')) {
+            $app = FluentCrm();
+            $countries = $app->applyFilters('fluentcrm-countries', []);
+
+            foreach ($countries as $country) {
+                if ($country['code'] == 'BD') {
+                    $customer_formatted_country = $country['title'];
+                    break;
+                }
+            }
+        }
+
         if (!$this->customer->id) return [];
 
         return [
-            'first_name'    => $this->customer->first_name ?? '',
-            'last_name'     => $this->customer->last_name ?? '',
-            'email'         => $this->customer->email ?? '',
-            'phone'         => $this->customer->phone ?? '',
-            'status'        => $this->customer->status ?? '',
-            'contact_type'  => $this->customer->contact_type ?? '',
-            'tags'          => $this->get_customer_tags(),
-            'lists'         => $this->get_customer_lists(),
-            'photo'         => $this->customer->photo ?? '',
-            'last_activity' => $this->customer->last_activity ? date('d M Y', strtotime($this->customer->last_activity)) : '',
-            'updated_at'    => $this->customer->updated_at ? date('d M Y', strtotime($this->customer->updated_at)) : '',
-            'created_at'    => $this->customer->created_at ? date('d M Y', strtotime($this->customer->created_at)) : ''
+            'first_name'        => $this->customer->first_name ?? '',
+            'last_name'         => $this->customer->last_name ?? '',
+            'email'             => $this->customer->email ?? '',
+            'phone'             => $this->customer->phone ?? '',
+            'status'            => $this->customer->status ?? '',
+            'contact_type'      => $this->customer->contact_type ?? '',
+            'tags'              => $this->get_customer_tags(),
+            'lists'             => $this->get_customer_lists(),
+            'photo'             => $this->customer->photo ?? '',
+            'address_line_1'    => $this->customer->address_line_1 ?? '',
+            'address_line_2'    => $this->customer->address_line_2 ?? '',
+            'city'              => $this->customer->city ?? '',
+            'state'             => $this->customer->state ?? '',
+            'postal_code'       => $this->customer->postal_code ?? '',
+            'country'           => $customer_formatted_country ?? '',
+            'date_of_birth'     => $this->customer->date_of_birth ? date('d M Y', strtotime($this->customer->date_of_birth)) : '',
+            'last_activity'     => $this->customer->last_activity ? date('d M Y', strtotime($this->customer->last_activity)) : '',
+            'updated_at'        => $this->customer->updated_at ? date('d M Y', strtotime($this->customer->updated_at)) : '',
+            'created_at'        => $this->customer->created_at ? date('d M Y', strtotime($this->customer->created_at)) : ''
         ];
     }
 

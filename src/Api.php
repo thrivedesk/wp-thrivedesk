@@ -135,16 +135,19 @@ final class Api
     public function fluentcrm_data_handler(): void
     {
         $sync_type = strtolower(sanitize_key($_GET['sync_type'] ?? ''));
-        $stripped_td_conversation_title = $_GET['td_conversation_subject'] ?? '';
+        $td_conversation = $_GET['td_conversation'] ?? [];
 
-        $td_conversation = [
-            'id'            => $_GET['td_conversation_id'] ?? '',
-            'title'         => substr($stripped_td_conversation_title, 0, 180),
-            'ticket_id'     => $_GET['td_conversation_ticket_id'] ?? '',
-            'inbox_id'      => $_GET['td_conversation_inbox_id'] ?? '',
-            'contact'       => $_GET['td_conversation_contact'] ?? '',
-            'status'        => $_GET['td_conversation_status'] ?? '',
-        ];
+        if (array_key_exists('title', $td_conversation))
+        {
+            $td_conversation['title'] = substr($td_conversation['title'], 0, 180);
+        }
+
+        $td_deleted_conversation = $_GET['deleted_conversation'] ?? '';
+
+        if ($td_deleted_conversation)
+        {
+            $td_conversation['id'] = $td_deleted_conversation;
+        }
 
         if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
             $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
@@ -228,17 +231,25 @@ final class Api
     {
         $payload = [];
         foreach ($_REQUEST as $key => $value) {
-            switch (strtolower($value)) {
-                case 'true':
-                case 'false':
-                case '0':
-                case '1':
-                $payload[$key] = (bool)$value;
-                break;
-                default:
-                    $payload[$key] = $value;
+            if(is_string($value))
+            {
+                switch (strtolower($value)) {
+                    case 'true':
+                    case 'false':
+                    case '0':
+                    case '1':
+                        $payload[$key] = (bool)$value;
+                        break;
+                    default:
+                        $payload[$key] = $value;
+                }
+            }
+            else
+            {
+                $payload[$key] = $value;
             }
         }
+
         $api_token = $this->plugin->get_plugin_data('api_token');
 
         $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];

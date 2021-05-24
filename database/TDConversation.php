@@ -9,6 +9,8 @@ class TDConversation
 {
     /**
      * migration for ThriveDesk Conversation
+     *
+     * @since 0.6.2
      */
     public static function migrate()
     {

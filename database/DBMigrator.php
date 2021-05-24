@@ -7,7 +7,9 @@ require_once(THRIVEDESK_DIR.'/database/TDConversation.php');
 class ThriveDeskDBMigrator
 {
     /**
-     * migrations
+     * ThriveDesk Database migrations
+     *
+     * @since 0.6.2
      */
     public static function migrate()
     {

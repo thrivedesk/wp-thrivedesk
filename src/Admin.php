@@ -22,13 +22,13 @@ final class Admin
      */
     private function __construct()
     {
+        add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
+
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
-
-        register_activation_hook(THRIVEDESK_FILE, [$this, 'db_migrate']);
 
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
@@ -165,5 +165,7 @@ final class Admin
             // Create thrivedesk_options
             if (false == get_option('thrivedesk_options')) update_option('thrivedesk_options', []);
         }
+
+        do_action('thrivedesk_db_migrate');
     }
 }

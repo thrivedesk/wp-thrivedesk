@@ -74,7 +74,7 @@ class FluentCrmHooks
                     }
 
                     return [
-                        'total' => 1,
+                        'total' => sizeof($td_conversations),
                         'data'  => $formattedTickets
                     ];
                 },
