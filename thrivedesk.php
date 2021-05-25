@@ -28,6 +28,7 @@
 
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
+use ThriveDesk\Restroute;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH'))  exit;
@@ -78,6 +79,7 @@ final class ThriveDesk
             self::$instance = new self();
 
             self::$instance->api = Api::instance();
+            self::$instance->restroute = Restroute::instance();
 
             if (is_admin()) {
                 self::$instance->admin = Admin::instance();

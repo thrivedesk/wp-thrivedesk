@@ -29,7 +29,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => 'e6c75065bc1de810aaea72805002e863a7db99a9',
+    'reference' => 'c26e121c969eb67e0b8e09caa46034fce16121c6',
     'name' => 'thrivedesk/wp-plugin',
   ),
   'versions' => 
@@ -41,7 +41,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => 'e6c75065bc1de810aaea72805002e863a7db99a9',
+      'reference' => 'c26e121c969eb67e0b8e09caa46034fce16121c6',
     ),
   ),
 );
