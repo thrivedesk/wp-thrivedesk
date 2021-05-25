@@ -36,6 +36,7 @@ final class FluentCRM extends Plugin
      * Check if plugin active or not
      *
      * @return boolean
+     * @since 0.7.0
      */
     public static function is_plugin_active(): bool
     {
@@ -51,6 +52,7 @@ final class FluentCRM extends Plugin
      * Check if customer exist or not
      *
      * @return boolean
+     * @since 0.7.0
      */
     public function is_customer_exist(): bool
     {
@@ -76,11 +78,11 @@ final class FluentCRM extends Plugin
      * Ensures that only one instance of WooCommerce exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @return object|WooCommerce
+     * @return FluentCRM|null
      * @access public
-     * @since 0.0.1
+     * @since 0.7.0
      */
-    public static function instance()
+    public static function instance(): ?FluentCRM
     {
         if (!isset(self::$instance) && !(self::$instance instanceof FluentCRM)) {
             self::$instance = new self();
@@ -135,6 +137,7 @@ final class FluentCRM extends Plugin
      * get customer tags
      *
      * @return array
+     * @since 0.7.0
      */
     public function get_customer_tags(): array
     {
@@ -149,6 +152,7 @@ final class FluentCRM extends Plugin
      * get customer lists
      *
      * @return array
+     * @since 0.7.0
      */
     public function get_customer_lists(): array
     {
@@ -163,6 +167,7 @@ final class FluentCRM extends Plugin
      * Get the customer data
      *
      * @return array
+     * @since 0.7.0
      */
     public function get_customer(): array
     {
@@ -216,15 +221,28 @@ final class FluentCRM extends Plugin
      * create new contact
      *
      * @return void
+     * @since 0.7.0
      */
     public function createNewContact(): void
     {
         if (function_exists('FluentCrmApi')) {
             $contactApi = FluentCrmApi('contacts');
 
+            $first_name = '';
+            $last_name = '';
+
+            $name_array = explode(" ", trim($this->contact_name));
+            if (sizeof($name_array) < 2) {
+                $first_name = trim($this->contact_name);
+            } else {
+                $last_name = array_pop($name_array);
+                $first_name = implode(" ", $name_array);
+            }
+
             $data = [
                 'email'         => $this->customer_email,
-                'first_name'    => $this->contact_name,
+                'first_name'    => $first_name,
+                'last_name'     => $last_name,
             ];
 
             $contactApi->createOrUpdate($data);
@@ -235,6 +253,7 @@ final class FluentCRM extends Plugin
      * ThriveDesk conversation sync handler
      *
      * @param $sync_type
+     * @since 0.7.0
      */
     public function syncTypeHandler($sync_type)
     {

@@ -18,6 +18,7 @@ class FluentCrmHooks
 
     /**
      * @return FluentCrmHooks|null
+     * @since 0.7.0
      */
     public static function instance(): ?FluentCrmHooks
     {
@@ -30,6 +31,8 @@ class FluentCrmHooks
 
     /**
      * filters for ThriveDesk conversation with fluentCrm
+     *
+     * @since 0.7.0
      */
     public function plugin_load()
     {

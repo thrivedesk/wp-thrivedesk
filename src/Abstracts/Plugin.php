@@ -94,6 +94,7 @@ abstract class Plugin
     /**
      * Get the accepted orders only
      *
+     * @param array $orders
      * @return array
      */
     public function filter_accepted_orders(array $orders): array
@@ -108,6 +109,7 @@ abstract class Plugin
     /**
      * Get the lifetime order value of the customer
      *
+     * @param array $orders
      * @return float
      */
     public function get_lifetime_order(array $orders): float
@@ -121,6 +123,7 @@ abstract class Plugin
     /**
      * Get this year order value of the customer
      *
+     * @param array $orders
      * @return float
      */
     public function get_this_year_order(array $orders): float
@@ -174,6 +177,7 @@ abstract class Plugin
      * Prepare data for FluentCRM api response
      *
      * @return array
+     * @since 0.7.0
      */
     public function prepare_fluentcrm_data(): array
     {

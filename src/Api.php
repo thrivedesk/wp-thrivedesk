@@ -54,7 +54,7 @@ final class Api
     }
 
     /**
-     * Available pulings
+     * Available plugins
      *
      * @return array
      * @since 0.0.1
@@ -131,6 +131,7 @@ final class Api
      * data handler for FluentCRM
      *
      * @return void
+     * @since 0.7.0
      */
     public function fluentcrm_data_handler(): void
     {

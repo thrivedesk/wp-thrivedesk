@@ -9,7 +9,7 @@ class ThriveDeskDBMigrator
     /**
      * ThriveDesk Database migrations
      *
-     * @since 0.6.2
+     * @since 0.7.0
      */
     public static function migrate()
     {

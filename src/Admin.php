@@ -166,6 +166,7 @@ final class Admin
             if (false == get_option('thrivedesk_options')) update_option('thrivedesk_options', []);
         }
 
+        // migrate action for thrivedesk database
         do_action('thrivedesk_db_migrate');
     }
 }
