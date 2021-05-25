@@ -185,7 +185,7 @@ final class FluentCRM extends Plugin
             $countries = $app->applyFilters('fluentcrm-countries', []);
 
             foreach ($countries as $country) {
-                if ($country['code'] == 'BD') {
+                if ($country['code'] == $this->customer->country) {
                     $customer_formatted_country = $country['title'];
                     break;
                 }
@@ -195,12 +195,13 @@ final class FluentCRM extends Plugin
         if (!$this->customer->id) return [];
 
         return [
+            'id'                => $this->customer->id ?? '',
             'first_name'        => $this->customer->first_name ?? '',
             'last_name'         => $this->customer->last_name ?? '',
             'email'             => $this->customer->email ?? '',
             'phone'             => $this->customer->phone ?? '',
-            'status'            => $this->customer->status ?? '',
-            'contact_type'      => $this->customer->contact_type ?? '',
+            'status'            => $this->customer->status ? ucfirst($this->customer->status) : '',
+            'contact_type'      => $this->customer->contact_type ? ucfirst($this->customer->contact_type) : '',
             'tags'              => $this->get_customer_tags(),
             'lists'             => $this->get_customer_lists(),
             'photo'             => $this->customer->photo ?? '',
