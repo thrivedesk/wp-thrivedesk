@@ -65,6 +65,7 @@ final class Api
             'edd'           => 'EDD',
             'woocommerce'   => 'WooCommerce',
             'fluentcrm'     => 'FluentCRM',
+            'postsync'      => 'PostSync'
         ];
     }
 

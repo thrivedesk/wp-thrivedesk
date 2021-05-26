@@ -40,7 +40,7 @@ $plugins = [
         'description'   => __('Sync posts with Thrivedesk for faster support.'),
         'image'         => 'postsync.png',
         'category'      => 'crm',
-        // 'installed'     => $fluentcrm->is_plugin_active(),
+        'installed'     => $postsync->is_plugin_active(),
         'connected'     => $postsync->get_plugin_data('connected'),
     ],
     // [
