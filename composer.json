@@ -14,7 +14,8 @@
 		"psr-4": {
 			"ThriveDesk\\": [
 				"src/",
-				"src/Abstracts"
+				"src/Abstracts",
+				"Hooks/"
 			]
 		},
 		"files": [
