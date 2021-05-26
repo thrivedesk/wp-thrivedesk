@@ -3,6 +3,7 @@
 $edd = ThriveDesk\Plugins\EDD::instance();
 $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 $fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
+$postsync = ThriveDesk\Plugins\PostSync::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
@@ -32,6 +33,15 @@ $plugins = [
         'category'      => 'crm',
         'installed'     => $fluentcrm->is_plugin_active(),
         'connected'     => $fluentcrm->get_plugin_data('connected'),
+    ],
+    [
+        'namespace'     => 'postsync',
+        'name'          => __('Post Sync', 'thrivedesk'),
+        'description'   => __('Sync posts with Thrivedesk for faster support.'),
+        'image'         => 'postsync2.png',
+        'category'      => 'crm',
+        // 'installed'     => $fluentcrm->is_plugin_active(),
+        'connected'     => $postsync->get_plugin_data('connected'),
     ],
     // [
     //     'name'      => __('SmartPay', 'thrivedesk'),
