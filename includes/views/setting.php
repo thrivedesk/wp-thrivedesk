@@ -74,7 +74,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="flex space-x-8 admin-tabs">
                 <a data-target="tab-integrations" class="inline-flex items-center px-1 border-b-2 border-blue-600" href="#">Integrations</a>
                 <?php if($postsync->get_plugin_data('connected')): ?>
-                <a data-target="tab-post-types-sync" class="inline-flex items-center px-1 border-b-2" href="#">Post Types</a>
+                <a data-target="tab-post-types-sync" class="inline-flex items-center px-1 border-b-2" href="#">Post Sync</a>
                 <?php endif; ?>
             </div>
             <div class="flex">
@@ -148,7 +148,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="hidden tab-post-types-sync">
             <div>
                 <?php 
-                    $all_post_types_arr = td_get_all_post_types_arr();
+                    $all_post_types_arr = $postsync->get_all_post_types_arr();
                     if (isset($_POST['post_type_sync_option'])) {
                         update_option('thrivedesk_post_type_sync_option', $_POST['post_type_sync_option']);
                     }

@@ -37,26 +37,7 @@ function thrivedesk_options()
     return is_array($options) ? $options : [];
 }
 
-/**
- * get all post types array
- * @since 0.6.2
- * @access public
- * @return array
- */
-if(!function_exists('td_get_all_post_types_arr')){
-    function td_get_all_post_types_arr(){
-        $args = array(
-            'public'   => true,
-            'show_in_rest' => true
-         );
-           
-        $output = 'names'; 
-        $operator = 'and'; 
-        $post_types = get_post_types( $args, $output, $operator );
-    
-        return $post_types;
-    }
-}
+
 
 /**
  * @since 0.6.2

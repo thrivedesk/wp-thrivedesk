@@ -104,5 +104,24 @@ final class PostSync extends Plugin
 
         return $key ? ($options[$key] ?? '') : $options;
     }
+
+    /**
+     * get all post types array
+     * @since 0.6.2
+     * @access public
+     * @return array
+     */
+    public function get_all_post_types_arr(){
+        $args = array(
+            'public'   => true,
+            'show_in_rest' => true
+        );
+        
+        $output = 'names'; 
+        $operator = 'and'; 
+        $post_types = get_post_types( $args, $output, $operator );
+    
+        return $post_types;
+    }
     
 }
