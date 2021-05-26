@@ -38,7 +38,7 @@ $plugins = [
         'namespace'     => 'postsync',
         'name'          => __('Post Sync', 'thrivedesk'),
         'description'   => __('Sync posts with Thrivedesk for faster support.'),
-        'image'         => 'postsync2.png',
+        'image'         => 'postsync.png',
         'category'      => 'crm',
         // 'installed'     => $fluentcrm->is_plugin_active(),
         'connected'     => $postsync->get_plugin_data('connected'),
@@ -73,7 +73,9 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="pl-6 flex justify-between text-sm font-medium leading-5 text-gray-500 h-12">
             <div class="flex space-x-8 admin-tabs">
                 <a data-target="tab-integrations" class="inline-flex items-center px-1 border-b-2 border-blue-600" href="#">Integrations</a>
+                <?php if($postsync->get_plugin_data('connected')): ?>
                 <a data-target="tab-post-types-sync" class="inline-flex items-center px-1 border-b-2" href="#">Post Types</a>
+                <?php endif; ?>
             </div>
             <div class="flex">
                 <a class="inline-flex items-center px-4 space-x-1 bg-gray-100 hover:bg-blue-50" href="https://youtu.be/ODV2Hi2MabI" target="_blank">
