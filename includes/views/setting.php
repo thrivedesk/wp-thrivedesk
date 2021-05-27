@@ -99,80 +99,97 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="mb-4 text-lg"><?php _e('Integrations', 'thrivedesk') ?></div>
             <div class="sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
                 <?php foreach ($plugins as $plugin) : ?>
-                <div class="border rounded-md p-4 bg-white transition hover:shadow-lg">
-                    <!-- title  -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <img class="w-12 h-12" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/{$plugin['image']}"; ?>" />
-                            <div class="font-medium text-base"><?php echo $plugin['name']; ?></div>
-                        </div>
-                        <?php if ($plugin['connected']) : ?>
-                        <span class="p-1 rounded-full bg-green-100 text-green-500" title=<?php echo __('Connected') ?>>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
+                    <div class="border rounded-md p-4 bg-white transition hover:shadow-lg">
+                        <!-- title  -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <img class="w-12 h-12"
+                                     src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/{$plugin['image']}"; ?>"/>
+                                <div class="font-medium text-base"><?php echo $plugin['name']; ?></div>
+                            </div>
+                            <?php if ($plugin['connected']) : ?>
+                                <span class="p-1 rounded-full bg-green-100 text-green-500"
+                                      title=<?php echo __('Connected') ?>>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor"
+                                 viewBox="0 0 16 16">
+                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                             </svg>
                         </span>
-                        <?php endif; ?>
-                    </div>
-                    <!-- description  -->
-                    <div class="text-gray-500 text-xs my-3">
-                        <?php echo $plugin['description'] ?>
-                    </div>
-
-                    <!-- meta  -->
-                    <div class="flex items-center justify-between relative">
-                        <span class="uppercase text-xs text-gray-400"><?php echo $plugin['category'] ?></span>
-
-                        <div>
-                            <?php if ($plugin['connected']) : ?>
-                            <button data-plugin="<?php echo $plugin['namespace']; ?>" data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo $nonce; ?>" class="connect inline-flex items-center space-x-1 py-1.5 pl-2 pr-3 rounded-full bg-red-100 text-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4" viewBox="0 0 16 16">
-                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                </svg>
-                                <span><?php _e('Disconnect', 'thrivedesk') ?></span>
-                            </button>
-                            <?php else : ?>
-                            <button data-plugin="<?php echo $plugin['namespace']; ?>" data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo $nonce; ?>" class="connect inline-flex items-center space-x-2 py-1.5 px-3 rounded-full bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16">
-                                    <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5zm6-8V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2V6a2 2 0 0 1 2-2h5z" />
-                                </svg>
-                                <span><?php _e('Connect', 'thrivedesk') ?></span>
-                            </button>
                             <?php endif; ?>
                         </div>
+                        <!-- description  -->
+                        <div class="text-gray-500 text-xs my-3">
+                            <?php echo $plugin['description'] ?>
+                        </div>
+
+                        <!-- meta  -->
+                        <div class="flex items-center justify-between relative">
+                            <span class="uppercase text-xs text-gray-400"><?php echo $plugin['category'] ?></span>
+
+                            <div>
+                                <?php if ($plugin['connected']) : ?>
+                                    <button data-plugin="<?php echo $plugin['namespace']; ?>"
+                                            data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>"
+                                            data-nonce="<?php echo $nonce; ?>"
+                                            class="connect inline-flex items-center space-x-1 py-1.5 pl-2 pr-3 rounded-full bg-red-100 text-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4"
+                                             viewBox="0 0 16 16">
+                                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                                        </svg>
+                                        <span><?php _e('Disconnect', 'thrivedesk') ?></span>
+                                    </button>
+                                <?php else : ?>
+                                    <button data-plugin="<?php echo $plugin['namespace']; ?>"
+                                            data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>"
+                                            data-nonce="<?php echo $nonce; ?>"
+                                            class="connect inline-flex items-center space-x-2 py-1.5 px-3 rounded-full bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3"
+                                             viewBox="0 0 16 16">
+                                            <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5zm6-8V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2V6a2 2 0 0 1 2-2h5z"/>
+                                        </svg>
+                                        <span><?php _e('Connect', 'thrivedesk') ?></span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             </div>
         </div>
         <div class="hidden tab-post-types-sync">
             <div>
-                <?php 
-                    $all_post_types_arr = $wppostsync->get_all_post_types_arr();
-                    if (isset($_POST['post_type_sync_option'])) {
-                        update_option('thrivedesk_post_type_sync_option', $_POST['post_type_sync_option']);
-                    }
-                    $post_type_sync_option = get_option('thrivedesk_post_type_sync_option');
-                ?>  
+                <?php
+                $all_post_types_arr = $wppostsync->get_all_post_types_arr();
+                if (isset($_POST['post_type_sync_option'])) {
+                    update_option('thrivedesk_post_type_sync_option', $_POST['post_type_sync_option']);
+                } else {
+                    update_option('thrivedesk_post_type_sync_option', []);
+                }
+                $post_type_sync_option = get_option('thrivedesk_post_type_sync_option');
+                ?>
                 <p class="mb-4 text-lg">
-                    <?php esc_html_e('Post types to index.', 'thrivedesk');?>
+                    <?php esc_html_e('Post types to index.', 'thrivedesk'); ?>
                 </p>
+
                 <form action="" method="POST">
-                    <?php 
-                        foreach($all_post_types_arr as $single_post_type):
-                            ?>
-                            <div>
-                                <input 
-                                    type="checkbox" 
-                                    name="post_type_sync_option[]" 
-                                    value="<?php echo $single_post_type; ?>" 
+                    <?php
+                    foreach ($all_post_types_arr as $single_post_type):
+                        ?>
+                        <div>
+                            <input
+                                    type="checkbox"
+                                    name="post_type_sync_option[]"
+                                    value="<?php echo $single_post_type; ?>"
                                     id="<?php echo $single_post_type; ?>"
-                                    <?php echo in_array($single_post_type, $post_type_sync_option) ? 'checked' : '';  ?> 
-                                >
-                                <label for="<?php echo $single_post_type; ?>"> <?php echo ucfirst($single_post_type); ?> </label>
-                            </div>
-                            <?php
-                        endforeach;
+                                <?php
+                                echo is_array($post_type_sync_option) ?
+                                    in_array($single_post_type, $post_type_sync_option) ? 'checked' : ''
+                                    : ''; ?>
+                            >
+                            <label for="<?php echo $single_post_type; ?>"> <?php echo ucfirst($single_post_type); ?> </label>
+                        </div>
+                    <?php
+                    endforeach;
                     ?>
                     <div class="submit">
                         <?php submit_button(); ?>
