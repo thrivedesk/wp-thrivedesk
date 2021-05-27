@@ -28,7 +28,6 @@
 
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
-use ThriveDesk\Restroute;
 use ThriveDesk\FluentCrmHooks;
 
 // Exit if accessed directly.
@@ -80,7 +79,6 @@ final class ThriveDesk
             self::$instance = new self();
 
             self::$instance->api = Api::instance();
-            self::$instance->restroute = Restroute::instance();
 
             self::$instance->hooks = FluentCrmHooks::instance();
 
