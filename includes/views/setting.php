@@ -3,7 +3,7 @@
 $edd = ThriveDesk\Plugins\EDD::instance();
 $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 $fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
-$postsync = ThriveDesk\Plugins\PostSync::instance();
+$wppostsync = ThriveDesk\Plugins\WPPostSync::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
@@ -35,13 +35,13 @@ $plugins = [
         'connected'     => $fluentcrm->get_plugin_data('connected'),
     ],
     [
-        'namespace'     => 'postsync',
+        'namespace'     => 'wppostsync',
         'name'          => __('WP Post Sync', 'thrivedesk'),
         'description'   => __('Share your site post data of selected post types for faster support.'),
-        'image'         => 'postsync.png',
+        'image'         => 'wppostsync.png',
         'category'      => 'WordPress',
-        'installed'     => $postsync->is_plugin_active(),
-        'connected'     => $postsync->get_plugin_data('connected'),
+        'installed'     => $wppostsync->is_plugin_active(),
+        'connected'     => $wppostsync->get_plugin_data('connected'),
     ],
     // [
     //     'name'      => __('SmartPay', 'thrivedesk'),
@@ -73,7 +73,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="pl-6 flex justify-between text-sm font-medium leading-5 text-gray-500 h-12">
             <div class="flex space-x-8 admin-tabs">
                 <a data-target="tab-integrations" class="inline-flex items-center px-1 border-b-2 border-blue-600" href="#">Integrations</a>
-                <?php if($postsync->get_plugin_data('connected')): ?>
+                <?php if($wppostsync->get_plugin_data('connected')): ?>
                 <a data-target="tab-post-types-sync" class="inline-flex items-center px-1 border-b-2" href="#">WP Post Sync</a>
                 <?php endif; ?>
             </div>
@@ -148,7 +148,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="hidden tab-post-types-sync">
             <div>
                 <?php 
-                    $all_post_types_arr = $postsync->get_all_post_types_arr();
+                    $all_post_types_arr = $wppostsync->get_all_post_types_arr();
                     if (isset($_POST['post_type_sync_option'])) {
                         update_option('thrivedesk_post_type_sync_option', $_POST['post_type_sync_option']);
                     }

@@ -65,7 +65,7 @@ final class Api
             'edd'           => 'EDD',
             'woocommerce'   => 'WooCommerce',
             'fluentcrm'     => 'FluentCRM',
-            'postsync'      => 'PostSync'
+            'wppostsync'    => 'WPPostSync'
         ];
     }
 
@@ -118,9 +118,9 @@ final class Api
                 $this->disconnect_action_handler();
             } else if (isset($action) && 'get_fluentcrm_data' === $action) {
                 $this->fluentcrm_data_handler();
-            } else if (isset($action) && 'get_postsync_data' === $action) {
+            } else if (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower(sanitize_key($_GET['query'] ?? ''));
-                $this->postsync_data_handler($remote_query_string);
+                $this->wp_postsync_data_handler($remote_query_string);
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -142,15 +142,13 @@ final class Api
         $sync_type = strtolower(sanitize_key($_GET['sync_type'] ?? ''));
         $td_conversation = $_GET['td_conversation'] ?? [];
 
-        if (array_key_exists('title', $td_conversation))
-        {
+        if (array_key_exists('title', $td_conversation)) {
             $td_conversation['title'] = substr($td_conversation['title'], 0, 180);
         }
 
         $td_deleted_conversation = $_GET['deleted_conversation'] ?? '';
 
-        if ($td_deleted_conversation)
-        {
+        if ($td_deleted_conversation) {
             $td_conversation['id'] = $td_deleted_conversation;
         }
 
@@ -167,8 +165,7 @@ final class Api
 
         $data = $this->plugin->prepare_fluentcrm_data();
 
-        if($sync_type)
-        {
+        if ($sync_type) {
             $this->plugin->td_conversation = $td_conversation;
             $this->plugin->syncTypeHandler($sync_type);
         }
@@ -176,7 +173,14 @@ final class Api
 
     }
 
-    public function postsync_data_handler($remote_query_string):void {
+    /**
+     * data handler for wp-post-sync
+     *
+     * @param $remote_query_string
+     * @since 0.8.0
+     */
+    public function wp_postsync_data_handler($remote_query_string): void
+    {
         $search_data = $this->plugin->get_post_search_result($remote_query_string);
         $this->apiResponse->success(200, $search_data, 'Success');
     }
@@ -241,8 +245,7 @@ final class Api
     {
         $payload = [];
         foreach ($_REQUEST as $key => $value) {
-            if(is_string($value))
-            {
+            if (is_string($value)) {
                 switch (strtolower($value)) {
                     case 'true':
                     case 'false':
@@ -253,9 +256,7 @@ final class Api
                     default:
                         $payload[$key] = $value;
                 }
-            }
-            else
-            {
+            } else {
                 $payload[$key] = $value;
             }
         }
