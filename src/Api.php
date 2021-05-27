@@ -118,6 +118,9 @@ final class Api
                 $this->disconnect_action_handler();
             } else if (isset($action) && 'get_fluentcrm_data' === $action) {
                 $this->fluentcrm_data_handler();
+            } else if (isset($action) && 'get_postsync_data' === $action) {
+                $remote_query_string = strtolower(sanitize_key($_GET['query'] ?? ''));
+                $this->postsync_data_handler($remote_query_string);
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -171,6 +174,11 @@ final class Api
         }
         $this->apiResponse->success(200, $data, 'Success');
 
+    }
+
+    public function postsync_data_handler($remote_query_string):void {
+        $search_data = $this->plugin->get_post_search_result($remote_query_string);
+        $this->apiResponse->success(200, $search_data, 'Success');
     }
 
     /**
