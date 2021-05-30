@@ -164,10 +164,11 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div>
             <?php
                 $all_post_types_arr = $wppostsync->get_all_post_types_arr();
-                if (isset($_POST['post_type_sync_option'])) {
-                    update_option('thrivedesk_post_type_sync_option', $_POST['post_type_sync_option']);
+                if ($_POST) {
+                    $post_type_sync_option_arr = $_POST['post_type_sync_option'] ?? [];
+                    update_option('thrivedesk_post_type_sync_option', $post_type_sync_option_arr);
                 } else {
-                    update_option('thrivedesk_post_type_sync_option', []);
+                    $post_type_sync_option_arr = get_option('thrivedesk_post_type_sync_option') ? get_option('thrivedesk_post_type_sync_option') : [];
                 }
                 $post_type_sync_option = get_option('thrivedesk_post_type_sync_option');
             ?>
@@ -180,11 +181,13 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                     foreach ($all_post_types_arr as $single_post_type) :
                 ?>
                 <div>
-                    <input type="checkbox" name="post_type_sync_option[]" value="<?php echo $single_post_type; ?>"
-                           id="<?php echo $single_post_type; ?>" <?php
-                    echo is_array($post_type_sync_option) ?
-                        in_array($single_post_type, $post_type_sync_option) ? 'checked' : ''
-                        : ''; ?>>
+                    <input
+                            type="checkbox"
+                            name="post_type_sync_option[]"
+                            value="<?php echo $single_post_type; ?>"
+                            id="<?php echo $single_post_type; ?>"
+                            <?php echo in_array($single_post_type, $post_type_sync_option_arr) ? 'checked' : '';  ?>
+                    >
                     <label for="<?php echo $single_post_type; ?>"> <?php echo ucfirst($single_post_type); ?> </label>
                 </div>
                 <?php
