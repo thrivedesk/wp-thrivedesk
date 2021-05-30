@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: live chat, chatbot, knowledge base, helpdesk, support, woocommerce, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 5.7
-Stable Tag: 0.6.2
+Stable Tag: 0.7.0
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -162,6 +162,10 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.7.0 =
+- NEW FluentCRM integration
+- Fixed Typo here and there 
+
 = 0.6.2 =
 - Fixed ThriveDesk connection error
 - Fixed link color overriding by plugin

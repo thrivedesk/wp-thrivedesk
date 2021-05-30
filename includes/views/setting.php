@@ -28,7 +28,7 @@ $plugins = [
     [
         'namespace'     => 'fluentcrm',
         'name'          => __('FluentCRM', 'thrivedesk'),
-        'description'   => __('Share customer data with ThriveDesk.'),
+        'description'   => __('Sync your contacts and tickets information with ThriveDesk.'),
         'image'         => 'fluentcrm.png',
         'category'      => 'crm',
         'installed'     => $fluentcrm->is_plugin_active(),
