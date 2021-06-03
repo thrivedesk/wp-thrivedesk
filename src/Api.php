@@ -119,7 +119,7 @@ final class Api
             } else if (isset($action) && 'get_fluentcrm_data' === $action) {
                 $this->fluentcrm_data_handler();
             } else if (isset($action) && 'get_wppostsync_data' === $action) {
-                $remote_query_string = strtolower(sanitize_key($_GET['query'] ?? ''));
+                $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
             } else {
                 $this->plugin_data_action_handler();
