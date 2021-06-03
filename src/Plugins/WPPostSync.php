@@ -153,16 +153,16 @@ final class WPPostSync extends Plugin
         while ($x_query->have_posts()):
             $x_query->the_post();
             $search_posts[get_the_ID()] = [
-                'id'        => get_the_ID(),
-                'title'     => get_the_title(),
-                'link'      => get_the_permalink(),
-                'excerpt'   => get_the_excerpt(),
+                'id'     => get_the_ID(),
+                'text'   => html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'),
+                'link'   => get_the_permalink(),
+                'value'  => html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8') . '|_td_|' . get_the_permalink(),
             ];
 
         endwhile;
         if (empty($search_posts)) {
             return [
-                'data' => 'nothing found'
+                'data' => []
             ];
         } else {
             return [
