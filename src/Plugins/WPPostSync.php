@@ -160,11 +160,10 @@ final class WPPostSync extends Plugin
             $x_query->the_post();
             $post_categories_array = get_the_category(get_the_ID());
             $post_title = $this->get_truncated_post_title(html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'));
-
             $search_posts[get_the_ID()] = [
                 'id'            => get_the_ID(),
                 'title'         => $post_title,
-                'categories'    => implode(', ', wp_list_pluck($post_categories_array, 'name')),
+                'categories'    => count($post_categories_array) ? implode(', ', wp_list_pluck($post_categories_array, 'name')) : 'Category not available',
                 'link'          => get_the_permalink(),
             ];
 
