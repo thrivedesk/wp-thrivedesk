@@ -22,6 +22,7 @@ final class WPPostSync extends Plugin
      * Check if plugin active or not
      *
      * @return boolean
+     * @since 0.8.0
      */
     public static function is_plugin_active(): bool
     {
@@ -111,6 +112,7 @@ final class WPPostSync extends Plugin
     /**
      * @param string $key
      * @return array|mixed|string
+     * @since 0.8.0
      */
     public function get_plugin_data(string $key = '')
     {
@@ -123,9 +125,10 @@ final class WPPostSync extends Plugin
 
     /**
      * get all post types array
+     *
      * @return array
-     * @since 0.8.0
      * @access public
+     * @since 0.8.0
      */
     public function get_all_post_types_arr(): array
     {
@@ -186,6 +189,7 @@ final class WPPostSync extends Plugin
      *
      * @param $title
      * @return string
+     * @since 0.8.0
      */
     public function get_truncated_post_title($title): string
     {
