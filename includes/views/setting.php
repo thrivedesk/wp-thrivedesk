@@ -76,10 +76,10 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
     <div class="pl-6 flex justify-between text-sm font-medium leading-5 text-gray-500 h-12">
       <div class="flex space-x-8 admin-tabs">
         <a data-target="tab-integrations" class="inline-flex items-center px-1 border-b-2 border-blue-600"
-          href="#">Integrations</a>
+          href="#"><?php _e('Integrations', 'thrivedesk') ?></a>
         <?php if ($wppostsync->get_plugin_data('connected')) : ?>
-        <a data-target="tab-post-types-sync" class="inline-flex items-center px-1 border-b-2" href="#">WP
-          Post Sync</a>
+        <a data-target="tab-post-types-sync" class="inline-flex items-center px-1 border-b-2" href="#"><?php _e('WP
+          Post Sync', 'thrivedesk') ?></a>
         <?php endif; ?>
       </div>
       <div class="flex">
@@ -112,10 +112,10 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <img class="w-12 h-12" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/{$plugin['image']}"; ?>" />
-              <div class="font-medium text-base"><?php echo $plugin['name']; ?></div>
+              <div class="font-medium text-base"><?php echo esc_html($plugin['name']); ?></div>
             </div>
             <?php if ($plugin['connected']) : ?>
-            <span class="p-1 rounded-full bg-green-100 text-green-500" title=<?php echo __('Connected') ?>>
+            <span class="p-1 rounded-full bg-green-100 text-green-500" title=<?php _e('Connected', 'thrivedesk') ?>>
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
                 <path
                   d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
@@ -125,17 +125,17 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
           </div>
           <!-- description  -->
           <div class="text-gray-500 text-xs my-3">
-            <?php echo $plugin['description'] ?>
+            <?php echo esc_html($plugin['description']); ?>
           </div>
 
           <!-- meta  -->
           <div class="flex items-center justify-between relative">
-            <span class="uppercase text-xs text-gray-400"><?php echo $plugin['category'] ?></span>
+            <span class="uppercase text-xs text-gray-400"><?php echo esc_html($plugin['category']) ?></span>
 
             <div>
               <?php if ($plugin['connected']) : ?>
-              <button data-plugin="<?php echo $plugin['namespace']; ?>"
-                data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo $nonce; ?>"
+              <button data-plugin="<?php echo esc_attr($plugin['namespace']); ?>"
+                data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo esc_attr($nonce); ?>"
                 class="connect inline-flex items-center space-x-1 py-1.5 pl-2 pr-3 rounded-full bg-red-100 text-red-500 focus:outline-none focus:ring-2 focus:ring-red-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4" viewBox="0 0 16 16">
                   <path
@@ -144,8 +144,8 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                 <span><?php _e('Disconnect', 'thrivedesk') ?></span>
               </button>
               <?php else : ?>
-              <button data-plugin="<?php echo $plugin['namespace']; ?>"
-                data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo $nonce; ?>"
+              <button data-plugin="<?php echo esc_attr($plugin['namespace']); ?>"
+                data-connected="<?php echo $plugin['connected'] ? '1' : '0'; ?>" data-nonce="<?php echo esc_attr($nonce); ?>"
                 class="connect inline-flex items-center space-x-2 py-1.5 px-3 rounded-full bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 <?php echo !$plugin['installed'] ? 'opacity-50' : '' ?>">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3" viewBox="0 0 16 16">
                   <path
@@ -173,7 +173,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                 $post_type_sync_option = get_option('thrivedesk_post_type_sync_option');
             ?>
             <p class="mb-4 text-lg">
-                <?php esc_html_e('Post types to index.', 'thrivedesk'); ?>
+                <?php _e('Post types to index.', 'thrivedesk'); ?>
             </p>
 
             <form action="" method="POST">
@@ -184,11 +184,11 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                     <input
                             type="checkbox"
                             name="post_type_sync_option[]"
-                            value="<?php echo $single_post_type; ?>"
-                            id="<?php echo $single_post_type; ?>"
+                            value="<?php echo esc_attr($single_post_type); ?>"
+                            id="<?php echo esc_attr($single_post_type); ?>"
                             <?php echo in_array($single_post_type, $post_type_sync_option_arr) ? 'checked' : '';  ?>
                     >
-                    <label for="<?php echo $single_post_type; ?>"> <?php echo ucfirst($single_post_type); ?> </label>
+                    <label for="<?php echo esc_attr($single_post_type); ?>"> <?php echo esc_html(ucfirst($single_post_type)); ?> </label>
                 </div>
                 <?php
                     endforeach;
