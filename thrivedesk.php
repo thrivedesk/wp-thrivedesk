@@ -11,7 +11,7 @@
  * Text Domain: thrivedesk
  * Domain Path: languages
  * 
- * Requires PHP      : 7.0.0
+ * Requires PHP      : 7.1.0
  * Requires at least : 4.9
  * Tested up to      : 5.7
  *

@@ -162,6 +162,10 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.8.0 =
+- NEW WPPostSync integration
+- Improved API request security
+
 = 0.7.0 =
 - NEW FluentCRM integration
 - Fixed Typo here and there 

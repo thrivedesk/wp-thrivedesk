@@ -16,6 +16,8 @@ final class WPPostSync extends Plugin
      */
     private static $instance = null;
 
+    public const POST_TITLE_LIMIT = 56;
+
     /**
      * Check if plugin active or not
      *
@@ -106,6 +108,10 @@ final class WPPostSync extends Plugin
         update_option('thrivedesk_options', $thrivedesk_options);
     }
 
+    /**
+     * @param string $key
+     * @return array|mixed|string
+     */
     public function get_plugin_data(string $key = '')
     {
         $thrivedesk_options = thrivedesk_options();
@@ -121,7 +127,7 @@ final class WPPostSync extends Plugin
      * @since 0.8.0
      * @access public
      */
-    public function get_all_post_types_arr()
+    public function get_all_post_types_arr(): array
     {
         $args = array(
             'public'        => true,
@@ -130,18 +136,15 @@ final class WPPostSync extends Plugin
 
         $output = 'names';
         $operator = 'and';
-        $post_types = get_post_types($args, $output, $operator);
-
-        return $post_types;
+        return get_post_types($args, $output, $operator);
     }
 
     /**
      * @param string $query_string for search among all post type
      * @access public
-     * @return JSON
      * @since 0.8.0
      */
-    public function get_post_search_result($query_string = '')
+    public function get_post_search_result(string $query_string = ''): array
     {
         $x_query = new \WP_Query(
             array(
@@ -152,14 +155,20 @@ final class WPPostSync extends Plugin
         $search_posts = [];
         while ($x_query->have_posts()):
             $x_query->the_post();
+            $post_categories_array = get_the_category(get_the_ID());
+            $post_title = $this->get_truncated_post_title(html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'));
+
             $search_posts[get_the_ID()] = [
-                'id'     => get_the_ID(),
-                'text'   => html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'),
-                'link'   => get_the_permalink(),
-                'value'  => html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8') . '|_td_|' . get_the_permalink(),
+                'id'            => get_the_ID(),
+                'title'         => $post_title,
+                'categories'    => implode(', ', wp_list_pluck($post_categories_array, 'name')),
+                'link'          => get_the_permalink(),
             ];
 
         endwhile;
+
+        wp_reset_query();
+
         if (empty($search_posts)) {
             return [
                 'data' => []
@@ -170,6 +179,19 @@ final class WPPostSync extends Plugin
                 'data'  => $search_posts
             ];
         }
-        wp_reset_query();
+    }
+
+    /**
+     * Truncate post title and add ending character if necessary
+     *
+     * @param $title
+     * @return string
+     */
+    public function get_truncated_post_title($title): string
+    {
+        if (mb_strwidth($title, 'UTF-8') > self::POST_TITLE_LIMIT) {
+            return rtrim(mb_strimwidth($title, 0, self::POST_TITLE_LIMIT, '', 'UTF-8')) . '...';
+        }
+        return $title;
     }
 }
