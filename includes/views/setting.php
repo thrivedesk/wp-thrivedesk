@@ -36,7 +36,7 @@ $plugins = [
     ],
     [
         'namespace'     => 'wppostsync',
-        'name'          => __('WP Post Sync', 'thrivedesk'),
+        'name'          => __('WordPress Post Sync', 'thrivedesk'),
         'description'   => __('Share your site post data of selected post types for faster support.'),
         'image'         => 'wppostsync.png',
         'category'      => 'WordPress',

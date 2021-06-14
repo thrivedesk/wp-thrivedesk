@@ -163,7 +163,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 0.8.0 =
-- NEW WPPostSync integration
+- NEW WordPress Post Sync integration
 - Improved API request security
 
 = 0.7.0 =
