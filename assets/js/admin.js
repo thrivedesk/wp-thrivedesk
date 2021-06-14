@@ -47,4 +47,30 @@ jQuery(document).ready(($) => {
 			);
 		}
 	});
+	/**
+	 * admin tab
+	 */
+	$('.wrap.thrivedesk .admin-tabs a').on('click', function(e){
+		e.preventDefault();
+		
+		var tabElement = document.querySelectorAll('.wrap.thrivedesk .admin-tabs a');
+		var contentElement = document.querySelectorAll('.wrap.thrivedesk #tab-content>div');
+
+		tabElement.forEach(function(linkElement){
+			$(linkElement)
+			.removeClass('border-blue-600 active')
+		});
+		contentElement.forEach(function(contentElement){
+			$(contentElement)
+			.removeClass('block')
+			.addClass('hidden');
+		});
+
+		var selectedTab = e.target.getAttribute('data-target');
+
+		$(e.target).addClass('border-blue-600 active');
+		document.getElementById('tab-content').getElementsByClassName(selectedTab)[0].classList.remove('hidden');
+
+	});
+	
 });
