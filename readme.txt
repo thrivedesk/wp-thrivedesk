@@ -162,7 +162,8 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
-= 0.8.2 =
+= 0.8.3 =
+- Fixed WordPress Post Sync tab border style
 - Fixed WordPress Post Sync image icon
 - Fixed plugin version tag
 
