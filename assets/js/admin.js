@@ -58,7 +58,7 @@ jQuery(document).ready(($) => {
 
 		tabElement.forEach(function(linkElement){
 			$(linkElement)
-			.removeClass('border-blue-600 active')
+			.removeClass('border-blue-600 active border-b-2')
 		});
 		contentElement.forEach(function(contentElement){
 			$(contentElement)
@@ -68,7 +68,7 @@ jQuery(document).ready(($) => {
 
 		var selectedTab = e.target.getAttribute('data-target');
 
-		$(e.target).addClass('border-blue-600 active');
+		$(e.target).addClass('border-blue-600 active border-b-2');
 		document.getElementById('tab-content').getElementsByClassName(selectedTab)[0].classList.remove('hidden');
 
 	});
