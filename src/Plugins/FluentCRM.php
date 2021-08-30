@@ -12,20 +12,15 @@ if (!defined('ABSPATH')) {
 
 final class FluentCRM extends Plugin
 {
-    /**
-     * The single instance of this class
-     */
+    /** The single instance of this class */
     private static $instance = null;
 
-    public $create_new_contact = false;
+    public const TYPE_CREATE_CONVERSATION        = 'create_conversation';
+    public const TYPE_DELETE_CONVERSATION        = 'delete_conversation';
+    public const TYPE_FORCE_DELETE_CONVERSATION  = 'force_delete_conversation';
+    public const TYPE_UPDATE_CONVERSATION_STATUS = 'update_conversation_status';
 
-    public $contact_name = '';
-
-    public $td_conversation = [];
-
-    public const CREATE_CONVERSATION = 'create_conversation';
-    public const DELETE_CONVERSATION = 'delete_conversation';
-    public const UPDATE_CONVERSATION_STATUS = 'update_conversation_status';
+    public const DB_TABLE_TD_CONVERSATION = 'td_conversations';
 
     public function accepted_statuses(): array
     {
@@ -59,14 +54,14 @@ final class FluentCRM extends Plugin
         if (!$this->customer_email) return false;
 
         if (!$this->customer && function_exists('FluentCrmApi')) {
-            $contactApi = FluentCrmApi('contacts');
+            $contactApi     = FluentCrmApi('contacts');
             $this->customer = $contactApi->getContact($this->customer_email);
         }
 
         if (!$this->customer) {
             if (!$this->create_new_contact) return false;
 
-            $this->createNewContact();
+            $this->createNewContact('');
         }
 
         return true;
@@ -80,7 +75,7 @@ final class FluentCRM extends Plugin
      *
      * @return FluentCRM|null
      * @access public
-     * @since 0.7.0
+     * @since  0.7.0
      */
     public static function instance(): ?FluentCRM
     {
@@ -93,9 +88,8 @@ final class FluentCRM extends Plugin
 
     public function connect()
     {
-        $thrivedesk_options = get_option('thrivedesk_options', []);
-        $thrivedesk_options['fluentcrm'] = $thrivedesk_options['fluentcrm'] ?? [];
-
+        $thrivedesk_options                           = get_option('thrivedesk_options', []);
+        $thrivedesk_options['fluentcrm']              = $thrivedesk_options['fluentcrm'] ?? [];
         $thrivedesk_options['fluentcrm']['connected'] = true;
 
         update_option('thrivedesk_options', $thrivedesk_options);
@@ -103,9 +97,8 @@ final class FluentCRM extends Plugin
 
     public function disconnect()
     {
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options              = get_option('thrivedesk_options', []);
         $thrivedesk_options['fluentcrm'] = $thrivedesk_options['fluentcrm'] ?? [];
-
         $thrivedesk_options['fluentcrm'] = [
             'api_token' => '',
             'connected' => false,
@@ -127,8 +120,7 @@ final class FluentCRM extends Plugin
     public function get_plugin_data(string $key = '')
     {
         $thrivedesk_options = thrivedesk_options();
-
-        $options = $thrivedesk_options['fluentcrm'] ?? [];
+        $options            = $thrivedesk_options['fluentcrm'] ?? [];
 
         return $key ? ($options[$key] ?? '') : $options;
     }
@@ -174,14 +166,14 @@ final class FluentCRM extends Plugin
         if (!$this->customer_email) return [];
 
         if (!$this->customer && function_exists('FluentCrmApi')) {
-            $contactApi = FluentCrmApi('contacts');
+            $contactApi     = FluentCrmApi('contacts');
             $this->customer = $contactApi->getContact($this->customer_email);
         }
 
         $customer_formatted_country = $this->customer->country ?? '';
 
         if (function_exists('FluentCrm')) {
-            $app = FluentCrm();
+            $app       = FluentCrm();
             $countries = $app->applyFilters('fluentcrm-countries', []);
 
             foreach ($countries as $country) {
@@ -195,94 +187,130 @@ final class FluentCRM extends Plugin
         if (!$this->customer->id) return [];
 
         return [
-            'id'                => $this->customer->id ?? '',
-            'first_name'        => $this->customer->first_name ?? '',
-            'last_name'         => $this->customer->last_name ?? '',
-            'email'             => $this->customer->email ?? '',
-            'phone'             => $this->customer->phone ?? '',
-            'status'            => $this->customer->status ? ucfirst($this->customer->status) : '',
-            'contact_type'      => $this->customer->contact_type ? ucfirst($this->customer->contact_type) : '',
-            'tags'              => $this->get_customer_tags(),
-            'lists'             => $this->get_customer_lists(),
-            'photo'             => $this->customer->photo ?? '',
-            'address_line_1'    => $this->customer->address_line_1 ?? '',
-            'address_line_2'    => $this->customer->address_line_2 ?? '',
-            'city'              => $this->customer->city ?? '',
-            'state'             => $this->customer->state ?? '',
-            'postal_code'       => $this->customer->postal_code ?? '',
-            'country'           => $customer_formatted_country ?? '',
-            'date_of_birth'     => $this->customer->date_of_birth ? date('d M Y', strtotime($this->customer->date_of_birth)) : '',
-            'last_activity'     => $this->customer->last_activity ? date('d M Y', strtotime($this->customer->last_activity)) : '',
-            'updated_at'        => $this->customer->updated_at ? date('d M Y', strtotime($this->customer->updated_at)) : '',
-            'created_at'        => $this->customer->created_at ? date('d M Y', strtotime($this->customer->created_at)) : ''
+            'id'             => $this->customer->id ?? '',
+            'first_name'     => $this->customer->first_name ?? '',
+            'last_name'      => $this->customer->last_name ?? '',
+            'email'          => $this->customer->email ?? '',
+            'phone'          => $this->customer->phone ?? '',
+            'status'         => $this->customer->status ? ucfirst($this->customer->status) : '',
+            'contact_type'   => $this->customer->contact_type ? ucfirst($this->customer->contact_type) : '',
+            'tags'           => $this->get_customer_tags(),
+            'lists'          => $this->get_customer_lists(),
+            'photo'          => $this->customer->photo ?? '',
+            'address_line_1' => $this->customer->address_line_1 ?? '',
+            'address_line_2' => $this->customer->address_line_2 ?? '',
+            'city'           => $this->customer->city ?? '',
+            'state'          => $this->customer->state ?? '',
+            'postal_code'    => $this->customer->postal_code ?? '',
+            'country'        => $customer_formatted_country ?? '',
+            'date_of_birth'  => $this->customer->date_of_birth ? date('d M Y', strtotime($this->customer->date_of_birth)) : '',
+            'last_activity'  => $this->customer->last_activity ? date('d M Y', strtotime($this->customer->last_activity)) : '',
+            'updated_at'     => $this->customer->updated_at ? date('d M Y', strtotime($this->customer->updated_at)) : '',
+            'created_at'     => $this->customer->created_at ? date('d M Y', strtotime($this->customer->created_at)) : ''
         ];
     }
 
     /**
      * create new contact
      *
+     * @param string $contactName
+     *
      * @return void
      * @since 0.7.0
      */
-    public function createNewContact(): void
+    public function createNewContact(string $contactName): void
     {
         if (function_exists('FluentCrmApi')) {
             $contactApi = FluentCrmApi('contacts');
 
-            $first_name = '';
-            $last_name = '';
+            $contact = $contactApi->getContact($this->customer_email);
 
-            $name_array = explode(" ", trim($this->contact_name));
+            error_log(print_r($contact, TRUE));
+
+            if ($contact) {
+                return;
+            }
+
+            $first_name = '';
+            $last_name  = '';
+
+            $name_array = explode(" ", trim($contactName));
             if (sizeof($name_array) < 2) {
-                $first_name = trim($this->contact_name);
+                $first_name = trim($contactName);
             } else {
-                $last_name = array_pop($name_array);
+                $last_name  = array_pop($name_array);
                 $first_name = implode(" ", $name_array);
             }
 
             $data = [
-                'email'         => $this->customer_email,
-                'first_name'    => $first_name,
-                'last_name'     => $last_name,
+                'email'      => $this->customer_email,
+                'first_name' => $first_name,
+                'last_name'  => $last_name,
             ];
 
             $contactApi->createOrUpdate($data);
         }
     }
 
+
     /**
-     * ThriveDesk conversation sync handler
+     * sync ThriveDesk conversation with FluentCrm
      *
-     * @param $sync_type
-     * @since 0.7.0
+     * @param string $syncType
+     * @param array  $extra
+     *
+     * @since 0.8.4
      */
-    public function syncTypeHandler($sync_type)
+    public function syncConversationWithFluentCrm(string $syncType, array $extra = []): void
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'td_conversations';
+        $table_name = $wpdb->prefix . self::DB_TABLE_TD_CONVERSATION;
 
-        if ($sync_type == self::CREATE_CONVERSATION) {
-            $wpdb->replace(
-                $table_name,
-                $this->td_conversation
-            );
-        } elseif ($sync_type == self::DELETE_CONVERSATION) {
-            $wpdb->delete(
-                $table_name,
-                array(
-                    'id' => $this->td_conversation['id'] ?? '',
-                )
-            );
-        } elseif ($sync_type == self::UPDATE_CONVERSATION_STATUS) {
-            $wpdb->update(
-                $table_name,
-                array(
-                    'status' => $this->td_conversation['status'] ?? '',
-                ),
-                array(
-                    'id' => $this->td_conversation['id'] ?? '',
-                )
-            );
+        switch ($syncType) {
+            case self::TYPE_CREATE_CONVERSATION:
+                $wpdb->replace(
+                    $table_name,
+                    $extra['conversation'] ?? []
+                );
+
+                $shouldCreateContact = $extra['create_new_contact'] ?? false;
+
+                if ($shouldCreateContact) {
+                    $this->createNewContact($extra['contact_name'] ?? '');
+                }
+                break;
+            case self::TYPE_DELETE_CONVERSATION:
+                break;
+            case self::TYPE_FORCE_DELETE_CONVERSATION:
+                $wpdb->delete(
+                    $table_name,
+                    array(
+                        'id' => $this->td_conversation['id'] ?? '',
+                    )
+                );
+                break;
+            case self::TYPE_UPDATE_CONVERSATION_STATUS:
+                $wpdb->update(
+                    $table_name,
+                    array(
+                        'status' => $extra['status'] ?? '',
+                    ),
+                    array(
+                        'id' => $extra['conversation_id'] ?? '',
+                    )
+                );
+                break;
         }
+    }
+
+    /**
+     * Prepare data for FluentCRM api response
+     *
+     * @return array
+     * @since 0.7.0
+     */
+    public function prepare_fluentcrm_data(): array
+    {
+        return $this->get_customer();
     }
 }
