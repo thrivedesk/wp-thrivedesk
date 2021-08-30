@@ -23,7 +23,7 @@ final class Api
     /**
      * Construct Api class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -42,7 +42,7 @@ final class Api
      *
      * @return object|Api
      * @access public
-     * @since 0.0.1
+     * @since  0.0.1
      */
     public static function instance(): object
     {
@@ -62,10 +62,10 @@ final class Api
     private function _available_plugins(): array
     {
         return [
-            'edd'           => 'EDD',
-            'woocommerce'   => 'WooCommerce',
-            'fluentcrm'     => 'FluentCRM',
-            'wppostsync'    => 'WPPostSync'
+            'edd'         => 'EDD',
+            'woocommerce' => 'WooCommerce',
+            'fluentcrm'   => 'FluentCRM',
+            'wppostsync'  => 'WPPostSync'
         ];
     }
 
@@ -91,7 +91,7 @@ final class Api
                 $this->apiResponse->error(401, 'Plugin is invalid or not available now.');
             }
 
-            $plugin_name = $this->_available_plugins()[$plugin] ?? 'EDD';
+            $plugin_name       = $this->_available_plugins()[$plugin] ?? 'EDD';
             $plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
 
             if (!class_exists($plugin_class_name)) {
@@ -116,8 +116,8 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
-            } else if (isset($action) && 'get_fluentcrm_data' === $action) {
-                $this->fluentcrm_data_handler();
+            } else if (isset($action) && 'handle_fluentcrm' === $action) {
+                $this->fluentcrm_handler();
             } else if (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
@@ -137,46 +137,33 @@ final class Api
      * @return void
      * @since 0.7.0
      */
-    public function fluentcrm_data_handler(): void
+    public function fluentcrm_handler(): void
     {
-        $sync_type = strtolower(sanitize_key($_GET['sync_type'] ?? ''));
-        $td_conversation = $_GET['td_conversation'] ?? [];
+        $syncType = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
 
-        if (array_key_exists('title', $td_conversation)) {
-            $td_conversation['title'] = substr($td_conversation['title'], 0, 180);
+        if ($syncType) {
+            $this->plugin->syncConversationWithFluentCrm($syncType, $_REQUEST['extra'] ?? []);
+        } else {
+            if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
+                $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
+            }
+
+            $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+
+            if (!$this->plugin->is_customer_exist()) {
+                $this->apiResponse->error(404, "Customer not found.");
+            }
+            $data = $this->plugin->prepare_fluentcrm_data();
+
+            $this->apiResponse->success(200, $data, 'Success');
         }
-
-        $td_deleted_conversation = $_GET['deleted_conversation'] ?? '';
-
-        if ($td_deleted_conversation) {
-            $td_conversation['id'] = $td_deleted_conversation;
-        }
-
-        if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
-            $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
-        }
-
-        $this->plugin->customer_email = sanitize_email($_REQUEST['email'] ?? '');
-        $this->plugin->create_new_contact = strtolower(sanitize_key($_GET['create_new_contact'] ?? false));
-        $this->plugin->contact_name = strtolower(sanitize_key($_GET['contact_name'] ?? ''));
-
-        if (!$this->plugin->is_customer_exist())
-            $this->apiResponse->error(404, "Customer not found.");
-
-        $data = $this->plugin->prepare_fluentcrm_data();
-
-        if ($sync_type) {
-            $this->plugin->td_conversation = $td_conversation;
-            $this->plugin->syncTypeHandler($sync_type);
-        }
-        $this->apiResponse->success(200, $data, 'Success');
-
     }
 
     /**
      * data handler for wp-post-sync
      *
      * @param $remote_query_string
+     *
      * @since 0.8.0
      */
     public function wp_postsync_data_handler($remote_query_string): void
