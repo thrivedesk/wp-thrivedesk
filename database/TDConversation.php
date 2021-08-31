@@ -2,9 +2,6 @@
 
 namespace ThriveDeskDBMigrations;
 
-global $td_db_version;
-$td_db_version = '1.0';
-
 class TDConversation
 {
     /**
@@ -14,12 +11,11 @@ class TDConversation
      */
     public static function migrate()
     {
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         global $wpdb;
-        global $td_db_version;
 
         $charset_collate = $wpdb->get_charset_collate();
-
-        $table_name = $wpdb->prefix . 'td_conversations';
+        $table_name      = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
         if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
             $sql = "CREATE TABLE $table_name (
@@ -31,12 +27,15 @@ class TDConversation
                 `status` varchar(20) NOT NULL,
                 `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `deleted_at` timestamp DEFAULT NULL,
                 PRIMARY KEY  (id)
             ) $charset_collate;";
 
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
-            add_option('td_db_version', $td_db_version);
+            add_option((string)OPTION_THRIVEDESK_DB_VERSION, THRIVEDESK_DB_VERSION);
+        } else if (get_option((string)OPTION_THRIVEDESK_DB_VERSION) < THRIVEDESK_DB_VERSION) {
+            maybe_add_column($table_name, "deleted_at", "ALTER TABLE $table_name ADD deleted_at timestamp DEFAULT NULL;");
+            update_option((string)OPTION_THRIVEDESK_DB_VERSION, THRIVEDESK_DB_VERSION);
         }
     }
 }
