@@ -55,10 +55,10 @@ class FluentCrmHooks
                 'get_support_tickets_thrivedesk',
                 function ($data, $subscriber) {
                     global $wpdb;
-                    $table_name = $wpdb->prefix . 'td_conversations';
+                    $table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
                     $td_conversations = $wpdb->get_results(
-                        "SELECT * FROM $table_name WHERE contact = '$subscriber->email'"
+                        "SELECT * FROM $table_name WHERE contact = '$subscriber->email' AND deleted_at IS NULL"
                     );
 
                     $formattedTickets = [];
@@ -66,13 +66,13 @@ class FluentCrmHooks
                     foreach ($td_conversations as $td_conversation) {
                         $conversation_url = THRIVEDESK_APP_URL . '/conversations/' . $td_conversation->id;
 
-                        $actionHTML = '<a target="_blank" href="' . $conversation_url . '">View conversation</a>';
+                        $actionHTML         = '<a target="_blank" href="' . $conversation_url . '">View conversation</a>';
                         $formattedTickets[] = [
-                            'id'            => '#' . $td_conversation->ticket_id,
-                            'title'         => $td_conversation->title,
-                            'status'        => $td_conversation->status,
-                            'Submitted at'  => date($td_conversation->created_at),
-                            'action'        => $actionHTML
+                            'id'           => '#' . $td_conversation->ticket_id,
+                            'title'        => $td_conversation->title,
+                            'status'       => $td_conversation->status,
+                            'Submitted at' => date($td_conversation->created_at),
+                            'action'       => $actionHTML
                         ];
                     }
 
