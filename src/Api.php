@@ -139,7 +139,8 @@ final class Api
      */
     public function fluentcrm_handler(): void
     {
-        $syncType = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
+        $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
+        $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
 
         if ($syncType) {
             $this->plugin->syncConversationWithFluentCrm($syncType, $_REQUEST['extra'] ?? []);
@@ -147,8 +148,6 @@ final class Api
             if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
                 $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
             }
-
-            $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
 
             if (!$this->plugin->is_customer_exist()) {
                 $this->apiResponse->error(404, "Customer not found.");

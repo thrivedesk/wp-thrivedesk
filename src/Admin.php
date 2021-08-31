@@ -17,7 +17,7 @@ final class Admin
     /**
      * Construct Admin class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -48,7 +48,7 @@ final class Admin
      *
      * @return object|Admin
      * @access public
-     * @since 0.0.1
+     * @since  0.0.1
      */
     public static function instance()
     {
@@ -63,7 +63,7 @@ final class Admin
      * Admin sub menu page
      *
      * @return void
-     * @since 0.0.1
+     * @since  0.0.1
      * @access public
      */
     public function admin_menu()
@@ -103,7 +103,7 @@ final class Admin
 
         $api_token = md5(time());
 
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options          = get_option('thrivedesk_options', []);
         $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
         $thrivedesk_options[$plugin] = [
             'api_token' => $api_token,
@@ -113,10 +113,10 @@ final class Admin
         update_option('thrivedesk_options', $thrivedesk_options);
 
         $hash = base64_encode(json_encode([
-            'store_url'     => get_bloginfo('url'),
-            'api_token'     => $api_token,
-            'cancel_url'    => admin_url('options-general.php?page=thrivedesk-setting&plugin='.$plugin.'&td-activated=false'),
-            'success_url'   => admin_url('options-general.php?page=thrivedesk-setting&plugin='.$plugin.'&td-activated=true')
+            'store_url'   => get_bloginfo('url'),
+            'api_token'   => $api_token,
+            'cancel_url'  => admin_url('options-general.php?page=thrivedesk-setting&plugin=' . $plugin . '&td-activated=false'),
+            'success_url' => admin_url('options-general.php?page=thrivedesk-setting&plugin=' . $plugin . '&td-activated=true')
         ]));
 
         echo THRIVEDESK_APP_URL . '/apps/' . $plugin . '?connect=' . $hash;
@@ -130,7 +130,7 @@ final class Admin
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options          = get_option('thrivedesk_options', []);
         $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
         $thrivedesk_options[$plugin] = [
             'api_token' => '',
@@ -148,7 +148,7 @@ final class Admin
      * Plugin activate.
      *
      * @return void
-     * @since 0.0.1
+     * @since  0.0.1
      * @access public
      */
     public function activate()
