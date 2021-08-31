@@ -18,6 +18,7 @@ final class FluentCRM extends Plugin
     public const TYPE_CREATE_CONVERSATION        = 'create_conversation';
     public const TYPE_DELETE_CONVERSATION        = 'delete_conversation';
     public const TYPE_FORCE_DELETE_CONVERSATION  = 'force_delete_conversation';
+    public const TYPE_RESTORE_CONVERSATION       = 'restore_conversation';
     public const TYPE_UPDATE_CONVERSATION_STATUS = 'update_conversation_status';
 
     public const DB_TABLE_TD_CONVERSATION = 'td_conversations';
@@ -59,9 +60,7 @@ final class FluentCRM extends Plugin
         }
 
         if (!$this->customer) {
-            if (!$this->create_new_contact) return false;
-
-            $this->createNewContact('');
+            return false;
         }
 
         return true;
@@ -215,20 +214,18 @@ final class FluentCRM extends Plugin
      *
      * @param string $contactName
      *
-     * @return void
+     * @return bool
      * @since 0.7.0
      */
-    public function createNewContact(string $contactName): void
+    public function createNewContact(string $contactName): bool
     {
         if (function_exists('FluentCrmApi')) {
             $contactApi = FluentCrmApi('contacts');
 
             $contact = $contactApi->getContact($this->customer_email);
 
-            error_log(print_r($contact, TRUE));
-
             if ($contact) {
-                return;
+                return true;
             }
 
             $first_name = '';
@@ -248,8 +245,9 @@ final class FluentCRM extends Plugin
                 'last_name'  => $last_name,
             ];
 
-            $contactApi->createOrUpdate($data);
+            return $contactApi->createOrUpdate($data) ? true : false;
         }
+        return false;
     }
 
 
@@ -268,36 +266,68 @@ final class FluentCRM extends Plugin
 
         switch ($syncType) {
             case self::TYPE_CREATE_CONVERSATION:
-                $wpdb->replace(
-                    $table_name,
-                    $extra['conversation'] ?? []
+                $extra['conversation'] && (
+                $wpdb->replace($table_name, $extra['conversation'])
                 );
 
-                $shouldCreateContact = $extra['create_new_contact'] ?? false;
-
-                if ($shouldCreateContact) {
-                    $this->createNewContact($extra['contact_name'] ?? '');
-                }
+                $extra['create_new_contact'] && (
+                $this->createNewContact($extra['contact_name'] ?? '')
+                );
                 break;
             case self::TYPE_DELETE_CONVERSATION:
+                if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
+                    foreach ($extra['conversation_ids'] as $conversationId) {
+                        $wpdb->update(
+                            $table_name,
+                            array(
+                                'deleted_at' => current_time('mysql'),
+                            ),
+                            array(
+                                'id' => $conversationId,
+                            )
+                        );
+                    }
+                }
                 break;
             case self::TYPE_FORCE_DELETE_CONVERSATION:
-                $wpdb->delete(
-                    $table_name,
-                    array(
-                        'id' => $this->td_conversation['id'] ?? '',
-                    )
-                );
+                if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
+                    foreach ($extra['conversation_ids'] as $conversationId) {
+                        $wpdb->delete(
+                            $table_name,
+                            array(
+                                'id' => $conversationId,
+                            )
+                        );
+                    }
+                }
+                break;
+            case self::TYPE_RESTORE_CONVERSATION:
+                if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
+                    foreach ($extra['conversation_ids'] as $conversationId) {
+                        $wpdb->update(
+                            $table_name,
+                            array(
+                                'deleted_at' => null,
+                            ),
+                            array(
+                                'id' => $conversationId,
+                            )
+                        );
+                    }
+                }
                 break;
             case self::TYPE_UPDATE_CONVERSATION_STATUS:
+                $extra['status'] && $extra['conversation_id'] && (
                 $wpdb->update(
                     $table_name,
                     array(
-                        'status' => $extra['status'] ?? '',
+                        'status'     => $extra['status'],
+                        'updated_at' => current_time('mysql'),
                     ),
                     array(
-                        'id' => $extra['conversation_id'] ?? '',
+                        'id' => $extra['conversation_id'],
                     )
+                )
                 );
                 break;
         }
