@@ -343,4 +343,20 @@ final class FluentCRM extends Plugin
     {
         return $this->get_customer();
     }
+
+    /**
+     * Truncate conversation subject and add ending character if necessary
+     *
+     * @param $title
+     *
+     * @return string
+     * @since 0.8.4
+     */
+    public function truncateString($title): string
+    {
+        if (mb_strwidth($title, 'UTF-8') > 180) {
+            return rtrim(mb_strimwidth($title, 0, 180, '', 'UTF-8')) . '...';
+        }
+        return $title;
+    }
 }
