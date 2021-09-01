@@ -4,6 +4,7 @@ $edd = ThriveDesk\Plugins\EDD::instance();
 $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 $fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
 $wppostsync = ThriveDesk\Plugins\WPPostSync::instance();
+$autonami = ThriveDesk\Plugins\Autonami::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
 $plugins = [
@@ -42,6 +43,15 @@ $plugins = [
         'category'      => 'WordPress',
         'installed'     => $wppostsync->is_plugin_active(),
         'connected'     => $wppostsync->get_plugin_data('connected'),
+    ],
+    [
+        'namespace'     => 'autonami',
+        'name'          => __('Autonami', 'thrivedesk'),
+        'description'   => __('Share customer data with ThriveDesk.'),
+        'image'         => 'autonami.png',
+        'category'      => 'CRM',
+        'installed'     => $autonami->is_plugin_active(),
+        'connected'     => $autonami->get_plugin_data('connected'),
     ],
     // [
     //     'name'      => __('SmartPay', 'thrivedesk'),
