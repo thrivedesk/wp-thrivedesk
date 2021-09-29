@@ -82,11 +82,14 @@ final class Admin
 
     public function admin_scripts($hook)
     {
+        $asset_file = include(THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/build/thrivedesk-autonami-tab.asset.php');
+
         if ('settings_page_thrivedesk-setting' == $hook) {
             wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.min.css', '', THRIVEDESK_VERSION);
         }
 
         wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+        wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/build/thrivedesk-autonami-tab.js', $asset_file['dependencies'], THRIVEDESK_VERSION);
 
         wp_localize_script(
             'thrivedesk-admin-script',

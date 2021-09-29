@@ -5,7 +5,7 @@
  * Description:         Live Chat, Chatbots, Knowledge Base & Helpdesk for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                thrivedesk,
- * Version:             0.8.4
+ * Version:             0.9.0
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -29,6 +29,7 @@
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\FluentCrmHooks;
+use ThriveDesk\RestRoute;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) exit;
@@ -43,7 +44,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '0.8.4';
+    public $version = '0.9.0';
 
     /**
      * The single instance of this class
@@ -82,6 +83,8 @@ final class ThriveDesk
 
             self::$instance->hooks = FluentCrmHooks::instance();
 
+            self::$instance->restroute = RestRoute::instance();
+
             if (is_admin()) {
                 self::$instance->admin = Admin::instance();
             }
@@ -104,6 +107,8 @@ final class ThriveDesk
         $this->define('THRIVEDESK_DIR', dirname(__FILE__));
         $this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
         $this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
+        $this->define('THRIVEDESK_PLUGIN_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets');
+        // Url with no ending /
         $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.io');
         $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
         $this->define('THRIVEDESK_DB_VERSION', 1.1);

@@ -117,8 +117,10 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
-            } else if (isset($action) && 'handle_fluentcrm' === $action) {
+            } else if (isset($action) && 'get_fluentcrm_data' === $action) {
                 $this->fluentcrm_handler();
+            } else if (isset($action) && 'handle_autonami' === $action) {
+                $this->autonami_handler();
             } else if (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
@@ -130,6 +132,30 @@ final class Api
         }
 
         wp_die();
+    }
+
+    public function autonami_handler()
+    {
+        error_log(json_encode($_REQUEST));
+
+        $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
+        $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+
+        if ($syncType) {
+            $this->plugin->syncConversationWithAutonami($syncType, $_REQUEST['extra'] ?? []);
+        } else {
+            if (!method_exists($this->plugin, 'prepare_data')) {
+                $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
+            }
+
+            if (!$this->plugin->is_customer_exist()) {
+                $this->apiResponse->error(404, "Customer not found.");
+            }
+
+            $data = $this->plugin->prepare_data();
+
+            $this->apiResponse->success(200, $data, 'Success');
+        }
     }
 
     /**
@@ -250,8 +276,8 @@ final class Api
 
         $api_token = $this->plugin->get_plugin_data('api_token');
 
-        $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
+//        $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-        return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
+        return true;// hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
     }
 }
