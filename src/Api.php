@@ -23,7 +23,7 @@ final class Api
     /**
      * Construct Api class.
      *
-     * @since  0.0.1
+     * @since 0.0.1
      * @access private
      */
     private function __construct()
@@ -124,6 +124,8 @@ final class Api
             } else if (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
+            } else if (isset($action) && 'get_woocommerce_order_status' === $action) {
+                $this->get_woocommerce_order_status();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -136,8 +138,6 @@ final class Api
 
     public function autonami_handler()
     {
-        error_log(json_encode($_REQUEST));
-
         $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
         $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
 
@@ -156,6 +156,30 @@ final class Api
 
             $this->apiResponse->success(200, $data, 'Success');
         }
+    }
+
+    /**
+     * get woocommerce order status
+     *
+     * @since 0.8.4
+     */
+    public function get_woocommerce_order_status()
+    {
+        $email = sanitize_email($_REQUEST['email'] ?? '');
+        $order_id = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
+
+        if (!method_exists($this->plugin, 'order_status')) {
+            $this->apiResponse->error(500, "Method 'order_status' not exist in plugin");
+        }
+
+        $this->plugin->customer_email = $email;
+
+        if (!$this->plugin->is_customer_exist())
+            $this->apiResponse->error(404, "Customer not found.");
+
+        $data = $this->plugin->order_status($order_id);
+
+        $this->apiResponse->success(200, $data, 'Success');
     }
 
     /**
@@ -276,8 +300,8 @@ final class Api
 
         $api_token = $this->plugin->get_plugin_data('api_token');
 
-//        $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
+        $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-        return true;// hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
+        return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
     }
 }
