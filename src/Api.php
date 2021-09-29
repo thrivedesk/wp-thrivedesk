@@ -121,6 +121,8 @@ final class Api
             } else if (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
+            } else if (isset($action) && 'get_woocommerce_order_status' === $action) {
+                $this->getWooCommerceOrderStatus();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -129,6 +131,30 @@ final class Api
         }
 
         wp_die();
+    }
+
+    /**
+     * get woocommerce order status
+     *
+     * @since 0.8.4
+     */
+    public function getWooCommerceOrderStatus()
+    {
+        $email = sanitize_email($_REQUEST['email'] ?? '');
+        $order_id = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
+
+        if (!method_exists($this->plugin, 'order_status')) {
+            $this->apiResponse->error(500, "Method 'order_status' not exist in plugin");
+        }
+
+        $this->plugin->customer_email = $email;
+
+        if (!$this->plugin->is_customer_exist())
+            $this->apiResponse->error(404, "Customer not found.");
+
+        $data = $this->plugin->order_status($order_id);
+
+        $this->apiResponse->success(200, $data, 'Success');
     }
 
     /**
