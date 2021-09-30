@@ -141,7 +141,7 @@ final class Api
         $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
         $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
         if ($syncType) {
-            $this->plugin->syncConversationWithAutonami($syncType, $_REQUEST['extra'] ?? []);
+            $this->plugin->sync_conversation_with_autonami($syncType, $_REQUEST['extra'] ?? []);
         } else {
             if (!method_exists($this->plugin, 'prepare_data')) {
                 $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
@@ -160,7 +160,7 @@ final class Api
     /**
      * get woocommerce order status
      *
-     * @since 0.8.4
+     * @since 0.9.0
      */
     public function get_woocommerce_order_status()
     {

@@ -11,12 +11,14 @@ class RestRoute
     /**
      * @var $instance
      * The single instance of this class
+     * @since 0.9.0
      */
     private static $instance;
 
     /** Main RestRoute
      *
      * @return RestRoute
+     * @since 0.9.0
      */
     public static function instance()
     {
@@ -31,6 +33,11 @@ class RestRoute
         add_action('rest_api_init', array($this, 'td_routes'));
     }
 
+    /**
+     * ThriveDesk conversation rest route
+     *
+     * @since 0.9.0
+     */
     public function td_routes()
     {
         register_rest_route('thrivedesk/v1', '/conversations/contact/(?P<id>\d+)', array(
@@ -39,6 +46,13 @@ class RestRoute
         ));
     }
 
+    /**
+     * @param $data
+     *
+     * @return array|\WP_REST_Response
+     *
+     * @since 0.9.0
+     */
     public function get_thrivedesk_conversations($data)
     {
         if (!isset($data['id'])) {
