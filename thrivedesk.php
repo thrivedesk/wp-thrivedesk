@@ -1,19 +1,19 @@
 <?php
 
 /**
- * Plugin Name: ThriveDesk
- * Description: Live Chat, Chatbots, Knowledge Base & Helpdesk for WordPress
- * Plugin URI:  https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Tags:        thrivedesk,
- * Version:     0.8.4
- * Author:      ThriveDesk
- * Author URI:  https://profiles.wordpress.org/thrivedesk/
- * Text Domain: thrivedesk
- * Domain Path: languages
- * 
- * Requires PHP      : 7.1.0
- * Requires at least : 4.9
- * Tested up to      : 5.7
+ * Plugin Name:         ThriveDesk
+ * Description:         Live Chat, Chatbots, Knowledge Base & Helpdesk for WordPress
+ * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
+ * Tags:                thrivedesk,
+ * Version:             0.9.0
+ * Author:              ThriveDesk
+ * Author URI:          https://profiles.wordpress.org/thrivedesk/
+ * Text Domain:         thrivedesk
+ * Domain Path:         languages
+ *
+ * Requires PHP:        7.1.0
+ * Requires at least:   4.9
+ * Tested up to:        5.7
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,10 @@
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\FluentCrmHooks;
+use ThriveDesk\RestRoute;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH'))  exit;
+if (!defined('ABSPATH')) exit;
 
 // Includes vendor files.
 require_once __DIR__ . '/vendor/autoload.php';
@@ -43,7 +44,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '0.8.4';
+    public $version = '0.9.0';
 
     /**
      * The single instance of this class
@@ -53,7 +54,7 @@ final class ThriveDesk
     /**
      * Construct ThriveDesk class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -68,9 +69,9 @@ final class ThriveDesk
      * Ensures that only one instance of ThriveDesk exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @since 0.0.1
      * @return object|ThriveDesk
      * @access public
+     * @since  0.0.1
      */
     public static function instance(): object
     {
@@ -81,6 +82,8 @@ final class ThriveDesk
             self::$instance->api = Api::instance();
 
             self::$instance->hooks = FluentCrmHooks::instance();
+
+            self::$instance->restroute = RestRoute::instance();
 
             if (is_admin()) {
                 self::$instance->admin = Admin::instance();
@@ -93,9 +96,9 @@ final class ThriveDesk
     /**
      * Define the necessary constants.
      *
-     * @since 0.0.1
-     * @access private
      * @return void
+     * @since  0.0.1
+     * @access private
      */
     private function define_constants(): void
     {
@@ -104,17 +107,22 @@ final class ThriveDesk
         $this->define('THRIVEDESK_DIR', dirname(__FILE__));
         $this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
         $this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
+        $this->define('THRIVEDESK_PLUGIN_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets');
         // Url with no ending /
         $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.io');
+        $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
+        $this->define('THRIVEDESK_DB_VERSION', 1.1);
+        $this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');
     }
 
     /**
      * Define constant if not already defined
      *
-     * @since 0.0.1
-     * @param string $name
+     * @param string      $name
      * @param string|bool $value
+     *
      * @return void
+     * @since 0.0.1
      */
     private function define($name, $value)
     {
@@ -129,4 +137,5 @@ function ThriveDesk()
 {
     return ThriveDesk::instance();
 }
+
 ThriveDesk();

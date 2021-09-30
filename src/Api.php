@@ -23,7 +23,7 @@ final class Api
     /**
      * Construct Api class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -42,7 +42,7 @@ final class Api
      *
      * @return object|Api
      * @access public
-     * @since 0.0.1
+     * @since  0.0.1
      */
     public static function instance(): object
     {
@@ -62,10 +62,11 @@ final class Api
     private function _available_plugins(): array
     {
         return [
-            'edd'           => 'EDD',
-            'woocommerce'   => 'WooCommerce',
-            'fluentcrm'     => 'FluentCRM',
-            'wppostsync'    => 'WPPostSync'
+            'edd'         => 'EDD',
+            'woocommerce' => 'WooCommerce',
+            'fluentcrm'   => 'FluentCRM',
+            'wppostsync'  => 'WPPostSync',
+            'autonami'    => 'Autonami'
         ];
     }
 
@@ -91,7 +92,7 @@ final class Api
                 $this->apiResponse->error(401, 'Plugin is invalid or not available now.');
             }
 
-            $plugin_name = $this->_available_plugins()[$plugin] ?? 'EDD';
+            $plugin_name       = $this->_available_plugins()[$plugin] ?? 'EDD';
             $plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
 
             if (!class_exists($plugin_class_name)) {
@@ -117,12 +118,14 @@ final class Api
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
             } else if (isset($action) && 'get_fluentcrm_data' === $action) {
-                $this->fluentcrm_data_handler();
+                $this->fluentcrm_handler();
+            } else if (isset($action) && 'handle_autonami' === $action) {
+                $this->autonami_handler();
             } else if (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
             } else if (isset($action) && 'get_woocommerce_order_status' === $action) {
-                $this->getWooCommerceOrderStatus();
+                $this->get_woocommerce_order_status();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -134,13 +137,38 @@ final class Api
     }
 
     /**
+     * handler autonami action
+     */
+    public function autonami_handler()
+    {
+        $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
+        $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+
+        if ($syncType) {
+            $this->plugin->sync_conversation_with_autonami($syncType, $_REQUEST['extra'] ?? []);
+        } else {
+            if (!method_exists($this->plugin, 'prepare_data')) {
+                $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
+            }
+
+            if (!$this->plugin->is_customer_exist()) {
+                $this->apiResponse->error(404, "Customer not found.");
+            }
+
+            $data = $this->plugin->prepare_data();
+
+            $this->apiResponse->success(200, $data, 'Success');
+        }
+    }
+
+    /**
      * get woocommerce order status
      *
-     * @since 0.8.4
+     * @since 0.9.0
      */
-    public function getWooCommerceOrderStatus()
+    public function get_woocommerce_order_status()
     {
-        $email = sanitize_email($_REQUEST['email'] ?? '');
+        $email    = sanitize_email($_REQUEST['email'] ?? '');
         $order_id = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
 
         if (!method_exists($this->plugin, 'order_status')) {
@@ -163,46 +191,32 @@ final class Api
      * @return void
      * @since 0.7.0
      */
-    public function fluentcrm_data_handler(): void
+    public function fluentcrm_handler(): void
     {
-        $sync_type = strtolower(sanitize_key($_GET['sync_type'] ?? ''));
-        $td_conversation = $_GET['td_conversation'] ?? [];
-
-        if (array_key_exists('title', $td_conversation)) {
-            $td_conversation['title'] = substr($td_conversation['title'], 0, 180);
-        }
-
-        $td_deleted_conversation = $_GET['deleted_conversation'] ?? '';
-
-        if ($td_deleted_conversation) {
-            $td_conversation['id'] = $td_deleted_conversation;
-        }
-
-        if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
-            $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
-        }
-
+        $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
         $this->plugin->customer_email = sanitize_email($_REQUEST['email'] ?? '');
-        $this->plugin->create_new_contact = strtolower(sanitize_key($_GET['create_new_contact'] ?? false));
-        $this->plugin->contact_name = strtolower(sanitize_key($_GET['contact_name'] ?? ''));
 
-        if (!$this->plugin->is_customer_exist())
-            $this->apiResponse->error(404, "Customer not found.");
+        if ($syncType) {
+            $this->plugin->sync_conversation_with_fluentcrm($syncType, $_REQUEST['extra'] ?? []);
+        } else {
+            if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
+                $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
+            }
 
-        $data = $this->plugin->prepare_fluentcrm_data();
+            if (!$this->plugin->is_customer_exist()) {
+                $this->apiResponse->error(404, "Customer not found.");
+            }
+            $data = $this->plugin->prepare_fluentcrm_data();
 
-        if ($sync_type) {
-            $this->plugin->td_conversation = $td_conversation;
-            $this->plugin->syncTypeHandler($sync_type);
+            $this->apiResponse->success(200, $data, 'Success');
         }
-        $this->apiResponse->success(200, $data, 'Success');
-
     }
 
     /**
      * data handler for wp-post-sync
      *
      * @param $remote_query_string
+     *
      * @since 0.8.0
      */
     public function wp_postsync_data_handler($remote_query_string): void
@@ -269,21 +283,20 @@ final class Api
      */
     private function verify_token(): bool
     {
-        $payload = [];
-        foreach ($_REQUEST as $key => $value) {
-            if (is_string($value)) {
-                switch (strtolower($value)) {
-                    case 'true':
-                    case 'false':
-                    case '0':
-                    case '1':
-                        $payload[$key] = (bool)$value;
-                        break;
-                    default:
-                        $payload[$key] = $value;
+        $payload = $_REQUEST;
+
+        if (isset($payload['extra'])) {
+            foreach ($payload['extra'] as $key => $value) {
+                if (!is_string($value)) {
+                    continue;
                 }
-            } else {
-                $payload[$key] = $value;
+                switch (strtolower($value)) {
+                    case "true":
+                    case "false":
+                    case "0":
+                    case "1":
+                        $payload['extra'][$key] = (bool)$value;
+                }
             }
         }
 
