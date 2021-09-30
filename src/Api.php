@@ -136,10 +136,14 @@ final class Api
         wp_die();
     }
 
+    /**
+     * handler autonami action
+     */
     public function autonami_handler()
     {
         $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
         $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+
         if ($syncType) {
             $this->plugin->sync_conversation_with_autonami($syncType, $_REQUEST['extra'] ?? []);
         } else {
