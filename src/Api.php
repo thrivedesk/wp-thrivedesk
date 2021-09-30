@@ -23,7 +23,7 @@ final class Api
     /**
      * Construct Api class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -140,7 +140,6 @@ final class Api
     {
         $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
         $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
-
         if ($syncType) {
             $this->plugin->syncConversationWithAutonami($syncType, $_REQUEST['extra'] ?? []);
         } else {
@@ -165,7 +164,7 @@ final class Api
      */
     public function get_woocommerce_order_status()
     {
-        $email = sanitize_email($_REQUEST['email'] ?? '');
+        $email    = sanitize_email($_REQUEST['email'] ?? '');
         $order_id = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
 
         if (!method_exists($this->plugin, 'order_status')) {
@@ -191,10 +190,10 @@ final class Api
     public function fluentcrm_handler(): void
     {
         $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
-        $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+        $this->plugin->customer_email = sanitize_email($_REQUEST['email'] ?? '');
 
         if ($syncType) {
-            $this->plugin->syncConversationWithFluentCrm($syncType, $_REQUEST['extra'] ?? []);
+            $this->plugin->sync_conversation_with_fluentcrm($syncType, $_REQUEST['extra'] ?? []);
         } else {
             if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
                 $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
@@ -280,21 +279,20 @@ final class Api
      */
     private function verify_token(): bool
     {
-        $payload = [];
-        foreach ($_REQUEST as $key => $value) {
-            if (is_string($value)) {
-                switch (strtolower($value)) {
-                    case 'true':
-                    case 'false':
-                    case '0':
-                    case '1':
-                        $payload[$key] = (bool)$value;
-                        break;
-                    default:
-                        $payload[$key] = $value;
+        $payload = $_REQUEST;
+
+        if (isset($payload['extra'])) {
+            foreach ($payload['extra'] as $key => $value) {
+                if (!is_string($value)) {
+                    continue;
                 }
-            } else {
-                $payload[$key] = $value;
+                switch (strtolower($value)) {
+                    case "true":
+                    case "false":
+                    case "0":
+                    case "1":
+                        $payload['extra'][$key] = (bool)$value;
+                }
             }
         }
 

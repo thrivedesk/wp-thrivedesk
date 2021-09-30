@@ -217,7 +217,7 @@ final class FluentCRM extends Plugin
      * @return bool
      * @since 0.7.0
      */
-    public function createNewContact(string $contactName): bool
+    public function create_new_contact(string $contactName): bool
     {
         if (function_exists('FluentCrmApi')) {
             $contactApi = FluentCrmApi('contacts');
@@ -259,7 +259,7 @@ final class FluentCRM extends Plugin
      *
      * @since 0.8.4
      */
-    public function syncConversationWithFluentCrm(string $syncType, array $extra = []): void
+    public function sync_conversation_with_fluentcrm(string $syncType, array $extra = []): void
     {
         global $wpdb;
         $table_name = $wpdb->prefix . self::DB_TABLE_TD_CONVERSATION;
@@ -271,7 +271,7 @@ final class FluentCRM extends Plugin
                 );
 
                 $extra['create_new_contact'] && (
-                $this->createNewContact($extra['contact_name'] ?? '')
+                $this->create_new_contact($extra['contact_name'] ?? '')
                 );
                 break;
             case self::TYPE_DELETE_CONVERSATION:
@@ -283,7 +283,8 @@ final class FluentCRM extends Plugin
                                 'deleted_at' => current_time('mysql'),
                             ),
                             array(
-                                'id' => $conversationId,
+                                'id'       => $conversationId,
+                                'inbox_id' => $extra['inbox_id'] ?? '',
                             )
                         );
                     }
@@ -295,7 +296,8 @@ final class FluentCRM extends Plugin
                         $wpdb->delete(
                             $table_name,
                             array(
-                                'id' => $conversationId,
+                                'id'       => $conversationId,
+                                'inbox_id' => $extra['inbox_id'] ?? '',
                             )
                         );
                     }
@@ -310,7 +312,8 @@ final class FluentCRM extends Plugin
                                 'deleted_at' => null,
                             ),
                             array(
-                                'id' => $conversationId,
+                                'id'       => $conversationId,
+                                'inbox_id' => $extra['inbox_id'] ?? '',
                             )
                         );
                     }
@@ -325,7 +328,8 @@ final class FluentCRM extends Plugin
                         'updated_at' => current_time('mysql'),
                     ),
                     array(
-                        'id' => $extra['conversation_id'],
+                        'id'       => $extra['conversation_id'],
+                        'inbox_id' => $extra['inbox_id'],
                     )
                 )
                 );
@@ -352,7 +356,7 @@ final class FluentCRM extends Plugin
      * @return string
      * @since 0.8.4
      */
-    public function truncateString($title): string
+    public function truncate_string($title): string
     {
         if (mb_strwidth($title, 'UTF-8') > 180) {
             return rtrim(mb_strimwidth($title, 0, 180, '', 'UTF-8')) . '...';
