@@ -69,7 +69,7 @@ class RestRoute
         }
 
         $column = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s ",
+            "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s",
             $table_name,
             'deleted_at'
         ));
