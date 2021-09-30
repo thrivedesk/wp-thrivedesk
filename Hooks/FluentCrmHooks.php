@@ -57,6 +57,22 @@ class FluentCrmHooks
                     global $wpdb;
                     $table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
+                    $row = $wpdb->get_var("SHOW TABLES LIKE '$table_name'");
+
+                    if (!$row) {
+                        return [];
+                    }
+
+                    $column = $wpdb->get_results($wpdb->prepare(
+                        "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s ",
+                        $table_name,
+                        'deleted_at'
+                    ));
+
+                    if (!$column) {
+                        return [];
+                    }
+
                     $td_conversations = $wpdb->get_results(
                         "SELECT * FROM $table_name WHERE contact = '$subscriber->email' AND deleted_at IS NULL"
                     );
