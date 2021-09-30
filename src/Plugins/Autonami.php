@@ -146,17 +146,15 @@ final class Autonami extends Plugin
      * @return array
      * @since 0.9.0
      */
-    public function get_customer_tags(): array
+    public function get_customer_tags($crm_contact): array
     {
-        if (!class_exists('BWFCRM_Contact')) {
-            return [];
+        $tags = [];
+
+        if (!class_exists('BWFCRM_Lists')) {
+            return $tags;
         }
 
-        /** Passing Contact object as argument */
-        $crm_contact = new \BWFCRM_Contact($this->customer);
-
         $tag_object = \BWFCRM_Tag::get_tags($crm_contact->get_tags());
-        $tags       = [];
 
         foreach ($tag_object as $tag) {
             array_push($tags, $tag['name']);
@@ -170,17 +168,15 @@ final class Autonami extends Plugin
      * @return array
      * @since 0.9.0
      */
-    public function get_customer_lists(): array
+    public function get_customer_lists($crm_contact): array
     {
-        if (!class_exists('BWFCRM_Contact')) {
-            return [];
+        $lists = [];
+
+        if (!class_exists('BWFCRM_Lists')) {
+            return $lists;
         }
 
-        /** Passing Contact object as argument */
-        $crm_contact = new \BWFCRM_Contact($this->customer);
-
         $list_object = \BWFCRM_Lists::get_lists($crm_contact->get_lists());
-        $lists       = [];
 
         foreach ($list_object as $list) {
             array_push($lists, $list['name']);
@@ -196,23 +192,49 @@ final class Autonami extends Plugin
      */
     public function get_customer(): array
     {
+        $tags           = [];
+        $lists          = [];
+        $date_of_birth  = '';
+        $address_line_1 = '';
+        $address_line_2 = '';
+
+        if (class_exists('BWFCRM_Contact')) {
+            /** Passing Contact object as argument */
+            $crm_contact = new \BWFCRM_Contact($this->customer);
+
+            $crm_contact->get_dob();
+
+            $tags = $this->get_customer_tags($crm_contact);
+
+            $lists = $this->get_customer_lists($crm_contact);
+
+            $date_of_birth = $crm_contact->get_dob() ?? '';
+
+            $address_line_1 = $crm_contact->get_address_1() ?? '';
+
+            $address_line_2 = $crm_contact->get_address_2() ?? '';
+        }
+
         return [
-            'id'            => abs($this->customer->get_id()) ?? 0,
-            'wpid'          => $this->customer->get_wpid(),
-            'email'         => $this->customer->get_email() ?? '',
-            'first_name'    => $this->customer->get_f_name() ?? '',
-            'last_name'     => $this->customer->get_l_name() ?? '',
-            'phone'         => $this->customer->get_contact_no() ?? '',
-            'country'       => $this->customer->get_country() ?? '',
-            'state'         => $this->customer->get_state() ?? '',
-            'timezone'      => $this->customer->get_timezone() ?? '',
-            'created_at'    => !empty($this->customer->get_creation_date()) ? get_date_from_gmt($this->customer->get_creation_date()) : '',
-            'last_modified' => !empty($this->customer->get_last_modified()) ? get_date_from_gmt($this->customer->get_last_modified()) : '',
-            'source'        => $this->customer->get_source(),
-            'contact_type'  => $this->customer->get_type(),
-            'status'        => $this->customer->get_status(),
-            'tags'          => $this->get_customer_tags(),
-            'lists'         => $this->get_customer_lists(),
+            'id'             => abs($this->customer->get_id()) ?? 0,
+            'wpid'           => $this->customer->get_wpid(),
+            'email'          => $this->customer->get_email() ?? '',
+            'first_name'     => $this->customer->get_f_name() ?? '',
+            'last_name'      => $this->customer->get_l_name() ?? '',
+            'phone'          => $this->customer->get_contact_no() ?? '',
+            'address_line_1' => $address_line_1,
+            'address_line_2' => $address_line_2,
+            'country'        => $this->customer->get_country() ?? '',
+            'state'          => $this->customer->get_state() ?? '',
+            'timezone'       => $this->customer->get_timezone() ?? '',
+            'created_at'     => !empty($this->customer->get_creation_date()) ? get_date_from_gmt($this->customer->get_creation_date()) : '',
+            'last_modified'  => !empty($this->customer->get_last_modified()) ? get_date_from_gmt($this->customer->get_last_modified()) : '',
+            'source'         => $this->customer->get_source(),
+            'contact_type'   => $this->customer->get_type(),
+            'date_of_birth'  => $date_of_birth ? date('d M Y', strtotime($date_of_birth)) : '',
+            'status'         => $this->customer->get_status(),
+            'tags'           => $lists,
+            'lists'          => $tags,
         ];
     }
 
