@@ -162,6 +162,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.9.1 =
+- Fixed database migration bug
+
 = 0.9.0 =
 - NEW Autonami integration
 - NEW WooCommerce order status check functionality

@@ -27,14 +27,14 @@ class TDConversation
                 `status` varchar(20) NOT NULL,
                 `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                `deleted_at` timestamp DEFAULT NULL,
+                `deleted_at` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY  (id)
             ) $charset_collate;";
 
             dbDelta($sql);
             add_option((string)OPTION_THRIVEDESK_DB_VERSION, THRIVEDESK_DB_VERSION);
         } else if (get_option((string)OPTION_THRIVEDESK_DB_VERSION) < THRIVEDESK_DB_VERSION) {
-            maybe_add_column($table_name, "deleted_at", "ALTER TABLE $table_name ADD deleted_at timestamp DEFAULT NULL;");
+            maybe_add_column($table_name, "deleted_at", "ALTER TABLE $table_name ADD deleted_at timestamp NULL DEFAULT NULL;");
             update_option((string)OPTION_THRIVEDESK_DB_VERSION, THRIVEDESK_DB_VERSION);
         }
     }
