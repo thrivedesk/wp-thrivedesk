@@ -162,6 +162,10 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.9.2 =
+- Fixed rest route warning issue
+- Improved rest route api call
+
 = 0.9.1 =
 - Fixed database migration bug
 

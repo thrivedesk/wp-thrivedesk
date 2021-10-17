@@ -41,8 +41,11 @@ class RestRoute
     public function td_routes()
     {
         register_rest_route('thrivedesk/v1', '/conversations/contact/(?P<id>\d+)', array(
-            'methods'  => 'get',
-            'callback' => array($this, 'get_thrivedesk_conversations')
+            'methods'             => 'get',
+            'callback'            => array($this, 'get_thrivedesk_conversations'),
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            }
         ));
     }
 
