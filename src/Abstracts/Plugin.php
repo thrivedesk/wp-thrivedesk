@@ -167,14 +167,13 @@ abstract class Plugin
 
         $avg_order = number_format((float)$avg_order, 2, '.', '');
 
-        $data = [
+        return [
+            "customer"        => $customer ?? [],
             "customer_since"  => $customer['registered_at'] ?? '',
             "lifetime_order"  => $this->get_formated_amount($lifetime_order),
             "this_year_order" => $this->get_formated_amount($this_year_order),
             "avg_order"       => $this->get_formated_amount($avg_order),
             "orders"          => $orders
         ];
-
-        return $data;
     }
 }
