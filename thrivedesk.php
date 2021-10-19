@@ -5,7 +5,7 @@
  * Description:         Live Chat, Chatbots, Knowledge Base & Helpdesk for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                thrivedesk,
- * Version:             0.9.2
+ * Version:             0.9.3
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -44,7 +44,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '0.9.2';
+    public $version = '0.9.3';
 
     /**
      * The single instance of this class
