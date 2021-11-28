@@ -243,8 +243,8 @@ final class Autonami extends Plugin
             'contact_type'   => $this->customer->get_type(),
             'date_of_birth'  => $date_of_birth ? date('d M Y', strtotime($date_of_birth)) : '',
             'status'         => $this->customer->get_status(),
-            'tags'           => $lists,
-            'lists'          => $tags,
+            'lists'          => $lists,
+            'tags'           => $tags,
         ];
     }
 
