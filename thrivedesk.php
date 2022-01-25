@@ -2,9 +2,9 @@
 
 /**
  * Plugin Name:         ThriveDesk
- * Description:         Live Chat, Chatbots, Knowledge Base & Helpdesk for WordPress
+ * Description:         Live Chat, Helpdesk & Community plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Tags:                thrivedesk,
+ * Tags:                live chat, free live chat, community, helpdesk, thrivedesk
  * Version:             0.9.4
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
@@ -13,7 +13,7 @@
  *
  * Requires PHP:        7.1.0
  * Requires at least:   4.9
- * Tested up to:        5.7
+ * Tested up to:        5.9
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
