@@ -8,6 +8,7 @@ use ThriveDesk\Plugin;
 if (!defined('ABSPATH')) {
     exit;
 }
+
 final class EDD extends Plugin
 {
     /**
@@ -18,7 +19,7 @@ final class EDD extends Plugin
     /**
      * Construct EDD class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -32,9 +33,9 @@ final class EDD extends Plugin
      * Ensures that only one instance of EDD exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @since 0.0.1
      * @return object|EDD
      * @access public
+     * @since  0.0.1
      */
     public static function instance()
     {
@@ -66,8 +67,9 @@ final class EDD extends Plugin
     {
         if (!$this->customer_email) return false;
 
-        if (!$this->customer)
+        if (!$this->customer && class_exists('EDD_Customer')) {
             $this->customer = new \EDD_Customer($this->customer_email);
+        }
 
         if (!$this->customer->id) return false;
 
@@ -93,21 +95,26 @@ final class EDD extends Plugin
     {
         if (!$this->customer_email) return [];
 
-        if (!$this->customer)
+        if (!$this->customer && class_exists('EDD_Customer')) {
             $this->customer = new \EDD_Customer($this->customer_email);
+        }
 
         if (!$this->customer->id) return [];
 
         return [
-            'name' => $this->customer->name ?? '',
+            'customer_id'   => $this->customer->id ?? '',
+            'user_id'       => $this->customer->user_id ?? '',
+            'email'         => $this->customer->email ?? '',
+            'name'          => $this->customer->name ?? '',
             'registered_at' => date('d M Y', strtotime($this->customer->date_created)) ?? ''
         ];
     }
 
     /**
-     * Get the formated amount
+     * Get the formatted amount
      *
      * @param float $amount
+     *
      * @return string
      */
     public function get_formated_amount(float $amount): string
@@ -132,7 +139,7 @@ final class EDD extends Plugin
 
             array_push($orders, [
                 'order_id'        => $order->number,
-                'amount'          => (float) $order->total,
+                'amount'          => (float)$order->total,
                 'amount_formated' => $this->get_formated_amount($order->total),
                 'date'            => date('d M Y', strtotime($order->date)),
                 'order_status'    => $order->status_nicename,
@@ -146,16 +153,17 @@ final class EDD extends Plugin
     /**
      * Get order items
      *
-     * @since 0.0.5
-     * 
      * @param object $order
+     *
      * @return array
+     * @since 0.0.5
+     *
      */
     private function get_order_items($order): array
     {
         return array_map(function ($download) use ($order) {
             $edd_download = edd_get_download($download['id']);
-            $option_name = edd_get_price_option_name($download['id'], $download['options']['price_id']);
+            $option_name  = edd_get_price_option_name($download['id'], $download['options']['price_id']);
 
             $download_item = [
                 'title'       => $edd_download->get_name(),
@@ -163,8 +171,7 @@ final class EDD extends Plugin
             ];
 
             if (function_exists('edd_software_licensing')) {
-                $license = edd_software_licensing()->get_license_by_purchase($order->number, $download['id']) ?? [];
-
+                $license       = edd_software_licensing()->get_license_by_purchase($order->number, $download['id']) ?? [];
                 $download_item = array_merge($download_item, [
                     'license' => [
                         'key'              => $license->license_key ?? '',
@@ -173,7 +180,7 @@ final class EDD extends Plugin
                         'activation_count' => $license->activation_count ?? 0,
                         'date_created'     => $license->date_created ?? '',
                         'expiration'       => $license->expiration ?? '',
-                        'is_lifetime'      => $license->is_lifetime,
+                        'is_lifetime'      => $license->is_lifetime ?? '',
                         'status'           => $license->status ?? '',
                     ]
                 ]);
@@ -196,7 +203,7 @@ final class EDD extends Plugin
 
     public function connect()
     {
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options        = get_option('thrivedesk_options', []);
         $thrivedesk_options['edd'] = $thrivedesk_options['edd'] ?? [];
 
         $thrivedesk_options['edd']['connected'] = true;
@@ -206,7 +213,7 @@ final class EDD extends Plugin
 
     public function disconnect()
     {
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options        = get_option('thrivedesk_options', []);
         $thrivedesk_options['edd'] = $thrivedesk_options['edd'] ?? [];
 
         $thrivedesk_options['edd'] = [

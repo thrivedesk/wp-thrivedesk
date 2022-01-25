@@ -23,7 +23,7 @@ final class Api
     /**
      * Construct Api class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
@@ -40,9 +40,9 @@ final class Api
      * Ensures that only one instance of Api exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @since 0.0.1
      * @return object|Api
      * @access public
+     * @since  0.0.1
      */
     public static function instance(): object
     {
@@ -54,23 +54,27 @@ final class Api
     }
 
     /**
-     * Available pulings
+     * Available plugins
      *
-     * @since 0.0.1
      * @return array
+     * @since 0.0.1
      */
     private function _available_plugins(): array
     {
         return [
-            'edd' => 'EDD',
+            'edd'         => 'EDD',
+            'woocommerce' => 'WooCommerce',
+            'fluentcrm'   => 'FluentCRM',
+            'wppostsync'  => 'WPPostSync',
+            'autonami'    => 'Autonami'
         ];
     }
 
     /**
      * Api listener
      *
-     * @since 0.0.1
      * @return void
+     * @since 0.0.1
      */
     public function api_listener(): void
     {
@@ -88,8 +92,8 @@ final class Api
                 $this->apiResponse->error(401, 'Plugin is invalid or not available now.');
             }
 
-            $plugin_name = $this->_available_plugins()[$plugin] ?? 'EDD';
-            $plugin_class_name = 'ThriveDesk\\Plugins\\' .  $plugin_name;
+            $plugin_name       = $this->_available_plugins()[$plugin] ?? 'EDD';
+            $plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
 
             if (!class_exists($plugin_class_name)) {
                 $this->apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
@@ -113,6 +117,15 @@ final class Api
                 $this->connect_action_handler();
             } else if (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
+            } else if (isset($action) && 'get_fluentcrm_data' === $action) {
+                $this->fluentcrm_handler();
+            } else if (isset($action) && 'handle_autonami' === $action) {
+                $this->autonami_handler();
+            } else if (isset($action) && 'get_wppostsync_data' === $action) {
+                $remote_query_string = strtolower($_GET['query'] ?? '');
+                $this->wp_postsync_data_handler($remote_query_string);
+            } else if (isset($action) && 'get_woocommerce_order_status' === $action) {
+                $this->get_woocommerce_order_status();
             } else {
                 $this->plugin_data_action_handler();
             }
@@ -124,10 +137,99 @@ final class Api
     }
 
     /**
-     * Handle plugin connect request
-     * 
-     * @since 0.0.4
+     * handler autonami action
+     */
+    public function autonami_handler()
+    {
+        $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
+        $this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+
+        if ($syncType) {
+            $this->plugin->sync_conversation_with_autonami($syncType, $_REQUEST['extra'] ?? []);
+        } else {
+            if (!method_exists($this->plugin, 'prepare_data')) {
+                $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
+            }
+
+            if (!$this->plugin->is_customer_exist()) {
+                $this->apiResponse->error(404, "Customer not found.");
+            }
+
+            $data = $this->plugin->prepare_data();
+
+            $this->apiResponse->success(200, $data, 'Success');
+        }
+    }
+
+    /**
+     * get woocommerce order status
+     *
+     * @since 0.9.0
+     */
+    public function get_woocommerce_order_status()
+    {
+        $email    = sanitize_email($_REQUEST['email'] ?? '');
+        $order_id = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
+
+        if (!method_exists($this->plugin, 'order_status')) {
+            $this->apiResponse->error(500, "Method 'order_status' not exist in plugin");
+        }
+
+        $this->plugin->customer_email = $email;
+
+        if (!$this->plugin->is_customer_exist())
+            $this->apiResponse->error(404, "Customer not found.");
+
+        $data = $this->plugin->order_status($order_id);
+
+        $this->apiResponse->success(200, $data, 'Success');
+    }
+
+    /**
+     * data handler for FluentCRM
+     *
      * @return void
+     * @since 0.7.0
+     */
+    public function fluentcrm_handler(): void
+    {
+        $syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
+        $this->plugin->customer_email = sanitize_email($_REQUEST['email'] ?? '');
+
+        if ($syncType) {
+            $this->plugin->sync_conversation_with_fluentcrm($syncType, $_REQUEST['extra'] ?? []);
+        } else {
+            if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
+                $this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
+            }
+
+            if (!$this->plugin->is_customer_exist()) {
+                $this->apiResponse->error(404, "Customer not found.");
+            }
+            $data = $this->plugin->prepare_fluentcrm_data();
+
+            $this->apiResponse->success(200, $data, 'Success');
+        }
+    }
+
+    /**
+     * data handler for wp-post-sync
+     *
+     * @param $remote_query_string
+     *
+     * @since 0.8.0
+     */
+    public function wp_postsync_data_handler($remote_query_string): void
+    {
+        $search_data = $this->plugin->get_post_search_result($remote_query_string);
+        $this->apiResponse->success(200, $search_data, 'Success');
+    }
+
+    /**
+     * Handle plugin connect request
+     *
+     * @return void
+     * @since 0.0.4
      */
     public function connect_action_handler(): void
     {
@@ -138,9 +240,9 @@ final class Api
 
     /**
      * Handle plugin disconnect request
-     * 
-     * @since 0.0.4
+     *
      * @return void
+     * @since 0.0.4
      */
     public function disconnect_action_handler(): void
     {
@@ -151,9 +253,9 @@ final class Api
 
     /**
      * Handle plugin data request
-     * 
-     * @since 0.0.4
+     *
      * @return void
+     * @since 0.0.4
      */
     public function plugin_data_action_handler()
     {
@@ -176,14 +278,32 @@ final class Api
     /**
      * Verify api request token
      *
-     * @since 0.0.4
      * @return boolean
+     * @since 0.0.4
      */
     private function verify_token(): bool
     {
-        $api_token = $this->plugin->get_plugin_data('api_token');
-        $signature  = $_SERVER['HTTP_X_TD_SIGNATURE'];
+        $payload = $_REQUEST;
 
-        return hash_equals(hash_hmac('SHA1', json_encode($_REQUEST), $api_token), $signature);
+        if (isset($payload['extra'])) {
+            foreach ($payload['extra'] as $key => $value) {
+                if (!is_string($value)) {
+                    continue;
+                }
+                switch (strtolower($value)) {
+                    case "true":
+                    case "false":
+                    case "0":
+                    case "1":
+                        $payload['extra'][$key] = (bool)$value;
+                }
+            }
+        }
+
+        $api_token = $this->plugin->get_plugin_data('api_token');
+
+        $signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
+
+        return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
     }
 }

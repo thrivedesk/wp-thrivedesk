@@ -55,6 +55,7 @@ abstract class Plugin
      * Get plugin data
      *
      * @param string $key
+     *
      * @return mixed
      */
     abstract public function get_plugin_data(string $key = '');
@@ -77,6 +78,7 @@ abstract class Plugin
      * Get the formated amount
      *
      * @param float $amount
+     *
      * @return string
      */
     public function get_formated_amount(float $amount): string
@@ -94,6 +96,8 @@ abstract class Plugin
     /**
      * Get the accepted orders only
      *
+     * @param array $orders
+     *
      * @return array
      */
     public function filter_accepted_orders(array $orders): array
@@ -108,6 +112,8 @@ abstract class Plugin
     /**
      * Get the lifetime order value of the customer
      *
+     * @param array $orders
+     *
      * @return float
      */
     public function get_lifetime_order(array $orders): float
@@ -120,6 +126,8 @@ abstract class Plugin
 
     /**
      * Get this year order value of the customer
+     *
+     * @param array $orders
      *
      * @return float
      */
@@ -157,14 +165,15 @@ abstract class Plugin
 
         $avg_order = $lifetime_order ? ($lifetime_order / count($accepted_orders)) : 0;
 
-        $data = [
-            "customer_since" => $customer['registered_at'] ?? '',
-            "lifetime_order" => $this->get_formated_amount($lifetime_order),
-            "this_year_order" => $this->get_formated_amount($this_year_order),
-            "avg_order" => $this->get_formated_amount($avg_order),
-            "orders" => $orders
-        ];
+        $avg_order = number_format((float)$avg_order, 2, '.', '');
 
-        return $data;
+        return [
+            "customer"        => $customer ?? [],
+            "customer_since"  => $customer['registered_at'] ?? '',
+            "lifetime_order"  => $this->get_formated_amount($lifetime_order),
+            "this_year_order" => $this->get_formated_amount($this_year_order),
+            "avg_order"       => $this->get_formated_amount($avg_order),
+            "orders"          => $orders
+        ];
     }
 }

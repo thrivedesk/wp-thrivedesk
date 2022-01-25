@@ -17,11 +17,13 @@ final class Admin
     /**
      * Construct Admin class.
      *
-     * @since 0.0.1
+     * @since  0.0.1
      * @access private
      */
     private function __construct()
     {
+        add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
+
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
@@ -32,15 +34,21 @@ final class Admin
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
     }
 
+    public function db_migrate()
+    {
+        require_once(THRIVEDESK_DIR . '/database/DBMigrator.php');
+        \ThriveDeskDBMigrator::migrate();
+    }
+
     /**
      * Main Admin Instance.
      *
      * Ensures that only one instance of Admin exists in memory at any one
      * time. Also prevents needing to define globals all over the place.
      *
-     * @since 0.0.1
      * @return object|Admin
      * @access public
+     * @since  0.0.1
      */
     public static function instance()
     {
@@ -54,9 +62,9 @@ final class Admin
     /**
      * Admin sub menu page
      *
-     * @since 0.0.1
-     * @access public
      * @return void
+     * @since  0.0.1
+     * @access public
      */
     public function admin_menu()
     {
@@ -72,11 +80,16 @@ final class Admin
         );
     }
 
-    public function admin_scripts()
+    public function admin_scripts($hook)
     {
-        wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.min.css', '', THRIVEDESK_VERSION);
+        $asset_file = include(THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/build/thrivedesk-autonami-tab.asset.php');
+
+        if ('settings_page_thrivedesk-setting' == $hook) {
+            wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.min.css', '', THRIVEDESK_VERSION);
+        }
 
         wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+        wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/build/thrivedesk-autonami-tab.js', $asset_file['dependencies'], THRIVEDESK_VERSION);
 
         wp_localize_script(
             'thrivedesk-admin-script',
@@ -87,13 +100,13 @@ final class Admin
 
     public function ajax_connect_plugin()
     {
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-connect-plugin'))  die;
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-plugin-action')) die;
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
         $api_token = md5(time());
 
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options          = get_option('thrivedesk_options', []);
         $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
         $thrivedesk_options[$plugin] = [
             'api_token' => $api_token,
@@ -103,10 +116,10 @@ final class Admin
         update_option('thrivedesk_options', $thrivedesk_options);
 
         $hash = base64_encode(json_encode([
-            'store_url'     => get_bloginfo('url'),
-            'api_token'     => $api_token,
-            'cancel_url'    => admin_url('options-general.php?page=thrivedesk-setting&plugin=edd&td-activated=false'),
-            'success_url'   => admin_url('options-general.php?page=thrivedesk-setting&plugin=edd&td-activated=true')
+            'store_url'   => get_bloginfo('url'),
+            'api_token'   => $api_token,
+            'cancel_url'  => admin_url('options-general.php?page=thrivedesk-setting&plugin=' . $plugin . '&td-activated=false'),
+            'success_url' => admin_url('options-general.php?page=thrivedesk-setting&plugin=' . $plugin . '&td-activated=true')
         ]));
 
         echo THRIVEDESK_APP_URL . '/apps/' . $plugin . '?connect=' . $hash;
@@ -116,11 +129,11 @@ final class Admin
 
     public function ajax_disconnect_plugin()
     {
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-connect-plugin'))  die;
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-plugin-action')) die;
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
-        $thrivedesk_options = get_option('thrivedesk_options', []);
+        $thrivedesk_options          = get_option('thrivedesk_options', []);
         $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
         $thrivedesk_options[$plugin] = [
             'api_token' => '',
@@ -137,9 +150,9 @@ final class Admin
     /**
      * Plugin activate.
      *
-     * @since 0.0.1
-     * @access public
      * @return void
+     * @since  0.0.1
+     * @access public
      */
     public function activate()
     {
@@ -155,5 +168,8 @@ final class Admin
             // Create thrivedesk_options
             if (false == get_option('thrivedesk_options')) update_option('thrivedesk_options', []);
         }
+
+        // migrate action for thrivedesk database
+        do_action('thrivedesk_db_migrate');
     }
 }

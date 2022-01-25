@@ -1,0 +1,31 @@
+{
+  "name": "thrivedesk",
+  "version": "1.0.0",
+  "description": "=== ThriveDesk - Customer Support & Helpdesk Software for WordPress Startups === Contributors: thrivedesk Tags: customer support, helpdesk, shared inbox, knowledge base, customer service software, WooCommerce, Easy Digital Downloads, Envato, Slack, webhook Requires at least: 4.9 Tested up to: 5.5.3 Requires PHP: 7.0.0 Stable Tag: 0.0.5 License: GNU Version 2 or later",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "postcss assets/css/admin.css -o assets/css/admin.min.css -w",
+    "wpscripts": "wp-scripts start assets/js/thrivedesk-autonami-tab.js --output-path=assets/js/build",
+    "wpscripts:build": "wp-scripts build assets/js/thrivedesk-autonami-tab.js --output-path=assets/js/build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thrivedesk/wp-thrivedesk.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thrivedesk/wp-thrivedesk/issues"
+  },
+  "homepage": "https://github.com/thrivedesk/wp-thrivedesk#readme",
+  "devDependencies": {
+    "@tailwindcss/jit": "^0.1.7",
+    "@wordpress/scripts": "^18.0.1",
+    "autoprefixer": "^10.2.5",
+    "cssnano": "^4.1.10",
+    "postcss": "^8.2.8",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "^2.0.4"
+  }
+}

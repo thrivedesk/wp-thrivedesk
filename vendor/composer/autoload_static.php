@@ -22,7 +22,12 @@ class ComposerStaticInit61ac37121bc927c3837fa0a0819ce1b8
         array (
             0 => __DIR__ . '/../..' . '/src',
             1 => __DIR__ . '/../..' . '/src/Abstracts',
+            2 => __DIR__ . '/../..' . '/Hooks',
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -30,6 +35,7 @@ class ComposerStaticInit61ac37121bc927c3837fa0a0819ce1b8
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit61ac37121bc927c3837fa0a0819ce1b8::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit61ac37121bc927c3837fa0a0819ce1b8::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit61ac37121bc927c3837fa0a0819ce1b8::$classMap;
 
         }, null, ClassLoader::class);
     }
