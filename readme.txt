@@ -1,8 +1,8 @@
-=== Live Chat, Chatbots, Knowledge Base & Helpdesk — ThriveDesk ===
+=== ThriveDesk - Live Chat, Helpdesk & Community for WordPress ===
 Contributors: thrivedesk
-Tags: live chat, chatbot, knowledge base, helpdesk, support, woocommerce, thrivedesk, zendesk, mailchimp
+Tags: chat, livechat, free live chat, community, helpdesk, chatbot, knowledge base, , support, help center, woocommerce, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
-Tested up to: 5.7
+Tested up to: 5.9
 Stable Tag: 0.7.0
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
