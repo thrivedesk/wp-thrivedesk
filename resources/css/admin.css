@@ -1,0 +1,8 @@
+@tailwind base;
+@layer base {
+	img {
+		border-style: none;
+	}
+}
+@tailwind components;
+@tailwind utilities;
