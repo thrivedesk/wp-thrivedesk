@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: chat, livechat, free live chat, community, helpdesk, chatbot, knowledge base, , support, help center, woocommerce, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 5.9
-Stable Tag: 0.7.0
+Stable Tag: 0.9.6
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -162,6 +162,13 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.9.6 =
+- Improved security
+- Improved performance 
+
+= 0.9.5 =
+- Tested plugin with WordPress version 5.9
+
 = 0.9.4 =
 - Fixed swapped Autonami lists and tags info
 

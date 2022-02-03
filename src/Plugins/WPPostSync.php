@@ -124,25 +124,6 @@ final class WPPostSync extends Plugin
     }
 
     /**
-     * get all post types array
-     *
-     * @return array
-     * @access public
-     * @since 0.8.0
-     */
-    public function get_all_post_types_arr(): array
-    {
-        $args = array(
-            'public'        => true,
-            'show_in_rest'  => true
-        );
-
-        $output = 'names';
-        $operator = 'and';
-        return get_post_types($args, $output, $operator);
-    }
-
-    /**
      * @param string $query_string for search among all post type
      * @access public
      * @since 0.8.0
@@ -156,7 +137,7 @@ final class WPPostSync extends Plugin
             )
         );
         $search_posts = [];
-        while ($x_query->have_posts()):
+        while ($x_query->have_posts()) :
             $x_query->the_post();
             $post_categories_array = get_the_category(get_the_ID());
             $post_title = $this->get_truncated_post_title(html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'));
