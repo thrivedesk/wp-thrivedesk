@@ -44,8 +44,8 @@ class FluentCrmHooks
                 'support_tickets_providers',
                 function ($providers) {
                     $providers['thrivedesk'] = [
-                        'title' => __('Support Tickets by ThriveDesk', 'fluent-crm'),
-                        'name'  => __('ThriveDesk', 'fluent-crm')
+                        'title' => __('Support Tickets by ThriveDesk', 'thrivedesk'),
+                        'name'  => __('ThriveDesk', 'thrivedesk')
                     ];
                     return $providers;
                 }
@@ -93,7 +93,7 @@ class FluentCrmHooks
                     }
 
                     return [
-                        'total' => sizeof($td_conversations),
+                        'total' => count($td_conversations),
                         'data'  => $formattedTickets
                     ];
                 },
