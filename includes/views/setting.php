@@ -69,7 +69,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
     <!-- header  -->
     <div class="bg-white -mt-2 -mx-5 shadow mb-6">
         <div class="flex items-center justify-between py-3 px-6 border-b">
-            <img class="w-32" src="//www.thrivedesk.com/wp-content/uploads/2021/03/png-logo.png" alt="ThriveDesk Logo">
+            <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>" alt="ThriveDesk Logo">
             <div>
                 <a class="px-4 py-1.5 flex items-center space-x-1 border rounded border-blue-500 text-blue-500 hover:bg-blue-50" href="https://www.thrivedesk.com" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
