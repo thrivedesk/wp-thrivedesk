@@ -175,4 +175,9 @@ final class SmartPay extends Plugin
 
         update_option('thrivedesk_options', $thrivedesk_options);
     }
+
+    public function get_plugin_data(string $key = '')
+    {
+        // /
+    }
 }
