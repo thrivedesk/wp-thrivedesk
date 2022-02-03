@@ -2,7 +2,6 @@
 	"name": "thrivedesk",
 	"version": "1.0.0",
 	"description": "=== ThriveDesk - Customer Support & Helpdesk Software for WordPress Startups === Contributors: thrivedesk Tags: customer support, helpdesk, shared inbox, knowledge base, customer service software, WooCommerce, Easy Digital Downloads, Envato, Slack, webhook Requires at least: 4.9 Tested up to: 5.5.3 Requires PHP: 7.0.0 Stable Tag: 0.0.5 License: GNU Version 2 or later",
-	"main": "index.js",
 	"scripts": {
 		"dev": "npm run development",
 		"development": "mix",
