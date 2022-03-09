@@ -162,6 +162,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute. 
 
 == Changelog ==
+= 0.9.7 =
+- Updated ThriveDesk app url
+
 = 0.9.6 =
 - Improved security
 - Improved performance 
