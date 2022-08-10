@@ -2,6 +2,8 @@
 
 namespace ThriveDesk;
 
+use WpFluent\Exception;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -31,6 +33,7 @@ class RestRoute
     private function __construct()
     {
         add_action('rest_api_init', array($this, 'td_routes'));
+        add_action('rest_api_init', array($this, 'form_routes'));
     }
 
     /**
@@ -47,6 +50,15 @@ class RestRoute
                 return current_user_can('manage_options');
             }
         ));
+    }
+
+    public function form_routes()
+    {
+        register_rest_route('/td-settings', '/fluent-forms/(?P<form_id>\d+)', array(
+            'methods'             => 'get',
+            'callback'            => array($this, 'get_fluent_forms'),
+        ));
+
     }
 
     /**
@@ -112,5 +124,28 @@ class RestRoute
         }
 
         return new \WP_REST_Response($formattedTickets, 200);
+    }
+
+    /**
+     * @param $data
+     * @return \WP_REST_Response
+     * @throws Exception
+     */
+    public static function get_fluent_forms($data): \WP_REST_Response
+    {
+        // add for only authenticate user
+//        if (!is_user_admin()) {
+//            return new \WP_REST_Response(['message' => 'No form does not exists'], 401);
+//        }
+        if ($data['form_id'] == 1) {
+            $query = wpFluent()->table('fluentform_forms')
+                ->orderBy('id', 'desc');
+
+            $forms = $query->select('*')->get();
+            return new \WP_REST_Response($forms, 200);
+        } else {
+            return new \WP_REST_Response([], 200);
+        }
+
     }
 }

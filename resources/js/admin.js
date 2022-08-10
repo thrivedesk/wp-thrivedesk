@@ -75,4 +75,21 @@ jQuery(document).ready(($) => {
 			.getElementsByClassName(selectedTab)[0]
 			.classList.remove('hidden');
 	});
+
+	// settings tab
+	$( "#form_provider" ).change(function() {
+		let selected_item_id = $("#form_provider").val();
+		$.ajax({
+			type: "GET",
+			url: "https://smartpay.test/wp-json/td-settings/fluent-forms/"+selected_item_id,
+			success: function(data){
+				let option = "";
+				option +='<option value="">Please choose a form</option>';
+				data.forEach(function(element) {
+					option  += "<option value = '"+ element.id + "'>"+ element.title +"</option>";
+				});
+				$("#form_name").html(option);
+			}
+		});
+	});
 });

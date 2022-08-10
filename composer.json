@@ -23,7 +23,8 @@
 			]
 		},
 		"files": [
-			"includes/helper.php"
+			"includes/helper.php",
+			"includes/functions.php"
 		]
 	}
 }
