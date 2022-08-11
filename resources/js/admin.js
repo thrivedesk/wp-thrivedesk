@@ -81,8 +81,9 @@ jQuery(document).ready(($) => {
 		let selected_item_id = $("#form_provider").val();
 		$.ajax({
 			type: "GET",
-			url: "https://smartpay.test/wp-json/td-settings/fluent-forms/"+selected_item_id,
+			url: "/wp-json/td-settings/forms/"+selected_item_id,
 			success: function(data){
+				console.log(data)
 				let option = "";
 				option +='<option value="">Please choose a form</option>';
 				data.forEach(function(element) {
@@ -92,4 +93,23 @@ jQuery(document).ready(($) => {
 			}
 		});
 	});
+
+	// $( "#form_name" ).change(function() {
+	// 	let selected_item_id = $("#form_name").val();
+	// 	console.log(selected_item_id)
+	// 	$.ajax({
+	// 		type: "GET",
+	// 		url: "/wp-json/td-settings/form-fields/"+selected_item_id,
+	// 		success: function(data){
+	// 			console.log(data)
+	// 			let option = "";
+	// 			option +='<option value="">Please choose a form fields</option>';
+	// 			data.fields.forEach(function(element) {
+	// 				option  += "<option value = '"+ element.id + "'>"+ element.title +"</option>";
+	// 			});
+	// 			$("#search_from").html(option);
+	// 		}
+	// 	});
+	// });
+
 });

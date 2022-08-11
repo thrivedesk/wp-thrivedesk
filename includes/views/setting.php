@@ -83,7 +83,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="pl-6 flex justify-between text-sm font-medium leading-5 text-gray-500 h-12">
             <div class="flex space-x-8 admin-tabs">
                 <a data-target="tab-integrations" class="inline-flex items-center px-1 border-blue-600" href="#"><?php _e('Integrations', 'thrivedesk') ?></a>
-                <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#"><?php _e('Settings', 'thrivedesk') ?></a>
+                <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#"><?php _e('HelpDesk Settings', 'thrivedesk') ?></a>
                 <?php if ($wppostsync->get_plugin_data('connected')) : ?>
                     <a data-target="tab-post-types-sync" class="inline-flex items-center px-1" href="#"><?php _e('WP Post Sync', 'thrivedesk') ?></a>
                 <?php endif; ?>
@@ -164,10 +164,9 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             </div>
         </div>
         <div class="hidden tab-settings">
-            <div class="mb-4 text-lg"><?php _e('Settings', 'thrivedesk') ?></div>
             <div class="rounded-lg shadow-md sm:rounded-lg bg-white border">
                 <div class="px-6 py-4">
-                    <h1 class="pb-3 text-left text-lg font-extrabold border-b">Conversation Settings</h1>
+                    <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
 <!--                    --><?php //getFormProviders() ?>
                     <div class="w-full text-sm text-left py-5">
                         <div class="flex items-center justify-center">
@@ -185,21 +184,18 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                     <div class="mb-6">
                                         <label for="form_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Choose your form</label>
                                         <select id="form_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option value="">Please choose a form name</option>
-                                            <option value="1">Form list 1</option>
-                                            <option value="2">Form list 2</option>
-                                            <option value="3">Form list 3</option>
+                                            <option value="">Please choose a form</option>
                                         </select>
                                     </div>
 
-                                    <div class="mb-6">
-                                        <label for="search_from" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select where to search</label>
-                                        <select id="search_from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option value="1">Post</option>
-                                            <option value="2">Subject</option>
-                                            <option value="3">WP Sync</option>
-                                        </select>
-                                    </div>
+<!--                                    <div class="mb-6">-->
+<!--                                        <label for="search_from" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select where to search</label>-->
+<!--                                        <select id="search_from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">-->
+<!--                                            <option value="1">Post</option>-->
+<!--                                            <option value="2">Subject</option>-->
+<!--                                            <option value="3">WP Sync</option>-->
+<!--                                        </select>-->
+<!--                                    </div>-->
 
                                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
                                 </form>

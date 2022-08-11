@@ -54,9 +54,14 @@ class RestRoute
 
     public function form_routes()
     {
-        register_rest_route('/td-settings', '/fluent-forms/(?P<form_id>\d+)', array(
+        register_rest_route('/td-settings', '/forms/(?P<form_id>\d+)', array(
             'methods'             => 'get',
-            'callback'            => array($this, 'get_fluent_forms'),
+            'callback'            => array($this, 'get_forms'),
+        ));
+
+        register_rest_route('/td-settings', '/form-fields/(?P<id>\d+)', array(
+            'methods'             => 'get',
+            'callback'            => array($this, 'get_form_fields'),
         ));
 
     }
@@ -131,7 +136,7 @@ class RestRoute
      * @return \WP_REST_Response
      * @throws Exception
      */
-    public static function get_fluent_forms($data): \WP_REST_Response
+    public static function get_forms($data): \WP_REST_Response
     {
         // add for only authenticate user
 //        if (!is_user_admin()) {
@@ -142,10 +147,46 @@ class RestRoute
                 ->orderBy('id', 'desc');
 
             $forms = $query->select('*')->get();
-            return new \WP_REST_Response($forms, 200);
-        } else {
-            return new \WP_REST_Response([], 200);
+            $form_data = [];
+            foreach ($forms as $key => $form) {
+                $form_data[] = [
+                  'id'  => $key,
+                  'title'  => $form->title,
+                ];
+            }
+
+            return new \WP_REST_Response($form_data, 200);
+        }if ($data['form_id'] == 2) {
+        $posts = get_posts(
+            array(
+                'numberposts' => -1,
+                'post_type' => 'wpcf7_contact_form',
+                'post_status' => 'any',
+            )
+        );
+
+        $form_data = [];
+        foreach ($posts as $key => $post) {
+            $form_data[] = [
+                'id'  => $key,
+                'title'  => $post->post_title,
+            ];
         }
 
+        return new \WP_REST_Response($form_data, 200);
+    } else {
+        return new \WP_REST_Response([], 200);
+    }
+    }
+
+    public function get_form_fields($data)
+    {
+        if (isset($data['id'])) {
+            $query = wpFluent()->table('fluentform_forms')
+                ->where('id', $data['id']);
+
+            $form_fields = $query->select('*')->first();
+            return new \WP_REST_Response(json_decode($form_fields->form_fields), 200);
+        }
     }
 }
