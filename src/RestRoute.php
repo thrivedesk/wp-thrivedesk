@@ -54,16 +54,45 @@ class RestRoute
 
     public function form_routes()
     {
-        register_rest_route('/td-settings', '/forms/(?P<form_id>\d+)', array(
-            'methods'             => 'get',
+        register_rest_route('/td-settings', '/forms', array(
+            'methods'             => 'post',
             'callback'            => array($this, 'get_forms'),
         ));
+
 
         register_rest_route('/td-settings', '/form-fields/(?P<id>\d+)', array(
             'methods'             => 'get',
             'callback'            => array($this, 'get_form_fields'),
         ));
 
+        register_rest_route('/td-settings', '/form/submit', array(
+            'methods'             => 'post',
+            'callback'            => array($this, 'save_form'),
+        ));
+
+
+    }
+
+    /**
+     * @return \WP_REST_Response
+     */
+    public function save_form()
+    {
+        if (isset($_POST['form_provider']) && isset($_POST['form_name'])) {
+            // add option to database
+            $td_helpdesk_settings = [
+                'form_provider' => $_POST['form_provider'],
+                'form_name' => $_POST['form_name'],
+            ];
+
+            if (get_option('td_helpdesk_settings')) {
+                update_option('td_helpdesk_settings', $td_helpdesk_settings);
+            } else {
+                add_option('td_helpdesk_settings', $td_helpdesk_settings);
+            }
+
+            return new \WP_REST_Response('saved successfully', 200);
+        }
     }
 
     /**
@@ -136,13 +165,13 @@ class RestRoute
      * @return \WP_REST_Response
      * @throws Exception
      */
-    public static function get_forms($data): \WP_REST_Response
+    public static function get_forms(): \WP_REST_Response
     {
         // add for only authenticate user
 //        if (!is_user_admin()) {
 //            return new \WP_REST_Response(['message' => 'No form does not exists'], 401);
 //        }
-        if ($data['form_id'] == 1) {
+        if ($_POST['value'] == 'fluent-form') {
             $query = wpFluent()->table('fluentform_forms')
                 ->orderBy('id', 'desc');
 
@@ -150,13 +179,13 @@ class RestRoute
             $form_data = [];
             foreach ($forms as $key => $form) {
                 $form_data[] = [
-                  'id'  => $key,
-                  'title'  => $form->title,
+                    'key'  => sanitize_title_with_dashes($form->title),
+                    'title'  => $form->title,
                 ];
             }
 
             return new \WP_REST_Response($form_data, 200);
-        }if ($data['form_id'] == 2) {
+        }if ($_POST['value'] == 'contact-form-7') {
         $posts = get_posts(
             array(
                 'numberposts' => -1,
