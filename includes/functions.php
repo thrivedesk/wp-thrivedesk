@@ -12,18 +12,23 @@ function getFormProviders(): array
     $providers = [];
 
     if (\ThriveDesk\FormProviders\FormProviderHelper::is_fluent_form_active()) {
-        $providers[] = 'Fluent Form';
+        $providers['fluent-form'] = 'Fluent Form';
     }
     if (\ThriveDesk\FormProviders\FormProviderHelper::is_contact_form_plugin_active()) {
-        $providers[] = 'Contact Form 7';
+        $providers['contact-form-7'] = 'Contact Form 7';
     }
 
     if (\ThriveDesk\FormProviders\FormProviderHelper::is_wp_form_plugin_active()) {
-        $providers[] = 'WPForms';
+        $providers['wp-forms'] = 'WPForms';
     }
 
     if (\ThriveDesk\FormProviders\FormProviderHelper::is_ninja_form_plugin_active()) {
-        $providers[] = 'Ninja Forms';
+        $providers['ninja-form'] = 'Ninja Forms';
     }
+//    dd($providers);
     return $providers;
+}
+
+function getSelectedTdSettings() {
+    return get_option('td_helpdesk_settings') ?? null;
 }
