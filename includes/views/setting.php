@@ -168,6 +168,8 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                 <div class="px-6 py-4">
                     <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
 <!--                    --><?php //getFormProviders() ?>
+                    <?php $selected_option = getSelectedTdSettings(); ?>
+<!--                    --><?php //print_r($selected_option['form_provider']); ?>
                     <div class="w-full text-sm text-left py-5">
                         <div class="flex items-center justify-center">
                             <div class="max-w-md w-full space-y-8">
@@ -177,7 +179,9 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                         <select id="form_provider" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                             <option value=""> Please choose form provider</option>
                                             <?php foreach (getFormProviders()  as $key => $provider) : ?>
-                                                <option value="<?php echo $key+1; ?>"><?php echo $provider; ?></option>
+                                                <option value="<?php echo $key; ?>"
+                                                <?php echo $selected_option['form_provider'] == $key ? 'selected' : '' ?>><?php echo $provider; ?></option>
+
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
@@ -197,7 +201,9 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
 <!--                                        </select>-->
 <!--                                    </div>-->
 
-                                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                                    <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700
+                                    hover:bg-blue-800
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
                                 </form>
                             </div>
                         </div>
