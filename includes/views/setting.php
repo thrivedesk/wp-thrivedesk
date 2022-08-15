@@ -180,7 +180,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                             <option value=""> Please choose form provider</option>
                                             <?php foreach (getFormProviders()  as $key => $provider) : ?>
                                                 <option value="<?php echo $key; ?>"
-                                                <?php echo $selected_option['form_provider'] == $key ? 'selected' : '' ?>><?php echo $provider; ?></option>
+                                                <?php echo $selected_option && $selected_option['form_provider'] == $key ? 'selected' : '' ?>><?php echo $provider; ?></option>
 
                                             <?php endforeach; ?>
                                         </select>

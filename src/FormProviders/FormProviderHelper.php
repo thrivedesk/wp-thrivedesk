@@ -70,4 +70,14 @@ class FormProviderHelper {
         return false;
     }
 
+    public static function is_formidable_form_plugin_active(): bool
+    {
+        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        if (is_plugin_active('formidable/formidable.php')) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
