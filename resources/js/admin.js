@@ -100,17 +100,47 @@ jQuery(document).ready(($) => {
 		});
 	});
 
+	// $('#td_setting_btn_submit').click(function(e){
+	// 	e.preventDefault();
+	// 	let form_provider = $("#form_provider").val();
+	// 	let form_name = $("#form_name").val();
+	//
+	// 	$.ajax({
+	// 		type: "POST",
+	// 		url: "/wp-json/td-settings/form/submit",
+	// 		data: {
+	// 			form_provider: form_provider,
+	// 			form_name: form_name,
+	// 		},
+	// 		success: function(data){
+	// 			Swal.fire({
+	// 				title: 'Great',
+	// 				icon: 'success',
+	// 				text: 'Setting saved successfully',
+	// 				showClass: {
+	// 					popup: 'animate__animated animate__fadeInDown'
+	// 				},
+	// 				hideClass: {
+	// 					popup: 'animate__animated animate__fadeOutUp'
+	// 				},
+	// 				timer: 4000
+	// 			});
+	// 		}
+	// 	});
+	//
+	// });
+
 	$('#td_setting_btn_submit').click(function(e){
 		e.preventDefault();
-		let form_provider = $("#form_provider").val();
-		let form_name = $("#form_name").val();
+		let td_form_page_id = $("#td_form_page").val();
+		let td_form_style = $("#td_form_style").val() || 'default';
 
 		$.ajax({
 			type: "POST",
 			url: "/wp-json/td-settings/form/submit",
 			data: {
-				form_provider: form_provider,
-				form_name: form_name,
+				td_form_page_id: td_form_page_id,
+				td_form_style: td_form_style,
 			},
 			success: function(data){
 				Swal.fire({

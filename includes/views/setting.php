@@ -167,43 +167,56 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="rounded-lg shadow-md sm:rounded-lg bg-white border">
                 <div class="px-6 py-4">
                     <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
-<!--                    --><?php //getFormProviders() ?>
-                    <?php $selected_option = getSelectedTdSettings(); ?>
-<!--                    --><?php //print_r($selected_option['form_provider']); ?>
+                    <?php $selected_option = getSelectedHelpdeskOptions(); ?>
                     <div class="w-full text-sm text-left py-5">
                         <div class="flex items-center justify-center">
                             <div class="max-w-md w-full space-y-8">
                                 <form class="mt-8 space-y-6" action="#" method="POST">
                                     <div class="mb-6">
-                                        <label for="form_provider" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select your Form provider</label>
-                                        <select id="form_provider" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option value=""> Please choose form provider</option>
-                                            <?php foreach (getFormProviders()  as $key => $provider) : ?>
-                                                <option value="<?php echo $key; ?>"
-                                                <?php echo $selected_option && $selected_option['form_provider'] == $key ? 'selected' : '' ?>><?php echo $provider; ?></option>
-
+                                        <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">API key</label>
+                                        <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                    </div>
+                                    <div class="mb-6">
+                                        <label for="td_form_page" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select your Page where you will redirect on create new Ticket page</label>
+                                        <select id="td_form_page" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            <option value=""> Please choose a page</option>
+                                            <?php foreach (get_pages()  as $key => $page) : ?>
+                                                <option value="<?php echo $page->ID; ?>" <?php echo $selected_option && $selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
+                                                    <?php echo $page->post_title; ?>
+                                                </option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
+
                                     <div class="mb-6">
-                                        <label for="form_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Choose your form</label>
-                                        <select id="form_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option value="">Please choose a form</option>
+                                        <label for="td_helpdesk_post_types" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Post types to search</label>
+                                        <?php
+                                        $wp_post_types = array_filter(get_post_types(array('public' => true, 'show_in_rest' => true)), function ($type) {
+                                            return $type !== 'attachment';
+                                        });
+
+                                        foreach ($wp_post_types as $post_type) :
+                                            ?>
+                                            <div>
+                                                <input type="checkbox" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" id="<?php echo esc_attr($post_type); ?>" >
+                                                <label for="<?php echo esc_attr($post_type); ?>"> <?php echo esc_html(ucfirst($post_type)); ?> </label>
+                                            </div>
+                                        <?php
+                                        endforeach;
+                                        ?>
+                                    </div>
+                                    <div class="mb-6">
+                                        <label for="td_helpdesk_form_style" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Choose your style (for default, left it blank)</label>
+                                        <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            <option value="">Please choose a style</option>
+                                            <option value="no_style">No Style</option>
+                                            <option value="modern">Modern</option>
                                         </select>
                                     </div>
 
-<!--                                    <div class="mb-6">-->
-<!--                                        <label for="search_from" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select where to search</label>-->
-<!--                                        <select id="search_from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">-->
-<!--                                            <option value="1">Post</option>-->
-<!--                                            <option value="2">Subject</option>-->
-<!--                                            <option value="3">WP Sync</option>-->
-<!--                                        </select>-->
-<!--                                    </div>-->
-
                                     <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700
                                     hover:bg-blue-800
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
                                 </form>
                             </div>
                         </div>

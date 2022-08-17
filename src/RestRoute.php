@@ -65,12 +65,36 @@ class RestRoute
             'callback'            => array($this, 'get_form_fields'),
         ));
 
+//        register_rest_route('/td-settings', '/form/submit', array(
+//            'methods'             => 'post',
+//            'callback'            => array($this, 'save_form'),
+//        ));
+
         register_rest_route('/td-settings', '/form/submit', array(
             'methods'             => 'post',
-            'callback'            => array($this, 'save_form'),
+            'callback'            => array($this, 'save_helpdesk_form'),
         ));
 
 
+    }
+
+    public function save_helpdesk_form()
+    {
+        if (isset($_POST['td_form_page_id']) && isset($_POST['td_form_style'])) {
+            // add option to database
+            $td_helpdesk_settings = [
+                'td_form_page_id' => $_POST['td_form_page_id'],
+                'td_form_style' => $_POST['td_form_style'],
+            ];
+
+            if (get_option('td_helpdesk_options')) {
+                update_option('td_helpdesk_options', $td_helpdesk_settings);
+            } else {
+                add_option('td_helpdesk_options', $td_helpdesk_settings);
+            }
+
+            return new \WP_REST_Response('saved successfully', 200);
+        }
     }
 
     /**

@@ -26,7 +26,7 @@
 					Ticket
 				</th>
 				<th scope="col" class="py-4 px-6 w-40 text-center">
-					Agent Access
+					Last replied by
 				</th>
 				<th scope="col" class="py-4 px-6 w-36 text-center">
 					Last Update
@@ -49,7 +49,7 @@
 					</div>
 				</td>
 				<td class="py-4 px-6 text-center">
-					-
+					Parvez Akhter
 				</td>
 				<td class="py-4 px-6 text-center">
 					5 mins ago
@@ -57,13 +57,67 @@
 				<td class="py-4 px-6 text-right">
 <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
                     <br>
-					<a href="<?php echo home_url(). '/td-shortcode?conversation_id=12'; ?>" class="font-medium
+					<a href="<?php echo home_url(). '/conversation_details_page/action=details_page'; ?>" class="font-medium
 					text-blue-600
 					dark:text-blue-500
 					hover:underline">View
                         Ticket</a>
 				</td>
 			</tr>
+            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                <th scope="row" class="py-4 px-6 font-medium text-center whitespace-nowrap">
+                    <span class="px-2 py-1 bg-gray-300 rounded-full">Active</span>
+                </th>
+                <td class="py-4 px-6">
+                    <div class="flex flex-col justify-start">
+                        <span class="text-blue-800 font-semibold">#8746837</span>
+                        <span class="font-bold text-gray-600 text-base">API setup</span>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                    </div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                    Abu Huraira
+                </td>
+                <td class="py-4 px-6 text-center">
+                    15 mins ago
+                </td>
+                <td class="py-4 px-6 text-right">
+                    <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
+                    <br>
+                    <a href="<?php echo home_url(). '/conversation_details_page/action=details_page'; ?>" class="font-medium
+					text-blue-600
+					dark:text-blue-500
+					hover:underline">View
+                        Ticket</a>
+                </td>
+            </tr>
+            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                <th scope="row" class="py-4 px-6 font-medium text-center whitespace-nowrap">
+                    <span class="px-2 py-1 bg-gray-300 rounded-full">Pending</span>
+                </th>
+                <td class="py-4 px-6">
+                    <div class="flex flex-col justify-start">
+                        <span class="text-blue-800 font-semibold">#8746838</span>
+                        <span class="font-bold text-gray-600 text-base">Custom Form does not load</span>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                    </div>
+                </td>
+                <td class="py-4 px-6 text-center">
+                    Sabir Mahmud
+                </td>
+                <td class="py-4 px-6 text-center">
+                    1 day ago
+                </td>
+                <td class="py-4 px-6 text-right">
+                    <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
+                    <br>
+                    <a href="<?php echo home_url(). '/conversation_details_page/action=details_page'; ?>" class="font-medium
+					text-blue-600
+					dark:text-blue-500
+					hover:underline">View
+                        Ticket</a>
+                </td>
+            </tr>
 
 			</tbody>
 
@@ -95,14 +149,6 @@
 		</div>
 	</div>
 </div>
-
-
-<!-- Modal toggle -->
-<!--<button id="openConversationModal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4-->
-<!--focus:outline-none focus:ring-blue-300-->
-<!--font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button" data-modal-toggle="tdConversationModal">-->
-<!--    Toggle modal-->
-<!--</button>-->
 
 <!-- Main modal -->
 <div id="tdConversationModal" style="display: none" tabindex="-1" class="td-modal overflow-y-auto overflow-x-hidden hidden
@@ -158,13 +204,9 @@ w-full md:inset-0 h-modal md:h-full justify-center items-center flex" aria-modal
             </div>
             <!-- Modal footer -->
             <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
-                <a href="" class="text-center text-gray-600 text-sm">
+                <a href="<?php echo get_page_link( get_post(getSelectedHelpdeskOptions('td_helpdesk_options')['td_form_page_id']))?>" target="_blank" class="text-center text-gray-600 text-sm">
                     Create new
                 </a>
-<!--                <button data-modal-toggle="tdConversationModal" type="button" class="text-white bg-blue-700-->
-<!--                hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm-->
-<!--                px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700-->
-<!--                dark:focus:ring-blue-800">Submit</button>-->
             </div>
         </div>
     </div>

@@ -53,10 +53,15 @@ function getSelectedTdSettings() {
     return get_option('td_helpdesk_settings') ?? null;
 }
 
+function getSelectedHelpdeskOptions() {
+    return get_option('td_helpdesk_options') ?? null;
+}
+
+
 
 function conversation_page($atts) {
     ob_start();
-	if (isset($_GET['conversation_id']) && $_GET['conversation_id']) {
+	if (isset($_GET['conversation_id'])) {
 		include THRIVEDESK_DIR. '/includes/views/shortcode/conversation-details.php';
 	} else {
 		include THRIVEDESK_DIR. '/includes/views/shortcode/conversations.php';
