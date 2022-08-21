@@ -100,53 +100,27 @@ jQuery(document).ready(($) => {
 		});
 	});
 
-	// $('#td_setting_btn_submit').click(function(e){
-	// 	e.preventDefault();
-	// 	let form_provider = $("#form_provider").val();
-	// 	let form_name = $("#form_name").val();
-	//
-	// 	$.ajax({
-	// 		type: "POST",
-	// 		url: "/wp-json/td-settings/form/submit",
-	// 		data: {
-	// 			form_provider: form_provider,
-	// 			form_name: form_name,
-	// 		},
-	// 		success: function(data){
-	// 			Swal.fire({
-	// 				title: 'Great',
-	// 				icon: 'success',
-	// 				text: 'Setting saved successfully',
-	// 				showClass: {
-	// 					popup: 'animate__animated animate__fadeInDown'
-	// 				},
-	// 				hideClass: {
-	// 					popup: 'animate__animated animate__fadeOutUp'
-	// 				},
-	// 				timer: 4000
-	// 			});
-	// 		}
-	// 	});
-	//
-	// });
-
-	$('#td_setting_btn_submit').click(function(e){
+	$('#td_helpdesk_form').submit(function(e){
 		e.preventDefault();
-		let td_form_page_id = $("#td_form_page").val();
-		let td_form_style = $("#td_form_style").val() || 'default';
+		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
+		let td_form_page_id = $("#td_form_page_id").val();
+		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item)=>item.value).get();
+		let td_form_style = $("#td_helpdesk_form_style").val();
 
 		$.ajax({
 			type: "POST",
 			url: "/wp-json/td-settings/form/submit",
 			data: {
+				td_helpdesk_api_key: td_helpdesk_api_key,
 				td_form_page_id: td_form_page_id,
+				td_helpdesk_post_types: td_helpdesk_post_types,
 				td_form_style: td_form_style,
 			},
 			success: function(data){
 				Swal.fire({
 					title: 'Great',
 					icon: 'success',
-					text: 'Setting saved successfully',
+					text: data,
 					showClass: {
 						popup: 'animate__animated animate__fadeInDown'
 					},
@@ -159,23 +133,5 @@ jQuery(document).ready(($) => {
 		});
 
 	});
-
-	// $( "#form_name" ).change(function() {
-	// 	let selected_item_id = $("#form_name").val();
-	// 	console.log(selected_item_id)
-	// 	$.ajax({
-	// 		type: "GET",
-	// 		url: "/wp-json/td-settings/form-fields/"+selected_item_id,
-	// 		success: function(data){
-	// 			console.log(data)
-	// 			let option = "";
-	// 			option +='<option value="">Please choose a form fields</option>';
-	// 			data.fields.forEach(function(element) {
-	// 				option  += "<option value = '"+ element.id + "'>"+ element.title +"</option>";
-	// 			});
-	// 			$("#search_from").html(option);
-	// 		}
-	// 	});
-	// });
 
 });
