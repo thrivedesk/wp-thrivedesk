@@ -80,20 +80,23 @@ class RestRoute
 
     public function save_helpdesk_form()
     {
-        if (isset($_POST['td_form_page_id']) && isset($_POST['td_form_style'])) {
+        if (isset($_POST['td_helpdesk_api_key']) && isset($_POST['td_form_page_id']) && isset($_POST['td_helpdesk_post_types']) &&
+            isset($_POST['td_form_style'])) {
             // add option to database
             $td_helpdesk_settings = [
-                'td_form_page_id' => $_POST['td_form_page_id'],
-                'td_form_style' => $_POST['td_form_style'],
+                'td_helpdesk_api_key'       => $_POST['td_helpdesk_api_key'],
+                'td_form_page_id'           => $_POST['td_form_page_id'],
+                'td_helpdesk_post_types'    => $_POST['td_helpdesk_post_types'],
+                'td_form_style'             => $_POST['td_form_style'],
             ];
 
-            if (get_option('td_helpdesk_options')) {
-                update_option('td_helpdesk_options', $td_helpdesk_settings);
+            if (get_option('td_helpdesk_settings')) {
+                update_option('td_helpdesk_settings', $td_helpdesk_settings);
             } else {
-                add_option('td_helpdesk_options', $td_helpdesk_settings);
+                add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
 
-            return new \WP_REST_Response('saved successfully', 200);
+            return new \WP_REST_Response('Settings saved successfully', 200);
         }
     }
 

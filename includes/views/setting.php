@@ -167,21 +167,32 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="rounded-lg shadow-md sm:rounded-lg bg-white border">
                 <div class="px-6 py-4">
                     <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
-                    <?php $selected_option = getSelectedHelpdeskOptions(); ?>
+                    <?php $td_helpdesk_selected_option = getSelectedHelpdeskOptions(); ?>
+                    <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
                     <div class="w-full text-sm text-left py-5">
                         <div class="flex items-center justify-center">
                             <div class="max-w-md w-full space-y-8">
-                                <form class="mt-8 space-y-6" action="#" method="POST">
+                                <form class="mt-8 space-y-6" id="td_helpdesk_form" action="#" method="POST">
                                     <div class="mb-6">
                                         <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">API key</label>
-                                        <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                                        <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
+                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
+                                               rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2
+                                               .5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
+                                               dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                               value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key']) ?? ''; ?>"
+                                               required />
                                     </div>
                                     <div class="mb-6">
-                                        <label for="td_form_page" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select your Page where you will redirect on create new Ticket page</label>
-                                        <select id="td_form_page" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <label for="td_form_page_id" class="block mb-2 text-sm font-medium
+                                        text-gray-900 dark:text-gray-400">Select your Page where you will redirect on create new Ticket page</label>
+                                        <select id="td_form_page_id" class="bg-gray-50 border border-gray-300
+                                        text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500
+                                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600
+                                        dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required >
                                             <option value=""> Please choose a page</option>
                                             <?php foreach (get_pages()  as $key => $page) : ?>
-                                                <option value="<?php echo $page->ID; ?>" <?php echo $selected_option && $selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
+                                                <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
                                                     <?php echo $page->post_title; ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -198,7 +209,10 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                         foreach ($wp_post_types as $post_type) :
                                             ?>
                                             <div>
-                                                <input type="checkbox" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" id="<?php echo esc_attr($post_type); ?>" >
+                                                <input class="td_helpdesk_post_types" type="checkbox" name="td_helpdesk_post_types[]"
+                                                       value="<?php echo esc_attr($post_type); ?>" id="<?php echo
+                                                esc_attr($post_type); ?>" <?php echo in_array($post_type,
+                                                    $td_selected_post_types) ? 'checked' : '';  ?>>
                                                 <label for="<?php echo esc_attr($post_type); ?>"> <?php echo esc_html(ucfirst($post_type)); ?> </label>
                                             </div>
                                         <?php
@@ -207,10 +221,12 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                     </div>
                                     <div class="mb-6">
                                         <label for="td_helpdesk_form_style" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Choose your style (for default, left it blank)</label>
-                                        <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300
+                                        text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                             <option value="">Please choose a style</option>
-                                            <option value="no_style">No Style</option>
-                                            <option value="modern">Modern</option>
+                                            <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>No
+                                                Style</option>
+                                            <option value="modern" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'modern' ? 'selected' : ''; ?>>Modern</option>
                                         </select>
                                     </div>
 

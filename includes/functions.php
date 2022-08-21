@@ -44,20 +44,13 @@ function getFormProviders(): array
     if (\ThriveDesk\FormProviders\FormProviderHelper::is_formidable_form_plugin_active()) {
         $providers['formidable-form'] = 'Formidable Forms';
     }
-
-//    dd($providers);
-    return $providers;
+	return $providers;
 }
 
-function getSelectedTdSettings() {
-    return get_option('td_helpdesk_settings') ?? null;
-}
 
 function getSelectedHelpdeskOptions() {
-    return get_option('td_helpdesk_options') ?? null;
+    return get_option('td_helpdesk_settings') ?? [];
 }
-
-
 
 function conversation_page($atts) {
     ob_start();
@@ -70,3 +63,4 @@ function conversation_page($atts) {
 }
 // add shortcode
 add_shortcode('thrivedesk_conversation', 'conversation_page');
+
