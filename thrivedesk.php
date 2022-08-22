@@ -110,6 +110,7 @@ final class ThriveDesk
         $this->define('THRIVEDESK_PLUGIN_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets');
         // Url with no ending /
         $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.com');
+        $this->define('THRIVEDESK_API_URL', 'http://api.thrivedesk.test');
         $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
         $this->define('THRIVEDESK_DB_VERSION', 1.2);
         $this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');
