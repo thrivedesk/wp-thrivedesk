@@ -1,3 +1,6 @@
+.td-shortcode-body {
+    max-width: 100% !important;
+}
 
 /*! purgecss start ignore */
 .tdSearch--active {

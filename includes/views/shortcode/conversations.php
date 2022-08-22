@@ -1,5 +1,6 @@
-<div class="w-full bg-gray-200 py-6 px-8">
+<div class="w-full bg-gray-200 py-6 px-8 td-shortcode-body" style="margin-top: 20px;">
 	<h1 class="pb-3 text-left text-lg font-extrabold">Tickets</h1>
+    <?php $conversations =  get_conversations(); ?>
 	<div class="rounded-lg shadow-md sm:rounded-lg bg-white">
 		<div class="flex justify-between items-center px-6 py-5">
 			<form class="flex items-center">
@@ -37,115 +38,74 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
-				<th scope="row" class="py-4 px-6 font-medium text-center whitespace-nowrap">
-					<span class="px-2 py-1 bg-gray-300 rounded-full">Closed</span>
-				</th>
-				<td class="py-4 px-6">
-					<div class="flex flex-col justify-start">
-						<span class="text-blue-800 font-semibold">#8746836</span>
-						<span class="font-bold text-gray-600 text-base">Privacy Error</span>
-						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-					</div>
-				</td>
-				<td class="py-4 px-6 text-center">
-					Parvez Akhter
-				</td>
-				<td class="py-4 px-6 text-center">
-					5 mins ago
-				</td>
-				<td class="py-4 px-6 text-right">
-<!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
-                    <br>
-					<a href="<?php echo home_url(). '/td-shortcode?conversation_id=12'; ?>"
-                       class="font-medium
+
+            <?php foreach($conversations['data'] as $key => $conversation): ?>
+
+                <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                    <th scope="row" class="py-4 px-6 font-medium text-center whitespace-nowrap">
+                        <span class="px-2 py-1 bg-gray-300 rounded-full"><?php echo $conversation['status']; ?></span>
+                    </th>
+                    <td class="py-4 px-6">
+                        <div class="flex flex-col justify-start">
+                            <span class="text-blue-800 font-semibold">#<?php echo $conversation['ticket_id']; ?></span>
+                            <span class="font-bold text-gray-600 text-base"><?php echo $conversation['subject'];
+                            ?></span>
+                            <p><?php echo $conversation['excerpt']; ?>.</p>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        Parvez Akhter
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <?php echo $conversation['updated_at']; ?>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
+                        <br>
+                        <a href="<?php echo home_url(). '/td-shortcode?conversation_id='.$conversation['id']; ?>"
+                           class="font-medium
 					text-blue-600
 					dark:text-blue-500
 					hover:underline">View
-                        Ticket</a>
-				</td>
-			</tr>
-            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
-                <th scope="row" class="py-4 px-6 font-medium text-center whitespace-nowrap">
-                    <span class="px-2 py-1 bg-gray-300 rounded-full">Active</span>
-                </th>
-                <td class="py-4 px-6">
-                    <div class="flex flex-col justify-start">
-                        <span class="text-blue-800 font-semibold">#8746837</span>
-                        <span class="font-bold text-gray-600 text-base">API setup</span>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                    </div>
-                </td>
-                <td class="py-4 px-6 text-center">
-                    Abu Huraira
-                </td>
-                <td class="py-4 px-6 text-center">
-                    15 mins ago
-                </td>
-                <td class="py-4 px-6 text-right">
-                    <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
-                    <br>
-                    <a href="<?php echo home_url(). '/conversation_details_page/action=details_page'; ?>" class="font-medium
-					text-blue-600
-					dark:text-blue-500
-					hover:underline">View
-                        Ticket</a>
-                </td>
-            </tr>
-            <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
-                <th scope="row" class="py-4 px-6 font-medium text-center whitespace-nowrap">
-                    <span class="px-2 py-1 bg-gray-300 rounded-full">Pending</span>
-                </th>
-                <td class="py-4 px-6">
-                    <div class="flex flex-col justify-start">
-                        <span class="text-blue-800 font-semibold">#8746838</span>
-                        <span class="font-bold text-gray-600 text-base">Custom Form does not load</span>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                    </div>
-                </td>
-                <td class="py-4 px-6 text-center">
-                    Sabir Mahmud
-                </td>
-                <td class="py-4 px-6 text-center">
-                    1 day ago
-                </td>
-                <td class="py-4 px-6 text-right">
-                    <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
-                    <br>
-                    <a href="<?php echo home_url(). '/conversation_details_page/action=details_page'; ?>" class="font-medium
-					text-blue-600
-					dark:text-blue-500
-					hover:underline">View
-                        Ticket</a>
-                </td>
-            </tr>
+                            Ticket</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
 
 			</tbody>
 
 		</table>
 		<div class="py-4 text-right pr-4">
 			<ul class="inline-flex -space-x-px">
-				<li>
-					<a href="#" class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-				</li>
-				<li>
-					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-				</li>
-				<li>
-					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-				</li>
-				<li>
-					<a href="#" aria-current="page" class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-				</li>
-				<li>
-					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-				</li>
-				<li>
-					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-				</li>
-				<li>
-					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-				</li>
+                <?php for ( $page = 1; $page <= $conversations['meta']['last_page']; $page++): ?>
+                    <li>
+                        <a href="<?php echo home_url(). '/td-shortcode?page='.$page; ?>" class="py-2 px-3
+                        ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300
+                        hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700
+                        dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><?= $page ?></a>
+                    </li>
+                <?php endfor; ?>
+<!--				<li>-->
+<!--					<a href="#" class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<a href="#" aria-current="page" class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>-->
+<!--				</li>-->
+<!--				<li>-->
+<!--					<a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>-->
+<!--				</li>-->
 			</ul>
 		</div>
 	</div>
