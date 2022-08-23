@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ThriveDesk\\' => array($baseDir . '/src', $baseDir . '/src/Abstracts', $baseDir . '/Hooks'),
+    'ThriveDesk\\' => array($baseDir . '/src', $baseDir . '/src/Abstracts', $baseDir . '/src/Conversations', $baseDir . '/Hooks'),
 );

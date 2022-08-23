@@ -30,6 +30,7 @@ use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\RestRoute;
+use ThriveDesk\Conversations\Conversation;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) exit;
@@ -88,6 +89,8 @@ final class ThriveDesk
             if (is_admin()) {
                 self::$instance->admin = Admin::instance();
             }
+
+	        Conversation::instance();
         }
 
         return self::$instance;

@@ -16,6 +16,7 @@ class RestRoute
      * @since 0.9.0
      */
     private static $instance;
+	public const POST_TITLE_LIMIT = 56;
 
     /** Main RestRoute
      *
@@ -54,16 +55,16 @@ class RestRoute
 
     public function form_routes()
     {
-        register_rest_route('/td-settings', '/forms', array(
-            'methods'             => 'post',
-            'callback'            => array($this, 'get_forms'),
-        ));
+//        register_rest_route('/td-settings', '/forms', array(
+//            'methods'             => 'post',
+//            'callback'            => array($this, 'get_forms'),
+//        ));
 
 
-        register_rest_route('/td-settings', '/form-fields/(?P<id>\d+)', array(
-            'methods'             => 'get',
-            'callback'            => array($this, 'get_form_fields'),
-        ));
+//        register_rest_route('/td-settings', '/form-fields/(?P<id>\d+)', array(
+//            'methods'             => 'get',
+//            'callback'            => array($this, 'get_form_fields'),
+//        ));
 
 //        register_rest_route('/td-settings', '/form/submit', array(
 //            'methods'             => 'post',
@@ -73,7 +74,18 @@ class RestRoute
         register_rest_route('/td-settings', '/form/submit', array(
             'methods'             => 'post',
             'callback'            => array($this, 'save_helpdesk_form'),
+            'permission_callback' => function () {
+	            return true;
+            }
         ));
+
+	    register_rest_route('/td-search-query', '/docs', array(
+		    'methods'             => 'post',
+		    'callback'            => array($this, 'get_search_data'),
+		    'permission_callback' => function () {
+			    return true;
+		    }
+	    ));
 
 
     }
@@ -245,4 +257,51 @@ class RestRoute
             return new \WP_REST_Response(json_decode($form_fields->form_fields), 200);
         }
     }
+
+	public function get_search_data(): array {
+		$query_string = $_POST['query_string'] ?? '';
+		$x_query = new \WP_Query(
+			array(
+				's'         => $query_string,
+				'post_type' => get_option('td_helpdesk_post_types')
+			)
+		);
+		$search_posts = [];
+		while ($x_query->have_posts()) :
+			$x_query->the_post();
+			$post_categories_array = get_the_category(get_the_ID());
+			$post_title = $this->get_truncated_post_title(html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'));
+			$search_posts[] = [
+				'id'            => get_the_ID(),
+				'title'         => $post_title,
+				'excerpt'       => get_the_excerpt(),
+				'categories'    => count($post_categories_array) ? implode(', ', wp_list_pluck($post_categories_array, 'name')) : 'Category not available',
+				'link'          => get_the_permalink(),
+			];
+
+		endwhile;
+
+		wp_reset_query();
+
+		if (empty($search_posts)) {
+			return [
+				'data' => []
+			];
+		} else {
+			return [
+				'count' => count($search_posts) . ' result found',
+				'data'  => $search_posts
+			];
+		}
+
+
+	}
+
+	public function get_truncated_post_title($title): string
+	{
+		if (mb_strwidth($title, 'UTF-8') > self::POST_TITLE_LIMIT) {
+			return rtrim(mb_strimwidth($title, 0, self::POST_TITLE_LIMIT, '', 'UTF-8')) . '...';
+		}
+		return $title;
+	}
 }

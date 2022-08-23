@@ -7,4 +7,18 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'ThriveDesk\\Admin' => $baseDir . '/src/Admin.php',
+    'ThriveDesk\\Api' => $baseDir . '/src/Api.php',
+    'ThriveDesk\\Api\\ApiResponse' => $baseDir . '/src/Api/ApiResponse.php',
+    'ThriveDesk\\Conversations\\Conversation' => $baseDir . '/src/Conversations/Conversation.php',
+    'ThriveDesk\\FluentCrmHooks' => $baseDir . '/Hooks/FluentCrmHooks.php',
+    'ThriveDesk\\FormProviders\\FormProviderHelper' => $baseDir . '/src/FormProviders/FormProviderHelper.php',
+    'ThriveDesk\\Plugin' => $baseDir . '/src/Abstracts/Plugin.php',
+    'ThriveDesk\\Plugins\\Autonami' => $baseDir . '/src/Plugins/Autonami.php',
+    'ThriveDesk\\Plugins\\EDD' => $baseDir . '/src/Plugins/EDD.php',
+    'ThriveDesk\\Plugins\\FluentCRM' => $baseDir . '/src/Plugins/FluentCRM.php',
+    'ThriveDesk\\Plugins\\SmartPay' => $baseDir . '/src/Plugins/SmartPay.php',
+    'ThriveDesk\\Plugins\\WPPostSync' => $baseDir . '/src/Plugins/WPPostSync.php',
+    'ThriveDesk\\Plugins\\WooCommerce' => $baseDir . '/src/Plugins/WooCommerce.php',
+    'ThriveDesk\\RestRoute' => $baseDir . '/src/RestRoute.php',
 );

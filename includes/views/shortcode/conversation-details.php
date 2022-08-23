@@ -1,7 +1,8 @@
 <?php
+$td_reply_nonce = wp_create_nonce('td-reply-conversation-action');
 
 if (isset($_GET['conversation_id'])) {
-	$conversation = get_conversation($_GET['conversation_id']);
+	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['conversation_id']);
 }
 ?>
 
@@ -9,7 +10,7 @@ if (isset($_GET['conversation_id'])) {
     <div class="w-full bg-gray-200 py-6 px-8 td-shortcode-body" style="margin: 20px 0 20px 0;">
         <div class="py-4 px-2 flex flex-col justify-start">
             <span class="font-semibold">#<?= $conversation['ticket_id'] . ' - ' .
-                $conversation['subject'] ; ?></span>
+                                             $conversation['subject'] ; ?></span>
             <p class="text-sm"><span>Last update: <?= $conversation['updated_at'] ?></span></p>
         </div>
         <div class="py-4 px-2 rounded-lg shadow-md sm:rounded-lg bg-white border">
@@ -17,8 +18,9 @@ if (isset($_GET['conversation_id'])) {
                 <h1 class="pb-3 text-left text-lg font-extrabold border-b">Conversation</h1>
                 <div class="w-full text-sm text-lef border-b py-5 mb-4">
 
-                    <?php foreach ($conversation['events'] as $event): ?>
-                        <div class="<?php echo $event['actor_type'] == 'ThriveDesk\\Models\\User' ? 'bg-blue-100' : 'bg-gray-100' ?>
+					<?php foreach ($conversation['events'] as $event): ?>
+                        <div class=" <?php echo $event['actor_type'] == 'ThriveDesk\\Models\\User' ? 'bg-blue-100' :
+							'bg-gray-100' ?>
                         rounded
                         border-2 mb-5">
                             <div class="px-6 py-4 pt-3">
@@ -31,26 +33,28 @@ if (isset($_GET['conversation_id'])) {
                                         <p class="text-sm"><?= $event['created_at']; ?></p>
                                     </div>
                                 </div>
-                                <div class="py-4">
-                                <?php if ($event['event'] && $event['event']['html_body']): ?>
-                                    <!--    FIXME: handle style broken issue with html body              -->
-                                        <?= $event['event']['html_body']; ?>
-	                            <?php elseif($event['event'] && $event['event']['text_body']): ?>
-	                                <?= $event['event']['text_body']; ?>
-                                <?php endif; ?>
+                                <div class="prose py-4">
+									<?php if ($event['event'] && $event['event']['html_body']): ?>
+										<?= \ThriveDesk\Conversations\Conversation::validate_conversation_body($event['event']['html_body']); ?>
+									<?php elseif($event['event'] && $event['event']['text_body']): ?>
+										<?= $event['event']['text_body']; ?>
+									<?php endif; ?>
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+					<?php endforeach; ?>
                 </div>
                 <div class="py-6">
                     <form action="" id="td_conversation_reply" method="POST">
+                        <input type="hidden" id="td_reply_none" value="<?php echo $td_reply_nonce; ?>">
+                        <input type="hidden" id="td_conversation_id" value="<?php echo $_GET['conversation_id']; ?>">
                         <div class="mb-6">
 							<?php wp_editor('', 'td_conversation_editor', ['editor_height' => '120'] ); ?>
                         </div>
 
                         <div class="mb-6">
                             <button type="submit" id="td_conversation_reply_submit"
+                                    data-nonce="<?php echo esc_attr($td_reply_nonce); ?>"
                                     class="text-white bg-blue-700
                                     hover:bg-blue-800
                                     focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

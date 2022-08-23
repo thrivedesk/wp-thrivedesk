@@ -6,6 +6,7 @@ $fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
 $wppostsync = ThriveDesk\Plugins\WPPostSync::instance();
 $autonami = ThriveDesk\Plugins\Autonami::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
+$conversation = ThriveDesk\Plugins\Conversation::instance();
 
 $plugins = [
     [
@@ -167,7 +168,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="rounded-lg shadow-md sm:rounded-lg bg-white border">
                 <div class="px-6 py-4">
                     <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
-                    <?php $td_helpdesk_selected_option = getSelectedHelpdeskOptions(); ?>
+                    <?php $td_helpdesk_selected_option = $conversation->getSelectedHelpdeskOptions(); ?>
                     <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
                     <div class="w-full text-sm text-left py-5">
                         <div class="flex items-center justify-center">
