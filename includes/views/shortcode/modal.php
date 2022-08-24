@@ -61,15 +61,12 @@ w-full md:inset-0 h-modal md:h-full justify-center items-center flex y-4" aria-m
 				</div>
 				<footer class="tdSearch-Footer">
 					<div class="flex-s p-1 space-x-2">
-						<a href="<?php echo get_page_link( get_post($conversation->getSelectedHelpdeskOptions('td_helpdesk_settings')['td_form_page_id']))?>" target="_blank" class="text-gray-600 text-sm">
+						<a href="<?php echo get_page_link( get_post($conversation->getSelectedHelpdeskOptions('td_helpdesk_settings')['td_form_page_id']))?>" id="td-new-ticket-url" target="_blank" class="text-blue-600 text-sm">
 							Create new
 						</a>
 					</div>
 				</footer>
 			</div>
-
-			<!-- Modal footer -->
-
 		</div>
 	</div>
 </div>

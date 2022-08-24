@@ -16,7 +16,11 @@ class RestRoute
      * @since 0.9.0
      */
     private static $instance;
-	public const POST_TITLE_LIMIT = 56;
+
+	/**
+	 * define post limit when searching
+	 */
+	public const POST_TITLE_LIMIT = 20;
 
     /** Main RestRoute
      *
@@ -53,24 +57,11 @@ class RestRoute
         ));
     }
 
-    public function form_routes()
-    {
-//        register_rest_route('/td-settings', '/forms', array(
-//            'methods'             => 'post',
-//            'callback'            => array($this, 'get_forms'),
-//        ));
-
-
-//        register_rest_route('/td-settings', '/form-fields/(?P<id>\d+)', array(
-//            'methods'             => 'get',
-//            'callback'            => array($this, 'get_form_fields'),
-//        ));
-
-//        register_rest_route('/td-settings', '/form/submit', array(
-//            'methods'             => 'post',
-//            'callback'            => array($this, 'save_form'),
-//        ));
-
+	/**
+	 * register routes for admin form and doc search
+	 * @return void
+	 */
+    public function form_routes(): void {
         register_rest_route('/td-settings', '/form/submit', array(
             'methods'             => 'post',
             'callback'            => array($this, 'save_helpdesk_form'),
@@ -90,6 +81,10 @@ class RestRoute
 
     }
 
+	/**
+	 * helpdesk form submit
+	 * @return void|\WP_REST_Response
+	 */
     public function save_helpdesk_form()
     {
         if (isset($_POST['td_helpdesk_api_key']) && isset($_POST['td_form_page_id']) && isset($_POST['td_helpdesk_post_types']) &&
@@ -112,27 +107,6 @@ class RestRoute
         }
     }
 
-    /**
-     * @return \WP_REST_Response
-     */
-    public function save_form()
-    {
-        if (isset($_POST['form_provider']) && isset($_POST['form_name'])) {
-            // add option to database
-            $td_helpdesk_settings = [
-                'form_provider' => $_POST['form_provider'],
-                'form_name' => $_POST['form_name'],
-            ];
-
-            if (get_option('td_helpdesk_settings')) {
-                update_option('td_helpdesk_settings', $td_helpdesk_settings);
-            } else {
-                add_option('td_helpdesk_settings', $td_helpdesk_settings);
-            }
-
-            return new \WP_REST_Response('saved successfully', 200);
-        }
-    }
 
     /**
      * @param $data
@@ -199,65 +173,10 @@ class RestRoute
         return new \WP_REST_Response($formattedTickets, 200);
     }
 
-    /**
-     * @param $data
-     * @return \WP_REST_Response
-     * @throws Exception
-     */
-    public static function get_forms(): \WP_REST_Response
-    {
-        // add for only authenticate user
-//        if (!is_user_admin()) {
-//            return new \WP_REST_Response(['message' => 'No form does not exists'], 401);
-//        }
-        if ($_POST['value'] == 'fluent-form') {
-            $query = wpFluent()->table('fluentform_forms')
-                ->orderBy('id', 'desc');
-
-            $forms = $query->select('*')->get();
-            $form_data = [];
-            foreach ($forms as $key => $form) {
-                $form_data[] = [
-                    'key'  => sanitize_title_with_dashes($form->title),
-                    'title'  => $form->title,
-                ];
-            }
-
-            return new \WP_REST_Response($form_data, 200);
-        }if ($_POST['value'] == 'contact-form-7') {
-        $posts = get_posts(
-            array(
-                'numberposts' => -1,
-                'post_type' => 'wpcf7_contact_form',
-                'post_status' => 'any',
-            )
-        );
-
-        $form_data = [];
-        foreach ($posts as $key => $post) {
-            $form_data[] = [
-                'id'  => $key,
-                'title'  => $post->post_title,
-            ];
-        }
-
-        return new \WP_REST_Response($form_data, 200);
-    } else {
-        return new \WP_REST_Response([], 200);
-    }
-    }
-
-    public function get_form_fields($data)
-    {
-        if (isset($data['id'])) {
-            $query = wpFluent()->table('fluentform_forms')
-                ->where('id', $data['id']);
-
-            $form_fields = $query->select('*')->first();
-            return new \WP_REST_Response(json_decode($form_fields->form_fields), 200);
-        }
-    }
-
+	/**
+	 * doc search on new ticket modal
+	 * @return array
+	 */
 	public function get_search_data(): array {
 		$query_string = $_POST['query_string'] ?? '';
 		$x_query = new \WP_Query(
@@ -293,10 +212,13 @@ class RestRoute
 				'data'  => $search_posts
 			];
 		}
-
-
 	}
 
+	/**
+	 * @param $title
+	 *
+	 * @return string
+	 */
 	public function get_truncated_post_title($title): string
 	{
 		if (mb_strwidth($title, 'UTF-8') > self::POST_TITLE_LIMIT) {

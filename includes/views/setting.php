@@ -6,8 +6,7 @@ $fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
 $wppostsync = ThriveDesk\Plugins\WPPostSync::instance();
 $autonami = ThriveDesk\Plugins\Autonami::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
-$conversation = ThriveDesk\Plugins\Conversation::instance();
-
+$conversation = ThriveDesk\Conversations\Conversation::instance();
 $plugins = [
     [
         'namespace'     => 'woocommerce',
@@ -175,7 +174,8 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                             <div class="max-w-md w-full space-y-8">
                                 <form class="mt-8 space-y-6" id="td_helpdesk_form" action="#" method="POST">
                                     <div class="mb-6">
-                                        <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">API key</label>
+                                        <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium
+                                        text-gray-900 dark:text-gray-400">API KEY</label>
                                         <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
                                                rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2

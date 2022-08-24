@@ -89,7 +89,6 @@ jQuery(document).ready(($) => {
 			url: "/wp-json/td-settings/forms",
 			data: form,
 			success: function(data){
-				// console.log(data)
 				let option = "";
 				option +='<option value="">Please choose a form</option>';
 				data.forEach(function(element) {

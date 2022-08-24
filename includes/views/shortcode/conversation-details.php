@@ -11,13 +11,21 @@ if (isset($_GET['conversation_id'])) {
         <div class="py-4 px-2 flex flex-col justify-start">
             <span class="font-semibold">#<?= $conversation['ticket_id'] . ' - ' .
                                              $conversation['subject'] ; ?></span>
-            <p class="text-sm"><span>Last update: <?= $conversation['updated_at'] ?></span></p>
+            <p class="text-sm mt-2"><span>Last update: <?= \ThriveDesk\Conversations\Conversation::diffForHumans
+                    ($conversation['updated_at']) ?></span></p>
+
         </div>
+
         <div class="py-4 px-2 rounded-lg shadow-md sm:rounded-lg bg-white border">
             <div class="px-6 py-4">
-                <h1 class="pb-3 text-left text-lg font-extrabold border-b">Conversation</h1>
-                <div class="w-full text-sm text-lef border-b py-5 mb-4">
+                <div class="flex justify-between border-b">
+                    <h1 class="pb-3 text-left text-lg font-extrabold">Conversation </h1>
+                    <div class="font-medium text-center whitespace-nowrap">
+                        <span class="px-2 py-1 bg-gray-300 rounded-full"><?php echo $conversation['status']; ?></span>
+                    </div>
 
+                </div>
+                <div class="w-full text-sm text-lef border-b py-5 mb-4">
 					<?php foreach ($conversation['events'] as $event): ?>
                         <div class=" <?php echo $event['actor_type'] == 'ThriveDesk\\Models\\User' ? 'bg-blue-100' :
 							'bg-gray-100' ?>
@@ -26,11 +34,13 @@ if (isset($_GET['conversation_id'])) {
                             <div class="px-6 py-4 pt-3">
                                 <div class="flex border-b">
                                     <div class="flex-none w-14 h-14">
-                                        <img class="w-10 h-10 rounded-full" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Rounded avatar" />
+                                        <img class="w-10 h-10 rounded-full" src="<?= $event['actor']['avatar'] ?? '' ?>"
+                                             alt="<?= $event['actor']['name'] ?? '' ?>
+                                        avatar" />
                                     </div>
                                     <div class="flex-initial w-64">
                                         <h3 class="font-bold"><?= $event['actor']['name']; ?></h3>
-                                        <p class="text-sm"><?= $event['created_at']; ?></p>
+                                        <p class="text-sm"><?= \ThriveDesk\Conversations\Conversation::diffForHumans($event['created_at']); ?></p>
                                     </div>
                                 </div>
                                 <div class="prose py-4">

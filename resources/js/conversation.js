@@ -32,33 +32,38 @@ jQuery(document).ready(($) => {
             success: function(data){
                 const list = $('#td_search_list');
                 let search_results = '';
-                data.data.forEach(function(item, i){
-                    search_results += `<li class="tdSearch-Hit hover:bg-blue-700" id="td-search-item-${i}" role="option" aria-selected="false"><a class="tdSearch-Hit--Result" target="_blank" href="${item.link}"><div class="tdSearch-Hit-Container"><div class="tdSearch-Hit-icon"></div><div class="tdSearch-Hit-content-wrapper"><span class="tdSearch-Hit-title">${item.excerpt}</span><spanclass="tdSearch-Hit-path">${item.title}</span></div><div class="tdSearch-Hit-action"></div></div></a></li>`;
+                if (data.data.length > 0) {
+                    data.data.forEach(function(item, i){
+                        search_results += `<li class="tdSearch-Hit hover:bg-blue-700" id="td-search-item-${i}" role="option" aria-selected="false"><a class="tdSearch-Hit--Result" target="_blank" href="${item.link}"><div class="tdSearch-Hit-Container"><div class="tdSearch-Hit-icon"></div><div class="tdSearch-Hit-content-wrapper"><span class="tdSearch-Hit-title">${item.excerpt}</span><spanclass="tdSearch-Hit-path">${item.title}</span></div><div class="tdSearch-Hit-action"></div></div></a></li>`;
 
-                    $(document).on('mouseover',`#td-search-item-${i}`,function(){
-                        console.log('on mouse over')
-                        $(`#td-search-item-${i}`).attr('aria-selected',true);
-                    });
-                    $(document).on('mouseout',`#td-search-item-${i}`,function(){
-                        $(`#td-search-item-${i}`).attr('aria-selected',false);
-                    });
+                        $(document).on('mouseover',`#td-search-item-${i}`,function(){
+                            console.log('on mouse over')
+                            $(`#td-search-item-${i}`).attr('aria-selected',true);
+                        });
+                        $(document).on('mouseout',`#td-search-item-${i}`,function(){
+                            $(`#td-search-item-${i}`).attr('aria-selected',false);
+                        });
 
-                    $(document).on('keyup', '#td_search_input', function(e){
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const pressedDown = (e.key === 'ArrowDown' || e.keyCode ===40);
-                        const pressedUp = (e.key === 'ArrowUp' || e.keyCode ===38);
-                        if ( pressedDown || pressedUp) {
-                            const current = $(`#td-search-item-${i}`);
-                            const next = pressedDown ? current.next() : current.prev();
-                            if (next.length) {
-                                current.attr('aria-selected',false);
-                                next.attr('aria-selected',true);
-                                next.focus();
+                        $(document).on('keyup', '#td_search_input', function(e){
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const pressedDown = (e.key === 'ArrowDown' || e.keyCode ===40);
+                            const pressedUp = (e.key === 'ArrowUp' || e.keyCode ===38);
+                            if ( pressedDown || pressedUp) {
+                                const current = $(`#td-search-item-${i}`);
+                                const next = pressedDown ? current.next() : current.prev();
+                                if (next.length) {
+                                    current.attr('aria-selected',false);
+                                    next.attr('aria-selected',true);
+                                    next.focus();
+                                }
                             }
-                        }
+                        });
                     });
-                });
+                } else {
+                    let new_ticket_url = $('#td-new-ticket-url').attr('href');
+                    search_results += `<li class="text-center pt-3"><p class="text-sm">No documentation found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</p></li>`
+                }
                 list.html(search_results);
             }
         });

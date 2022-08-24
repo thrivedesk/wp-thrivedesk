@@ -53,10 +53,10 @@ $links = $conversations['meta']['links'] ?? [];
                         </div>
                     </td>
                     <td class="py-4 px-6 text-center">
-                        Parvez Akhter
+                        <?= $conversation['last_actor']['name'] ?? '-' ?>
                     </td>
                     <td class="py-4 px-6 text-center">
-                        <?php echo $conversation['updated_at']; ?>
+                        <?= \ThriveDesk\Conversations\Conversation::diffForHumans($conversation['updated_at']) ?>
                     </td>
                     <td class="py-4 px-6 text-right">
                         <!--					<a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>-->
@@ -84,7 +84,7 @@ $links = $conversations['meta']['links'] ?? [];
                 ?>
                     <li>
                         <a href="<?= $link['url'] ? get_permalink() .'?cv_page='.$page : 'javascript:void(0)' ?>"
-                        class="<?= $link['active'] ? 'active' : ''; ?> py-2 px-3
+                        class="<?= $link['active'] ? 'text-white bg-blue-600' : ''; ?> py-2 px-3
                         ml-0 leading-tight text-gray-500 bg-white  border border-gray-300
                         hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700
                         dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white <?= $key == count($links)-1 ?
