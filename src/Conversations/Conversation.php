@@ -22,7 +22,7 @@ class Conversation {
 	/**
 	 *  middle common url text
 	 */
-	const TD_CONVERSATION_URL = '/public/v1/conversations/';
+	const TD_CONVERSATION_URL = '/public/v1/customer/conversations/';
 
 	/**
 	 * singleton class
@@ -171,8 +171,10 @@ class Conversation {
 	 */
 	public static function get_conversations() {
 		$page = $_GET['cv_page'] ?? 1;
+		$current_user_email = wp_get_current_user()->user_email;
 		$token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
-		$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL .'?page='.$page;
+		$state = hash_hmac('SHA1', $current_user_email, $token);
+		$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL .'?customer_email='. $current_user_email .'&state='. $state .'&page='.$page.'&per-page=2';
 		$args     = array(
 			'headers' => array(
 				'Authorization' => 'Bearer ' . $token,
