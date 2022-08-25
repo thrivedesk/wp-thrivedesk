@@ -78,27 +78,7 @@ jQuery(document).ready(($) => {
 			.classList.remove('hidden');
 	});
 
-	// settings tab
-	$( "#form_provider" ).change(function() {
-		let selected_item_id = $("#form_provider").val();
-		let form = {
-			'value': selected_item_id,
-		}
-		$.ajax({
-			type: "POST",
-			url: "/wp-json/td-settings/forms",
-			data: form,
-			success: function(data){
-				let option = "";
-				option +='<option value="">Please choose a form</option>';
-				data.forEach(function(element) {
-					option  += "<option value = '"+ element.key + "'>"+ element.title +"</option>";
-				});
-				$("#form_name").html(option);
-			}
-		});
-	});
-
+	// helpdesk form
 	$('#td_helpdesk_form').submit(function(e){
 		e.preventDefault();
 		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();

@@ -37,7 +37,6 @@ jQuery(document).ready(($) => {
                         search_results += `<li class="tdSearch-Hit hover:bg-blue-700" id="td-search-item-${i}" role="option" aria-selected="false"><a class="tdSearch-Hit--Result" target="_blank" href="${item.link}"><div class="tdSearch-Hit-Container"><div class="tdSearch-Hit-icon"></div><div class="tdSearch-Hit-content-wrapper"><span class="tdSearch-Hit-title">${item.excerpt}</span><spanclass="tdSearch-Hit-path">${item.title}</span></div><div class="tdSearch-Hit-action"></div></div></a></li>`;
 
                         $(document).on('mouseover',`#td-search-item-${i}`,function(){
-                            console.log('on mouse over')
                             $(`#td-search-item-${i}`).attr('aria-selected',true);
                         });
                         $(document).on('mouseout',`#td-search-item-${i}`,function(){
