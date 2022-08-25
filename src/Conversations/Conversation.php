@@ -84,9 +84,9 @@ class Conversation {
 	public function conversation_page() {
 		ob_start();
 		if (isset($_GET['conversation_id'])) {
-			include THRIVEDESK_DIR. '/includes/views/shortcode/conversation-details.php';
+			thrivedesk_view('shortcode/conversation-details');
 		} else {
-			include THRIVEDESK_DIR. '/includes/views/shortcode/conversations.php';
+			thrivedesk_view('shortcode/conversations');
 		}
 		return ob_get_clean();
 	}
@@ -165,14 +165,6 @@ class Conversation {
 		return $dom->saveHTML();
 	}
 
-	/*
-	 * admin setting
-	 * get add settings from the wp options
-	 */
-	public function getSelectedHelpdeskOptions() {
-		return get_option('td_helpdesk_settings') ?? [];
-	}
-
 	/**
 	 * get all conversations
 	 * @return mixed|null
@@ -190,38 +182,5 @@ class Conversation {
 		$body     = wp_remote_retrieve_body( $response );
 		$body     = json_decode( $body, true );
 		return $body ?? [];
-	}
-
-	/**
-	 * format timestamp for the conversation
-	 * @throws \Exception
-	 */
-	public static function diffForHumans($datetime, $full = false): string {
-		$now = new DateTime;
-		$ago = new DateTime($datetime);
-		$diff = $now->diff($ago);
-
-		$diff->w = floor($diff->d / 7);
-		$diff->d -= $diff->w * 7;
-
-		$periods = array(
-			'y' => ['year', 'years'],
-			'm' => ['month', 'months'],
-			'w' => ['week', 'weeks'],
-			'd' => ['day', 'days'],
-			'h' => ['hour', 'hours'],
-			'i' => ['minute', 'minutes'],
-			's' => ['second', 'seconds']
-		);
-
-		$parts = array();
-		foreach ($periods as $k => &$v) {
-			if ($diff->$k) {
-				$parts[] = $diff->$k . ' ' . $v[$diff->$k > 1];
-			}
-		}
-
-		if (!$full) $parts = array_slice($parts, 0, 1);
-		return $parts ? implode(', ', $parts) . ' ago' : 'just now';
 	}
 }

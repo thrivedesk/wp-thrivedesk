@@ -41,3 +41,47 @@ if (!function_exists('thrivedesk_options')) {
         return is_array($options) ? $options : [];
     }
 }
+
+if (!function_exists('diff_for_humans')) {
+	/**
+	 * format timestamp for the conversation
+	 * @throws \Exception
+	 */
+	function diff_for_humans($datetime, $full = false): string {
+		$now = new DateTime;
+		$ago = new DateTime($datetime);
+		$diff = $now->diff($ago);
+
+		$diff->w = floor($diff->d / 7);
+		$diff->d -= $diff->w * 7;
+
+		$periods = array(
+			'y' => ['year', 'years'],
+			'm' => ['month', 'months'],
+			'w' => ['week', 'weeks'],
+			'd' => ['day', 'days'],
+			'h' => ['hour', 'hours'],
+			'i' => ['minute', 'minutes'],
+			's' => ['second', 'seconds']
+		);
+
+		$parts = array();
+		foreach ($periods as $k => &$v) {
+			if ($diff->$k) {
+				$parts[] = $diff->$k . ' ' . $v[$diff->$k > 1];
+			}
+		}
+
+		if (!$full) $parts = array_slice($parts, 0, 1);
+		return $parts ? implode(', ', $parts) . ' ago' : 'just now';
+	}
+}
+
+/**
+ * helpdesk options
+ */
+if (!function_exists('get_td_helpdesk_options')) {
+	function get_td_helpdesk_options() {
+		return get_option('td_helpdesk_settings') ?? [];
+	}
+}
