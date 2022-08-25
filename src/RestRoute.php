@@ -5,173 +5,166 @@ namespace ThriveDesk;
 use WpFluent\Exception;
 
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
 class RestRoute
 {
-    /**
-     * @var $instance
-     * The single instance of this class
-     * @since 0.9.0
-     */
-    private static $instance;
+	/**
+	 * @var $instance
+	 * The single instance of this class
+	 * @since 0.9.0
+	 */
+	private static $instance;
 
 	/**
 	 * define post limit when searching
 	 */
 	public const POST_TITLE_LIMIT = 20;
 
-    /** Main RestRoute
-     *
-     * @return RestRoute
-     * @since 0.9.0
-     */
-    public static function instance()
-    {
-        if (null === self::$instance) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
+	/** Main RestRoute
+	 *
+	 * @return RestRoute
+	 * @since 0.9.0
+	 */
+	public static function instance()
+	{
+		if (null === self::$instance) {
+			self::$instance = new self;
+		}
+		return self::$instance;
+	}
 
-    private function __construct()
-    {
-        add_action('rest_api_init', array($this, 'td_routes'));
-        add_action('rest_api_init', array($this, 'form_routes'));
-    }
-
-    /**
-     * ThriveDesk conversation rest route
-     *
-     * @since 0.9.0
-     */
-    public function td_routes()
-    {
-        register_rest_route('thrivedesk/v1', '/conversations/contact/(?P<id>\d+)', array(
-            'methods'             => 'get',
-            'callback'            => array($this, 'get_thrivedesk_conversations'),
-            'permission_callback' => function () {
-                return current_user_can('manage_options');
-            }
-        ));
-    }
+	private function __construct()
+	{
+		add_action('rest_api_init', array($this, 'td_routes'));
+	}
 
 	/**
-	 * register routes for admin form and doc search
-	 * @return void
+	 * ThriveDesk conversation rest route
+	 *
+	 * @since 0.9.0
 	 */
-    public function form_routes(): void {
-        register_rest_route('/td-settings', '/form/submit', array(
-            'methods'             => 'post',
-            'callback'            => array($this, 'save_helpdesk_form'),
-            'permission_callback' => function () {
-	            return true;
-            }
-        ));
+	public function td_routes()
+	{
+		register_rest_route('thrivedesk/v1', '/conversations/contact/(?P<id>\d+)', array(
+			'methods'             => 'get',
+			'callback'            => array($this, 'get_thrivedesk_conversations'),
+			'permission_callback' => function () {
+				return current_user_can('manage_options');
+			}
+		));
 
-	    register_rest_route('/td-search-query', '/docs', array(
-		    'methods'             => 'post',
-		    'callback'            => array($this, 'get_search_data'),
-		    'permission_callback' => function () {
-			    return true;
-		    }
-	    ));
+		// helpdesk setting route for saving the setting
+		register_rest_route('/td-settings', '/form/submit', array(
+			'methods'             => 'post',
+			'callback'            => array($this, 'save_helpdesk_form'),
+			'permission_callback' => function () {
+				return true;
+			}
+		));
 
-
-    }
+		// doc search result route
+		register_rest_route('/td-search-query', '/docs', array(
+			'methods'             => 'post',
+			'callback'            => array($this, 'get_search_data'),
+			'permission_callback' => function () {
+				return true;
+			}
+		));
+	}
 
 	/**
 	 * helpdesk form submit
 	 * @return void|\WP_REST_Response
 	 */
-    public function save_helpdesk_form()
-    {
-        if (isset($_POST['td_helpdesk_api_key']) && isset($_POST['td_form_page_id']) && isset($_POST['td_helpdesk_post_types']) &&
-            isset($_POST['td_form_style'])) {
-            // add option to database
-            $td_helpdesk_settings = [
-                'td_helpdesk_api_key'       => $_POST['td_helpdesk_api_key'],
-                'td_form_page_id'           => $_POST['td_form_page_id'],
-                'td_helpdesk_post_types'    => $_POST['td_helpdesk_post_types'],
-                'td_form_style'             => $_POST['td_form_style'],
-            ];
+	public function save_helpdesk_form()
+	{
+		if (isset($_POST['td_helpdesk_api_key']) && isset($_POST['td_form_page_id']) && isset($_POST['td_helpdesk_post_types']) &&
+		    isset($_POST['td_form_style'])) {
+			// add option to database
+			$td_helpdesk_settings = [
+				'td_helpdesk_api_key'       => $_POST['td_helpdesk_api_key'],
+				'td_form_page_id'           => $_POST['td_form_page_id'],
+				'td_helpdesk_post_types'    => $_POST['td_helpdesk_post_types'],
+				'td_form_style'             => $_POST['td_form_style'],
+			];
 
-            if (get_option('td_helpdesk_settings')) {
-                update_option('td_helpdesk_settings', $td_helpdesk_settings);
-            } else {
-                add_option('td_helpdesk_settings', $td_helpdesk_settings);
-            }
+			if (get_option('td_helpdesk_settings')) {
+				update_option('td_helpdesk_settings', $td_helpdesk_settings);
+			} else {
+				add_option('td_helpdesk_settings', $td_helpdesk_settings);
+			}
 
-            return new \WP_REST_Response('Settings saved successfully', 200);
-        }
-    }
+			return new \WP_REST_Response('Settings saved successfully', 200);
+		}
+	}
 
 
-    /**
-     * @param $data
-     *
-     * @return array|\WP_REST_Response
-     *
-     * @since 0.9.0
-     */
-    public function get_thrivedesk_conversations($data)
-    {
-        if (!isset($data['id'])) {
-            return new \WP_REST_Response(['message' => 'Invalid request format'], 401);
-        }
+	/**
+	 * @param $data
+	 *
+	 * @return array|\WP_REST_Response
+	 *
+	 * @since 0.9.0
+	 */
+	public function get_thrivedesk_conversations($data)
+	{
+		if (!isset($data['id'])) {
+			return new \WP_REST_Response(['message' => 'Invalid request format'], 401);
+		}
 
-        if (!class_exists('BWF_Contacts')) {
-            return new \WP_REST_Response(['message' => 'Class BWF_Contacts does not exists'], 401);
-        }
+		if (!class_exists('BWF_Contacts')) {
+			return new \WP_REST_Response(['message' => 'Class BWF_Contacts does not exists'], 401);
+		}
 
-        $contact_obj = \BWF_Contacts::get_instance();
+		$contact_obj = \BWF_Contacts::get_instance();
 
-        $contact = $contact_obj->get_contact_by('id', $data['id']);
+		$contact = $contact_obj->get_contact_by('id', $data['id']);
 
-        if (!absint($contact->get_id()) > 0) {
-            return new \WP_REST_Response(['message' => 'Contact does not exists'], 401);
-        }
+		if (!absint($contact->get_id()) > 0) {
+			return new \WP_REST_Response(['message' => 'Contact does not exists'], 401);
+		}
 
-        $contact_email = $contact->get_email();
+		$contact_email = $contact->get_email();
 
-        global $wpdb;
-        $table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
+		global $wpdb;
+		$table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
-        $row = $wpdb->get_var("SHOW TABLES LIKE '$table_name'");
+		$row = $wpdb->get_var("SHOW TABLES LIKE '$table_name'");
 
-        if (!$row) {
-            return [];
-        }
+		if (!$row) {
+			return [];
+		}
 
-        $column = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s",
-            $table_name,
-            'deleted_at'
-        ));
+		$column = $wpdb->get_results($wpdb->prepare(
+			"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = %s",
+			$table_name,
+			'deleted_at'
+		));
 
-        if (!$column) {
-            return [];
-        }
+		if (!$column) {
+			return [];
+		}
 
-        $td_conversations = $wpdb->get_results(
-            "SELECT * FROM $table_name WHERE contact='$contact_email' AND deleted_at IS NULL"
-        );
+		$td_conversations = $wpdb->get_results(
+			"SELECT * FROM $table_name WHERE contact='$contact_email' AND deleted_at IS NULL"
+		);
 
-        $formattedTickets = [];
+		$formattedTickets = [];
 
-        foreach ($td_conversations as $td_conversation) {
-            $formattedTickets[] = [
-                'id'           => '#' . $td_conversation->ticket_id,
-                'title'        => $td_conversation->title,
-                'status'       => $td_conversation->status,
-                'submitted_at' => date($td_conversation->created_at),
-                'action'       => THRIVEDESK_APP_URL . '/conversations/' . $td_conversation->id,
-            ];
-        }
+		foreach ($td_conversations as $td_conversation) {
+			$formattedTickets[] = [
+				'id'           => '#' . $td_conversation->ticket_id,
+				'title'        => $td_conversation->title,
+				'status'       => $td_conversation->status,
+				'submitted_at' => date($td_conversation->created_at),
+				'action'       => THRIVEDESK_APP_URL . '/conversations/' . $td_conversation->id,
+			];
+		}
 
-        return new \WP_REST_Response($formattedTickets, 200);
-    }
+		return new \WP_REST_Response($formattedTickets, 200);
+	}
 
 	/**
 	 * doc search on new ticket modal
