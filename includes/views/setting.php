@@ -6,7 +6,6 @@ $fluentcrm = ThriveDesk\Plugins\FluentCRM::instance();
 $wppostsync = ThriveDesk\Plugins\WPPostSync::instance();
 $autonami = ThriveDesk\Plugins\Autonami::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
-$conversation = ThriveDesk\Conversations\Conversation::instance();
 $plugins = [
     [
         'namespace'     => 'woocommerce',
@@ -167,7 +166,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="rounded-lg shadow-md sm:rounded-lg bg-white border">
                 <div class="px-6 py-4">
                     <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
-                    <?php $td_helpdesk_selected_option = $conversation->getSelectedHelpdeskOptions(); ?>
+                    <?php $td_helpdesk_selected_option = get_td_helpdesk_options(); ?>
                     <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
                     <div class="w-full text-sm text-left py-5">
                         <div class="flex items-center justify-center">
@@ -175,22 +174,20 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                 <form class="mt-8 space-y-6" id="td_helpdesk_form" action="#" method="POST">
                                     <div class="mb-6">
                                         <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium
-                                        text-gray-900 dark:text-gray-400">API KEY</label>
+                                        text-gray-900">API KEY</label>
                                         <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
                                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
                                                rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2
-                                               .5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400
-                                               dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                               .5"
                                                value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key']) ?? ''; ?>"
                                                required />
                                     </div>
                                     <div class="mb-6">
                                         <label for="td_form_page_id" class="block mb-2 text-sm font-medium
-                                        text-gray-900 dark:text-gray-400">Select your Page where you will redirect on create new Ticket page</label>
+                                        text-gray-900">Select your Page where you will redirect on create new Ticket page</label>
                                         <select id="td_form_page_id" class="bg-gray-50 border border-gray-300
                                         text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500
-                                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600
-                                        dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required >
+                                        block w-full p-2.5" required >
                                             <option value=""> Please choose a page</option>
                                             <?php foreach (get_pages()  as $key => $page) : ?>
                                                 <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
@@ -201,7 +198,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                     </div>
 
                                     <div class="mb-6">
-                                        <label for="td_helpdesk_post_types" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Post types to search</label>
+                                        <label for="td_helpdesk_post_types" class="block mb-2 text-sm font-medium text-gray-900">Post types to search</label>
                                         <?php
                                         $wp_post_types = array_filter(get_post_types(array('public' => true, 'show_in_rest' => true)), function ($type) {
                                             return $type !== 'attachment';
@@ -221,9 +218,9 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                         ?>
                                     </div>
                                     <div class="mb-6">
-                                        <label for="td_helpdesk_form_style" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Choose your style (for default, left it blank)</label>
+                                        <label for="td_helpdesk_form_style" class="block mb-2 text-sm font-medium text-gray-900">Choose your style (for default, left it blank)</label>
                                         <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300
-                                        text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                        text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                                             <option value="">Please choose a style</option>
                                             <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>No
                                                 Style</option>
@@ -233,7 +230,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
 
                                     <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700
                                     hover:bg-blue-800
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
+                                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Save</button>
                                 </form>
                             </div>
                         </div>
