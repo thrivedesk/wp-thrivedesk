@@ -5,6 +5,9 @@
 	img {
 		border-style: none;
 	}
+	.td-card{
+		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
+	}
 }
 @tailwind components;
 @tailwind utilities;

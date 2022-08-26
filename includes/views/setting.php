@@ -82,7 +82,9 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="pl-6 flex justify-between text-sm font-medium leading-5 text-gray-500 h-12">
             <div class="flex space-x-8 admin-tabs">
                 <a data-target="tab-integrations" class="inline-flex items-center px-1 border-blue-600" href="#"><?php _e('Integrations', 'thrivedesk') ?></a>
-                <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#"><?php _e('HelpDesk Settings', 'thrivedesk') ?></a>
+                <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#">
+                    <?php _e('Portal', 'thrivedesk') ?> <span class="bg-blue-500 text-white uppercase text-xs ml-1 px-1.5 py-0.5 rounded">New</span>
+                </a>
                 <?php if ($wppostsync->get_plugin_data('connected')) : ?>
                     <a data-target="tab-post-types-sync" class="inline-flex items-center px-1" href="#"><?php _e('WP Post Sync', 'thrivedesk') ?></a>
                 <?php endif; ?>
@@ -104,12 +106,12 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
     <h1></h1>
 
     <!-- body  -->
-    <div id="tab-content" class="px-1.5">
+    <div id="tab-content" class="px-1.5 prose max-w-none prose-img:my-0">
         <div class="tab-integrations">
             <div class="mb-4 text-lg"><?php _e('Integrations', 'thrivedesk') ?></div>
             <div class="sm:grid sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
                 <?php foreach ($plugins as $plugin) : ?>
-                    <div class="border rounded-md p-4 transition hover:shadow-lg bg-white">
+                    <div class="td-card">
                         <!-- title  -->
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-4">
@@ -132,7 +134,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                             <?php endif; ?>
                         </div>
                         <!-- description  -->
-                        <div class="text-gray-500 text-xs my-3">
+                        <div class="text-gray-500 text-sm my-3">
                             <?php echo esc_html($plugin['description']); ?>
                         </div>
 
@@ -140,7 +142,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                         <div class="flex items-center justify-between relative">
                             <span class="uppercase text-xs text-gray-400"><?php echo esc_html($plugin['category']) ?></span>
 
-                            <div>
+                            <div class="text-xs">
                                 <?php if ($plugin['connected']) : ?>
                                     <button data-plugin="<?php echo esc_attr($plugin['namespace']); ?>" data-connected="1" data-nonce="<?php echo esc_attr($nonce); ?>" class="connect inline-flex items-center space-x-1 py-1.5 pl-2 pr-3 rounded-full bg-red-100 text-red-500 focus:outline-none focus:ring-2 focus:ring-red-600">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4" viewBox="0 0 16 16">
@@ -163,80 +165,100 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             </div>
         </div>
         <div class="hidden tab-settings">
-            <div class="rounded-lg shadow-md sm:rounded-lg bg-white border">
-                <div class="px-6 py-4">
-                    <h1 class="pb-3 text-left text-lg font-extrabold border-b">HelpDesk Settings</h1>
-                    <?php $td_helpdesk_selected_option = get_td_helpdesk_options(); ?>
-                    <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
-                    <div class="w-full text-sm text-left py-5">
-                        <div class="flex items-center justify-center">
-                            <div class="max-w-md w-full space-y-8">
-                                <form class="mt-8 space-y-6" id="td_helpdesk_form" action="#" method="POST">
-                                    <div class="mb-6">
-                                        <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium
-                                        text-gray-900">API KEY</label>
-                                        <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
-                                               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm
-                                               rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2
-                                               .5"
-                                               value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key']) ?? ''; ?>"
-                                               required />
+            <?php $td_helpdesk_selected_option = get_td_helpdesk_options(); ?>
+            <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
+            
+            <div class="td-card td-settings md:grid md:grid-cols-5 p-0">
+                <form class="md:col-span-4 space-y-6 p-10" id="td_helpdesk_form" action="#" method="POST">
+                    <div>
+                        <div class="md:grid md:grid-cols-4 md:gap-10">
+                            <div class="md:col-span-2">
+                                <div class="px-4 sm:px-0">
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900">Ticket</h3>
+                                    <div class="mt-1 text-sm text-gray-600">
+                                        <p><strong>API Keys:</strong> Login to ThriveDesk app and get your API key from <a class="text-blue-500" href="#" target="_blank">here</a>.</p>
+                                        <p><strong>New Ticket Page:</strong> Use any form plugin to create new ticket page or use existing one. Learn more <a class="text-blue-500" href="#">here</a>.</p>
                                     </div>
-                                    <div class="mb-6">
-                                        <label for="td_form_page_id" class="block mb-2 text-sm font-medium
-                                        text-gray-900">Select your Page where you will redirect on create new Ticket page</label>
-                                        <select id="td_form_page_id" class="bg-gray-50 border border-gray-300
-                                        text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500
-                                        block w-full p-2.5" required >
-                                            <option value=""> Please choose a page</option>
-                                            <?php foreach (get_pages()  as $key => $page) : ?>
-                                                <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
-                                                    <?php echo $page->post_title; ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-6">
-                                        <label for="td_helpdesk_post_types" class="block mb-2 text-sm font-medium text-gray-900">Post types to search</label>
-                                        <?php
-                                        $wp_post_types = array_filter(get_post_types(array('public' => true, 'show_in_rest' => true)), function ($type) {
-                                            return $type !== 'attachment';
-                                        });
-
-                                        foreach ($wp_post_types as $post_type) :
-                                            ?>
-                                            <div>
-                                                <input class="td_helpdesk_post_types" type="checkbox" name="td_helpdesk_post_types[]"
-                                                       value="<?php echo esc_attr($post_type); ?>" id="<?php echo
-                                                esc_attr($post_type); ?>" <?php echo in_array($post_type,
-                                                    $td_selected_post_types) ? 'checked' : '';  ?>>
-                                                <label for="<?php echo esc_attr($post_type); ?>"> <?php echo esc_html(ucfirst($post_type)); ?> </label>
-                                            </div>
-                                        <?php
-                                        endforeach;
-                                        ?>
-                                    </div>
-                                    <div class="mb-6">
-                                        <label for="td_helpdesk_form_style" class="block mb-2 text-sm font-medium text-gray-900">Choose your style (for default, left it blank)</label>
-                                        <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300
-                                        text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                                            <option value="">Please choose a style</option>
-                                            <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>No
-                                                Style</option>
-                                            <option value="modern" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'modern' ? 'selected' : ''; ?>>Modern</option>
-                                        </select>
-                                    </div>
-
-                                    <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700
-                                    hover:bg-blue-800
-                                    focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Save</button>
-                                </form>
+                                </div>
+                            </div>
+                            <div class="mt-5 md:mt-0 md:col-span-2 space-y-4">
+                                <div>
+                                    <label for="td_helpdesk_api_key">API Key</label>
+                                    <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
+                                            class="mt-1 block w-full"
+                                            value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key']) ?? ''; ?>"
+                                            required />
+                                </div>
+                                <div>
+                                    <label for="td_form_page_id">New Ticket Page</label>
+                                    <select id="td_form_page_id" class="mt-1 block w-full" required >
+                                        <option value=""> Please choose a page</option>
+                                        <?php foreach (get_pages()  as $key => $page) : ?>
+                                            <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
+                                                <?php echo $page->post_title; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <hr>
+                    <div>
+                        <div class="md:grid md:grid-cols-4 md:gap-10">
+                            <div class="md:col-span-2">
+                                <div class="px-4 sm:px-0">
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900">Knowledge base</h3>
+                                    <div class="mt-1 text-sm text-gray-600">
+                                        <p><strong>Search From:</strong> Select a post type where user can search before raise a support ticket.</p>
+                                        <p><strong>Style:</strong> You can customize the style of support portal to match with your brand or use our design.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-5 md:mt-0 md:col-span-2">
+                                <div class="mb-6">
+                                <label for="td_helpdesk_post_types">Search From</label>
+                                <?php 
+                                    $wp_post_types = array_filter(get_post_types(array('public' => true, 'show_in_rest' => true)), function ($type) {
+                                    return $type !== 'attachment';
+                                }); ?>
+                                <div class="flex items-center space-x-2">
+                                <?php foreach ($wp_post_types as $post_type) : ?>
+                                        <div>
+                                            <input class="td_helpdesk_post_types" type="checkbox" name="td_helpdesk_post_types[]"
+                                                    value="<?php echo esc_attr($post_type); ?>" id="<?php echo
+                                            esc_attr($post_type); ?>" <?php echo in_array($post_type,
+                                                $td_selected_post_types) ? 'checked' : '';  ?>>
+                                            <label for="<?php echo esc_attr($post_type); ?>"> <?php echo esc_html(ucfirst($post_type)); ?> </label>
+                                        </div>
+                                <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label for="td_helpdesk_form_style">Portal Style</label>
+                                <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300
+                                text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                                    <option value="">Please choose a style</option>
+                                    <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>Unstyled</option>
+                                    <option value="modern" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'modern' ? 'selected' : ''; ?>>Modern(Recommended)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="bg-gray-100 px-4 py-2 rounded-r-md">
+                    <h3 class="text-xl font-semibold mb-3">Portal</h3>
+                    <p>With ThriveDesk Portal, your customers can raise and track support requests, access Knowledge base and FAQs to find quick answers to common questions, and engage with support agent.</p>
+                    <p>This tickets portal can only be accessible by logged in users.</p>
+                    <h3 class="text-xl font-semibold my-3">Shortcodes</h3>
+                    <p>
+                        <code>[thrivedesk_portal]</code> - Customer ticket dashbaord only accessible after login.
+                    </p>
                 </div>
-            </div>
+            </div> <!-- td-card-end  -->
         </div>
 
         <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
