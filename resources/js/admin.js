@@ -88,7 +88,7 @@ jQuery(document).ready(($) => {
 
 		$.ajax({
 			type: "POST",
-			url: "/wp-json/td-settings/form/submit",
+			url: thrivedesk.wp_json_url + "/td-settings/form/submit",
 			data: {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 				td_form_page_id: td_form_page_id,

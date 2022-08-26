@@ -71,6 +71,7 @@ class Conversation {
 
 		wp_localize_script('thrivedesk-conversation-script',
 			'td_objects', array(
+				'wp_json_url' => site_url('wp-json'),
 				'ajax_url' => admin_url('admin-ajax.php')
 			));
 		wp_enqueue_script('thrivedesk-conversation-script');
@@ -113,7 +114,7 @@ class Conversation {
 		}
 
 		$token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
-		$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL .$_POST['data']['conversation_id'].'/customer/reply';
+		$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL .$_POST['data']['conversation_id'].'/reply';
 		$args     = array(
 			'headers' => array(
 				'Authorization' => 'Bearer ' . $token,
@@ -181,7 +182,7 @@ class Conversation {
 		$current_user_email = wp_get_current_user()->user_email;
 		$token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
 		$state = hash_hmac('SHA1', $current_user_email, $token);
-		$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL .'?customer_email='. $current_user_email .'&state='. $state .'&page='.$page.'&per-page=2';
+		$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL .'?customer_email='. $current_user_email .'&state='. $state .'&page='.$page.'&per-page=10';
 		$args     = array(
 			'headers' => array(
 				'Authorization' => 'Bearer ' . $token,

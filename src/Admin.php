@@ -97,7 +97,10 @@ final class Admin
         wp_localize_script(
             'thrivedesk-admin-script',
             'thrivedesk',
-            array('ajax_url' => admin_url('admin-ajax.php'))
+            array(
+				'ajax_url' => admin_url('admin-ajax.php'),
+	            'wp_json_url' => site_url('wp-json'),
+            )
         );
 
         if (class_exists('BWF_Contacts')) {

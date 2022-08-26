@@ -56,7 +56,7 @@ class RestRoute
 		));
 
 		// helpdesk setting route for saving the setting
-		register_rest_route('/td-settings', '/form/submit', array(
+		register_rest_route('td-settings', '/form/submit', array(
 			'methods'             => 'post',
 			'callback'            => array($this, 'save_helpdesk_form'),
 			'permission_callback' => function () {
@@ -65,7 +65,7 @@ class RestRoute
 		));
 
 		// doc search result route
-		register_rest_route('/td-search-query', '/docs', array(
+		register_rest_route('td-search-query', '/docs', array(
 			'methods'             => 'post',
 			'callback'            => array($this, 'get_search_data'),
 			'permission_callback' => function () {

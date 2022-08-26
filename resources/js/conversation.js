@@ -25,7 +25,7 @@ jQuery(document).ready(($) => {
         if (!search_query) return;
         $.ajax({
             type: "POST",
-            url: "/wp-json/td-search-query/docs",
+            url: td_objects.wp_json_url + "/td-search-query/docs",
             data: {
                 query_string: search_query,
             },
