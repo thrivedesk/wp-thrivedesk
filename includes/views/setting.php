@@ -193,7 +193,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                     <label for="td_helpdesk_api_key"><?php _e('API Key', 'thrivedesk'); ?></label>
                                     <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
                                             class="mt-1 block w-full"
-                                            value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key']) ?? ''; ?>"
+                                            value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? ''); ?>"
                                             required />
                                 </div>
                                 <div>
@@ -248,14 +248,15 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                             </div>
                             <div class="mb-6">
                                 <label for="td_helpdesk_form_style"><?php _e('Portal Style', 'thrivedesk'); ?></label>
+                                <?php $form_style = $td_helpdesk_selected_option['td_form_style'] ?? 'no_style' ?>
                                 <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300
                                 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
                                     <option value=""><?php _e('Please choose a style', 'thrivedesk'); ?></option>
-                                    <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>
+                                    <option value="no_style" <?php echo $form_style == 'no_style' ? 'selected' : ''; ?>>
                                         <?php _e('Unstyled', 'thrivedesk'); ?>
                                     </option>
 
-                                    <option value="modern" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'modern' ? 'selected' : ''; ?>>
+                                    <option value="modern" <?php echo $form_style == 'modern' ? 'selected' : ''; ?>>
                                         <?php _e('Modern(Recommended)', 'thrivedesk'); ?>
                                     </option>
                                 </select>

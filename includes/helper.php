@@ -82,6 +82,6 @@ if (!function_exists('diff_for_humans')) {
  */
 if (!function_exists('get_td_helpdesk_options')) {
 	function get_td_helpdesk_options() {
-		return get_option('td_helpdesk_settings') ?? [];
+		return get_option('td_helpdesk_settings', []);
 	}
 }
