@@ -69,7 +69,7 @@ $links = $conversations['meta']['links'] ?? [];
             <div class="w-full text-gray-500">
                 <div class="text-sm text-gray-700 bg-gray-100">
                     <div class="py-4 px-6 w-auto">
-                        <p class="text-center">No ticket found for your contact.Open new ticket to start conversation. </p>
+                        <p class="text-center"> <?php _e('No ticket found for your contact.Open new ticket to start conversation', 'thrivedesk'); ?>. </p>
                     </div>
                 </div>
             </div>

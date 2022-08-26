@@ -83,7 +83,8 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
             <div class="flex space-x-8 admin-tabs">
                 <a data-target="tab-integrations" class="inline-flex items-center px-1 border-blue-600" href="#"><?php _e('Integrations', 'thrivedesk') ?></a>
                 <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#">
-                    <?php _e('Portal', 'thrivedesk') ?> <span class="bg-blue-500 text-white uppercase text-xs ml-1 px-1.5 py-0.5 rounded">New</span>
+                    <?php _e('Portal', 'thrivedesk') ?> <span class="bg-blue-500 text-white uppercase text-xs ml-1
+                    px-1.5 py-0.5 rounded"><?php _e('New', 'thrivedesk'); ?></span>
                 </a>
                 <?php if ($wppostsync->get_plugin_data('connected')) : ?>
                     <a data-target="tab-post-types-sync" class="inline-flex items-center px-1" href="#"><?php _e('WP Post Sync', 'thrivedesk') ?></a>
@@ -174,25 +175,31 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                         <div class="md:grid md:grid-cols-4 md:gap-10">
                             <div class="md:col-span-2">
                                 <div class="px-4 sm:px-0">
-                                    <h3 class="text-lg font-medium leading-6 text-gray-900">Ticket</h3>
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900"><?php _e('Ticket', 'thrivedesk');
+                                    ?></h3>
                                     <div class="mt-1 text-sm text-gray-600">
-                                        <p><strong>API Keys:</strong> Login to ThriveDesk app and get your API key from <a class="text-blue-500" href="#" target="_blank">here</a>.</p>
-                                        <p><strong>New Ticket Page:</strong> Use any form plugin to create new ticket page or use existing one. Learn more <a class="text-blue-500" href="#">here</a>.</p>
+                                        <p><strong><?php _e('API Keys', 'thrivedesk'); ?>:</strong>
+                                            <?php _e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
+                                            <a class="text-blue-500" href="#" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
+                                        </p>
+                                        <p><strong><?php _e('New Ticket Page', 'thrivedesk'); ?>:</strong>
+                                            <?php _e('Use any form plugin to create new ticket page or use existing one. Learn more ', 'thrivedesk'); ?>
+                                            <a class="text-blue-500" href="#">here</a>.</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-5 md:mt-0 md:col-span-2 space-y-4">
                                 <div>
-                                    <label for="td_helpdesk_api_key">API Key</label>
+                                    <label for="td_helpdesk_api_key"><?php _e('API Key', 'thrivedesk'); ?></label>
                                     <input id="td_helpdesk_api_key" type="text" name="td_helpdesk_api_key"
                                             class="mt-1 block w-full"
                                             value="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_api_key']) ?? ''; ?>"
                                             required />
                                 </div>
                                 <div>
-                                    <label for="td_form_page_id">New Ticket Page</label>
+                                    <label for="td_form_page_id"><?php _e('New Ticket Page', 'thrivedesk'); ?></label>
                                     <select id="td_form_page_id" class="mt-1 block w-full" required >
-                                        <option value=""> Please choose a page</option>
+                                        <option value=""> <?php _e('Please choose a page', 'thrivedesk'); ?> </option>
                                         <?php foreach (get_pages()  as $key => $page) : ?>
                                             <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
                                                 <?php echo $page->post_title; ?>
@@ -208,16 +215,21 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                         <div class="md:grid md:grid-cols-4 md:gap-10">
                             <div class="md:col-span-2">
                                 <div class="px-4 sm:px-0">
-                                    <h3 class="text-lg font-medium leading-6 text-gray-900">Knowledge base</h3>
+                                    <h3 class="text-lg font-medium leading-6 text-gray-900"><?php _e('Knowledge 
+                                    base', 'thrivedesk'); ?></h3>
                                     <div class="mt-1 text-sm text-gray-600">
-                                        <p><strong>Search From:</strong> Select a post type where user can search before raise a support ticket.</p>
-                                        <p><strong>Style:</strong> You can customize the style of support portal to match with your brand or use our design.</p>
+                                        <p><strong><?php _e('Search From', 'thrivedesk'); ?>:</strong>
+                                            <?php _e('Select a post type where user can search before raise a support ticket', 'thrivedesk'); ?>.
+                                        </p>
+                                        <p><strong><?php _e('Style', 'thrivedesk'); ?>:</strong>
+                                            <?php _e('You can customize the style of support portal to match with your brand or use our design', 'thrivedesk'); ?>.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-5 md:mt-0 md:col-span-2">
                                 <div class="mb-6">
-                                <label for="td_helpdesk_post_types">Search From</label>
+                                <label for="td_helpdesk_post_types"><?php _e('Search From', 'thrivedesk'); ?></label>
                                 <?php 
                                     $wp_post_types = array_filter(get_post_types(array('public' => true, 'show_in_rest' => true)), function ($type) {
                                     return $type !== 'attachment';
@@ -235,27 +247,34 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                 </div>
                             </div>
                             <div class="mb-6">
-                                <label for="td_helpdesk_form_style">Portal Style</label>
+                                <label for="td_helpdesk_form_style"><?php _e('Portal Style', 'thrivedesk'); ?></label>
                                 <select id="td_helpdesk_form_style" class="bg-gray-50 border border-gray-300
                                 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
-                                    <option value="">Please choose a style</option>
-                                    <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>Unstyled</option>
-                                    <option value="modern" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'modern' ? 'selected' : ''; ?>>Modern(Recommended)</option>
+                                    <option value=""><?php _e('Please choose a style', 'thrivedesk'); ?></option>
+                                    <option value="no_style" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'no_style' ? 'selected' : ''; ?>>
+                                        <?php _e('Unstyled', 'thrivedesk'); ?>
+                                    </option>
+
+                                    <option value="modern" <?php echo $td_helpdesk_selected_option['td_form_style'] == 'modern' ? 'selected' : ''; ?>>
+                                        <?php _e('Modern(Recommended)', 'thrivedesk'); ?>
+                                    </option>
                                 </select>
                             </div>
 
-                            <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Save</button>
+                            <button type="submit" id="td_setting_btn_submit" class="text-white bg-blue-700
+                            hover:bg-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5
+                            text-center"><?php _e('Save', 'thrivedesk'); ?></button>
                             </div>
                         </div>
                     </div>
                 </form>
                 <div class="bg-gray-100 px-4 py-2 rounded-r-md">
-                    <h3 class="text-xl font-semibold mb-3">Portal</h3>
-                    <p>With ThriveDesk Portal, your customers can raise and track support requests, access Knowledge base and FAQs to find quick answers to common questions, and engage with support agent.</p>
-                    <p>This tickets portal can only be accessible by logged in users.</p>
-                    <h3 class="text-xl font-semibold my-3">Shortcodes</h3>
+                    <h3 class="text-xl font-semibold mb-3"><?php _e('Portal', 'thrivedesk'); ?></h3>
+                    <p><?php _e('With ThriveDesk Portal, your customers can raise and track support requests, access Knowledge base and FAQs to find quick answers to common questions, and engage with support agent', 'thrivedesk'); ?>.</p>
+                    <p><?php _e('This tickets portal can only be accessible by logged in users'); ?>.</p>
+                    <h3 class="text-xl font-semibold my-3"><?php _e('Shortcodes', 'thivedesk'); ?></h3>
                     <p>
-                        <code>[thrivedesk_portal]</code> - Customer ticket dashbaord only accessible after login.
+                        <code>[thrivedesk_portal]</code> -<?php _e(' Customer ticket dashbaord only accessible after login', 'thrivedesk'); ?>.
                     </p>
                 </div>
             </div> <!-- td-card-end  -->
