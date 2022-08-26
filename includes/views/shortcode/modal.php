@@ -12,13 +12,13 @@ w-full md:inset-0 h-modal md:h-full justify-center items-center flex y-4" aria-m
 			<!-- Modal header -->
 			<div class="flex justify-between items-start p-4 rounded-t border-b">
 				<h3 class="text-xl font-semibold text-gray-900">
-					Create new ticket
+					<?php _e('Create new ticket', 'thrivedesk'); ?>
 				</h3>
 				<button type="button" id="close_modal" class="text-gray-400 bg-transparent hover:bg-gray-200
                 hover:text-gray-900
                 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" data-modal-toggle="tdConversationModal">
 					<?php thrivedesk_view('icons/close'); ?>
-					<span class="sr-only">Close modal</span>
+					<span class="sr-only"><?php _e('Close', 'thrivedesk'); ?></span>
 				</button>
 			</div>
 			<!-- Modal body -->
@@ -38,7 +38,9 @@ w-full md:inset-0 h-modal md:h-full justify-center items-center flex y-4" aria-m
 						<section class="tdSearch-Hits">
 							<ul role="listbox" aria-labelledby="tdSearch-label" id="td_search_list">
 								<li class="text-center pt-3">
-									<p class="text-sm">Write to search from documentation</p>
+									<p class="text-sm">
+                                        <?php _e('Write to search from documentation', 'thrivedesk'); ?>
+                                    </p>
 								</li>
 							</ul>
 						</section>
@@ -48,7 +50,7 @@ w-full md:inset-0 h-modal md:h-full justify-center items-center flex y-4" aria-m
 				<footer class="tdSearch-Footer">
 					<div class="flex-s p-1 space-x-2">
 						<a href="<?php echo get_page_link( get_post(get_td_helpdesk_options('td_helpdesk_settings')['td_form_page_id']))?>" id="td-new-ticket-url" target="_blank" class="text-blue-600 text-sm">
-							Create new
+							<?php _e('Create new', 'thrivedesk'); ?>
 						</a>
 					</div>
 				</footer>
