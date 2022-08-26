@@ -55,7 +55,7 @@ class Conversation {
 	 * @return void
 	 */
 	public function add_td_conversation_shortcode(): void {
-		add_shortcode('thrivedesk_conversation', [$this, 'conversation_page']);
+		add_shortcode('thrivedesk_portal', [$this, 'conversation_page']);
 	}
 
 	/**
@@ -81,14 +81,21 @@ class Conversation {
 	 * if conversation id then redirect to the conversation details page
 	 *
 	 */
-	public function conversation_page() {
-		ob_start();
-		if (isset($_GET['conversation_id'])) {
-			thrivedesk_view('shortcode/conversation-details');
-		} else {
-			thrivedesk_view('shortcode/conversations');
+	public function conversation_page($atts, $content = null) {
+		if (is_user_logged_in() && !is_null( $content ) && !is_feed()) {
+			ob_start();
+			if (isset($_GET['conversation_id'])) {
+				thrivedesk_view('shortcode/conversation-details');
+			} else {
+				thrivedesk_view('shortcode/conversations');
+			}
+			return ob_get_clean();
 		}
-		return ob_get_clean();
+		global $wp;
+        $redirect = home_url($wp->request);
+		return '<p>'. __('You must be logged in to view the ticket or conversation', 'thrivedesk'). '. Click <a class="text-blue-600" href="'. esc_url(wp_login_url
+			($redirect)) .'"> here</a> to login.
+			</p>';
 	}
 
 	/**
