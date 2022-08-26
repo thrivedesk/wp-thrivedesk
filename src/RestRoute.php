@@ -186,7 +186,7 @@ class RestRoute
 			$search_posts[] = [
 				'id'            => get_the_ID(),
 				'title'         => $post_title,
-				'excerpt'       => get_the_excerpt(),
+				'excerpt'       => strip_tags(get_the_excerpt()),
 				'categories'    => count($post_categories_array) ? implode(', ', wp_list_pluck($post_categories_array, 'name')) : 'Category not available',
 				'link'          => get_the_permalink(),
 			];
