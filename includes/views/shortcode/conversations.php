@@ -6,17 +6,17 @@ $links = $conversations['meta']['links'] ?? [];
 
 ?>
 
-<div class="w-full bg-gray-200 py-6 px-8 td-shortcode-body" style="margin-top: 20px;">
-    <h1 class="pb-3 text-left text-lg font-extrabold"><?php _e('Tickets'); ?></h1>
+<div class="w-full bg-gray-50 p-10 td-portal" style="margin-top: 20px;">
     <div class="rounded-lg shadow-md sm:rounded-lg bg-white">
-        <div class="flex float-right items-center px-6 py-5">
+        <div class="flex justify-between items-center px-6 py-5">
+            <h3 class="font-extrabold !m-0"><?php _e('Tickets'); ?></h3>
             <button type="submit" id="openConversationModal" class="p-2.5 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg border
 			border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300" data-modal-toggle="tdConversationModal">
                 <span class="p-3"><?php _e('Open New Ticket', 'thrivedesk'); ?></span>
             </button>
         </div>
 
-        <table class="w-full text-sm text-left text-gray-500">
+        <table class="w-full text-sm text-left text-gray-500 !m-0">
             <thead class="text-xs text-gray-700 bg-gray-100">
             <tr>
                 <th scope="col" class="py-4 px-6 w-28">
@@ -65,15 +65,13 @@ $links = $conversations['meta']['links'] ?? [];
 			<?php endforeach; ?>
             </tbody>
         </table>
-		<?php if (count($conversations) <= 0): ?>
-            <div class="w-full text-gray-500">
-                <div class="text-sm text-gray-700 bg-gray-100">
-                    <div class="py-4 px-6 w-auto">
-                        <p class="text-center"> <?php _e('No ticket found for your contact.Open new ticket to start conversation', 'thrivedesk'); ?>. </p>
-                    </div>
-                </div>
+		<?php if (!count($conversations)): ?>
+            <div class="p-10 text-center">
+                <span><?php _e('No tickets found. Open new ticket and start the conversation', 'thrivedesk'); ?></span>
             </div>
 		<?php endif ?>
+
+        <?php if($links): ?>
         <div class="py-4 text-right pr-4">
             <ul class="inline-flex -space-x-px">
 				<?php foreach ($links as $key => $link): ?>
@@ -95,6 +93,7 @@ $links = $conversations['meta']['links'] ?? [];
 				<?php endforeach; ?>
             </ul>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 

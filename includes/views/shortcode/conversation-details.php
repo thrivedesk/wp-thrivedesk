@@ -7,7 +7,7 @@ if (isset($_GET['conversation_id'])) {
 ?>
 
 <?php if ($conversation): ?>
-    <div class="w-full bg-gray-200 py-6 px-8 td-shortcode-body" style="margin: 20px 0 20px 0;">
+    <div class="w-full bg-gray-200 py-6 px-8 td-portal" style="margin: 20px 0 20px 0;">
         <div class="py-4 px-2 flex flex-col justify-start">
             <span class="font-semibold">#<?= $conversation['ticket_id'] . ' - ' . $conversation['subject'] ; ?></span>
             <p class="text-sm mt-2">
