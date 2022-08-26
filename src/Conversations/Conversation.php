@@ -142,10 +142,8 @@ class Conversation {
 	/**
 	 * get single conversation
 	 * @param $conversation_id
-	 *
-	 * @return mixed|null
 	 */
-	public static function get_conversation($conversation_id): mixed {
+	public static function get_conversation($conversation_id) {
 		if (!$conversation_id) {
 			return null;
 		}
