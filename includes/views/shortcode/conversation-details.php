@@ -9,17 +9,19 @@ if (isset($_GET['conversation_id'])) {
 <?php if ($conversation): ?>
     <div class="w-full bg-gray-200 py-6 px-8 td-shortcode-body" style="margin: 20px 0 20px 0;">
         <div class="py-4 px-2 flex flex-col justify-start">
-            <span class="font-semibold">#<?= $conversation['ticket_id'] . ' - ' .
-                                             $conversation['subject'] ; ?></span>
-            <p class="text-sm mt-2"><span>Last update: <?= diff_for_humans
-					($conversation['updated_at']) ?></span></p>
-
+            <span class="font-semibold">#<?= $conversation['ticket_id'] . ' - ' . $conversation['subject'] ; ?></span>
+            <p class="text-sm mt-2">
+                <span>
+                    <?php _e('Last update', 'thrivedesk'); ?>:
+                    <?= diff_for_humans($conversation['updated_at']) ?>
+                </span>
+            </p>
         </div>
 
         <div class="py-4 px-2 rounded-lg shadow-md sm:rounded-lg bg-white border">
             <div class="px-6 py-4">
                 <div class="flex justify-between border-b">
-                    <h1 class="pb-3 text-left text-lg font-extrabold">Conversation </h1>
+                    <h1 class="pb-3 text-left text-lg font-extrabold"><?php _e('Conversation', 'thrivedesk'); ?> </h1>
                     <div class="font-medium text-center whitespace-nowrap">
                         <span class="px-2 py-1 bg-gray-300 rounded-full"><?php echo $conversation['status']; ?></span>
                     </div>
@@ -68,7 +70,7 @@ if (isset($_GET['conversation_id'])) {
                                     class="text-white bg-blue-700
                                     hover:bg-blue-800
                                     focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">
-                                Reply
+                                <?php _e('Reply', 'thrivedesk'); ?>
                             </button>
                         </div>
                     </form>
