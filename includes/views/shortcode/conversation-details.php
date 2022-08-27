@@ -9,11 +9,11 @@ if (isset($_GET['conversation_id'])) {
 <?php if ($conversation): ?>
     <div class="w-full bg-gray-200 py-6 px-8 td-portal" style="margin: 20px 0 20px 0;">
         <div class="py-4 px-2 flex flex-col justify-start">
-            <span class="font-semibold">#<?= $conversation['ticket_id'] . ' - ' . $conversation['subject'] ; ?></span>
+            <span class="font-semibold">#<?php echo $conversation['ticket_id'] . ' - ' . $conversation['subject'] ; ?></span>
             <p class="text-sm mt-2">
                 <span>
                     <?php _e('Last update', 'thrivedesk'); ?>:
-                    <?= diff_for_humans($conversation['updated_at']) ?>
+                    <?php echo diff_for_humans($conversation['updated_at']) ?>
                 </span>
             </p>
         </div>
@@ -36,20 +36,20 @@ if (isset($_GET['conversation_id'])) {
                             <div class="px-6 py-4 pt-3">
                                 <div class="flex border-b">
                                     <div class="flex-none w-14 h-14">
-                                        <img class="w-10 h-10 rounded-full" src="<?= $event['actor']['avatar'] ?? '' ?>"
-                                             alt="<?= $event['actor']['name'] ?? '' ?>
+                                        <img class="w-10 h-10 rounded-full" src="<?php echo $event['actor']['avatar'] ?? '' ?>"
+                                             alt="<?php echo $event['actor']['name'] ?? '' ?>
                                         avatar" />
                                     </div>
                                     <div class="flex-initial w-64">
-                                        <h3 class="font-bold"><?= $event['actor']['name']; ?></h3>
-                                        <p class="text-sm"><?= diff_for_humans($event['created_at']); ?></p>
+                                        <h3 class="font-bold"><?php echo $event['actor']['name']; ?></h3>
+                                        <p class="text-sm"><?php echo diff_for_humans($event['created_at']); ?></p>
                                     </div>
                                 </div>
                                 <div class="prose py-4">
 									<?php if ($event['event'] && $event['event']['html_body']): ?>
-										<?= \ThriveDesk\Conversations\Conversation::validate_conversation_body($event['event']['html_body']); ?>
+										<?php echo \ThriveDesk\Conversations\Conversation::validate_conversation_body($event['event']['html_body']); ?>
 									<?php elseif($event['event'] && $event['event']['text_body']): ?>
-										<?= $event['event']['text_body']; ?>
+										<?php echo $event['event']['text_body']; ?>
 									<?php endif; ?>
                                 </div>
                             </div>
