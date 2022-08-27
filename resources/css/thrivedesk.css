@@ -1,0 +1,62 @@
+/* ----------------------------- FRONTEND ONLY --------------------------------
+We are using Tailwind core with !important so try to use single selector.
+Anyone want to override can do so with parent + child selector with !important.
+eg: #thrivedesk .search{ display: flex !important; } 
+------------------------------------------------------------------------------- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+    /* Common */
+    .td-container{
+        @apply rounded-lg drop-shadow bg-white border;
+    }
+    /* Buttons  */
+    .td-btn-primary{
+        @apply px-5 py-2 font-medium text-white bg-blue-600 rounded hover:bg-blue-500;
+    }
+    .td-btn-default{
+        @apply px-5 py-2 font-medium bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-black hover:border-black outline-none;
+    }
+
+    /* Tickets */
+    .td-ticket-search{
+        @apply px-3 py-1.5 w-64 bg-white rounded !important;
+    }
+    .td-portal-header{
+        @apply flex justify-between items-center px-6 py-4;
+    }
+    .td-portal-tickets{
+        thead{
+            @apply bg-gray-100;
+            th{
+                @apply py-4 px-6;
+            }
+        }
+        tbody{
+            tr{
+                @apply border-b hover:bg-blue-50 cursor-pointer;
+            }
+            tr:nth-of-type(2){
+                @apply bg-gray-100;
+            }
+            td{
+                @apply py-4 px-6;
+            }
+        }
+    }
+    .td-portal-footer{
+        @apply px-6 py-4 flex justify-end;
+    }
+    .td-paginator{
+        @apply list-none p-0 m-0 flex bg-white drop-shadow rounded !important;
+        li{
+            @apply py-2 px-3 hover:bg-gray-100 !important;
+        }
+        li a{ @apply block no-underline !important; }
+        li.active{
+            @apply bg-blue-600 hover:bg-blue-500 text-white;
+        }
+    }
+}

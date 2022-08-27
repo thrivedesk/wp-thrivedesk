@@ -64,17 +64,17 @@ class Conversation {
 	 * @return void
 	 */
 	public function load_scripts(): void {
-		wp_enqueue_style('thrivedesk-frontend-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
+		wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', THRIVEDESK_VERSION);
 
-		wp_register_script( 'thrivedesk-conversation-script', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', array('jquery'), THRIVEDESK_VERSION);
+		wp_register_script( 'thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', array('jquery'), THRIVEDESK_VERSION);
 
 
-		wp_localize_script('thrivedesk-conversation-script',
+		wp_localize_script('thrivedesk-conversations',
 			'td_objects', array(
 				'wp_json_url' => site_url('wp-json'),
 				'ajax_url' => admin_url('admin-ajax.php')
 			));
-		wp_enqueue_script('thrivedesk-conversation-script');
+		wp_enqueue_script('thrivedesk-conversations');
 	}
 
 	/**
