@@ -29,6 +29,7 @@
 		"cssnano": "^5.1.13",
 		"laravel-mix": "^6.0.41",
 		"postcss": "^8.4.16",
+		"postcss-nesting": "^10.1.10",
 		"tailwindcss": "^3.0.18"
 	},
 	"dependencies": {
