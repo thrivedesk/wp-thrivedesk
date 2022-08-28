@@ -39,7 +39,7 @@ $links = $conversations['meta']['links'] ?? [];
 			<?php foreach($conversation_data as $key => $conversation): ?>
                 <tr>
                     <td scope="row" class="font-medium text-center whitespace-nowrap">
-                        <span class="px-2 py-1 bg-gray-300 rounded-full"><?php echo $conversation['status']; ?></span>
+                        <span class="px-2 py-1 bg-slate-300 rounded-full"><?php echo $conversation['status']; ?></span>
                     </td>
                     <td>
                         <div class="flex flex-col justify-start">

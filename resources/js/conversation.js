@@ -1,15 +1,12 @@
 import Swal from "sweetalert2";
 
 jQuery(document).ready(($) => {
-    $('body').append(`<div id="modal-backdrop" style="display: none" class="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40"></div>`)
     $('#openConversationModal').click(function (e) {
-        $('.td-modal').fadeIn(500);
-        $('#modal-backdrop').fadeIn(500);
+        $('.td-modal-container').removeClass('hidden').fadeIn(500);
     });
 
-    $('#close_modal').click(function (e) {
-        $('.td-modal').fadeOut(500);
-        $('#modal-backdrop').fadeOut(500);
+    $('#close-modal').click(function (e) {
+        $('.td-modal-container').addClass('hidden').fadeOut(200);
     });
 
     function debounce( callback, delay ) {
@@ -21,7 +18,7 @@ jQuery(document).ready(($) => {
     }
 
     function search_query(){
-        let search_query = $('#td_search_input').val();
+        let search_query = $('#td-search-input').val();
         if (!search_query) return;
         $.ajax({
             type: "POST",
@@ -30,45 +27,31 @@ jQuery(document).ready(($) => {
                 query_string: search_query,
             },
             success: function(data){
-                const list = $('#td_search_list');
+                const list = $('#td-search-results');
                 let search_results = '';
                 if (data.data.length > 0) {
                     data.data.forEach(function(item, i){
-                        search_results += `<li class="tdSearch-Hit hover:bg-blue-700" id="td-search-item-${i}" role="option" aria-selected="false"><a class="tdSearch-Hit--Result" target="_blank" href="${item.link}"><div class="tdSearch-Hit-Container"><div class="tdSearch-Hit-icon"></div><div class="tdSearch-Hit-content-wrapper"><span class="tdSearch-Hit-title">${item.excerpt}</span><spanclass="tdSearch-Hit-path">${item.title}</span></div><div class="tdSearch-Hit-action"></div></div></a></li>`;
-
-                        $(document).on('mouseover',`#td-search-item-${i}`,function(){
-                            $(`#td-search-item-${i}`).attr('aria-selected',true);
-                        });
-                        $(document).on('mouseout',`#td-search-item-${i}`,function(){
-                            $(`#td-search-item-${i}`).attr('aria-selected',false);
-                        });
-
-                        $(document).on('keyup', '#td_search_input', function(e){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const pressedDown = (e.key === 'ArrowDown' || e.keyCode ===40);
-                            const pressedUp = (e.key === 'ArrowUp' || e.keyCode ===38);
-                            if ( pressedDown || pressedUp) {
-                                const current = $(`#td-search-item-${i}`);
-                                const next = pressedDown ? current.next() : current.prev();
-                                if (next.length) {
-                                    current.attr('aria-selected',false);
-                                    next.attr('aria-selected',true);
-                                    next.focus();
-                                }
-                            }
-                        });
+                        search_results += `<li class="td-search-item" id="td-search-item-${i}">
+                            <a class="p-4 mx-6 no-underline relative bg-slate-100 hover:bg-blue-500 rounded-lg block group" target="_blank" href="${item.link}">
+                                <div class="flex flex-auto flex-col min-w-0">
+                                    <span class="font-medium text-black group-hover:text-white">${item.title}</span>
+                                    <span class="truncate text-slate-500 group-hover:text-white">${item.excerpt}</span>
+                                </div>
+                            </a>
+                        </li>`;
                     });
                 } else {
                     let new_ticket_url = $('#td-new-ticket-url').attr('href');
-                    search_results += `<li class="text-center pt-3"><p class="text-sm">No documentation found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</p></li>`
+                    search_results += `<li class="h-36 flex items-center justify-center text-slate-500">
+                            <div>No documentation found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
+                        </li>`
                 }
                 list.html(search_results);
             }
         });
     }
 
-    $('#td_search_input').keyup(debounce(search_query, 1000));
+    $('#td-search-input').keyup(debounce(search_query, 1000));
 
     $('#td_conversation_reply').submit(function(e){
         e.preventDefault();
