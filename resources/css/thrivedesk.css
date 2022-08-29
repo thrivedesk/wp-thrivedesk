@@ -6,7 +6,6 @@ eg: #thrivedesk .search{ display: flex !important; }
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import './td-search.css';
 
 @layer components{
     /* Common */

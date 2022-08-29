@@ -1,6 +1,6 @@
 <!-- Main modal -->
-<div class="td-modal-container hidden" aria-modal="true" role="dialog">
-	<div class="td-modal">
+<div class="td-modal-container hidden fixed top-0 left-0 z-100 max-w-full flex flex-col h-screen w-screen p-6 md:p-[10vh] 2xl:p-[12vh] bg-slate-900 bg-opacity-50 backdrop-blur-sm" aria-modal="true" role="dialog">
+	<div class="td-modal w-full mx-auto max-w-3xl min-h-0 flex flex-col rounded-lg drop-shadow-lg bg-white">
 		<!-- Modal header  -->
 		<div class="td-modal-header px-4 flex flex-none items-center border-b border-slate-100">
 			<form class="flex flex-1 items-center">
@@ -13,7 +13,7 @@
 		</div> <!-- /Modal header  -->
 		
 		<!-- Modal body  -->
-		<div class="td-modal-body">
+		<div class="td-modal-body flex-auto overflow-auto">
 			<div class="py-6">
 				<div>
 					<ul id="td-search-results" class="space-y-2">
