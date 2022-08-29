@@ -58,7 +58,7 @@ $links = $conversations['meta']['links'] ?? [];
                     <td class="text-right">
                         <br>
                         <a href="<?php echo get_permalink() .'?conversation_id='.$conversation['id']; ?>"
-                           class="td-btn-default"><?php _e('View Ticket', 'thrivedesk'); ?></a>
+                           class="td-btn-default"><?php _e('View', 'thrivedesk'); ?></a>
                     </td>
                 </tr>
 			<?php endforeach; ?>

@@ -53,7 +53,7 @@ jQuery(document).ready(($) => {
 	 * admin tab
 	 */
 	$('.wrap.thrivedesk .admin-tabs a').on('click', function (e) {
-		e.preventDefault();
+		// e.preventDefault();
 
 		var tabElement = document.querySelectorAll(
 			'.wrap.thrivedesk .admin-tabs a'
@@ -69,37 +69,63 @@ jQuery(document).ready(($) => {
 			$(contentElement).removeClass('block').addClass('hidden');
 		});
 
-		var selectedTab = e.target.getAttribute('data-target');
+		const selectedTab = this.getAttribute('data-target');
 
-		$(e.target).addClass('border-blue-600 active border-b-2');
+		$(this).addClass('border-blue-600 active border-b-2');
 		document
 			.getElementById('tab-content')
 			.getElementsByClassName(selectedTab)[0]
 			.classList.remove('hidden');
 	});
 
+	// get the fragment from url
+	let fragment = window.location.hash;
+	if (fragment) {
+		// remove the # from the fragment
+		fragment = fragment.substr(1);
+		// get the element with the id of the fragment
+		const element = document.querySelector(`a[href="#${fragment}"]`);
+		if (element) {
+			// if the element exists, click it
+			element.click();
+		}
+	}
+
 	// helpdesk form
 	$('#td_helpdesk_form').submit(function(e){
 		e.preventDefault();
 		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
-		let td_form_page_id = $("#td_form_page_id").val();
+		let td_helpdesk_page_id = $("#td_helpdesk_page_id").val();
 		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item)=>item.value).get();
-		let td_form_style = $("#td_helpdesk_form_style").val();
+		let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
 
 		$.ajax({
 			type: "POST",
 			url: thrivedesk.wp_json_url + "/td-settings/form/submit",
 			data: {
 				td_helpdesk_api_key: td_helpdesk_api_key,
-				td_form_page_id: td_form_page_id,
+				td_helpdesk_page_id: td_helpdesk_page_id,
 				td_helpdesk_post_types: td_helpdesk_post_types,
-				td_form_style: td_form_style,
+				td_helpdesk_form_style: td_helpdesk_form_style,
 			},
 			success: function(data){
 				Swal.fire({
 					title: 'Great',
 					icon: 'success',
 					text: data,
+					showClass: {
+						popup: 'animate__animated animate__fadeInDown'
+					},
+					hideClass: {
+						popup: 'animate__animated animate__fadeOutUp'
+					},
+					timer: 4000
+				});
+			},
+			error: function(data){
+				Swal.fire({
+					title: 'Error',
+					icon: 'error',
 					showClass: {
 						popup: 'animate__animated animate__fadeInDown'
 					},
