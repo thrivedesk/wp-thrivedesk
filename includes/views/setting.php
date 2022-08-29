@@ -197,11 +197,13 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                             required />
                                 </div>
                                 <div>
-                                    <label for="td_form_page_id" class="font-medium text-black text-sm"><?php _e('New Ticket Page', 'thrivedesk'); ?></label>
-                                    <select id="td_form_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" required >
+                                    <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e('New Ticket Page', 'thrivedesk'); ?></label>
+                                    <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300
+                                    rounded
+                                    px-2 py-1 w-full max-w-full" required >
                                         <option value=""> <?php _e('Select a page', 'thrivedesk'); ?> </option>
                                         <?php foreach (get_pages()  as $key => $page) : ?>
-                                            <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_form_page_id'] == $page->ID ? 'selected' : '' ?> >
+                                            <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?> >
                                                 <?php echo $page->post_title; ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -246,14 +248,14 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                             </div>
                             <div class="mb-6">
                                 <label class="font-medium text-black text-sm" for="td_helpdesk_form_style"><?php _e('Style', 'thrivedesk'); ?></label>
-                                <?php $form_style = $td_helpdesk_selected_option['td_form_style'] ?? 'no_style' ?>
+                                <?php $form_style = $td_helpdesk_selected_option['td_helpdesk_form_style'] ?? 'no_style' ?>
                                 <div class="flex items-center space-x-2">
                                     <div class="flex items-center">
-                                        <input type="radio" name="td_helpdesk_form_style[]" value="modern" id="td_helpdesk_style_modern" <?php echo $form_style == 'modern' ? 'checked' : ''; ?>>
+                                        <input type="radio" name="td_helpdesk_form_style" value="modern" id="td_helpdesk_style_modern" <?php echo $form_style == 'modern' ? 'checked' : ''; ?>>
                                         <label for="td_helpdesk_style_modern"><?php _e('Modern(Recommended)', 'thrivedesk'); ?></label>
                                     </div>
                                     <div class="flex items-center">
-                                        <input type="radio" name="td_helpdesk_form_style[]" value="no_style" id="td_helpdesk_style_no_style" <?php echo $form_style == 'no_style' ? 'checked' : ''; ?>>
+                                        <input type="radio" name="td_helpdesk_form_style" value="no_style" id="td_helpdesk_style_no_style" <?php echo $form_style == 'no_style' ? 'checked' : ''; ?>>
                                         <label for="td_helpdesk_style_no_style"><?php _e('Unstyled', 'thrivedesk'); ?></label>
                                     </div>
                                 </div>

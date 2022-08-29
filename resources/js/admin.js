@@ -82,24 +82,37 @@ jQuery(document).ready(($) => {
 	$('#td_helpdesk_form').submit(function(e){
 		e.preventDefault();
 		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
-		let td_form_page_id = $("#td_form_page_id").val();
+		let td_helpdesk_page_id = $("#td_helpdesk_page_id").val();
 		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item)=>item.value).get();
-		let td_form_style = $("#td_helpdesk_form_style").val();
+		let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
 
 		$.ajax({
 			type: "POST",
 			url: thrivedesk.wp_json_url + "/td-settings/form/submit",
 			data: {
 				td_helpdesk_api_key: td_helpdesk_api_key,
-				td_form_page_id: td_form_page_id,
+				td_helpdesk_page_id: td_helpdesk_page_id,
 				td_helpdesk_post_types: td_helpdesk_post_types,
-				td_form_style: td_form_style,
+				td_helpdesk_form_style: td_helpdesk_form_style,
 			},
 			success: function(data){
 				Swal.fire({
 					title: 'Great',
 					icon: 'success',
 					text: data,
+					showClass: {
+						popup: 'animate__animated animate__fadeInDown'
+					},
+					hideClass: {
+						popup: 'animate__animated animate__fadeOutUp'
+					},
+					timer: 4000
+				});
+			},
+			error: function(data){
+				Swal.fire({
+					title: 'Error',
+					icon: 'error',
 					showClass: {
 						popup: 'animate__animated animate__fadeInDown'
 					},
