@@ -168,7 +168,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
         <div class="hidden tab-settings">
             <?php $td_helpdesk_selected_option = get_td_helpdesk_options(); ?>
             <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
-            
+
             <div class="td-card td-settings md:flex p-0 2xl:max-w-7xl mx-auto">
                 <form class="md:flex-1 space-y-6 p-10" id="td_helpdesk_form" action="#" method="POST">
                     <div>
@@ -203,7 +203,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                                     px-2 py-1 w-full max-w-full" required >
                                         <option value=""> <?php _e('Select a page', 'thrivedesk'); ?> </option>
                                         <?php foreach (get_pages()  as $key => $page) : ?>
-                                            <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?> >
+                                            <option value="<?php echo $page->ID; ?>" <?php echo $td_helpdesk_selected_option['td_helpdesk_page_id'] ?? '' == $page->ID ? 'selected' : '' ?> >
                                                 <?php echo $page->post_title; ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -232,7 +232,7 @@ $nonce = wp_create_nonce('thrivedesk-plugin-action');
                             <div class="mt-5 md:mt-0 md:col-span-2">
                                 <div class="mb-6">
                                 <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e('Search Provider', 'thrivedesk'); ?></label>
-                                <?php 
+                                <?php
                                     $wp_post_types = array_filter(get_post_types(array('public' => true, 'show_in_rest' => true)), function ($type) {
                                     return $type !== 'attachment';
                                 }); ?>
