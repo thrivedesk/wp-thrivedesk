@@ -227,7 +227,8 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                                 <div>
                                     <label for="td_helpdesk_page_id"
                                            class="font-medium text-black text-sm"><?php _e( 'New Ticket Page',
-											'thrivedesk' ); ?></label>
+											'thrivedesk' ); ?>
+                                    </label>
                                     <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300
                                     rounded
                                     px-2 py-1 w-full max-w-full" required>
@@ -249,7 +250,8 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                             <div class="md:col-span-2">
                                 <div>
                                     <h3 class="text-lg font-semibold leading-6 text-gray-900"><?php _e( 'Knowledge 
-                                    base', 'thrivedesk' ); ?></h3>
+                                    base', 'thrivedesk' ); ?>
+                                    </h3>
                                     <div class="mt-1 text-sm text-gray-600">
                                         <p><strong><?php _e( 'Search Provider', 'thrivedesk' ); ?>:</strong>
 											<?php _e( 'Select a post type where user can search before raise a support ticket',
@@ -289,27 +291,31 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                                 </div>
                                 <div class="mb-6">
                                     <label class="font-medium text-black text-sm"
-                                           for="td_helpdesk_form_style"><?php _e( 'Style', 'thrivedesk' ); ?></label>
+                                           for="td_helpdesk_form_style"><?php _e( 'Style', 'thrivedesk' ); ?>
+                                    </label>
 									<?php $form_style = $td_helpdesk_selected_option['td_helpdesk_form_style'] ?? 'no_style' ?>
                                     <div class="flex items-center space-x-2">
                                         <div class="flex items-center">
                                             <input type="radio" name="td_helpdesk_form_style" value="modern"
                                                    id="td_helpdesk_style_modern" <?php echo $form_style == 'modern' ? 'checked' : ''; ?>>
                                             <label for="td_helpdesk_style_modern"><?php _e( 'Modern(Recommended)',
-													'thrivedesk' ); ?></label>
+													'thrivedesk' ); ?>
+                                            </label>
                                         </div>
                                         <div class="flex items-center">
                                             <input type="radio" name="td_helpdesk_form_style" value="no_style"
                                                    id="td_helpdesk_style_no_style" <?php echo $form_style == 'no_style' ? 'checked' : ''; ?>>
                                             <label for="td_helpdesk_style_no_style"><?php _e( 'Unstyled',
-													'thrivedesk' ); ?></label>
+													'thrivedesk' ); ?>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
 
                                 <button type="submit" id="td_setting_btn_submit"
                                         class="text-white bg-blue-600 hover:bg-blue-700 font-semibold text-base rounded w-full py-2.5"><?php _e( 'Save',
-										'thrivedesk' ); ?></button>
+										'thrivedesk' ); ?>
+                                </button>
                             </div>
                         </div>
                     </div>
