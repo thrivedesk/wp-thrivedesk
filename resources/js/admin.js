@@ -83,7 +83,6 @@ jQuery(document).ready(($) => {
 	if (fragment) {
 		// remove the # from the fragment
 		fragment = fragment.substr(1);
-		console.log(fragment);
 		// get the element with the id of the fragment
 		const element = document.querySelector(`a[href="#${fragment}"]`);
 		if (element) {
