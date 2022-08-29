@@ -122,3 +122,8 @@ eg: #thrivedesk .search{ display: flex !important; }
         @apply bg-blue-50;
     }
 }
+
+/* Disable conversation page header  */
+.page{
+    .entry-header{ display: none !important; }
+}
