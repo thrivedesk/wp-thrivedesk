@@ -7,7 +7,7 @@
 				<label for="td-search-input" id="tdSearch-label"><?php thrivedesk_view('/icons/search'); ?></label>
 				<input id="td-search-input" class="bg-white border-0 h-14 flex-auto outline-none"  spellcheck="false" placeholder="<?php _e('Search documentation')?>" maxlength="64" type="search" value="" />
 			</form>
-			<button id="close-modal" class="px-1.5 py-1 uppercase font-semibold border border-slate-100 rounded flex items-center text-xs hover:bg-slate-100 text-black" data-modal-toggle="tdConversationModal">
+			<button id="close-modal" class="px-1.5 py-1 uppercase font-semibold bg-white border border-slate-100 rounded flex items-center text-xs hover:bg-slate-100 text-black" data-modal-toggle="tdConversationModal">
 				<span><?php _e('Esc', 'thrivedesk'); ?></span>
 			</button>
 		</div> <!-- /Modal header  -->
@@ -16,7 +16,7 @@
 		<div class="td-modal-body flex-auto overflow-auto">
 			<div class="py-6">
 				<div>
-					<ul id="td-search-results" class="space-y-2 td-search-items">
+					<ul id="td-search-results" class="space-y-2">
 						<li class="h-36 flex items-center justify-center text-slate-500">
 							<span> <?php _e('Search before creating a new ticket', 'thrivedesk'); ?></span>
 						</li>

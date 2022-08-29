@@ -81,7 +81,7 @@ $links = $conversations['meta']['links'] ?? [];
 					parse_str($params, $query);
 					$page = $query['page'] ?? 1;
 					?>
-                    <li class="<?php echo $link['active'] ? 'text-white bg-blue-600' : ''; ?>">
+                    <li class="<?php echo $link['active'] ? 'active' : ''; ?>">
                         <a href="<?php echo $link['url'] ? get_permalink() .'?cv_page='.$page : 'javascript:void(0)' ?>">
                             <?php echo $link['label']?>
                         </a>

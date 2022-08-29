@@ -24,7 +24,7 @@ eg: #thrivedesk .search{ display: flex !important; }
     }
     /* Status Tag  */
     .status{
-        @apply px-2 rounded-full bg-slate-200 font-medium text-black inline-block leading-6;
+        @apply px-2 rounded-full bg-slate-200 font-medium text-black;
     }
     a{
         @apply no-underline !important;
@@ -97,5 +97,28 @@ eg: #thrivedesk .search{ display: flex !important; }
         .td-search-excerpt{
             @apply truncate;
         }
+    }
+}
+
+/* Conversations  */
+.td-conversation{
+    @apply bg-white shadow rounded-lg;
+    .td-conversation-header{
+        @apply p-4 flex items-center bg-slate-50 rounded-t-lg;
+    }
+    .td-conversation-body{
+        @apply p-6;
+        a{ @apply text-blue-600 font-bold;}
+        *{
+            @apply mt-0 mb-2;
+        }
+    }    
+}
+/* // Conversation by agent */
+.td-conversation.actor-agent{
+    @apply shadow-blue-100;
+
+    .td-conversation-header{
+        @apply bg-blue-50;
     }
 }
