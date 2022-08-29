@@ -16,7 +16,7 @@
 		<div class="td-modal-body flex-auto overflow-auto">
 			<div class="py-6">
 				<div>
-					<ul id="td-search-results" class="space-y-2">
+					<ul id="td-search-results" class="space-y-2 td-search-items">
 						<li class="h-36 flex items-center justify-center text-slate-500">
 							<span> <?php _e('Search before creating a new ticket', 'thrivedesk'); ?></span>
 						</li>

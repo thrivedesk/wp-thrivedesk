@@ -182,12 +182,12 @@ class RestRoute
 		while ($x_query->have_posts()) :
 			$x_query->the_post();
 			$post_categories_array = get_the_category(get_the_ID());
-			$post_title = $this->get_truncated_post_title(html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8'));
+			$post_title = html_entity_decode(get_the_title(), ENT_NOQUOTES, 'UTF-8');
 			$search_posts[] = [
 				'id'            => get_the_ID(),
 				'title'         => $post_title,
 				'excerpt'       => strip_tags(get_the_excerpt()),
-				'categories'    => count($post_categories_array) ? implode(', ', wp_list_pluck($post_categories_array, 'name')) : 'Category not available',
+				'categories'    => count($post_categories_array) ? implode(' - ', wp_list_pluck($post_categories_array, 'name')) : 'Category not available',
 				'link'          => get_the_permalink(),
 			];
 

@@ -30,35 +30,36 @@ $links = $conversations['meta']['links'] ?? [];
                     <th scope="col" class="w-36 text-center">
                         <?php _e('Last update', 'thrivedesk'); ?>
                     </th>
-                    <th scope="col" class="w-36 text-right">
-                        <?php _e('Actions', 'thrivedesk'); ?>
-                    </th>
+                    <th scope="col" class="w-36"></th>
                 </tr>
             </thead>
             <tbody>
 			<?php foreach($conversation_data as $key => $conversation): ?>
                 <tr>
-                    <td scope="row" class="font-medium text-center whitespace-nowrap">
-                        <span class="px-2 py-1 bg-slate-300 rounded-full"><?php echo $conversation['status']; ?></span>
+                    <td scope="row" class="text-center align-middle">
+                        <span class="status status-<?php echo strtolower($conversation['status']); ?>">
+                            <?php echo $conversation['status']; ?>
+                        </span>
                     </td>
                     <td>
-                        <div class="flex flex-col justify-start">
-                            <span class="text-blue-600 font-medium">#<?php echo $conversation['ticket_id']; ?></span>
-                            <span class="font-medium text-black"><?php echo $conversation['subject'];
-								?></span>
+                    <a href="<?php echo get_permalink() .'?conversation_id='.$conversation['id']; ?>">
+                            <div class="text-base font-medium">
+                                <span class="text-slate-500">(#<?php echo $conversation['ticket_id']; ?>)</span>
+                                <span class="text-black"><?php echo $conversation['subject'];?></span>
+                            </div>
                             <div><?php echo $conversation['excerpt']; ?>.</div>
-                        </div>
+                        </a>
                     </td>
-                    <td class="text-center">
+                    <td class="text-center align-middle">
 						<?php echo $conversation['last_actor']['name'] ?? '-' ?>
                     </td>
-                    <td class="text-center">
+                    <td class="text-center align-middle">
 						<?php echo diff_for_humans($conversation['updated_at']) ?>
                     </td>
-                    <td class="text-right">
-                        <br>
-                        <a href="<?php echo get_permalink() .'?conversation_id='.$conversation['id']; ?>"
-                           class="td-btn-default"><?php _e('View', 'thrivedesk'); ?></a>
+                    <td class="text-center align-middle">
+                        <a href="<?php echo get_permalink() .'?conversation_id='.$conversation['id']; ?>" class="td-btn-default">
+                           <?php _e('View', 'thrivedesk'); ?>
+                        </a>
                     </td>
                 </tr>
 			<?php endforeach; ?>

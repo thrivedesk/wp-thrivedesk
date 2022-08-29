@@ -38,10 +38,11 @@ jQuery(document).ready(($) => {
                 if (data.data.length > 0) {
                     data.data.forEach(function(item, i){
                         search_results += `<li class="td-search-item" id="td-search-item-${i}">
-                            <a class="p-4 mx-6 no-underline relative bg-slate-100 hover:bg-blue-500 rounded-lg block group" target="_blank" href="${item.link}">
-                                <div class="flex flex-auto flex-col min-w-0">
-                                    <span class="font-medium text-black group-hover:text-white">${item.title}</span>
-                                    <span class="truncate text-slate-500 group-hover:text-white">${item.excerpt}</span>
+                            <a target="_blank" href="${item.link}">
+                                <div class="td-search-content">
+                                    <span class="td-search-tag">${item.categories}</span>
+                                    <span class="td-search-title">${item.title}</span>
+                                    <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
                             </a>
                         </li>`;
