@@ -9,6 +9,12 @@ jQuery(document).ready(($) => {
         $('.td-modal-container').addClass('hidden').fadeOut(200);
     });
 
+    $(document).keydown(function(event){
+        if (event.key === 'Escape') {
+            $('.td-modal-container').addClass('hidden').fadeOut(200);
+        }
+    });
+
     function debounce( callback, delay ) {
         let timeout;
         return function() {
