@@ -53,7 +53,7 @@ jQuery(document).ready(($) => {
 	 * admin tab
 	 */
 	$('.wrap.thrivedesk .admin-tabs a').on('click', function (e) {
-		e.preventDefault();
+		// e.preventDefault();
 
 		var tabElement = document.querySelectorAll(
 			'.wrap.thrivedesk .admin-tabs a'
@@ -69,14 +69,28 @@ jQuery(document).ready(($) => {
 			$(contentElement).removeClass('block').addClass('hidden');
 		});
 
-		var selectedTab = e.target.getAttribute('data-target');
+		const selectedTab = this.getAttribute('data-target');
 
-		$(e.target).addClass('border-blue-600 active border-b-2');
+		$(this).addClass('border-blue-600 active border-b-2');
 		document
 			.getElementById('tab-content')
 			.getElementsByClassName(selectedTab)[0]
 			.classList.remove('hidden');
 	});
+
+	// get the fragment from url
+	let fragment = window.location.hash;
+	if (fragment) {
+		// remove the # from the fragment
+		fragment = fragment.substr(1);
+		console.log(fragment);
+		// get the element with the id of the fragment
+		const element = document.querySelector(`a[href="#${fragment}"]`);
+		if (element) {
+			// if the element exists, click it
+			element.click();
+		}
+	}
 
 	// helpdesk form
 	$('#td_helpdesk_form').submit(function(e){

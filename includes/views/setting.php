@@ -87,11 +87,13 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
         </div>
         <div class="pl-6 flex justify-between text-sm font-medium leading-5 text-gray-500 h-12">
             <div class="flex space-x-8 admin-tabs">
-                <a data-target="tab-integrations" class="inline-flex items-center px-1 border-blue-600"
-                   href="#"><?php _e( 'Integrations', 'thrivedesk' ) ?></a>
-                <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#">
-					<?php _e( 'Portal', 'thrivedesk' ) ?> <span class="bg-blue-50 text-blue-500 border border-blue-200 uppercase text-xs ml-1
-                    px-1.5 py-0.5 rounded"><?php _e( 'Beta', 'thrivedesk' ); ?></span>
+                <a data-target="tab-integrations" class="inline-flex items-center border-b-2 px-1 border-blue-600"
+                   href="#integrations"><?php _e( 'Integrations', 'thrivedesk' ) ?></a>
+                <a data-target="tab-settings" class="inline-flex items-center px-1 border-blue-600" href="#portal">
+					<?php _e( 'Portal', 'thrivedesk' ); ?>
+                    <span class="bg-blue-50 text-blue-500 border border-blue-200 uppercase text-xs ml-1
+                    px-1.5 py-0.5 rounded"><?php _e( 'Beta', 'thrivedesk' ); ?>
+                    </span>
                 </a>
 				<?php if ( $wppostsync->get_plugin_data( 'connected' ) ) : ?>
                     <a data-target="tab-post-types-sync" class="inline-flex items-center px-1"
