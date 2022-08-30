@@ -24,7 +24,7 @@ eg: #thrivedesk .search{ display: flex !important; }
     }
     /* Status Tag  */
     .status{
-        @apply px-2 rounded-full bg-slate-200 font-medium text-black;
+        @apply px-2 rounded-full bg-slate-200 font-medium text-black inline-block leading-6;
     }
     a{
         @apply no-underline !important;
@@ -33,7 +33,7 @@ eg: #thrivedesk .search{ display: flex !important; }
 
 /* Tickets */
 .td-ticket-search{
-    @apply px-3 py-1.5 w-64 bg-white rounded !important;
+    @apply px-3 py-1.5 w-64 bg-white border rounded !important;
 }
 .td-portal-header{
     @apply flex justify-between items-center px-6 py-4;
