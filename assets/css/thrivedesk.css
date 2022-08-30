@@ -984,12 +984,14 @@ video {
 }
 /* Status Tag  */
 .status {
+  display: inline-block;
   border-radius: 9999px;
   --tw-bg-opacity: 1;
   background-color: rgb(226 232 240 / var(--tw-bg-opacity));
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   font-weight: 500;
+  line-height: 1.5rem;
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }

@@ -24,7 +24,7 @@ eg: #thrivedesk .search{ display: flex !important; }
     }
     /* Status Tag  */
     .status{
-        @apply px-2 rounded-full bg-slate-200 font-medium text-black;
+        @apply px-2 rounded-full bg-slate-200 font-medium text-black inline-block leading-6;
     }
     a{
         @apply no-underline !important;

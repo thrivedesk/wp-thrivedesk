@@ -5,7 +5,7 @@
 		<div class="td-modal-header px-4 flex flex-none items-center border-b border-slate-100">
 			<form class="flex flex-1 items-center">
 				<label for="td-search-input" id="tdSearch-label"><?php thrivedesk_view('/icons/search'); ?></label>
-				<input id="td-search-input" class="bg-white border-0 h-14 flex-auto outline-none"  spellcheck="false" placeholder="<?php _e('Search documentation')?>" maxlength="64" type="search" value="" />
+				<input id="td-search-input" class="bg-white border-0 px-2 h-14 flex-auto outline-none"  spellcheck="false" placeholder="<?php _e('Search documentation')?>" maxlength="64" type="search" value="" />
 			</form>
 			<button id="close-modal" class="px-1.5 py-1 uppercase font-semibold bg-white border border-slate-100 rounded flex items-center text-xs hover:bg-slate-100 text-black" data-modal-toggle="tdConversationModal">
 				<span><?php _e('Esc', 'thrivedesk'); ?></span>
