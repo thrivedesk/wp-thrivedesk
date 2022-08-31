@@ -23,6 +23,41 @@ jQuery(document).ready(($) => {
         }
     }
 
+    // get search input id
+    const tdTicketSearchId = $('#td-ticket-search');
+
+    // handle clear button
+    tdTicketSearchId.on('keyup', function (e) {
+        // trigger search immediately
+        $(this).trigger('search');
+    });
+
+    // Conversation search
+    tdTicketSearchId.on('search', function (e) {
+        const tableContainer = $('#conversation-table');
+        const search = $(this).val();
+        tableContainer.find('tr').each(function (index, element) {
+            if (search === '') {
+                $(element).show();
+                return;
+            }
+            const row = $(element);
+            const ticketId = row?.text()?.toLowerCase();
+            if (ticketId && ticketId.toString().indexOf(search) === -1) {
+                row.hide();
+            } else {
+                row.show();
+            }
+        });
+
+        // Show no results message if no results found
+        if (tableContainer.find('tr:visible').length === 0) {
+            tableContainer.find('#no-results').show();
+        } else {
+            tableContainer.find('#no-results').hide();
+        }
+    });
+
     function search_query(){
         let search_query = $('#td-search-input').val();
         if (!search_query) return;

@@ -9,13 +9,13 @@ $links = $conversations['meta']['links'] ?? [];
 <div id="thrivedesk" class="w-full prose max-w-none">
     <div class="td-container">
         <div class="td-portal-header">
-            <input type="text" class="td-ticket-search" placeholder="<?php _e('Search...')?>">
+            <input type="search" class="td-ticket-search" id="td-ticket-search" placeholder="<?php _e('Search...')?>">
             <button type="submit" id="openConversationModal" class="td-btn-primary" data-modal-toggle="tdConversationModal">
                 <span><?php _e('Create a new ticket', 'thrivedesk'); ?></span>
             </button>
         </div>
 
-        <table class="td-portal-tickets !m-0">
+        <table class="td-portal-tickets !m-0" id="conversation-table">
             <thead>
                 <tr>
                     <th scope="col" class="w-28">
@@ -63,6 +63,11 @@ $links = $conversations['meta']['links'] ?? [];
                     </td>
                 </tr>
 			<?php endforeach; ?>
+            <tr id="no-results" style="display: none;">
+                <td colspan="5" class="text-center">
+                    <?php _e('No tickets found', 'thrivedesk'); ?>
+                </td>
+            </tr>
             </tbody>
         </table>
 		
