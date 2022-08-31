@@ -100,6 +100,10 @@ eg: #thrivedesk .search{ display: flex !important; }
     }
 }
 
+.td-spinner {
+    @apply inline mr-2 w-8 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600
+}
+
 /* Conversations  */
 .td-conversation{
     @apply bg-white shadow rounded-lg;

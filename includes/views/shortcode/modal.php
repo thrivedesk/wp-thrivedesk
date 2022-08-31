@@ -15,6 +15,12 @@
 		<!-- Modal body  -->
 		<div class="td-modal-body flex-auto overflow-auto">
 			<div class="py-6 td-search-items">
+                <div class="text-center" style="display: none;" id="td-search-spinner">
+                    <div role="status">
+                        <?php thrivedesk_view('/icons/spinner'); ?>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
 				<div>
 					<ul id="td-search-results" class="space-y-2">
 						<li class="h-36 flex items-center justify-center text-slate-500">

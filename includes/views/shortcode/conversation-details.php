@@ -50,8 +50,11 @@ if (isset($_GET['conversation_id'])) {
                 <?php wp_editor('', 'td_conversation_editor', ['editor_height' => '120'] ); ?>
 
                 <button type="submit" id="td_conversation_reply_submit" data-nonce="<?php echo esc_attr($td_reply_nonce); ?>"
-                        class="td-btn-primary mt-6 px-10">
-                    <?php _e('Reply', 'thrivedesk'); ?>
+                        class="td-btn-primary px-8 mt-6">
+		            <?php _e('Reply', 'thrivedesk'); ?>
+                    <span id="td-reply-spinner" style="display: none;">
+                            <?php thrivedesk_view('/icons/spinner'); ?>
+                    </span>
                 </button>
             </form>
         </div>

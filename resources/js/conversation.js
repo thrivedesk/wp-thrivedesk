@@ -60,7 +60,9 @@ jQuery(document).ready(($) => {
 
     function search_query(){
         let search_query = $('#td-search-input').val();
+        let tdSearchSpinner = $('#td-search-spinner');
         if (!search_query) return;
+        tdSearchSpinner.show();
         $.ajax({
             type: "POST",
             url: td_objects.wp_json_url + "/td-search-query/docs",
@@ -68,6 +70,7 @@ jQuery(document).ready(($) => {
                 query_string: search_query,
             },
             success: function(data){
+                tdSearchSpinner.hide();
                 const list = $('#td-search-results');
                 let search_results = '';
                 if (data.data.length > 0) {
@@ -83,6 +86,7 @@ jQuery(document).ready(($) => {
                         </li>`;
                     });
                 } else {
+                    tdSearchSpinner.hide();
                     let new_ticket_url = $('#td-new-ticket-url').attr('href');
                     search_results += `<li class="h-36 flex items-center justify-center text-slate-500">
                             <div>No documentation found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
@@ -108,6 +112,8 @@ jQuery(document).ready(($) => {
                 text: 'Reply text can not be empty!',
             })
         } else {
+            // make spinner visible
+            $('#td-reply-spinner').show();
             jQuery.post(
                 td_objects.ajax_url,
                 {
@@ -120,6 +126,8 @@ jQuery(document).ready(($) => {
                 },
                 (response) => {
                     if (response.status === 'success') {
+                        // make spinner invisible
+                        $('#td-reply-spinner').hide();
                         Swal.fire({
                             icon: 'success',
                             title: 'Reply sent',
@@ -128,6 +136,8 @@ jQuery(document).ready(($) => {
                             location.reload();
                         })
                     } else {
+                        // make spinner invisible
+                        $('#td-reply-spinner').hide();
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
