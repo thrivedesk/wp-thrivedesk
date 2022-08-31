@@ -142,14 +142,16 @@ class Conversation
                 'message' => stripslashes($_POST['data']['reply_text']),
             ],
         ];
-        $response = wp_remote_post($url, $args);
+        $response           = wp_remote_post($url, $args);
+	    $body               = wp_remote_retrieve_body($response);
+	    $body               = json_decode($body, true);
 
         header('Content-Type: application/json');
 
         if (!is_wp_error($response)) {
             echo json_encode([
                 'status'  => 'success',
-                'message' => 'Reply sent successfully',
+                'message' => $body['message'],
             ]);
         } else {
             echo json_encode([
