@@ -1,8 +1,8 @@
 <?php
 
-$conversations =  \ThriveDesk\Conversations\Conversation::get_conversations();
-$conversation_data = $conversations['data'] ?? [];
-$links = $conversations['meta']['links'] ?? [];
+$conversations       =  \ThriveDesk\Conversations\Conversation::get_conversations();
+$conversation_data   = $conversations['data'] ? \ThriveDesk\Conversations\Conversation::td_conversation_sort_by_status($conversations['data']) : [];
+$links               = $conversations['meta']['links'] ?? [];
 
 ?>
 
@@ -57,7 +57,7 @@ $links = $conversations['meta']['links'] ?? [];
 						<?php echo diff_for_humans($conversation['updated_at']) ?>
                     </td>
                     <td class="text-center align-middle">
-                        <a href="<?php echo get_permalink() .'?conversation_id='.$conversation['id']; ?>" class="td-btn-default">
+                        <a href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>" class="td-btn-default">
                            <?php _e('View', 'thrivedesk'); ?>
                         </a>
                     </td>
@@ -73,7 +73,7 @@ $links = $conversations['meta']['links'] ?? [];
 		
         <?php if (!count($conversations)): ?>
         <div class="p-10 text-center">
-            <span><?php _e('No tickets found. Open new ticket and start the conversation', 'thrivedesk'); ?></span>
+            <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
         </div>
 		<?php endif ?>
 

@@ -99,7 +99,7 @@ class Conversation
     {
         if (is_user_logged_in() && !is_null($content) && !is_feed()) {
             ob_start();
-            if (isset($_GET['conversation_id'])) {
+            if (isset($_GET['td_conversation_id']) && !empty($_GET['td_conversation_id'])) {
                 thrivedesk_view('shortcode/conversation-details');
             } else {
                 thrivedesk_view('shortcode/conversations');
@@ -213,7 +213,8 @@ class Conversation
         $current_user_email = wp_get_current_user()->user_email;
         $token              = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
         $state              = hash_hmac('SHA1', $current_user_email, $token);
-        $url                = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&state=' . $state . '&page=' . $page . '&per-page=10';
+        $url                = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' .
+                              $current_user_email . '&state=' . $state . '&page=' . $page . '&per-page=15';
         $args               = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
@@ -224,5 +225,26 @@ class Conversation
         $body               = json_decode($body, true);
 
         return $body ?? [];
+    }
+
+    public static function td_conversation_sort_by_status($data)
+    {
+        usort($data, function($first, $second) {
+            // sort by status as active, pending, closed
+            $status = [
+                'Active'  => 1,
+                'Pending' => 2,
+                'Closed'  => 3,
+            ];
+
+            $first = $status[$first['status']];
+            $second = $status[$second['status']];
+            if ($first == $second) {
+                return 0;
+            }
+            return ($first < $second) ? -1 : 1;
+        });
+
+        return $data;
     }
 }
