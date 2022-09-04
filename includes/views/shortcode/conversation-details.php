@@ -1,13 +1,21 @@
 <?php
 $td_reply_nonce = wp_create_nonce('td-reply-conversation-action');
 
-if (isset($_GET['conversation_id'])) {
-	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['conversation_id']);
+if (isset($_GET['td_conversation_id'])) {
+	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['td_conversation_id']);
 }
 ?>
 <?php if ($conversation): ?>
 <div class="td-portal-conversations prose max-w-none">
     <!-- header  -->
+    <div class="flex">
+        <a href="<?php echo get_permalink(); ?>" class="text-slate-500 flex items-center mb-4 space-x-0
+        hover:text-slate-700">
+            <?php thrivedesk_view('icons/back'); ?>
+            <span><?php _e('Back to tickets', 'thrivedesk'); ?></span>
+        </a>
+    </div>
+
     <div class="flex items-center">
        <div class="flex-auto">
         <span>#<?php echo $conversation['ticket_id'];?></span>
