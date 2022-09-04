@@ -97,7 +97,7 @@ jQuery(document).ready(($) => {
 		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
 		let td_helpdesk_page_id = $("#td_helpdesk_page_id").val();
 		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item)=>item.value).get();
-		let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
+		// let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
 
 		$.ajax({
 			type: "POST",
@@ -106,7 +106,7 @@ jQuery(document).ready(($) => {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 				td_helpdesk_page_id: td_helpdesk_page_id,
 				td_helpdesk_post_types: td_helpdesk_post_types,
-				td_helpdesk_form_style: td_helpdesk_form_style,
+				// td_helpdesk_form_style: td_helpdesk_form_style,
 			},
 			success: function(data){
 				Swal.fire({
