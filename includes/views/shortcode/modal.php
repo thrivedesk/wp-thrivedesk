@@ -15,7 +15,7 @@
 		<!-- Modal body  -->
 		<div class="td-modal-body flex-auto overflow-auto">
 			<div class="py-6 td-search-items">
-                <div class="text-center" style="display: none;" id="td-search-spinner">
+                <div class="text-center my-5" style="display: none;" id="td-search-spinner">
                     <div role="status">
                         <?php thrivedesk_view('/icons/spinner'); ?>
                         <span class="sr-only">Loading...</span>
