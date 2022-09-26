@@ -95,6 +95,8 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                     px-1.5 py-0.5 rounded"><?php _e( 'Beta', 'thrivedesk' ); ?>
                     </span>
                 </a>
+                <a data-target="tab-assistant" class="inline-flex items-center border-b-2 px-1 border-blue-600"
+                   href="#assistant"><?php _e( 'Assistant', 'thrivedesk' ) ?></a>
 				<?php if ( $wppostsync->get_plugin_data( 'connected' ) ) : ?>
                     <a data-target="tab-post-types-sync" class="inline-flex items-center px-1"
                        href="#"><?php _e( 'WP Post Sync', 'thrivedesk' ) ?></a>
@@ -309,6 +311,32 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                     </p>
                 </div>
             </div> <!-- td-card-end  -->
+        </div>
+
+        <div class="hidden tab-assistant">
+            <div class="td-card td-settings md:flex p-0 2xl:max-w-7xl mx-auto">
+                <form class="md:flex-1 space-y-6 p-10" id="td_helpdesk_form" action="#" method="POST">
+                    <div>
+                        <div class="md:grid md:grid-cols-12 md:gap-12">
+                            <div class="md:col-span-2">
+                                <div>
+                                    <h3 class="text-lg font-semibold leading-6 text-gray-900 mt-0">
+                                        <?php _e( 'Assistant', 'thrivedesk' ); ?>
+                                    </h3>
+                                </div>
+                                <label for="td-assistant-checked-toggle" class="inline-flex relative items-center mb-4
+                                cursor-pointer">
+                                    <input type="checkbox" value="" id="td-assistant-checked-toggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                    <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Checked toggle</span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <hr>
+                </form>
+            </div>
         </div>
 
 		<?php if ( $wppostsync && $wppostsync->get_plugin_data( 'connected' ) ) : ?>
