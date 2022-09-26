@@ -139,4 +139,9 @@ jQuery(document).ready(($) => {
 
 	});
 
+	$('#td-assistant-checked-toggle').on('change', function(e){
+		// make a axios request
+		e.preventDefault();
+	});
+
 });
