@@ -101,7 +101,7 @@ jQuery(document).ready(($) => {
 
 		$.ajax({
 			type: "POST",
-			url: thrivedesk.wp_json_url + "/td-settings/form/submit",
+			url:   + "/td-settings/form/submit",
 			data: {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 				td_helpdesk_page_id: td_helpdesk_page_id,
@@ -139,9 +139,54 @@ jQuery(document).ready(($) => {
 
 	});
 
-	$('#td-assistant-checked-toggle').on('change', function(e){
+	$('.td-assistant-item').on('change', function(e){
 		// make a axios request
-		e.preventDefault();
+		let $target = $(this);
+		// check the value of the checkbox
+		let checked = $target.is(':checked');
+
+		$('.td-assistant-item').prop('checked', false);
+		if (checked) {
+			$target.prop('checked', true);
+		} else {
+			$target.prop('checked', false);
+		}
+		// $target.prop('checked', true);
+
+		$.ajax({
+			type: "POST",
+			url:  thrivedesk.wp_json_url + "/thrivedesk/v1/assistant/submit",
+			data: {
+				selected_assistant_id: $target.val(),
+				status: checked,
+			}
+		}).success(function(data){
+			Swal.fire({
+				title: 'Great',
+				icon: 'success',
+				text: data,
+				showClass: {
+					popup: 'animate__animated animate__fadeInDown'
+				},
+				hideClass: {
+					popup: 'animate__animated animate__fadeOutUp'
+				},
+				timer: 4000
+			});
+		}).error(function(data){
+			Swal.fire({
+				title: 'Error',
+				icon: 'error',
+				text: 'Something went wrong',
+				showClass: {
+					popup: 'animate__animated animate__fadeInDown'
+				},
+				hideClass: {
+					popup: 'animate__animated animate__fadeOutUp'
+				},
+				timer: 4000
+			})
+		})
 	});
 
 });

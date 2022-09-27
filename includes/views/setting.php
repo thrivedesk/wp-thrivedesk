@@ -7,6 +7,8 @@ $wppostsync  = ThriveDesk\Plugins\WPPostSync::instance();
 $autonami    = ThriveDesk\Plugins\Autonami::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
+$assistants = \ThriveDesk\Assistants\Assistant::get_assistants()['assistants'] ?? [];
+$assistant_settings = \ThriveDesk\Assistants\Assistant::get_assistant_settings();
 $plugins = [
 	[
 		'namespace'   => 'woocommerce',
@@ -317,22 +319,35 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
             <div class="td-card td-settings md:flex p-0 2xl:max-w-7xl mx-auto">
                 <form class="md:flex-1 space-y-6 p-10" id="td_helpdesk_form" action="#" method="POST">
                     <div>
-                        <div class="md:grid md:grid-cols-12 md:gap-12">
-                            <div class="md:col-span-2">
-                                <div>
-                                    <h3 class="text-lg font-semibold leading-6 text-gray-900 mt-0">
-                                        <?php _e( 'Assistant', 'thrivedesk' ); ?>
-                                    </h3>
-                                </div>
-                                <label for="td-assistant-checked-toggle" class="inline-flex relative items-center mb-4
-                                cursor-pointer">
-                                    <input type="checkbox" value="" id="td-assistant-checked-toggle" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                    <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Checked toggle</span>
-                                </label>
-                            </div>
-
+                        <div class="border-b-2">
+                            <h3 class="text-lg font-semibold leading-6 text-gray-900 mt-0">
+                                <?php _e( 'Assistants', 'thrivedesk' ); ?>
+                            </h3>
                         </div>
+                        <ul class="list-none">
+                            <?php foreach ($assistants as $assistant): ?>
+                                <li>
+                                    <label for="td-assistant-checked-toggle-<?php echo $assistant['id']; ?>"
+                                           class="inline-flex relative items-center mb-4 cursor-pointer">
+                                        <input type="checkbox" value="<?php echo $assistant['id']; ?>"
+                                               id="td-assistant-checked-toggle-<?php echo $assistant['id']; ?>"
+                                               name="td-assistant" class="sr-only peer td-assistant-item"
+                                            <?php echo ($assistant_settings && $assistant_settings['status']) &&
+                                                       $assistant_settings['id'] == $assistant['id'] ? 'checked' : ''; ?>>
+                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                        <span class="ml-3 text-sm font-medium text-gray-900
+                                        dark:text-gray-300"><?php echo $assistant['name']; ?></span>
+                                    </label>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+
+                        <?php if (count($assistants) <=0 ): ?>
+                            <p>No Assistant found.
+                                <a href="https://app.thrivedesk.com/assistants" target="_blank">Click</a>
+                                to set up your assistant.
+                            </p>
+                        <?php endif; ?>
                     </div>
                     <hr>
                 </form>

@@ -91,6 +91,7 @@ final class ThriveDesk
             }
 
 	        Conversation::instance();
+            \ThriveDesk\Assistants\Assistant::instance();
         }
 
         return self::$instance;
