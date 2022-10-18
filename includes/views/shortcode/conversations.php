@@ -1,7 +1,8 @@
 <?php
+use ThriveDesk\Conversations\Conversation;
 
-$conversations       =  \ThriveDesk\Conversations\Conversation::get_conversations();
-$conversation_data   = $conversations['data'] ? \ThriveDesk\Conversations\Conversation::td_conversation_sort_by_status($conversations['data']) : [];
+$conversations       = Conversation::get_conversations();
+$conversation_data   = isset($conversations['data']) ? Conversation::td_conversation_sort_by_status($conversations['data']) : [];
 $links               = $conversations['meta']['links'] ?? [];
 
 ?>
