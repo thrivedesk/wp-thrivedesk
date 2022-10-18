@@ -55,15 +55,6 @@ class RestRoute
 			}
 		));
 
-		// helpdesk setting route for saving the setting
-		register_rest_route('td-settings', '/form/submit', array(
-			'methods'             => 'post',
-			'callback'            => array($this, 'save_helpdesk_form'),
-			'permission_callback' => function () {
-				return true;
-			}
-		));
-
 		// doc search result route
 		register_rest_route('td-search-query', '/docs', array(
 			'methods'             => 'post',
@@ -72,31 +63,6 @@ class RestRoute
 				return true;
 			}
 		));
-	}
-
-	/**
-	 * helpdesk form submit
-	 * @return void|\WP_REST_Response
-	 */
-	public function save_helpdesk_form()
-	{
-		if (isset($_POST['td_helpdesk_api_key']) && isset($_POST['td_helpdesk_page_id']) && isset($_POST['td_helpdesk_post_types'])) {
-			// add option to database
-			$td_helpdesk_settings = [
-				'td_helpdesk_api_key'       => $_POST['td_helpdesk_api_key'],
-				'td_helpdesk_page_id'       => $_POST['td_helpdesk_page_id'],
-				'td_helpdesk_post_types'    => $_POST['td_helpdesk_post_types'],
-//				'td_helpdesk_form_style'    => $_POST['td_helpdesk_form_style'],
-			];
-
-			if (get_option('td_helpdesk_settings')) {
-				update_option('td_helpdesk_settings', $td_helpdesk_settings);
-			} else {
-				add_option('td_helpdesk_settings', $td_helpdesk_settings);
-			}
-
-			return new \WP_REST_Response('Settings saved successfully', 200);
-		}
 	}
 
 

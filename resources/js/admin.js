@@ -92,51 +92,36 @@ jQuery(document).ready(($) => {
 	}
 
 	// helpdesk form
-	$('#td_helpdesk_form').submit(function(e){
+	$('#td_helpdesk_form').submit(function(e) {
 		e.preventDefault();
 		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
 		let td_helpdesk_page_id = $("#td_helpdesk_page_id").val();
-		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item)=>item.value).get();
+		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item) => item.value).get();
 		// let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
 
-		$.ajax({
-			type: "POST",
-			url:   + "/td-settings/form/submit",
-			data: {
-				td_helpdesk_api_key: td_helpdesk_api_key,
-				td_helpdesk_page_id: td_helpdesk_page_id,
-				td_helpdesk_post_types: td_helpdesk_post_types,
-				// td_helpdesk_form_style: td_helpdesk_form_style,
-			},
-			success: function(data){
+		// jquery post with action
+		jQuery.post(
+			thrivedesk.ajax_url,
+			{
+				action: 'thrivedesk_helpdesk_form',
+				data: {
+					td_helpdesk_api_key: td_helpdesk_api_key,
+					td_helpdesk_page_id: td_helpdesk_page_id,
+					td_helpdesk_post_types: td_helpdesk_post_types,
+					// td_helpdesk_form_style: td_helpdesk_form_style,
+				},
+			}
+		).success(function (response) {
+			let icon;
+			if (response) {
+				response.status === 'success' ? icon = 'success' : icon = 'error';
 				Swal.fire({
-					title: 'Great',
-					icon: 'success',
-					text: data,
-					showClass: {
-						popup: 'animate__animated animate__fadeInDown'
-					},
-					hideClass: {
-						popup: 'animate__animated animate__fadeOutUp'
-					},
-					timer: 4000
-				});
-			},
-			error: function(data){
-				Swal.fire({
-					title: 'Error',
-					icon: 'error',
-					showClass: {
-						popup: 'animate__animated animate__fadeInDown'
-					},
-					hideClass: {
-						popup: 'animate__animated animate__fadeOutUp'
-					},
-					timer: 4000
+					icon: icon,
+					title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
+					text: response.message,
 				});
 			}
 		});
-
 	});
 
 	$('.td-assistant-item').on('change', function(e){

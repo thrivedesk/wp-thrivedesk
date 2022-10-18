@@ -56,6 +56,33 @@ class Conversation
 
         // ajax call for sending reply
         add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
+
+        // ajax call for saving the helpdesk setting
+        add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
+    }
+
+    public function td_save_helpdesk_form()
+    {
+        header('Content-Type: application/json');
+        $data = $_POST['data'];
+        if (isset($data['td_helpdesk_api_key']) && isset($data['td_helpdesk_page_id']) && isset($data['td_helpdesk_post_types'])) {
+            // add option to database
+            $td_helpdesk_settings = [
+                'td_helpdesk_api_key'       => $data['td_helpdesk_api_key'],
+                'td_helpdesk_page_id'       => $data['td_helpdesk_page_id'],
+                'td_helpdesk_post_types'    => $data['td_helpdesk_post_types'],
+            ];
+
+            if (get_option('td_helpdesk_settings')) {
+                update_option('td_helpdesk_settings', $td_helpdesk_settings);
+            } else {
+                add_option('td_helpdesk_settings', $td_helpdesk_settings);
+            }
+            echo json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
+            die();
+        }
+        echo json_encode(['status' => 'error', 'message' => 'Something went wrong']);
+        die();
     }
 
     /**
@@ -114,7 +141,7 @@ class Conversation
                 'thrivedesk') . '. Click <a class="text-blue-600" href="' . esc_url(wp_login_url
             ($redirect)) . '"> here</a> to login.
 			</p>';
-	}
+    }
 
     /**
      * send reply to the conversation
@@ -143,8 +170,8 @@ class Conversation
             ],
         ];
         $response           = wp_remote_post($url, $args);
-	    $body               = wp_remote_retrieve_body($response);
-	    $body               = json_decode($body, true);
+        $body               = wp_remote_retrieve_body($response);
+        $body               = json_decode($body, true);
 
         header('Content-Type: application/json');
 
