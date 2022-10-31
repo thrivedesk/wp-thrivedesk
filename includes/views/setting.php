@@ -99,10 +99,17 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                 </a>
                 <a data-target="tab-assistant" class="inline-flex items-center border-b-2 px-1 border-blue-600"
                    href="#assistant"><?php _e( 'Assistant', 'thrivedesk' ) ?></a>
+
 				<?php if ( $wppostsync->get_plugin_data( 'connected' ) ) : ?>
                     <a data-target="tab-post-types-sync" class="inline-flex items-center px-1"
                        href="#"><?php _e( 'WP Post Sync', 'thrivedesk' ) ?></a>
 				<?php endif; ?>
+
+                <a data-target="tab-welcome" class="inline-flex items-center border-b-2 px-1 border-blue-600"
+                   href="#welcome"><?php _e( 'Welcome', 'thrivedesk' ) ?></a>
+
+                <a data-target="tab-resource" class="inline-flex items-center border-b-2 px-1 border-blue-600"
+                   href="#resource"><?php _e( 'Resource', 'thrivedesk' ) ?></a>
             </div>
             <div class="flex">
                 <a class="inline-flex items-center px-4 space-x-1 bg-gray-100 hover:bg-blue-50"
@@ -353,54 +360,10 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                 </form>
             </div>
         </div>
+            <!-- include the welcome page -->
+        <?php thrivedesk_view( 'pages/welcome' ); ?>
 
-		<?php if ( $wppostsync && $wppostsync->get_plugin_data( 'connected' ) ) : ?>
-            <div class="hidden tab-post-types-sync">
-                <div>
-					<?php
-					$post_type_sync_nonce = $_POST['post_type_sync_nonce'] ?? null;
-
-					if ( $post_type_sync_nonce && wp_verify_nonce( $post_type_sync_nonce,
-							'thrivedesk-post-type-sync-nonce' ) ) {
-						$post_type_sync_options = array_map( 'sanitize_text_field', $_POST['post_types'] ) ?? [];
-
-						update_option( 'thrivedesk_post_type_sync_option', $post_type_sync_options );
-					} else {
-						$post_type_sync_options = get_option( 'thrivedesk_post_type_sync_option', [] );
-					}
-					?>
-                    <p class="mb-4 text-lg">
-						<?php _e( 'Post types to index.', 'thrivedesk' ); ?>
-                    </p>
-
-                    <form action="#" method="POST">
-                        <input type="hidden" name="post_type_sync_nonce"
-                               value="<?php echo wp_create_nonce( 'thrivedesk-post-type-sync-nonce' ) ?>">
-						<?php
-						$wp_post_types = array_filter( get_post_types( array(
-							'public'       => true,
-							'show_in_rest' => true
-						) ), function ( $type ) {
-							return $type !== 'attachment';
-						} );
-
-						foreach ( $wp_post_types as $post_type ) :
-							?>
-                            <div>
-                                <input type="checkbox" name="post_types[]" value="<?php echo esc_attr( $post_type ); ?>"
-                                       id="<?php echo esc_attr( $post_type ); ?>" <?php echo in_array( $post_type,
-									$post_type_sync_options ) ? 'checked' : ''; ?>>
-                                <label for="<?php echo esc_attr( $post_type ); ?>"> <?php echo esc_html( ucfirst( $post_type ) ); ?> </label>
-                            </div>
-						<?php
-						endforeach;
-						?>
-                        <div class="submit">
-							<?php submit_button(); ?>
-                        </div>
-                    </form>
-                </div>
-            </div>
-		<?php endif; ?>
+        <!-- include the resource page -->
+        <?php thrivedesk_view( 'pages/resource' ); ?>
     </div>
 </div>
