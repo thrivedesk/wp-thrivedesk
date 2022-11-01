@@ -52,18 +52,18 @@ jQuery(document).ready(($) => {
 	/**
 	 * admin tab
 	 */
-	$('.wrap.thrivedesk .admin-tabs a').on('click', function (e) {
+	$('.thrivedesk .nav-tabs a').on('click', function (e) {
 		// e.preventDefault();
 
 		var tabElement = document.querySelectorAll(
-			'.wrap.thrivedesk .admin-tabs a'
+			'.thrivedesk .nav-tabs a'
 		);
 		var contentElement = document.querySelectorAll(
-			'.wrap.thrivedesk #tab-content>div'
+			'.thrivedesk #tab-content>div'
 		);
 
 		tabElement.forEach(function (linkElement) {
-			$(linkElement).removeClass('border-blue-600 active border-b-2');
+			$(linkElement).removeClass('active');
 		});
 		contentElement.forEach(function (contentElement) {
 			$(contentElement).removeClass('block').addClass('hidden');
@@ -71,7 +71,7 @@ jQuery(document).ready(($) => {
 
 		const selectedTab = this.getAttribute('data-target');
 
-		$(this).addClass('border-blue-600 active border-b-2');
+		$(this).addClass('active');
 		document
 			.getElementById('tab-content')
 			.getElementsByClassName(selectedTab)[0]

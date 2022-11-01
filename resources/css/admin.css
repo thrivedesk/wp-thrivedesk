@@ -6,7 +6,22 @@
 	.td-card{
 		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
 	}
+	.nav-tabs{
+		a{
+			@apply py-2 px-4 rounded hover:bg-sky-50 text-sm text-slate-800;
+		}
+		.active{
+			@apply bg-sky-50;
+		}
+	}
 }
 @tailwind components;
 @tailwind utilities;
 
+/* Reset wp  */
+#wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
+	@apply !h-full;
+}
+#wpbody-content, #wpcontent{
+	@apply !p-0 text-slate-700;
+}
