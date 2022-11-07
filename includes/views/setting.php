@@ -42,7 +42,7 @@ $plugins = [
 		'name'        => __( 'WordPress Post Sync', 'thrivedesk' ),
 		'description' => __( 'Share your site post data of selected post types for faster support.' ),
 		'image'       => 'wppostsync.png',
-		'category'    => 'WordPress',
+		'category'    => 'Core',
 		'installed'   => $wppostsync->is_plugin_active(),
 		'connected'   => $wppostsync->get_plugin_data( 'connected' ),
 	],
@@ -147,66 +147,57 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                         <div class="text-lg font-bold"><?php _e( 'Integrations', 'thrivedesk' ) ?></div>
                         <div class="space-y-3 sm:space-y-0 sm:grid md:grid-cols-3 sm:gap-4 mt-4">
                             <?php foreach ( $plugins as $plugin ) : ?>
-                                <div class="td-card">
+                                <div class="td-card relative">
                                     <!-- title  -->
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-4">
-                                            <img class="w-12 h-12"
-                                                src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name( $plugin['image'] ); ?>"
-                                                alt="plugin_image"/>
+                                    <div class="flex space-x-4">
+                                        <img class="w-12 h-12 rounded"
+                                            src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name( $plugin['image'] ); ?>"
+                                            alt="plugin_image"/>
+                                        <div>
                                             <div class="font-medium text-base"><?php echo esc_html( $plugin['name'] ); ?></div>
+                                            <span class="uppercase text-xs text-gray-400"><?php echo esc_html( $plugin['category'] ) ?></span>
                                         </div>
-                                        <?php if ( $plugin['connected'] ) : ?>
-                                            <span class="p-1 rounded-full bg-green-100 text-green-500" title=<?php _e( 'Connected',
-                                                'thrivedesk' ) ?>>
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor"
-                                                    viewBox="0 0 16 16">
-                                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-                                                </svg>
-                                            </span>
-
-                                        <?php elseif ( ! $plugin['installed'] ) : ?>
-                                            <span class="p-1 rounded-full bg-red-100 text-red-500"
-                                                title="<?php _e( 'Plugin not installed or not activated yet', 'thrivedesk' ) ?>">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                    class="bi bi-exclamation-lg" viewBox="0 0 16 16">
-                                                    <path d="M7.005 3.1a1 1 0 1 1 1.99 0l-.388 6.35a.61.61 0 0 1-1.214 0L7.005 3.1ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"/>
-                                                </svg>
-                                            </span>
-                                        <?php endif; ?>
                                     </div>
                                     <!-- description  -->
                                     <div class="text-gray-500 text-sm my-3">
                                         <?php echo esc_html( $plugin['description'] ); ?>
                                     </div>
 
-                                    <!-- meta  -->
-                                    <div class="flex items-center justify-between relative">
-                                        <span class="uppercase text-xs text-gray-400"><?php echo esc_html( $plugin['category'] ) ?></span>
-
-                                        <div class="text-xs">
-                                            <?php if ( $plugin['connected'] ) : ?>
-                                                <button data-plugin="<?php echo esc_attr( $plugin['namespace'] ); ?>"
-                                                        data-connected="1" data-nonce="<?php echo esc_attr( $nonce ); ?>"
-                                                        class="connect inline-flex items-center space-x-1 py-1.5 pl-2 pr-3 rounded-full bg-red-100 text-red-500 focus:outline-none focus:ring-2 focus:ring-red-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-4 h-4"
-                                                        viewBox="0 0 16 16">
-                                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                                                    </svg>
-                                                    <span><?php _e( 'Disconnect', 'thrivedesk' ) ?></span>
-                                                </button>
-                                            <?php else : ?>
-                                                <button data-plugin="<?php echo esc_attr( $plugin['namespace'] ); ?>"
-                                                        data-connected="0" data-nonce="<?php echo esc_attr( $nonce ); ?>"
-                                                        class="connect inline-flex items-center space-x-2 py-1.5 px-3 rounded-full bg-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600 <?php echo ! $plugin['installed'] ? 'opacity-50 cursor-not-allowed' : '' ?>" <?php echo ! $plugin['installed'] ? 'disabled' : '' ?>>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-3 h-3"
-                                                        viewBox="0 0 16 16">
-                                                        <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm5 10v2a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2v5a2 2 0 0 1-2 2H5zm6-8V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h2V6a2 2 0 0 1 2-2h5z"/>
-                                                    </svg>
-                                                    <span><?php _e( 'Connect', 'thrivedesk' ) ?></span>
-                                                </button>
-                                            <?php endif; ?>
+                                    <!-- CTA  -->
+                                    <?php if ( $plugin['connected'] ) : ?>
+                                        <button data-plugin="<?php echo esc_attr( $plugin['namespace'] ); ?>"
+                                                data-connected="1" data-nonce="<?php echo esc_attr( $nonce ); ?>"
+                                                class="connect w-full py-2 text-center rounded bg-red-50 text-red-500 hover:bg-red-500 hover:text-white">
+                                            
+                                            <span><?php _e( 'Disconnect', 'thrivedesk' ) ?></span>
+                                        </button>
+                                    <?php else : ?>
+                                        <button data-plugin="<?php echo esc_attr( $plugin['namespace'] ); ?>"
+                                                data-connected="0" data-nonce="<?php echo esc_attr( $nonce ); ?>"
+                                                class="connect w-full py-2 text-center rounded bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white <?php echo ! $plugin['installed'] ? 'opacity-50 cursor-not-allowed' : '' ?>" <?php echo ! $plugin['installed'] ? 'disabled' : '' ?>>
+                                            <span><?php _e( 'Connect', 'thrivedesk' ) ?></span>
+                                        </button>
+                                    <?php endif; ?>
+                                    <!-- connection status  -->
+                                    <div class="absolute -top-3 right-1">
+                                        <?php if ( $plugin['connected'] ) : ?>
+                                        <div class=" py-1 pl-1.5 pr-3 rounded-full bg-green-100 text-green-600 text-xs flex items-center space-x-1" title=<?php _e( 'Connected',
+                                            'thrivedesk' ) ?>>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="currentColor"
+                                                viewBox="0 0 16 16">
+                                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                                            </svg>
+                                            <span><?php _e('Connected', 'thrivedesk')?></span>
                                         </div>
+                                        <?php elseif ( ! $plugin['installed'] ) : ?>
+                                        <div class="p-1 rounded-full bg-red-100 text-red-500"
+                                            title="<?php _e( 'Plugin not installed or not activated yet', 'thrivedesk' ) ?>">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-exclamation-lg" viewBox="0 0 16 16">
+                                                <path d="M7.005 3.1a1 1 0 1 1 1.99 0l-.388 6.35a.61.61 0 0 1-1.214 0L7.005 3.1ZM7 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"/>
+                                            </svg>
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
