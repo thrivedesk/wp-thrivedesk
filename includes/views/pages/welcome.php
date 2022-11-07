@@ -1,4 +1,4 @@
-<div class="hidden tab-welcome flex space-x-4">
+<div class="tab-welcome flex space-x-4">
     <div class="flex-1">
         <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
             <h1 class="font-medium text-2xl">Welcome To ThriveDesk</h1>

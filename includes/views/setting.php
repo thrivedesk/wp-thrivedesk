@@ -103,7 +103,7 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     <!-- body  -->
     <div class="flex flex-1">
         <!-- sidebar  -->
-        <div class="w-64 p-5 flex flex-col gap-1 nav-tabs">
+        <div class="w-64 p-5 flex flex-col gap-1 sidebar-nav">
             <a data-target="tab-welcome" href="#welcome">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-signpost-split-fill" viewBox="0 0 16 16">
                     <path d="M7 16h2V6h5a1 1 0 0 0 .8-.4l.975-1.3a.5.5 0 0 0 0-.6L14.8 2.4A1 1 0 0 0 14 2H9v-.586a1 1 0 0 0-2 0V7H2a1 1 0 0 0-.8.4L.225 8.7a.5.5 0 0 0 0 .6l.975 1.3a1 1 0 0 0 .8.4h5v5z"/>
@@ -138,12 +138,12 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
             </a>
         </div>
         <!-- body  -->
-        <div class="flex-1 bg-white rounded-l-lg shadow-lg">
-            <div class="mx-auto px-8 py-12 2xl:max-w-7xl">
+        <div class="main-wrap">
+            <div class="mx-auto px-8 py-12 2xl:max-w-7xl h-full">
                 <!-- reposition error info from header -->
                 <h1></h1>
-                <div id="tab-content" class="px-1.5">
-                    <div class="tab-integrations">
+                <div id="tab-content" class="px-1.5 h-full">
+                    <div class="hidden tab-integrations">
                         <div class="text-lg font-bold"><?php _e( 'Integrations', 'thrivedesk' ) ?></div>
                         <div class="space-y-3 sm:space-y-0 sm:grid md:grid-cols-3 sm:gap-4 mt-4">
                             <?php foreach ( $plugins as $plugin ) : ?>

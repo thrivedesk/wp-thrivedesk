@@ -52,11 +52,11 @@ jQuery(document).ready(($) => {
 	/**
 	 * admin tab
 	 */
-	$('.thrivedesk .nav-tabs a').on('click', function (e) {
+	$('.thrivedesk .sidebar-nav a').on('click', function (e) {
 		// e.preventDefault();
 
 		var tabElement = document.querySelectorAll(
-			'.thrivedesk .nav-tabs a'
+			'.thrivedesk .sidebar-nav a'
 		);
 		var contentElement = document.querySelectorAll(
 			'.thrivedesk #tab-content>div'

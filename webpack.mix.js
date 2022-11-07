@@ -5,4 +5,6 @@ mix.js('resources/js/admin.js', 'js')
 	.postCss('resources/css/admin.css', 'css')
 	.postCss('resources/css/thrivedesk.css', 'css')
 	.version()
-	.setPublicPath('assets');
+	.setPublicPath('assets').options({
+		processCssUrls: false
+	});
