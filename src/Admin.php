@@ -28,11 +28,30 @@ final class Admin
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
+		add_action('admin_init', [$this, 'redirectToGettingStartedPage']);
+
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
 
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
     }
+
+	/**
+	 * After successful activation, redirect to the welcome page.
+	 * must not redirect if multi activation.
+	 * @return void
+	 */
+	public function redirectToGettingStartedPage(): void {
+
+		if (isset($_GET['activate-multi']) || is_network_admin()) {
+			return;
+		}
+
+		if (get_option('wp_thrivedesk_activation_redirect', false)) {
+			delete_option('wp_thrivedesk_activation_redirect');
+			exit( wp_redirect("options-general.php?page=thrivedesk-setting#welcome") );
+		}
+	}
 
     public function db_migrate()
     {

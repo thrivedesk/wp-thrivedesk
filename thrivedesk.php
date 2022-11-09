@@ -28,6 +28,7 @@
 
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
+use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
@@ -40,107 +41,112 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 final class ThriveDesk
 {
-    /**
-     * Plugin version
-     *
-     * @var string
-     */
-    public $version = '0.10.0';
+	/**
+	 * Plugin version
+	 *
+	 * @var string
+	 */
+	public $version = '0.10.0';
 
-    /**
-     * The single instance of this class
-     */
-    private static $instance = null;
+	/**
+	 * The single instance of this class
+	 */
+	private static $instance = null;
 
-    /**
-     * Construct ThriveDesk class.
-     *
-     * @since  0.0.1
-     * @access private
-     */
-    private function __construct()
-    {
-        // Define constants.
-        $this->define_constants();
-    }
+	/**
+	 * Construct ThriveDesk class.
+	 *
+	 * @since  0.0.1
+	 * @access private
+	 */
+	private function __construct()
+	{
+		// Define constants.
+		$this->define_constants();
+	}
 
-    /**
-     * Main ThriveDesk Instance.
-     *
-     * Ensures that only one instance of ThriveDesk exists in memory at any one
-     * time. Also prevents needing to define globals all over the place.
-     *
-     * @return object|ThriveDesk
-     * @access public
-     * @since  0.0.1
-     */
-    public static function instance(): object
-    {
-        if (!isset(self::$instance) && !(self::$instance instanceof ThriveDesk)) {
+	/**
+	 * Main ThriveDesk Instance.
+	 *
+	 * Ensures that only one instance of ThriveDesk exists in memory at any one
+	 * time. Also prevents needing to define globals all over the place.
+	 *
+	 * @return object|ThriveDesk
+	 * @access public
+	 * @since  0.0.1
+	 */
+	public static function instance(): object
+	{
+		if (!isset(self::$instance) && !(self::$instance instanceof ThriveDesk)) {
 
-            self::$instance = new self();
+			self::$instance = new self();
 
-            self::$instance->api = Api::instance();
+			self::$instance->api = Api::instance();
 
-            self::$instance->hooks = FluentCrmHooks::instance();
+			self::$instance->hooks = FluentCrmHooks::instance();
 
-            self::$instance->restroute = RestRoute::instance();
+			self::$instance->restroute = RestRoute::instance();
 
-            if (is_admin()) {
-                self::$instance->admin = Admin::instance();
-            }
+			if (is_admin()) {
+				self::$instance->admin = Admin::instance();
+			}
 
-	        Conversation::instance();
-            \ThriveDesk\Assistants\Assistant::instance();
-        }
+			Conversation::instance();
+			Assistant::instance();
 
-        return self::$instance;
-    }
+			// allow to redirect to the getting started page
+			register_activation_hook(__FILE__, function () {
+				add_option('wp_thrivedesk_activation_redirect', true);
+			});
+		}
 
-    /**
-     * Define the necessary constants.
-     *
-     * @return void
-     * @since  0.0.1
-     * @access private
-     */
-    private function define_constants(): void
-    {
-        $this->define('THRIVEDESK_VERSION', $this->version);
-        $this->define('THRIVEDESK_FILE', __FILE__);
-        $this->define('THRIVEDESK_DIR', dirname(__FILE__));
-        $this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
-        $this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
-        $this->define('THRIVEDESK_PLUGIN_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets');
-        // Url with no ending /
-        $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.com');
-        $this->define('THRIVEDESK_API_URL', 'http://api.thrivedesk.test');
-        $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
-        $this->define('THRIVEDESK_DB_VERSION', 1.2);
-        $this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');
-    }
+		return self::$instance;
+	}
 
-    /**
-     * Define constant if not already defined
-     *
-     * @param string      $name
-     * @param string|bool $value
-     *
-     * @return void
-     * @since 0.0.1
-     */
-    private function define($name, $value)
-    {
-        if (!defined($name)) {
-            define($name, $value);
-        }
-    }
+	/**
+	 * Define the necessary constants.
+	 *
+	 * @return void
+	 * @since  0.0.1
+	 * @access private
+	 */
+	private function define_constants(): void
+	{
+		$this->define('THRIVEDESK_VERSION', $this->version);
+		$this->define('THRIVEDESK_FILE', __FILE__);
+		$this->define('THRIVEDESK_DIR', dirname(__FILE__));
+		$this->define('THRIVEDESK_INC_DIR', dirname(__FILE__) . '/includes');
+		$this->define('THRIVEDESK_PLUGIN_ASSETS', plugins_url('assets', __FILE__));
+		$this->define('THRIVEDESK_PLUGIN_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets');
+		// Url with no ending /
+		$this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.com');
+		$this->define('THRIVEDESK_API_URL', 'http://api.thrivedesk.test');
+		$this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
+		$this->define('THRIVEDESK_DB_VERSION', 1.2);
+		$this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');
+	}
+
+	/**
+	 * Define constant if not already defined
+	 *
+	 * @param string      $name
+	 * @param string|bool $value
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
+	private function define($name, $value)
+	{
+		if (!defined($name)) {
+			define($name, $value);
+		}
+	}
 }
 
 // Initialize ThriveDesk.
 function ThriveDesk()
 {
-    return ThriveDesk::instance();
+	return ThriveDesk::instance();
 }
 
 ThriveDesk();
