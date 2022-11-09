@@ -22,13 +22,16 @@ final class Admin
      */
     private function __construct()
     {
+	    // allow to redirect to the getting started page
+	    register_activation_hook(THRIVEDESK_FILE, [$this, 'add_option_for_welcome_page_redirection']);
+
         add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
 
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
-		add_action('admin_init', [$this, 'redirectToGettingStartedPage']);
+		add_action('admin_init', [$this, 'redirect_to_getting_started_page']);
 
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
 
@@ -36,12 +39,16 @@ final class Admin
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
     }
 
+	public function add_option_for_welcome_page_redirection(): void {
+		add_option('wp_thrivedesk_activation_redirect', true);
+	}
+
 	/**
 	 * After successful activation, redirect to the welcome page.
 	 * must not redirect if multi activation.
 	 * @return void
 	 */
-	public function redirectToGettingStartedPage(): void {
+	public function redirect_to_getting_started_page(): void {
 
 		if (isset($_GET['activate-multi']) || is_network_admin()) {
 			return;

@@ -93,11 +93,6 @@ final class ThriveDesk
 
 			Conversation::instance();
 			Assistant::instance();
-
-			// allow to redirect to the getting started page
-			register_activation_hook(__FILE__, function () {
-				add_option('wp_thrivedesk_activation_redirect', true);
-			});
 		}
 
 		return self::$instance;
