@@ -57,12 +57,6 @@ final class Admin
 		if (get_option('wp_thrivedesk_activation_redirect', false)) {
 			delete_option('wp_thrivedesk_activation_redirect');
 
-            // if an API Key is already set, redirect to the settings page
-            if (!empty(get_td_helpdesk_options()['td_helpdesk_api_key'])) {
-                wp_redirect(admin_url('options-general.php?page=thrivedesk-setting#settings'));
-                exit;
-            }
-
 			exit( wp_redirect("options-general.php?page=thrivedesk-setting#welcome") );
 		}
 	}
