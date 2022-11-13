@@ -103,7 +103,7 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     <!-- body  -->
     <div class="flex flex-1">
         <!-- sidebar  -->
-        <div class="w-64 p-5 flex flex-col gap-1 sidebar-nav">
+        <div class="w-64 p-5 flex flex-col gap-1 sidebar-nav tab-link">
             <a data-target="tab-welcome" href="#welcome">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-signpost-split-fill" viewBox="0 0 16 16">
                     <path d="M7 16h2V6h5a1 1 0 0 0 .8-.4l.975-1.3a.5.5 0 0 0 0-.6L14.8 2.4A1 1 0 0 0 14 2H9v-.586a1 1 0 0 0-2 0V7H2a1 1 0 0 0-.8.4L.225 8.7a.5.5 0 0 0 0 .6l.975 1.3a1 1 0 0 0 .8.4h5v5z"/>
@@ -315,17 +315,17 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     </div>
 </div>
 
-<script>
-    !function(t,e,n){function s(){
-        var t=e.getElementsByTagName("script")[0],n=e.createElement("script");
-        n.type="text/javascript",n.async=!0,n.src="https://assistant.thrivedesk.io/bootloader.js?"+Date.now(),
-        t.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},
-        n.readyQueue=[],"complete"===e.readyState)return s();
-    t.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}
-    (window,document,window.Assistant||function(){}),window.Assistant("init","954831e8-9cf3-4a06-b9b3-d324b2f7dc8b");
-    
-    Assistant('identify', {
-        name: '<?php echo wp_get_current_user()->display_name?>',
-        email: '<?php echo wp_get_current_user()->user_email?>',
-    });
-</script>
+<!--<script>-->
+<!--    !function(t,e,n){function s(){-->
+<!--        var t=e.getElementsByTagName("script")[0],n=e.createElement("script");-->
+<!--        n.type="text/javascript",n.async=!0,n.src="https://assistant.thrivedesk.io/bootloader.js?"+Date.now(),-->
+<!--        t.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},-->
+<!--        n.readyQueue=[],"complete"===e.readyState)return s();-->
+<!--    t.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}-->
+<!--    (window,document,window.Assistant||function(){}),window.Assistant("init","954831e8-9cf3-4a06-b9b3-d324b2f7dc8b");-->
+<!--    -->
+<!--    Assistant('identify', {-->
+<!--        name: '--><?php //echo wp_get_current_user()->display_name?>//',
+//        email: '<?php //echo wp_get_current_user()->user_email?>//',
+//    });
+//</script>

@@ -52,11 +52,11 @@ jQuery(document).ready(($) => {
 	/**
 	 * admin tab
 	 */
-	$('.thrivedesk .sidebar-nav a').on('click', function (e) {
+	$('.thrivedesk .tab-link a').on('click', function (e) {
 		// e.preventDefault();
 
 		var tabElement = document.querySelectorAll(
-			'.thrivedesk .sidebar-nav a'
+			'.thrivedesk .tab-link a'
 		);
 		var contentElement = document.querySelectorAll(
 			'.thrivedesk #tab-content>div'
@@ -77,6 +77,36 @@ jQuery(document).ready(($) => {
 			.getElementsByClassName(selectedTab)[0]
 			.classList.remove('hidden');
 	});
+
+	/**
+	 * Inner tab content
+	 */
+
+	$('.thrivedesk .inner-tab-link a').on('click', function (e) {
+
+		const innerTabElement = document.querySelectorAll(
+			'.thrivedesk .inner-tab-link a'
+		);
+		const contentElement = document.querySelectorAll(
+			'.thrivedesk #inner-tab-content>div'
+		);
+
+		innerTabElement.forEach(function (linkElement) {
+			$(linkElement).removeClass('active');
+		});
+		contentElement.forEach(function (contentElement) {
+			$(contentElement).removeClass('block').addClass('hidden');
+		});
+
+		const selectedTab = this.getAttribute('data-target');
+
+		$(this).addClass('active');
+		document
+			.getElementById('inner-tab-content')
+			.getElementsByClassName(selectedTab)[0]
+			.classList.remove('hidden');
+	});
+
 
 	// get the fragment from url
 	let fragment = window.location.hash;
