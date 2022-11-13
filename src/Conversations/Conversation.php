@@ -65,7 +65,7 @@ class Conversation
     {
         header('Content-Type: application/json');
         $data = $_POST['data'];
-        if (isset($data['td_helpdesk_api_key']) && isset($data['td_helpdesk_page_id']) && isset($data['td_helpdesk_post_types'])) {
+        if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
             $td_helpdesk_settings = [
                 'td_helpdesk_api_key'       => $data['td_helpdesk_api_key'],
