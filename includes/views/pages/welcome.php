@@ -1,11 +1,19 @@
 <div class="tab-welcome flex space-x-4">
     <div class="flex-1">
-        <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
-            <h1 class="font-medium text-2xl">Welcome To ThriveDesk</h1>
-            <p class="mr-28 text-base">Customer support on WordPress has never been easier, faster, or more flexible.</p>
-            <a class="btn-primary mr-28 text-center" href="https://app.thrivedesk.com/register/?email=<?php echo wp_get_current_user()->user_email?>&workspace=<?php echo get_bloginfo('name');?>" target="_blank">Set Up My Account</a>
-            <small>If you already have account on ThriveDesk, obtain API key and put it here.</small>
-        </div>
+        <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
+            <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
+                <h1 class="font-medium text-2xl">Welcome To ThriveDesk</h1>
+                <p class="mr-28 text-base">Customer support on WordPress has never been easier, faster, or more flexible.</p>
+                <a class="btn-primary mr-28 text-center" href="https://app.thrivedesk.com/register/?email=<?php echo wp_get_current_user()->user_email?>&workspace=<?php echo get_bloginfo('name');?>" target="_blank">Set Up My Account</a>
+                <small>If you already have account on ThriveDesk, obtain API key and put it here.</small>
+            </div>
+        <?php else: ?>
+            <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
+                <h1 class="font-medium text-2xl">ThriveDesk</h1>
+                <p class="mr-28 text-base">Content will be updated here.</p>
+            </div>
+        <?php endif; ?>
+
         <div class="flex space-x-4 mt-4">
             <div class="w-1/2 p-6 rounded-md text-white text-base bg-gradient-to-br from-zinc-600 to-zinc-900">
                 <div class="rounded-xl p-4 bg-gradient-to-b from-white/20 to-white/5 w-16 h-16 flex items-center justify-center mb-4">
