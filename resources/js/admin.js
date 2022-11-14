@@ -1,6 +1,32 @@
 import Swal from "sweetalert2";
 
 jQuery(document).ready(($) => {
+
+	function thrivedeskTabManager(tabElement, contentElement, currentTab = null, innerTab= false){
+		tabElement.forEach(function (linkElement) {
+			$(linkElement).removeClass('active');
+		});
+		contentElement.forEach(function (contentElement) {
+			$(contentElement).removeClass('block').addClass('hidden');
+		});
+
+		const selectedTab = currentTab.getAttribute('data-target');
+
+		$(currentTab).addClass('active');
+
+		if (innerTab) {
+			document
+				.getElementById('inner-tab-content')
+				.getElementsByClassName(selectedTab)[0]
+				.classList.remove('hidden');
+		} else {
+			document
+				.getElementById('tab-content')
+				.getElementsByClassName(selectedTab)[0]
+				.classList.remove('hidden');
+		}
+	}
+
 	$('.thrivedesk button.connect').on('click', function (e) {
 		e.preventDefault();
 
@@ -55,27 +81,15 @@ jQuery(document).ready(($) => {
 	$('.thrivedesk .tab-link a').on('click', function (e) {
 		// e.preventDefault();
 
-		var tabElement = document.querySelectorAll(
+		const tabElement = document.querySelectorAll(
 			'.thrivedesk .tab-link a'
 		);
-		var contentElement = document.querySelectorAll(
+		const contentElement = document.querySelectorAll(
 			'.thrivedesk #tab-content>div'
 		);
 
-		tabElement.forEach(function (linkElement) {
-			$(linkElement).removeClass('active');
-		});
-		contentElement.forEach(function (contentElement) {
-			$(contentElement).removeClass('block').addClass('hidden');
-		});
+		thrivedeskTabManager(tabElement, contentElement, this);
 
-		const selectedTab = this.getAttribute('data-target');
-
-		$(this).addClass('active');
-		document
-			.getElementById('tab-content')
-			.getElementsByClassName(selectedTab)[0]
-			.classList.remove('hidden');
 	});
 
 	/**
@@ -91,20 +105,7 @@ jQuery(document).ready(($) => {
 			'.thrivedesk #inner-tab-content>div'
 		);
 
-		innerTabElement.forEach(function (linkElement) {
-			$(linkElement).removeClass('active');
-		});
-		contentElement.forEach(function (contentElement) {
-			$(contentElement).removeClass('block').addClass('hidden');
-		});
-
-		const selectedTab = this.getAttribute('data-target');
-
-		$(this).addClass('active');
-		document
-			.getElementById('inner-tab-content')
-			.getElementsByClassName(selectedTab)[0]
-			.classList.remove('hidden');
+		thrivedeskTabManager(innerTabElement, contentElement, this, true);
 	});
 
 
