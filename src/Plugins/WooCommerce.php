@@ -2,7 +2,9 @@
 
 namespace ThriveDesk\Plugins;
 
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use ThriveDesk\Plugin;
+use WC_Order;
 use WC_Order_Query;
 
 // Exit if accessed directly.
@@ -145,6 +147,7 @@ final class WooCommerce extends Plugin
                 'order_status' => ucfirst($order->get_status()),
                 'shipping' => $this->get_shipping_details($order),
                 'downloads' => $this->get_order_items($order),
+                'order_url' => $order->get_edit_order_url(),
             ]);
         }
 
