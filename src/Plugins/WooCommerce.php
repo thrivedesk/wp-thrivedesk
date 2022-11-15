@@ -2,9 +2,7 @@
 
 namespace ThriveDesk\Plugins;
 
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use ThriveDesk\Plugin;
-use WC_Order;
 use WC_Order_Query;
 
 // Exit if accessed directly.
