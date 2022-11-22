@@ -284,10 +284,14 @@ final class WooCommerce extends Plugin
             } else {
                 array_push($download_item, array(
                     "title" => $item["name"],
+                    "product_id" => $item["product_id"],
+                    "product_permalink" => get_permalink($item["product_id"]),
+                    "quantity" => $item["quantity"], 
+                    "total_tax" => $item["total_tax"], 
+                    "price" => $item["subtotal"],
                 ));
             }
         }
-
         return $download_item;
     }
 
