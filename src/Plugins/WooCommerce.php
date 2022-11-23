@@ -16,7 +16,12 @@ final class WooCommerce extends Plugin
      * The single instance of this class
      */
     private static $instance = null;
-    public $orders = [];    
+
+    /**
+     * To store customers order details. 
+     */
+    public $orders = [];
+
     /**
      * Construct WooCommerce class.
      *
@@ -59,17 +64,23 @@ final class WooCommerce extends Plugin
         return true;
     }
 
-    public function is_guest(){
+    /**
+     * Check if a contact, guest or customer 
+     *
+     * @return boolean
+     */
+    public function is_guest()
+    {
 
-        if(empty($this->orders))
-        {
-            
+        if (empty($this->orders)) {
+
             $this->orders = $this->get_orders();
         }
-        if(!empty($this->orders)) return true;
+        if (!empty($this->orders)) return true;
 
         return false;
     }
+
     /**
      * Check if customer exist or not
      *
@@ -140,21 +151,23 @@ final class WooCommerce extends Plugin
     public function get_orders(): array
     {
 
-        $query = new WC_Order_Query();
-        $query->set('customer', $this->customer_email);
-        $customer_orders = $query->get_orders();
+        if (empty($this->orders)) {
+            $query = new WC_Order_Query();
+            $query->set('customer', $this->customer_email);
+            $customer_orders = $query->get_orders();
 
-        foreach ($customer_orders as $order) {
-            array_push($this->orders, [
-                'order_id' => $order->get_id(),
-                'amount' => (float)$order->get_total(),
-                'amount_formated' => $this->get_formated_amount($order->get_total()),
-                'date' => date('d M Y', strtotime($order->get_date_created())),
-                'order_status' => ucfirst($order->get_status()),
-                'shipping' => $this->get_shipping_details($order),
-                'downloads' => $this->get_order_items($order),
-                'order_url' => $order->get_edit_order_url(),
-            ]);
+            foreach ($customer_orders as $order) {
+                array_push($this->orders, [
+                    'order_id' => $order->get_id(),
+                    'amount' => (float)$order->get_total(),
+                    'amount_formated' => $this->get_formated_amount($order->get_total()),
+                    'date' => date('d M Y', strtotime($order->get_date_created())),
+                    'order_status' => ucfirst($order->get_status()),
+                    'shipping' => $this->get_shipping_details($order),
+                    'downloads' => $this->get_order_items($order),
+                    'order_url' => $order->get_edit_order_url(),
+                ]);
+            }
         }
 
         return $this->orders;
