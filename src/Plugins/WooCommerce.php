@@ -21,6 +21,7 @@ final class WooCommerce extends Plugin
      * To store customers order details. 
      */
     public $orders = [];
+    private $flug = false;
 
     /**
      * Construct WooCommerce class.
@@ -71,13 +72,11 @@ final class WooCommerce extends Plugin
      */
     public function is_guest()
     {
-
-        if (empty($this->orders)) {
-
+        if (empty($this->orders) && !$this->flug) {
             $this->orders = $this->get_orders();
+            $this->flug = true;
         }
         if (!empty($this->orders)) return true;
-
         return false;
     }
 
