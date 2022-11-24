@@ -21,7 +21,11 @@ final class WooCommerce extends Plugin
      * To store customers order details. 
      */
     public $orders = [];
-    private $flug = false;
+
+    /**
+     * To track the get_orders method is already called or not. 
+     */
+    private $isCalled = false;
 
     /**
      * Construct WooCommerce class.
@@ -72,9 +76,8 @@ final class WooCommerce extends Plugin
      */
     public function is_guest()
     {
-        if (empty($this->orders) && !$this->flug) {
+        if (empty($this->orders)) {
             $this->orders = $this->get_orders();
-            $this->flug = true;
         }
         if (!empty($this->orders)) return true;
         return false;
@@ -150,10 +153,11 @@ final class WooCommerce extends Plugin
     public function get_orders(): array
     {
 
-        if (empty($this->orders)) {
+        if (empty($this->orders) && !$this->isCalled) {
             $query = new WC_Order_Query();
             $query->set('customer', $this->customer_email);
             $customer_orders = $query->get_orders();
+            $this->isCalled = true;
 
             foreach ($customer_orders as $order) {
                 array_push($this->orders, [
