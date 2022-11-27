@@ -282,8 +282,8 @@ final class WooCommerce extends Plugin
                     "product_id" => $item["product_id"],
                     "product_permalink" => get_permalink($item["product_id"]),
                     "quantity" => $item["quantity"], 
-                    "total_tax" => $item["total_tax"], 
-                    "price" => $item["subtotal"],
+                    "total_tax" => $this->get_formated_amount((float) $item["total_tax"]), 
+                    "price" => $this->get_formated_amount((float) $item["subtotal"]),
                     "license" => $license_info[$item->get_id()],
                 ));
             } else {
@@ -292,8 +292,8 @@ final class WooCommerce extends Plugin
                     "product_id" => $item["product_id"],
                     "product_permalink" => get_permalink($item["product_id"]),
                     "quantity" => $item["quantity"], 
-                    "total_tax" => $item["total_tax"], 
-                    "price" => $item["subtotal"],
+                    "total_tax" => $this->get_formated_amount((float) $item["total_tax"]), 
+                    "price" => $this->get_formated_amount((float) $item["subtotal"]),
                 ));
             }
         }
