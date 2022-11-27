@@ -279,6 +279,11 @@ final class WooCommerce extends Plugin
             if (array_key_exists($item->get_id(), $license_info)) {
                 array_push($download_item, array(
                     "title" => $item["name"],
+                    "product_id" => $item["product_id"],
+                    "product_permalink" => get_permalink($item["product_id"]),
+                    "quantity" => $item["quantity"], 
+                    "total_tax" => $item["total_tax"], 
+                    "price" => $item["subtotal"],
                     "license" => $license_info[$item->get_id()],
                 ));
             } else {
