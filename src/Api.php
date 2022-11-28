@@ -260,12 +260,14 @@ final class Api
     public function plugin_data_action_handler()
     {
         $email = sanitize_email($_REQUEST['email'] ?? '');
+        $enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
 
         if (!method_exists($this->plugin, 'prepare_data')) {
             $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
         }
 
         $this->plugin->customer_email = $email;
+        $this->plugin->shipping_param = $enableShipping;
 
         if (!$this->plugin->is_customer_exist())
             $this->apiResponse->error(404, "Customer not found.");
@@ -285,17 +287,23 @@ final class Api
     {
         $payload = $_REQUEST;
 
-        if (isset($payload['extra'])) {
-            foreach ($payload['extra'] as $key => $value) {
+        if ($payload) {
+            foreach ($payload as $key => $value) {
                 if (!is_string($value)) {
                     continue;
                 }
                 switch (strtolower($value)) {
-                    case "true":
-                    case "false":
-                    case "0":
                     case "1":
-                        $payload['extra'][$key] = (bool)$value;
+                    case "true":
+                    case 1:
+                        $payload[$key] = true;
+                        break;
+
+                    case "0":
+                    case "false":
+                    case 0:
+                        $payload[$key] = false;
+                        break;
                 }
             }
         }

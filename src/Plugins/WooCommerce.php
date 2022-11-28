@@ -136,17 +136,32 @@ final class WooCommerce extends Plugin
         $query->set('customer', $this->customer_email);
         $customer_orders = $query->get_orders();
 
-        foreach ($customer_orders as $order) {
-            array_push($orders, [
-                'order_id' => $order->get_id(),
-                'amount' => (float)$order->get_total(),
-                'amount_formated' => $this->get_formated_amount($order->get_total()),
-                'date' => date('d M Y', strtotime($order->get_date_created())),
-                'order_status' => ucfirst($order->get_status()),
-                'shipping' => $this->get_shipping_details($order),
-                'downloads' => $this->get_order_items($order),
-                'order_url' => $order->get_edit_order_url(),
-            ]);
+        if ($this->shipping_param) {
+            foreach ($customer_orders as $order) {
+                array_push($orders, [
+                    'order_id' => $order->get_id(),
+                    'amount' => (float)$order->get_total(),
+                    'amount_formated' => $this->get_formated_amount($order->get_total()),
+                    'date' => date('d M Y', strtotime($order->get_date_created())),
+                    'order_status' => ucfirst($order->get_status()),
+                    'shipping' => $this->get_shipping_details($order),
+                    'downloads' => $this->get_order_items($order),
+                    'order_url' => $order->get_edit_order_url(),
+                ]);
+            }
+        } else {
+            foreach ($customer_orders as $order) {
+                array_push($orders, [
+                    'order_id' => $order->get_id(),
+                    'amount' => (float)$order->get_total(),
+                    'amount_formated' => $this->get_formated_amount($order->get_total()),
+                    'date' => date('d M Y', strtotime($order->get_date_created())),
+                    'order_status' => ucfirst($order->get_status()),
+                    'shipping' => [],
+                    'downloads' => $this->get_order_items($order),
+                    'order_url' => $order->get_edit_order_url(),
+                ]);
+            }
         }
 
         return $orders;
@@ -188,6 +203,7 @@ final class WooCommerce extends Plugin
      */
     public function get_shipping_details($order): array
     {
+
         $states = WC()->countries->get_states($order->get_shipping_country());
         $state = !empty($states[$order->get_shipping_state()]) ? $states[$order->get_shipping_state()] : '';
 
