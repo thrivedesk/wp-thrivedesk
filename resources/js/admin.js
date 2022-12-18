@@ -126,6 +126,8 @@ jQuery(document).ready(($) => {
 	$('#td_helpdesk_form').submit(function(e) {
 		e.preventDefault();
 		let td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
+		let td_helpdesk_organization = $("#td-organizations").val();
+		let td_helpdesk_assistant = $("#td-assistants").val();
 		let td_helpdesk_page_id = $("#td_helpdesk_page_id").val();
 		let td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map((i, item) => item.value).get();
 		// let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
@@ -137,6 +139,8 @@ jQuery(document).ready(($) => {
 				action: 'thrivedesk_helpdesk_form',
 				data: {
 					td_helpdesk_api_key: td_helpdesk_api_key,
+					td_helpdesk_organization: td_helpdesk_organization,
+					td_helpdesk_assistant: td_helpdesk_assistant,
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
 					// td_helpdesk_form_style: td_helpdesk_form_style,
@@ -155,32 +159,94 @@ jQuery(document).ready(($) => {
 		});
 	});
 
-	$('.td-assistant-item').on('change', function(e){
-		// make a axios request
+	// $('.td-assistant-item').on('change', function(e){
+	// 	// make a axios request
+	// 	let $target = $(this);
+	// 	// check the value of the checkbox
+	// 	let checked = $target.is(':checked');
+	//
+	// 	$('.td-assistant-item').prop('checked', false);
+	// 	if (checked) {
+	// 		$target.prop('checked', true);
+	// 	} else {
+	// 		$target.prop('checked', false);
+	// 	}
+	// 	// $target.prop('checked', true);
+	//
+	// 	$.ajax({
+	// 		type: "POST",
+	// 		url:  thrivedesk.wp_json_url + "/thrivedesk/v1/assistant/submit",
+	// 		data: {
+	// 			selected_assistant_id: $target.val(),
+	// 			status: checked,
+	// 		}
+	// 	}).success(function(data){
+	// 		Swal.fire({
+	// 			title: 'Great',
+	// 			icon: 'success',
+	// 			text: data,
+	// 			showClass: {
+	// 				popup: 'animate__animated animate__fadeInDown'
+	// 			},
+	// 			hideClass: {
+	// 				popup: 'animate__animated animate__fadeOutUp'
+	// 			},
+	// 			timer: 4000
+	// 		});
+	// 	}).error(function(data){
+	// 		Swal.fire({
+	// 			title: 'Error',
+	// 			icon: 'error',
+	// 			text: 'Something went wrong',
+	// 			showClass: {
+	// 				popup: 'animate__animated animate__fadeInDown'
+	// 			},
+	// 			hideClass: {
+	// 				popup: 'animate__animated animate__fadeOutUp'
+	// 			},
+	// 			timer: 4000
+	// 		})
+	// 	})
+	// });
+
+	// verify the API key
+	$('#td-api-verification-btn').on('click', async function (e) {
+		e.preventDefault();
 		let $target = $(this);
-		// check the value of the checkbox
-		let checked = $target.is(':checked');
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
-		$('.td-assistant-item').prop('checked', false);
-		if (checked) {
-			$target.prop('checked', true);
-		} else {
-			$target.prop('checked', false);
-		}
-		// $target.prop('checked', true);
-
-		$.ajax({
-			type: "POST",
-			url:  thrivedesk.wp_json_url + "/thrivedesk/v1/assistant/submit",
-			data: {
-				selected_assistant_id: $target.val(),
-				status: checked,
+		// get request to verify the API key using fetch
+		await fetch('https://api.thrivedesk.xyz/v1/me', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + apiKey,
+			},
+		}).then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Something went wrong');
 			}
-		}).success(function(data){
+		}).then(data => {
+			console.log(data.organizations);
+			// show the organization list
+			let orgList = $('#td-organizations');
+			orgList.html('');
+			orgList.append('<option value="">Select Organization</option>');
+			data.organizations.forEach(function (item) {
+				orgList.append('<option value="' + item.slug + '">' + item.company + '</option>');
+			});
+
+			// change the button text to verified then disable the button
+			$target.text('Verified');
+			$target.prop('disabled', true);
+
 			Swal.fire({
 				title: 'Great',
 				icon: 'success',
-				text: data,
+				text: 'API key verified successfully',
 				showClass: {
 					popup: 'animate__animated animate__fadeInDown'
 				},
@@ -189,7 +255,8 @@ jQuery(document).ready(($) => {
 				},
 				timer: 4000
 			});
-		}).error(function(data){
+		}).catch(error => {
+			console.log(error);
 			Swal.fire({
 				title: 'Error',
 				icon: 'error',
@@ -202,7 +269,53 @@ jQuery(document).ready(($) => {
 				},
 				timer: 4000
 			})
-		})
+		});
 	});
 
+	// load the assistant list on change of organization
+	$('#td-organizations').on('change', async function (e) {
+		let $target = $(this);
+		let orgSlug = $target.val();
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
+		// get request to verify the API key using fetch
+		await fetch('https://api.thrivedesk.xyz/v1/assistants', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + apiKey,
+				'X-Td-Organization-Slug': orgSlug,
+			},
+		}).then(response => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('Something went wrong');
+			}
+		}).then(data => {
+			console.log(data.assistants);
+			// show the assistants list
+			let assistantList = $('#td-assistants');
+			assistantList.html('');
+			assistantList.append('<option value="">Select Assistant</option>');
+			data.assistants.forEach(function (item) {
+				assistantList.append('<option value="' + item.id + '">' + item.name + '</option>');
+			});
+
+		}).catch(error => {
+			console.log(error);
+			Swal.fire({
+				title: 'Error',
+				icon: 'error',
+				text: 'Something went wrong',
+				showClass: {
+					popup: 'animate__animated animate__fadeInDown'
+				},
+				hideClass: {
+					popup: 'animate__animated animate__fadeOutUp'
+				},
+				timer: 4000
+			})
+		});
+	});
 });
