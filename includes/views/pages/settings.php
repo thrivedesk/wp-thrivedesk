@@ -1,6 +1,10 @@
 <div class="hidden tab-settings">
-    <?php $td_helpdesk_selected_option = get_td_helpdesk_options(); ?>
-    <?php $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []; ?>
+    <?php
+    $td_helpdesk_selected_option = get_td_helpdesk_options();
+    $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
+    $td_organizations = \ThriveDesk\Assistants\Assistant::organizations() ?? [];
+    $td_assistants = \ThriveDesk\Assistants\Assistant::get_assistants() ?? [];
+    ?>
     <form class="space-y-8" id="td_helpdesk_form" action="#" method="POST">
         <!-- connection  -->
         <div class="space-y-1">
@@ -40,6 +44,12 @@
                     <label>
                         <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-organizations">
                             <option value=""> <?php _e( 'Select an organization', 'thrivedesk' ); ?> </option>
+                            <?php foreach ( $td_organizations as $organization ) : ?>
+                                <option value="<?php echo $organization['slug']; ?>" <?php echo $td_helpdesk_selected_option['td_helpdesk_organization_slug'] == $organization['slug'] ? 'selected' : ''; ?>>
+                                    <?php echo $organization['company']; ?>
+                                </option>
+
+                            <?php endforeach; ?>
                         </select>
                     </label>
                 </div>
@@ -54,6 +64,11 @@
                     <label class="font-medium text-black text-sm"><?php _e( 'Select Assistant', 'thrivedesk' ); ?></label>
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants">
                         <option value=""> <?php _e( 'Select an assistant', 'thrivedesk' ); ?> </option>
+                        <?php foreach ( $td_assistants as $assistant ) : ?>
+                            <option value="<?php echo $assistant['id']; ?>" <?php echo $td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id'] ? 'selected' : ''; ?>>
+                                <?php echo $assistant['name']; ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>

@@ -27,13 +27,26 @@ class Assistant {
 
     public function load_assistant_script()
     {
-        $assistant_settings = self::get_assistant_settings();
-        if (empty($assistant_settings)) {
+        $assistant_id = get_td_helpdesk_options()['td_helpdesk_assistant_id'];
+        if (empty($assistant_id)) {
             return;
         }
-        if ($assistant_settings['status'] == 'true') {
-            echo $assistant_settings['script'];
-        }
+        $assistant_script = '
+        <script>
+            !function(t,e,n){function s(){
+                var t=e.getElementsByTagName("script")[0],n=e.createElement("script");
+                n.type="text/javascript",n.async=!0,n.src="https://assistant.thrivedesk.io/bootloader.js?"+Date.now(),
+                t.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},
+                n.readyQueue=[],"complete"===e.readyState)return s();
+            t.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}
+            (window,document,window.Assistant||function(){}),window.Assistant("init","'.$assistant_id.'");
+
+            Assistant("identify", {
+                name: ' . wp_get_current_user()->display_name . ',
+                email: '. wp_get_current_user()->user_email .'})
+        </script>';
+
+        echo $assistant_script;
     }
 
     public function assistant_routes()
@@ -81,19 +94,22 @@ class Assistant {
 
     public static function get_assistants()
     {
-        $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLnRocml2ZWRlc2suaW9cL3YxXC9hdXRoXC9sb2dpbiIsImlhdCI6MTY2Mjg2NDI0OCwiZXhwIjoxNjY1NDU2MjQ4LCJuYmYiOjE2NjI4NjQyNDgsImp0aSI6IklBU1NHdWVXYURaaEljaWgiLCJzdWIiOiI5NGQzMWE2Zi0xNmE5LTQxNjAtOWNjZC1lY2E0MzEwNGJmZWYiLCJwcnYiOiJiZDZiM2Y5MDRkOTExZTkyZGFiYTY0ZWJlOTVlNzE5Yjc0OTM0MDEzIn0.9u8-1uW8rERtzx8J2IlNmzlOhiplDQWGX-tIAkpsLE4';
+        $token = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
+        $url = THRIVEDESK_API_URL .'/v1/assistants';
 
-        $url = 'https://api.thrivedesk.io/v1/assistants';
         $args               = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+                'X-Td-Organization-Slug' => get_option('td_helpdesk_settings')['td_helpdesk_organization_slug'] ?? '',
             ],
         ];
         $response           = wp_remote_get($url, $args);
         $body               = wp_remote_retrieve_body($response);
         $body               = json_decode($body, true);
 
-        return $body ?? [];
+        return $body['assistants'] ?? [];
     }
 
     public static function get_assistant_settings()
@@ -101,5 +117,28 @@ class Assistant {
         $assistant_settings = get_option('td_assistant_settings');
 
         return $assistant_settings ?? [];
+    }
+
+    /** get the organization list
+     * @return mixed
+     */
+    public static function organizations()
+    {
+        $token              = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
+        $url = THRIVEDESK_API_URL .'/v1/me';
+
+        $args               = [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+                'Content-Type'  => 'application/json',
+            ],
+        ];
+
+        $response = wp_remote_get($url, $args);
+        $body     = wp_remote_retrieve_body($response);
+        $body     = json_decode($body, true);
+
+        return $body['organizations'];
     }
 }
