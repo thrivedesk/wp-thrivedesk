@@ -68,9 +68,11 @@ class Conversation
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
             $td_helpdesk_settings = [
-                'td_helpdesk_api_key'       => $data['td_helpdesk_api_key'],
-                'td_helpdesk_page_id'       => $data['td_helpdesk_page_id'],
-                'td_helpdesk_post_types'    => $data['td_helpdesk_post_types'],
+                'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
+                'td_helpdesk_organization_slug'         => $data['td_helpdesk_organization'],
+                'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'],
+                'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
+                'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
             ];
 
             if (get_option('td_helpdesk_settings')) {
