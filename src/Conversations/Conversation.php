@@ -4,6 +4,7 @@ namespace ThriveDesk\Conversations;
 
 // Exit if accessed directly.
 use DOMDocument;
+use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -26,7 +27,7 @@ class Conversation
     /**
      *  middle common url text
      */
-    const TD_CONVERSATION_URL = '/public/v1/customer/conversations/';
+    const TD_CONVERSATION_URL = '/v1/customer/conversations/';
 
     /**
      * singleton class
@@ -145,77 +146,6 @@ class Conversation
 			</p>';
     }
 
-    /**
-     * send reply to the conversation
-     * by ajax call
-     *
-     * @return void
-     */
-    public function td_send_reply()
-    {
-
-        if (!isset($_POST['data']['nonce'])
-            || !isset($_POST['data']['conversation_id'])
-            || !isset($_POST['data']['reply_text'])
-            || !wp_verify_nonce($_POST['data']['nonce'], 'td-reply-conversation-action')) {
-            die;
-        }
-
-        $token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
-        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply';
-        $args     = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-            ],
-            'body'    => [
-                'message' => stripslashes($_POST['data']['reply_text']),
-            ],
-        ];
-        $response           = wp_remote_post($url, $args);
-        $body               = wp_remote_retrieve_body($response);
-        $body               = json_decode($body, true);
-
-        header('Content-Type: application/json');
-
-        if (!is_wp_error($response)) {
-            echo json_encode([
-                'status'  => 'success',
-                'message' => $body['message'],
-            ]);
-        } else {
-            echo json_encode([
-                'status'  => 'error',
-                'message' => 'Reply could not send successfully',
-            ]);
-        }
-        die;
-    }
-
-    /**
-     * get single conversation
-     *
-     * @param $conversation_id
-     *
-     * @return mixed|null
-     */
-    public static function get_conversation($conversation_id)
-    {
-        if (!$conversation_id) {
-            return null;
-        }
-        $token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
-        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id;
-        $args     = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-            ],
-        ];
-        $response = wp_remote_get($url, $args);
-        $body     = wp_remote_retrieve_body($response);
-        $body     = json_decode($body, true);
-
-        return $body['data'];
-    }
 
     /**
      * validate html body of the conversation
@@ -239,21 +169,69 @@ class Conversation
     public static function get_conversations()
     {
         $page               = $_GET['cv_page'] ?? 1;
-        $current_user_email = wp_get_current_user()->user_email;
-        $token              = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
-        $state              = hash_hmac('SHA1', $current_user_email, $token);
-        $url                = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' .
-                              $current_user_email . '&state=' . $state . '&page=' . $page . '&per-page=15';
-        $args               = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-            ],
-        ];
-        $response           = wp_remote_get($url, $args);
-        $body               = wp_remote_retrieve_body($response);
-        $body               = json_decode($body, true);
+//        $current_user_email = wp_get_current_user()->user_email;
+        $current_user_email = 'soreilly@yahoo.com'; // FIXME: remove this line on production
+        $url                = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
 
-        return $body ?? [];
+        $response =( new TDApiService() )->getRequest($url);
+
+        return $response ?? [];
+    }
+
+    /**
+     * get single conversation
+     *
+     * @param $conversation_id
+     *
+     * @return mixed|null
+     */
+    public static function get_conversation($conversation_id)
+    {
+        if (!$conversation_id) {
+            return null;
+        }
+        //        $current_user_email = wp_get_current_user()->user_email;
+        $current_user_email = 'soreilly@yahoo.com'; // FIXME: remove this line on production
+        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
+        $response =( new TDApiService() )->getRequest($url);
+        return $response['data'] ?? [];
+    }
+
+    /**
+     * send reply to the conversation
+     * by ajax call
+     *
+     * @return void
+     */
+    public function td_send_reply()
+    {
+
+        if (!isset($_POST['data']['nonce'])
+            || !isset($_POST['data']['conversation_id'])
+            || !isset($_POST['data']['reply_text'])
+            || !wp_verify_nonce($_POST['data']['nonce'], 'td-reply-conversation-action')) {
+            die;
+        }
+
+        $token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
+        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=soreilly@yahoo.com';
+
+        $data = [
+            'message' => stripslashes($_POST['data']['reply_text']),
+        ];
+
+        header('Content-Type: application/json');
+
+        try {
+            $response_body =( new TDApiService() )->postRequest($url, $data);
+            echo json_encode([
+                'status'  => 'success',
+                'message' => $response_body['message'],
+            ]);
+        }catch (\Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        die;
     }
 
     public static function td_conversation_sort_by_status($data)
