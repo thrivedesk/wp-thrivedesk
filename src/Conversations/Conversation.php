@@ -169,8 +169,7 @@ class Conversation
     public static function get_conversations()
     {
         $page               = $_GET['cv_page'] ?? 1;
-//        $current_user_email = wp_get_current_user()->user_email;
-        $current_user_email = 'soreilly@yahoo.com'; // FIXME: remove this line on production
+        $current_user_email = wp_get_current_user()->user_email;
         $url                = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
 
         $response =( new TDApiService() )->getRequest($url);
@@ -190,8 +189,7 @@ class Conversation
         if (!$conversation_id) {
             return null;
         }
-        //        $current_user_email = wp_get_current_user()->user_email;
-        $current_user_email = 'soreilly@yahoo.com'; // FIXME: remove this line on production
+        $current_user_email = wp_get_current_user()->user_email;
         $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
         $response =( new TDApiService() )->getRequest($url);
         return $response['data'] ?? [];
@@ -213,7 +211,6 @@ class Conversation
             die;
         }
 
-        $token    = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
         $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=soreilly@yahoo.com';
 
         $data = [
