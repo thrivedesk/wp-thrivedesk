@@ -6,8 +6,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 class TDApiService {
-    private string $api_token;
-    private string $org_slug;
+    private $api_token;
+    private $org_slug;
 
     public function __construct()
     {
