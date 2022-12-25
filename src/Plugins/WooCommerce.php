@@ -125,6 +125,7 @@ final class WooCommerce extends Plugin
      * Get the customer orders
      *
      * @return array
+     * @throws \Exception
      */
     public function get_orders(): array
     {
