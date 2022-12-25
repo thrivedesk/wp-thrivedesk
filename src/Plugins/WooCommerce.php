@@ -18,12 +18,12 @@ final class WooCommerce extends Plugin
     private static $instance = null;
 
     /**
-     * To store customers order details. 
+     * To store customers order details.
      */
     public $orders = [];
 
     /**
-     * To track the get_orders method is already called or not. 
+     * To track the get_orders method is already called or not.
      */
     private $isCalled = false;
 
@@ -70,7 +70,7 @@ final class WooCommerce extends Plugin
     }
 
     /**
-     * Check if a contact, guest or customer 
+     * Check if a contact, guest or customer
      *
      * @return boolean
      */
@@ -149,6 +149,7 @@ final class WooCommerce extends Plugin
      * Get the customer orders
      *
      * @return array
+     * @throws \Exception
      */
     public function get_orders(): array
     {
@@ -157,19 +158,36 @@ final class WooCommerce extends Plugin
             $query = new WC_Order_Query();
             $query->set('customer', $this->customer_email);
             $customer_orders = $query->get_orders();
-            $this->isCalled = true;
+            $this->isCalled  = true;
 
-            foreach ($customer_orders as $order) {
-                array_push($this->orders, [
-                    'order_id' => $order->get_id(),
-                    'amount' => (float)$order->get_total(),
-                    'amount_formated' => $this->get_formated_amount($order->get_total()),
-                    'date' => date('d M Y', strtotime($order->get_date_created())),
-                    'order_status' => ucfirst($order->get_status()),
-                    'shipping' => $this->get_shipping_details($order),
-                    'downloads' => $this->get_order_items($order),
-                    'order_url' => $order->get_edit_order_url(),
-                ]);
+            if ($this->shipping_param) {
+                foreach ($customer_orders as $order) {
+                    array_push($this->orders, [
+                        'order_id'        => $order->get_id(),
+                        'amount'          => (float)$order->get_total(),
+                        'amount_formated' => $this->get_formated_amount($order->get_total()),
+                        'date'            => date('d M Y', strtotime($order->get_date_created())),
+                        'order_status'    => ucfirst($order->get_status()),
+                        'shipping'        => $this->get_shipping_details($order),
+                        'downloads'       => $this->get_order_items($order),
+                        'order_url'       => method_exists($order,
+                            'get_edit_order_url') ? $order->get_edit_order_url() : '#',
+                    ]);
+                }
+            } else {
+                foreach ($customer_orders as $order) {
+                    array_push($this->orders, [
+                        'order_id'        => $order->get_id(),
+                        'amount'          => (float)$order->get_total(),
+                        'amount_formated' => $this->get_formated_amount($order->get_total()),
+                        'date'            => date('d M Y', strtotime($order->get_date_created())),
+                        'order_status'    => ucfirst($order->get_status()),
+                        'shipping'        => [],
+                        'downloads'       => $this->get_order_items($order),
+                        'order_url'       => method_exists($order,
+                            'get_edit_order_url') ? $order->get_edit_order_url() : '#',
+                    ]);
+                }
             }
         }
 
