@@ -17,6 +17,13 @@ abstract class Plugin
     public $customer_email = '';
 
     /**
+     * Shipping param
+     *
+     * @var string
+     */
+    public $shipping_param = '';
+
+    /**
      * Customer data
      *
      * @var object

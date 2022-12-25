@@ -66,7 +66,7 @@ final class Api
             'woocommerce' => 'WooCommerce',
             'fluentcrm'   => 'FluentCRM',
             'wppostsync'  => 'WPPostSync',
-            'autonami'    => 'Autonami'
+            'autonami'    => 'Autonami',
         ];
     }
 
@@ -115,16 +115,16 @@ final class Api
 
             if (isset($action) && 'connect' === $action) {
                 $this->connect_action_handler();
-            } else if (isset($action) && 'disconnect' === $action) {
+            } elseif (isset($action) && 'disconnect' === $action) {
                 $this->disconnect_action_handler();
-            } else if (isset($action) && 'get_fluentcrm_data' === $action) {
+            } elseif (isset($action) && 'get_fluentcrm_data' === $action) {
                 $this->fluentcrm_handler();
-            } else if (isset($action) && 'handle_autonami' === $action) {
+            } elseif (isset($action) && 'handle_autonami' === $action) {
                 $this->autonami_handler();
-            } else if (isset($action) && 'get_wppostsync_data' === $action) {
+            } elseif (isset($action) && 'get_wppostsync_data' === $action) {
                 $remote_query_string = strtolower($_GET['query'] ?? '');
                 $this->wp_postsync_data_handler($remote_query_string);
-            } else if (isset($action) && 'get_woocommerce_order_status' === $action) {
+            } elseif (isset($action) && 'get_woocommerce_order_status' === $action) {
                 $this->get_woocommerce_order_status();
             } else {
                 $this->plugin_data_action_handler();
@@ -177,8 +177,9 @@ final class Api
 
         $this->plugin->customer_email = $email;
 
-        if (!$this->plugin->is_customer_exist())
+        if (!$this->plugin->is_customer_exist()) {
             $this->apiResponse->error(404, "Customer not found.");
+        }
 
         $data = $this->plugin->order_status($order_id);
 
@@ -259,16 +260,19 @@ final class Api
      */
     public function plugin_data_action_handler()
     {
-        $email = sanitize_email($_REQUEST['email'] ?? '');
+        $email          = sanitize_email($_REQUEST['email'] ?? '');
+        $enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
 
         if (!method_exists($this->plugin, 'prepare_data')) {
             $this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
         }
 
         $this->plugin->customer_email = $email;
+        $this->plugin->shipping_param = $enableShipping;
 
-        if (!$this->plugin->is_customer_exist())
+        if (!$this->plugin->is_customer_exist()) {
             $this->apiResponse->error(404, "Customer not found.");
+        }
 
         $data = $this->plugin->prepare_data();
 
@@ -285,17 +289,21 @@ final class Api
     {
         $payload = $_REQUEST;
 
-        if (isset($payload['extra'])) {
-            foreach ($payload['extra'] as $key => $value) {
+        if ($payload) {
+            foreach ($payload as $key => $value) {
                 if (!is_string($value)) {
                     continue;
                 }
                 switch (strtolower($value)) {
-                    case "true":
-                    case "false":
-                    case "0":
                     case "1":
-                        $payload['extra'][$key] = (bool)$value;
+                    case "true":
+                        $payload[$key] = true;
+                        break;
+
+                    case "0":
+                    case "false":
+                        $payload[$key] = false;
+                        break;
                 }
             }
         }
