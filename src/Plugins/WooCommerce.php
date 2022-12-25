@@ -145,7 +145,7 @@ final class WooCommerce extends Plugin
                 'order_status' => ucfirst($order->get_status()),
                 'shipping' => $this->get_shipping_details($order),
                 'downloads' => $this->get_order_items($order),
-                'order_url' => $order->get_edit_order_url(),
+                'order_url' =>  method_exists($order, 'get_edit_order_url') ? $order->get_edit_order_url() : '#',
             ]);
         }
 
