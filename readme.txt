@@ -163,7 +163,10 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 0.10.0 =
-- Stable release of version 0.10.0
+- NEW Guest order sync 
+- Improved Customer identifier
+- Improved Products details
+- Improved and optimized shipping details
 
 == Changelog ==
 = 0.9.8 =
