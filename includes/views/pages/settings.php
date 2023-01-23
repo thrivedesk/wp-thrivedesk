@@ -13,9 +13,7 @@
             <div class="td-card">
                 <div class="space-y-2">
                     <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
-                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key">
-                        <?php echo esc_attr( $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '' ); ?>
-                    </textarea>
+                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '' ); ?></textarea>
 
                     <div class="flex justify-between">
                         <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 shadow-lg font-medium rounded-lg py-1 px-3 text-xs text-center" id="td-api-verification-btn">
@@ -34,27 +32,6 @@
             </div>
         </div>
 
-        <!-- Organization -->
-        <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e( 'Organization', 'thrivedesk' ); ?></div>
-            <p><?php _e('Choose your organization to support your customer', 'thrivedesk'); ?></p>
-            <div class="td-card">
-                <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php _e( 'Select Organization', 'thrivedesk' ); ?></label>
-                    <label>
-                        <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-organizations">
-                            <option value=""> <?php _e( 'Select an organization', 'thrivedesk' ); ?> </option>
-                            <?php foreach ( $td_organizations as $organization ) : ?>
-                                <option value="<?php echo $organization['slug']; ?>" <?php echo $td_helpdesk_selected_option['td_helpdesk_organization_slug'] == $organization['slug'] ? 'selected' : ''; ?>>
-                                    <?php echo $organization['company']; ?>
-                                </option>
-
-                            <?php endforeach; ?>
-                        </select>
-                    </label>
-                </div>
-            </div>
-        </div>
         <!-- assistant  -->
         <div class="space-y-1">
             <div class="text-base font-bold"><?php _e( 'Assistant', 'thrivedesk' ); ?></div>
