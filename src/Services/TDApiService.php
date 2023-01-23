@@ -11,8 +11,7 @@ class TDApiService {
 
     public function __construct()
     {
-        $this->api_token = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
-        $this->org_slug = get_option('td_helpdesk_settings')['td_helpdesk_organization_slug'];
+        $this->api_token = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
     }
 
     public function postRequest(string $url, array $data = []){
@@ -20,7 +19,6 @@ class TDApiService {
         $args     = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->api_token,
-                'X-Td-Organization-Slug' => $this->org_slug,
             ],
             'body'    => $data,
         ];
@@ -37,13 +35,13 @@ class TDApiService {
                 'Authorization' => 'Bearer ' . $this->api_token,
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
-                'X-Td-Organization-Slug' => $this->org_slug,
             ],
         ];
 
         $response           = wp_remote_get($url, $args);
         $body               = wp_remote_retrieve_body($response);
         $body               = json_decode($body, true);
+
         return $body ?? [];
     }
 }

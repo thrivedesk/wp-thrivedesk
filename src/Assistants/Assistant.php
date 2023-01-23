@@ -77,7 +77,7 @@ class Assistant {
      */
     public static function organizations()
     {
-        $token              = get_option('td_helpdesk_settings')['td_helpdesk_api_key'];
+        $token              = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
         $url = THRIVEDESK_API_URL .'/v1/me';
 
         $args               = [
@@ -92,6 +92,6 @@ class Assistant {
         $body     = wp_remote_retrieve_body($response);
         $body     = json_decode($body, true);
 
-        return $body['organizations'];
+        return $body['organizations'] ?? [];
     }
 }
