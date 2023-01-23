@@ -43,13 +43,13 @@ $links               = $conversations['meta']['links'] ?? [];
                         </span>
                     </td>
                     <td>
-                    <a href="<?php echo get_permalink() .'?conversation_id='.$conversation['id']; ?>">
-                            <div class="text-base font-medium">
-                                <span class="text-slate-500">(#<?php echo $conversation['ticket_id']; ?>)</span>
-                                <span class="text-black"><?php echo $conversation['subject'];?></span>
-                            </div>
-                            <div><?php echo $conversation['excerpt']; ?>.</div>
-                        </a>
+                    <a href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
+                        <div class="text-base font-medium">
+                            <span class="text-slate-500">(#<?php echo $conversation['ticket_id']; ?>)</span>
+                            <span class="text-black"><?php echo $conversation['subject'];?></span>
+                        </div>
+                        <div class="text-slate-500"><?php echo $conversation['excerpt']; ?>.</div>
+                    </a>
                     </td>
                     <td class="text-center align-middle">
 						<?php echo $conversation['last_actor']['name'] ?? '-' ?>
