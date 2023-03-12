@@ -1,44 +1,61 @@
-<div class="tab-welcome flex space-x-4">
-    <div class="flex-1">
+<div class="tab-welcome flex flex-col space-y-4">
+    <div class="flex space-x-4">
+        <div class="mr-28">
         <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
-            <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
-                <h1 class="font-medium text-2xl">Welcome To ThriveDesk</h1>
-                <p class="mr-28 text-base">Customer support on WordPress has never been easier, faster, or more flexible.</p>
-                <a class="btn-primary mr-28 text-center" href="https://app.thrivedesk.com/register/?email=<?php echo wp_get_current_user()->user_email?>&workspace=<?php echo get_bloginfo('name');?>" target="_blank">Set Up My Account</a>
-                <small>If you already have account on ThriveDesk, obtain API key and put it here.</small>
+            <div class="space-y-3 flex flex-col">
+                <div class="td-steps">
+                    <span class="active"></span><span></span><span></span>
+                </div>
+                <h1 class="font-bold text-3xl">Welcome To ThriveDesk</h1>
+                <p class="text-base">Customer support on WordPress has never been easier, faster, or more flexible.</p>
+                <a class="btn-primary text-center" href="https://app.thrivedesk.com/register/?email=<?php echo wp_get_current_user()->user_email?>&company=<?php echo get_bloginfo('name');?>" target="_blank">Set Up My Account</a>
+                <div class="flex justify-evenly space-x-2 w-full mt-4">
+                    <span class="bg-gray-300 h-px flex-grow t-2 relative top-2"></span>
+                    <span class="flex-none uppercase text-xs text-gray-400 font-semibold">or</span>
+                    <span class="bg-gray-300 h-px flex-grow t-2 relative top-2"></span>
+                </div>
+                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" href="#settings">Enter API Key</a>
             </div>
         <?php else: ?>
             <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
                 <h1 class="font-medium text-2xl">ThriveDesk</h1>
-                <p class="mr-28 text-base">Content will be updated here.</p>
+                <p class="text-base">Content will be updated here.</p>
             </div>
         <?php endif; ?>
-
-        <div class="flex space-x-4 mt-4">
-            <div class="w-1/2 p-6 rounded-md text-white text-base bg-gradient-to-br from-zinc-600 to-zinc-900">
-                <div class="rounded-xl p-4 bg-gradient-to-b from-white/20 to-white/5 w-16 h-16 flex items-center justify-center mb-4">
-                    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="m9.25 1.75-6.5 6.5h4v6l6.5-6.5h-4v-6Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                </div>
-                <div class="text-xl font-bold">Sync WordPress Posts</div>
-                <div class="mt-2 tracking-wide">Everything you’ve asked for, in one place. Search and browse Extensions for your tools.</div>
-                <a href="#" target="_blnk" class="rounded-md bg-white/20 hover:bg-white/30 py-2 px-4 no-underline text-white my-4 inline-block">Learn more</a>
-            </div>
-            <div class="w-1/2 p-6 rounded-md text-white text-base space-y-2" style="background:linear-gradient(107.56deg,#dcf9ff,#621dba 48.44%,#04001c 95.31%)">
-                <a href="#" target="_blank" class="block">
-                    <div class="text-xl font-bold">Portal</div>
-                    <div class="tracking-wide">Create help center inside WordPress without writing any code.</div>
-                    <!-- <img class="" src="https://www.raycast.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fextension-code-example.b2ccf8d7.png&w=828&q=75" alt="Live chat"> -->
-                </a>
-            </div>
+        </div>
+        <div>
+            <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/welcome.png'; ?>" alt="Welcome">
         </div>
     </div>
-    <div class="w-1/3 space-y-4">
-        <a href="#" target="_blank" class="block relative">
-            <div class="p-6 rounded-md text-white text-base bg-gradient-to-br from-purple-400 via-purple-600 to-violet-600">
-                <div class="text-xl font-bold">Live Chat</div>
-                <div class="tracking-wide mt-2">Talk with your website visitor and help them realtime with ThriveDesk Assistant</div>
-                <img class="max-w-xs 2xl:max-w-md mt-3 -mb-10" src="https://www.thrivedesk.com/wp-content/uploads/2021/08/assistant-customizable.png" alt="Live chat">
-            </div>
-        </a>
+    
+    <hr>
+
+    <div>
+        <h3 class="text-base mb-3 uppercase">Latest news</h3>
+        <?php
+            // RSS feed
+            $feed_url = 'https://www.thrivedesk.com/feed/';
+            // Get the feed items using SimplePie
+            include_once(ABSPATH . WPINC . '/feed.php');
+            $rss = fetch_feed($feed_url);
+            $maxitems = 0;
+            // Checks that the object is created correctly
+            if ( ! is_wp_error( $rss ) ){ 
+                // Limit it to 3. 
+                $maxitems = $rss->get_item_quantity( 3 ); 
+                // Build an array of all the items, starting with element 0 (first element).
+                $items = $rss->get_items( 0, $maxitems );
+            
+            };
+        ?>
+        <div class="flex space-x-3">
+            <?php foreach($items as $item):?>
+                <div class="w-1/3 border py-2 px-3 rounded">
+                    <a href="<?php echo esc_url( $item->get_permalink() ); ?>" target="_blank">
+                        <?php echo esc_html( $item->get_title() ); ?>
+                    </a>
+                </div>
+            <?php endforeach;?>
+        </div>
     </div>
 </div>

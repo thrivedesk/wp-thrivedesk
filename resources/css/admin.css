@@ -45,7 +45,17 @@
 	.main-wrap{
 		@apply flex-1 rounded-l-lg shadow-lg;
 		background: url("../images/footer-bg.png") center bottom no-repeat #fff;
-		background-size: 100% 20%;
+		background-size: 100% 10%;
+	}
+
+	.td-steps{
+		@apply mb-2 flex space-x-1;
+		>span{
+			@apply block w-2 h-2 rounded-full bg-green-200;
+		}
+		>span.active{
+			@apply w-6 bg-green-400;
+		}
 	}
 	
 }
@@ -53,9 +63,9 @@
 @tailwind utilities;
 
 /* Reset wp  */
-#wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
+/* #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
 	@apply !h-full;
-}
+} */
 #wpbody-content, #wpcontent{
 	@apply !p-0 text-slate-700;
 }

@@ -11,8 +11,29 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) keys.push(key); return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 jQuery(document).ready(function ($) {
+  function thrivedeskTabManager(tabElement, contentElement) {
+    var currentTab = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var innerTab = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    tabElement.forEach(function (linkElement) {
+      $(linkElement).removeClass('active');
+    });
+    contentElement.forEach(function (contentElement) {
+      $(contentElement).removeClass('block').addClass('hidden');
+    });
+    var selectedTab = currentTab.getAttribute('data-target');
+    $(currentTab).addClass('active');
+    if (innerTab) {
+      document.getElementById('inner-tab-content').getElementsByClassName(selectedTab)[0].classList.remove('hidden');
+    } else {
+      document.getElementById('tab-content').getElementsByClassName(selectedTab)[0].classList.remove('hidden');
+    }
+  }
   $('.thrivedesk button.connect').on('click', function (e) {
     e.preventDefault();
     var $target = $(this);
@@ -49,23 +70,25 @@ jQuery(document).ready(function ($) {
       });
     }
   });
+
   /**
    * admin tab
    */
-  $('.thrivedesk .sidebar-nav a').on('click', function (e) {
+  $('.thrivedesk .tab-link a').on('click', function (e) {
     // e.preventDefault();
 
-    var tabElement = document.querySelectorAll('.thrivedesk .sidebar-nav a');
+    var tabElement = document.querySelectorAll('.thrivedesk .tab-link a');
     var contentElement = document.querySelectorAll('.thrivedesk #tab-content>div');
-    tabElement.forEach(function (linkElement) {
-      $(linkElement).removeClass('active');
-    });
-    contentElement.forEach(function (contentElement) {
-      $(contentElement).removeClass('block').addClass('hidden');
-    });
-    var selectedTab = this.getAttribute('data-target');
-    $(this).addClass('active');
-    document.getElementById('tab-content').getElementsByClassName(selectedTab)[0].classList.remove('hidden');
+    thrivedeskTabManager(tabElement, contentElement, this);
+  });
+
+  /**
+   * Inner tab content
+   */
+  $('.thrivedesk .inner-tab-link a').on('click', function (e) {
+    var innerTabElement = document.querySelectorAll('.thrivedesk .inner-tab-link a');
+    var contentElement = document.querySelectorAll('.thrivedesk #inner-tab-content>div');
+    thrivedeskTabManager(innerTabElement, contentElement, this, true);
   });
 
   // get the fragment from url
@@ -84,9 +107,11 @@ jQuery(document).ready(function ($) {
   // helpdesk form
   $('#td_helpdesk_form').submit(function (e) {
     e.preventDefault();
-    var td_helpdesk_api_key = $("#td_helpdesk_api_key").val();
-    var td_helpdesk_page_id = $("#td_helpdesk_page_id").val();
-    var td_helpdesk_post_types = $(".td_helpdesk_post_types:checked").map(function (i, item) {
+    var td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
+    var td_helpdesk_organization = $('#td-organizations').val();
+    var td_helpdesk_assistant = $('#td-assistants').val();
+    var td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
+    var td_helpdesk_post_types = $('.td_helpdesk_post_types:checked').map(function (i, item) {
       return item.value;
     }).get();
     // let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
@@ -96,6 +121,8 @@ jQuery(document).ready(function ($) {
       action: 'thrivedesk_helpdesk_form',
       data: {
         td_helpdesk_api_key: td_helpdesk_api_key,
+        td_helpdesk_organization: td_helpdesk_organization,
+        td_helpdesk_assistant: td_helpdesk_assistant,
         td_helpdesk_page_id: td_helpdesk_page_id,
         td_helpdesk_post_types: td_helpdesk_post_types
         // td_helpdesk_form_style: td_helpdesk_form_style,
@@ -112,54 +139,134 @@ jQuery(document).ready(function ($) {
       }
     });
   });
-  $('.td-assistant-item').on('change', function (e) {
-    // make a axios request
-    var $target = $(this);
-    // check the value of the checkbox
-    var checked = $target.is(':checked');
-    $('.td-assistant-item').prop('checked', false);
-    if (checked) {
-      $target.prop('checked', true);
-    } else {
-      $target.prop('checked', false);
-    }
-    // $target.prop('checked', true);
 
-    $.ajax({
-      type: "POST",
-      url: thrivedesk.wp_json_url + "/thrivedesk/v1/assistant/submit",
-      data: {
-        selected_assistant_id: $target.val(),
-        status: checked
-      }
-    }).success(function (data) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-        title: 'Great',
-        icon: 'success',
-        text: data,
-        showClass: {
-          popup: 'animate__animated animate__fadeInDown'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__fadeOutUp'
-        },
-        timer: 4000
-      });
-    }).error(function (data) {
-      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-        title: 'Error',
-        icon: 'error',
-        text: 'Something went wrong',
-        showClass: {
-          popup: 'animate__animated animate__fadeInDown'
-        },
-        hideClass: {
-          popup: 'animate__animated animate__fadeOutUp'
-        },
-        timer: 4000
-      });
-    });
-  });
+  // verify the API key
+  $('#td-api-verification-btn').on('click', /*#__PURE__*/function () {
+    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(e) {
+      var $target, apiKey;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            e.preventDefault();
+            $target = $(this);
+            apiKey = $('#td_helpdesk_api_key').val().trim(); // get request to verify the API key using fetch
+            _context.next = 5;
+            return fetch('https://api.thrivedesk.xyz/v1/me', {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + apiKey
+              }
+            }).then(function (response) {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error('Something went wrong');
+              }
+            }).then(function (data) {
+              // change the button text to verified then disable the button
+              $target.text('Verified');
+              $target.prop('disabled', true);
+              loadAssistants();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                title: 'Great',
+                icon: 'success',
+                text: 'API key verified successfully',
+                showClass: {
+                  popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                  popup: 'animate__animated animate__fadeOutUp'
+                },
+                timer: 4000
+              });
+            })["catch"](function (error) {
+              console.log(error);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                title: 'Error',
+                icon: 'error',
+                text: 'Something went wrong',
+                showClass: {
+                  popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                  popup: 'animate__animated animate__fadeOutUp'
+                },
+                timer: 4000
+              });
+            });
+          case 5:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, this);
+    }));
+    return function (_x) {
+      return _ref.apply(this, arguments);
+    };
+  }());
+
+  // load the assistant list on change of organization
+  function loadAssistants() {
+    return _loadAssistants.apply(this, arguments);
+  }
+  function _loadAssistants() {
+    _loadAssistants = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var $target, orgSlug, apiKey;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            $target = $(this);
+            orgSlug = $target.val();
+            apiKey = $('#td_helpdesk_api_key').val().trim();
+            _context2.next = 5;
+            return fetch('https://api.thrivedesk.xyz/v1/assistants', {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + apiKey,
+                'X-Td-Organization-Slug': orgSlug
+              }
+            }).then(function (response) {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error('Something went wrong');
+              }
+            }).then(function (data) {
+              console.log(data.assistants);
+              // show the assistants list
+              var assistantList = $('#td-assistants');
+              assistantList.html('');
+              assistantList.append('<option value="">Select Assistant</option>');
+              data.assistants.forEach(function (item) {
+                assistantList.append('<option value="' + item.id + '">' + item.name + '</option>');
+              });
+            })["catch"](function (error) {
+              console.log(error);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                title: 'Error',
+                icon: 'error',
+                text: 'Something went wrong',
+                showClass: {
+                  popup: 'animate__animated animate__fadeInDown'
+                },
+                hideClass: {
+                  popup: 'animate__animated animate__fadeOutUp'
+                },
+                timer: 4000
+              });
+            });
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2, this);
+    }));
+    return _loadAssistants.apply(this, arguments);
+  }
 });
 
 /***/ }),
@@ -197,7 +304,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module) {
 
 /*!
-* sweetalert2 v11.6.5
+* sweetalert2 v11.7.3
 * Released under the MIT License.
 */
 (function (global, factory) {
@@ -235,7 +342,7 @@ __webpack_require__.r(__webpack_exports__);
     }
     return result;
   };
-  const swalClasses = prefix(['container', 'shown', 'height-auto', 'iosfix', 'popup', 'modal', 'no-backdrop', 'no-transition', 'toast', 'toast-shown', 'show', 'hide', 'close', 'title', 'html-container', 'actions', 'confirm', 'deny', 'cancel', 'default-outline', 'footer', 'icon', 'icon-content', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'label', 'textarea', 'inputerror', 'input-label', 'validation-message', 'progress-steps', 'active-progress-step', 'progress-step', 'progress-step-line', 'loader', 'loading', 'styled', 'top', 'top-start', 'top-end', 'top-left', 'top-right', 'center', 'center-start', 'center-end', 'center-left', 'center-right', 'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen', 'rtl', 'timer-progress-bar', 'timer-progress-bar-container', 'scrollbar-measure', 'icon-success', 'icon-warning', 'icon-info', 'icon-question', 'icon-error', 'no-war']);
+  const swalClasses = prefix(['container', 'shown', 'height-auto', 'iosfix', 'popup', 'modal', 'no-backdrop', 'no-transition', 'toast', 'toast-shown', 'show', 'hide', 'close', 'title', 'html-container', 'actions', 'confirm', 'deny', 'cancel', 'default-outline', 'footer', 'icon', 'icon-content', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'label', 'textarea', 'inputerror', 'input-label', 'validation-message', 'progress-steps', 'active-progress-step', 'progress-step', 'progress-step-line', 'loader', 'loading', 'styled', 'top', 'top-start', 'top-end', 'top-left', 'top-right', 'center', 'center-start', 'center-end', 'center-left', 'center-right', 'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen', 'rtl', 'timer-progress-bar', 'timer-progress-bar-container', 'scrollbar-measure', 'icon-success', 'icon-warning', 'icon-info', 'icon-question', 'icon-error']);
   const iconTypes = prefix(['success', 'warning', 'info', 'question', 'error']);
 
   const consolePrefix = 'SweetAlert2:';
@@ -396,7 +503,7 @@ __webpack_require__.r(__webpack_exports__);
   /**
    * @returns {HTMLElement | null}
    */
-  const getProgressSteps$1 = () => elementByClass(swalClasses['progress-steps']);
+  const getProgressSteps = () => elementByClass(swalClasses['progress-steps']);
 
   /**
    * @returns {HTMLElement | null}
@@ -404,14 +511,19 @@ __webpack_require__.r(__webpack_exports__);
   const getValidationMessage = () => elementByClass(swalClasses['validation-message']);
 
   /**
-   * @returns {HTMLElement | null}
+   * @returns {HTMLButtonElement | null}
    */
-  const getConfirmButton = () => elementBySelector(`.${swalClasses.actions} .${swalClasses.confirm}`);
+  const getConfirmButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.confirm}`);
 
   /**
-   * @returns {HTMLElement | null}
+   * @returns {HTMLButtonElement | null}
    */
-  const getDenyButton = () => elementBySelector(`.${swalClasses.actions} .${swalClasses.deny}`);
+  const getCancelButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.cancel}`);
+
+  /**
+   * @returns {HTMLButtonElement | null}
+   */
+  const getDenyButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.deny}`);
 
   /**
    * @returns {HTMLElement | null}
@@ -422,11 +534,6 @@ __webpack_require__.r(__webpack_exports__);
    * @returns {HTMLElement | null}
    */
   const getLoader = () => elementBySelector(`.${swalClasses.loader}`);
-
-  /**
-   * @returns {HTMLElement | null}
-   */
-  const getCancelButton = () => elementBySelector(`.${swalClasses.actions} .${swalClasses.cancel}`);
 
   /**
    * @returns {HTMLElement | null}
@@ -666,7 +773,7 @@ __webpack_require__.r(__webpack_exports__);
    *
    * @param {HTMLElement} elem
    * @param {string} className
-   * @returns {HTMLElement | null}
+   * @returns {HTMLElement | undefined}
    */
   const getDirectChildByClass = (elem, className) => {
     const children = Array.from(elem.children);
@@ -791,7 +898,6 @@ __webpack_require__.r(__webpack_exports__);
     timerProgressBar.style.width = '100%';
     const timerProgressBarFullWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
     const timerProgressBarPercent = timerProgressBarWidth / timerProgressBarFullWidth * 100;
-    timerProgressBar.style.removeProperty('transition');
     timerProgressBar.style.width = `${timerProgressBarPercent}%`;
   };
 
@@ -1272,9 +1378,11 @@ __webpack_require__.r(__webpack_exports__);
     show(inputContainer);
 
     // input autofocus
-    setTimeout(() => {
-      focusInput(input);
-    });
+    if (params.inputAutoFocus) {
+      setTimeout(() => {
+        focusInput(input);
+      });
+    }
   };
 
   /**
@@ -1749,7 +1857,7 @@ __webpack_require__.r(__webpack_exports__);
    * @param {SweetAlertOptions} params
    */
   const renderProgressSteps = (instance, params) => {
-    const progressStepsContainer = getProgressSteps$1();
+    const progressStepsContainer = getProgressSteps();
     if (!params.progressSteps || params.progressSteps.length === 0) {
       hide(progressStepsContainer);
       return;
@@ -1945,11 +2053,10 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   /**
-   * @param {SweetAlertOptions} innerParams
    * @param {number} index
    * @param {number} increment
    */
-  const setFocus = (innerParams, index, increment) => {
+  const setFocus = (index, increment) => {
     const focusableElements = getFocusableElements();
     // search for visible elements and select the next possible match
     if (focusableElements.length) {
@@ -1963,7 +2070,8 @@ __webpack_require__.r(__webpack_exports__);
       } else if (index === -1) {
         index = focusableElements.length - 1;
       }
-      return focusableElements[index].focus();
+      focusableElements[index].focus();
+      return;
     }
     // no visible focusable elements, focus the popup
     getPopup().focus();
@@ -1973,10 +2081,10 @@ __webpack_require__.r(__webpack_exports__);
 
   /**
    * @param {SweetAlert2} instance
-   * @param {KeyboardEvent} e
-   * @param {function} dismissWith
+   * @param {KeyboardEvent} event
+   * @param {Function} dismissWith
    */
-  const keydownHandler = (instance, e, dismissWith) => {
+  const keydownHandler = (instance, event, dismissWith) => {
     const innerParams = privateProps.innerParams.get(instance);
     if (!innerParams) {
       return; // This instance has already been destroyed
@@ -1986,60 +2094,59 @@ __webpack_require__.r(__webpack_exports__);
     // https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event#ignoring_keydown_during_ime_composition
     // https://github.com/sweetalert2/sweetalert2/issues/720
     // https://github.com/sweetalert2/sweetalert2/issues/2406
-    if (e.isComposing || e.keyCode === 229) {
+    if (event.isComposing || event.keyCode === 229) {
       return;
     }
     if (innerParams.stopKeydownPropagation) {
-      e.stopPropagation();
+      event.stopPropagation();
     }
 
     // ENTER
-    if (e.key === 'Enter') {
-      handleEnter(instance, e, innerParams);
+    if (event.key === 'Enter') {
+      handleEnter(instance, event, innerParams);
     }
 
     // TAB
-    else if (e.key === 'Tab') {
-      handleTab(e, innerParams);
+    else if (event.key === 'Tab') {
+      handleTab(event);
     }
 
     // ARROWS - switch focus between buttons
-    else if ([...arrowKeysNextButton, ...arrowKeysPreviousButton].includes(e.key)) {
-      handleArrows(e.key);
+    else if ([...arrowKeysNextButton, ...arrowKeysPreviousButton].includes(event.key)) {
+      handleArrows(event.key);
     }
 
     // ESC
-    else if (e.key === 'Escape') {
-      handleEsc(e, innerParams, dismissWith);
+    else if (event.key === 'Escape') {
+      handleEsc(event, innerParams, dismissWith);
     }
   };
 
   /**
    * @param {SweetAlert2} instance
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    * @param {SweetAlertOptions} innerParams
    */
-  const handleEnter = (instance, e, innerParams) => {
+  const handleEnter = (instance, event, innerParams) => {
     // https://github.com/sweetalert2/sweetalert2/issues/2386
     if (!callIfFunction(innerParams.allowEnterKey)) {
       return;
     }
-    if (e.target && instance.getInput() && e.target instanceof HTMLElement && e.target.outerHTML === instance.getInput().outerHTML) {
+    if (event.target && instance.getInput() && event.target instanceof HTMLElement && event.target.outerHTML === instance.getInput().outerHTML) {
       if (['textarea', 'file'].includes(innerParams.input)) {
         return; // do not submit
       }
 
       clickConfirm();
-      e.preventDefault();
+      event.preventDefault();
     }
   };
 
   /**
-   * @param {KeyboardEvent} e
-   * @param {SweetAlertOptions} innerParams
+   * @param {KeyboardEvent} event
    */
-  const handleTab = (e, innerParams) => {
-    const targetElement = e.target;
+  const handleTab = event => {
+    const targetElement = event.target;
     const focusableElements = getFocusableElements();
     let btnIndex = -1;
     for (let i = 0; i < focusableElements.length; i++) {
@@ -2050,16 +2157,16 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     // Cycle to the next button
-    if (!e.shiftKey) {
-      setFocus(innerParams, btnIndex, 1);
+    if (!event.shiftKey) {
+      setFocus(btnIndex, 1);
     }
 
     // Cycle to the prev button
     else {
-      setFocus(innerParams, btnIndex, -1);
+      setFocus(btnIndex, -1);
     }
-    e.stopPropagation();
-    e.preventDefault();
+    event.stopPropagation();
+    event.preventDefault();
   };
 
   /**
@@ -2069,7 +2176,9 @@ __webpack_require__.r(__webpack_exports__);
     const confirmButton = getConfirmButton();
     const denyButton = getDenyButton();
     const cancelButton = getCancelButton();
-    if (document.activeElement instanceof HTMLElement && ![confirmButton, denyButton, cancelButton].includes(document.activeElement)) {
+    /** @type HTMLElement[] */
+    const buttons = [confirmButton, denyButton, cancelButton];
+    if (document.activeElement instanceof HTMLElement && !buttons.includes(document.activeElement)) {
       return;
     }
     const sibling = arrowKeysNextButton.includes(key) ? 'nextElementSibling' : 'previousElementSibling';
@@ -2089,13 +2198,13 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   /**
-   * @param {KeyboardEvent} e
+   * @param {KeyboardEvent} event
    * @param {SweetAlertOptions} innerParams
-   * @param {function} dismissWith
+   * @param {Function} dismissWith
    */
-  const handleEsc = (e, innerParams, dismissWith) => {
+  const handleEsc = (event, innerParams, dismissWith) => {
     if (callIfFunction(innerParams.allowEscapeKey)) {
-      e.preventDefault();
+      event.preventDefault();
       dismissWith(DismissReason.esc);
     }
   };
@@ -2184,18 +2293,18 @@ __webpack_require__.r(__webpack_exports__);
     const container = getContainer();
     let preventTouchMove;
     /**
-     * @param {TouchEvent} e
+     * @param {TouchEvent} event
      */
-    container.ontouchstart = e => {
-      preventTouchMove = shouldPreventTouchMove(e);
+    container.ontouchstart = event => {
+      preventTouchMove = shouldPreventTouchMove(event);
     };
     /**
-     * @param {TouchEvent} e
+     * @param {TouchEvent} event
      */
-    container.ontouchmove = e => {
+    container.ontouchmove = event => {
       if (preventTouchMove) {
-        e.preventDefault();
-        e.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
       }
     };
   };
@@ -2272,10 +2381,12 @@ __webpack_require__.r(__webpack_exports__);
     }
   };
 
-  /*
-   * Instance method to close sweetAlert
+  /**
+   * @param {SweetAlert2} instance
+   * @param {HTMLElement} container
+   * @param {boolean} returnFocus
+   * @param {Function} didClose
    */
-
   function removePopupAndResetState(instance, container, returnFocus, didClose) {
     if (isToast()) {
       triggerDidCloseAndDispose(instance, didClose);
@@ -2300,9 +2411,19 @@ __webpack_require__.r(__webpack_exports__);
     }
     removeBodyClasses();
   }
+
+  /**
+   * Remove SweetAlert2 classes from body
+   */
   function removeBodyClasses() {
     removeClass([document.documentElement, document.body], [swalClasses.shown, swalClasses['height-auto'], swalClasses['no-backdrop'], swalClasses['toast-shown']]);
   }
+
+  /**
+   * Instance method to close sweetAlert
+   *
+   * @param {any} resolveValue
+   */
   function close(resolveValue) {
     resolveValue = prepareResolveValue(resolveValue);
     const swalPromiseResolve = privateMethods.swalPromiseResolve.get(this);
@@ -2318,6 +2439,10 @@ __webpack_require__.r(__webpack_exports__);
       swalPromiseResolve(resolveValue);
     }
   }
+
+  /**
+   * @returns {boolean}
+   */
   function isAwaitingPromise() {
     return !!privateProps.awaitingPromise.get(this);
   }
@@ -2338,6 +2463,10 @@ __webpack_require__.r(__webpack_exports__);
     handlePopupAnimation(instance, popup, innerParams);
     return true;
   };
+
+  /**
+   * @param {any} error
+   */
   function rejectPromise(error) {
     const rejectPromise = privateMethods.swalPromiseReject.get(this);
     handleAwaitingPromise(this);
@@ -2346,15 +2475,26 @@ __webpack_require__.r(__webpack_exports__);
       rejectPromise(error);
     }
   }
+
+  /**
+   * @param {SweetAlert2} instance
+   */
   const handleAwaitingPromise = instance => {
+    // @ts-ignore
     if (instance.isAwaitingPromise()) {
       privateProps.awaitingPromise.delete(instance);
       // The instance might have been previously partly destroyed, we must resume the destroy process in this case #2335
       if (!privateProps.innerParams.get(instance)) {
+        // @ts-ignore
         instance._destroy();
       }
     }
   };
+
+  /**
+   * @param {any} resolveValue
+   * @returns {SweetAlertResult}
+   */
   const prepareResolveValue = resolveValue => {
     // When user calls Swal.close()
     if (typeof resolveValue === 'undefined') {
@@ -2370,6 +2510,12 @@ __webpack_require__.r(__webpack_exports__);
       isDismissed: false
     }, resolveValue);
   };
+
+  /**
+   * @param {SweetAlert2} instance
+   * @param {HTMLElement} popup
+   * @param {SweetAlertOptions} innerParams
+   */
   const handlePopupAnimation = (instance, popup, innerParams) => {
     const container = getContainer();
     // If animation is supported, animate
@@ -2384,6 +2530,14 @@ __webpack_require__.r(__webpack_exports__);
       removePopupAndResetState(instance, container, innerParams.returnFocus, innerParams.didClose);
     }
   };
+
+  /**
+   * @param {SweetAlert2} instance
+   * @param {HTMLElement} popup
+   * @param {HTMLElement} container
+   * @param {boolean} returnFocus
+   * @param {Function} didClose
+   */
   const animatePopup = (instance, popup, container, returnFocus, didClose) => {
     globalState.swalCloseEventFinishedCallback = removePopupAndResetState.bind(null, instance, container, returnFocus, didClose);
     popup.addEventListener(animationEndEvent, function (e) {
@@ -2393,11 +2547,18 @@ __webpack_require__.r(__webpack_exports__);
       }
     });
   };
+
+  /**
+   * @param {SweetAlert2} instance
+   * @param {Function} didClose
+   */
   const triggerDidCloseAndDispose = (instance, didClose) => {
     setTimeout(() => {
       if (typeof didClose === 'function') {
+        // @ts-ignore
         didClose.bind(instance.params)();
       }
+      // @ts-ignore
       instance._destroy();
     });
   };
@@ -2445,7 +2606,11 @@ __webpack_require__.r(__webpack_exports__);
     setInputDisabled(this.getInput(), true);
   }
 
-  // Show block with validation message
+  /**
+   * Show block with validation message
+   *
+   * @param {string} error
+   */
   function showValidationMessage(error) {
     const domCache = privateProps.domCache.get(this);
     const params = privateProps.innerParams.get(this);
@@ -2464,7 +2629,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 
-  // Hide block with validation message
+  /**
+   * Hide block with validation message
+   */
   function resetValidationMessage() {
     const domCache = privateProps.domCache.get(this);
     if (domCache.validationMessage) {
@@ -2476,11 +2643,6 @@ __webpack_require__.r(__webpack_exports__);
       input.removeAttribute('aria-describedby');
       removeClass(input, swalClasses.inputerror);
     }
-  }
-
-  function getProgressSteps() {
-    const domCache = privateProps.domCache.get(this);
-    return domCache.progressSteps;
   }
 
   const defaultParams = {
@@ -2554,6 +2716,7 @@ __webpack_require__.r(__webpack_exports__);
     inputLabel: '',
     inputValue: '',
     inputOptions: {},
+    inputAutoFocus: true,
     inputAutoTrim: true,
     inputAttributes: {},
     inputValidator: undefined,
@@ -2653,12 +2816,15 @@ __webpack_require__.r(__webpack_exports__);
 
   /**
    * Updates popup parameters.
+   *
+   * @param {SweetAlertOptions} params
    */
   function update(params) {
     const popup = getPopup();
     const innerParams = privateProps.innerParams.get(this);
     if (!popup || hasClass(popup, innerParams.hideClass.popup)) {
-      return warn(`You're trying to update the closed or closing popup, that won't work. Use the update() method in preConfirm parameter or show a new popup.`);
+      warn(`You're trying to update the closed or closing popup, that won't work. Use the update() method in preConfirm parameter or show a new popup.`);
+      return;
     }
     const validUpdatableParams = filterValidParams(params);
     const updatedParams = Object.assign({}, innerParams, validUpdatableParams);
@@ -2672,6 +2838,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     });
   }
+
+  /**
+   * @param {SweetAlertOptions} params
+   * @returns {SweetAlertOptions}
+   */
   const filterValidParams = params => {
     const validUpdatableParams = {};
     Object.keys(params).forEach(param => {
@@ -2684,6 +2855,9 @@ __webpack_require__.r(__webpack_exports__);
     return validUpdatableParams;
   };
 
+  /**
+   * Dispose the current SweetAlert2 instance
+   */
   function _destroy() {
     const domCache = privateProps.domCache.get(this);
     const innerParams = privateProps.innerParams.get(this);
@@ -2745,30 +2919,31 @@ __webpack_require__.r(__webpack_exports__);
 
   var instanceMethods = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    hideLoading: hideLoading,
-    disableLoading: hideLoading,
-    getInput: getInput,
+    _destroy: _destroy,
     close: close,
+    closeModal: close,
+    closePopup: close,
+    closeToast: close,
+    disableButtons: disableButtons,
+    disableInput: disableInput,
+    disableLoading: hideLoading,
+    enableButtons: enableButtons,
+    enableInput: enableInput,
+    getInput: getInput,
+    handleAwaitingPromise: handleAwaitingPromise,
+    hideLoading: hideLoading,
     isAwaitingPromise: isAwaitingPromise,
     rejectPromise: rejectPromise,
-    handleAwaitingPromise: handleAwaitingPromise,
-    closePopup: close,
-    closeModal: close,
-    closeToast: close,
-    enableButtons: enableButtons,
-    disableButtons: disableButtons,
-    enableInput: enableInput,
-    disableInput: disableInput,
-    showValidationMessage: showValidationMessage,
     resetValidationMessage: resetValidationMessage,
-    getProgressSteps: getProgressSteps,
-    update: update,
-    _destroy: _destroy
+    showValidationMessage: showValidationMessage,
+    update: update
   });
 
   /**
    * Shows loader (spinner), this is useful with AJAX requests.
    * By default the loader be shown instead of the "Confirm" button.
+   *
+   * @param {HTMLButtonElement} [buttonToReplace]
    */
   const showLoading = buttonToReplace => {
     let popup = getPopup();
@@ -2788,6 +2963,11 @@ __webpack_require__.r(__webpack_exports__);
     popup.setAttribute('aria-busy', 'true');
     popup.focus();
   };
+
+  /**
+   * @param {HTMLElement} popup
+   * @param {HTMLButtonElement} [buttonToReplace]
+   */
   const replaceButton = (popup, buttonToReplace) => {
     const actions = getActions();
     const loader = getLoader();
@@ -3264,6 +3444,12 @@ __webpack_require__.r(__webpack_exports__);
     return params;
   };
 
+  /**
+   * Main method to create a new SweetAlert2 popup
+   *
+   * @param  {...SweetAlertOptions} args
+   * @returns {Promise<SweetAlertResult>}
+   */
   function fire() {
     const Swal = this; // eslint-disable-line @typescript-eslint/no-this-alias
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -3375,6 +3561,10 @@ __webpack_require__.r(__webpack_exports__);
 
   let bodyClickListenerAdded = false;
   const clickHandlers = {};
+
+  /**
+   * @param {string} attr
+   */
   function bindClickHandler() {
     let attr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'data-swal-template';
     clickHandlers[attr] = this;
@@ -3399,44 +3589,45 @@ __webpack_require__.r(__webpack_exports__);
 
   var staticMethods = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    isValidParameter: isValidParameter,
-    isUpdatableParameter: isUpdatableParameter,
-    isDeprecatedParameter: isDeprecatedParameter,
     argsToParams: argsToParams,
-    getContainer: getContainer,
-    getPopup: getPopup,
-    getTitle: getTitle,
-    getHtmlContainer: getHtmlContainer,
-    getImage: getImage,
-    getIcon: getIcon,
-    getIconContent: getIconContent,
-    getInputLabel: getInputLabel,
-    getCloseButton: getCloseButton,
-    getActions: getActions,
-    getConfirmButton: getConfirmButton,
-    getDenyButton: getDenyButton,
-    getCancelButton: getCancelButton,
-    getLoader: getLoader,
-    getFooter: getFooter,
-    getTimerProgressBar: getTimerProgressBar,
-    getFocusableElements: getFocusableElements,
-    getValidationMessage: getValidationMessage,
-    isLoading: isLoading,
-    isVisible: isVisible,
+    bindClickHandler: bindClickHandler,
+    clickCancel: clickCancel,
     clickConfirm: clickConfirm,
     clickDeny: clickDeny,
-    clickCancel: clickCancel,
-    fire: fire,
-    mixin: mixin,
-    showLoading: showLoading,
     enableLoading: showLoading,
+    fire: fire,
+    getActions: getActions,
+    getCancelButton: getCancelButton,
+    getCloseButton: getCloseButton,
+    getConfirmButton: getConfirmButton,
+    getContainer: getContainer,
+    getDenyButton: getDenyButton,
+    getFocusableElements: getFocusableElements,
+    getFooter: getFooter,
+    getHtmlContainer: getHtmlContainer,
+    getIcon: getIcon,
+    getIconContent: getIconContent,
+    getImage: getImage,
+    getInputLabel: getInputLabel,
+    getLoader: getLoader,
+    getPopup: getPopup,
+    getProgressSteps: getProgressSteps,
     getTimerLeft: getTimerLeft,
-    stopTimer: stopTimer,
-    resumeTimer: resumeTimer,
-    toggleTimer: toggleTimer,
+    getTimerProgressBar: getTimerProgressBar,
+    getTitle: getTitle,
+    getValidationMessage: getValidationMessage,
     increaseTimer: increaseTimer,
+    isDeprecatedParameter: isDeprecatedParameter,
+    isLoading: isLoading,
     isTimerRunning: isTimerRunning,
-    bindClickHandler: bindClickHandler
+    isUpdatableParameter: isUpdatableParameter,
+    isValidParameter: isValidParameter,
+    isVisible: isVisible,
+    mixin: mixin,
+    resumeTimer: resumeTimer,
+    showLoading: showLoading,
+    stopTimer: stopTimer,
+    toggleTimer: toggleTimer
   });
 
   class Timer {
@@ -4009,7 +4200,7 @@ __webpack_require__.r(__webpack_exports__);
       loader: getLoader(),
       closeButton: getCloseButton(),
       validationMessage: getValidationMessage(),
-      progressSteps: getProgressSteps$1()
+      progressSteps: getProgressSteps()
     };
     privateProps.domCache.set(instance, domCache);
     return domCache;
@@ -4054,7 +4245,7 @@ __webpack_require__.r(__webpack_exports__);
       return;
     }
     if (!focusButton(domCache, innerParams)) {
-      setFocus(innerParams, -1, 1);
+      setFocus(-1, 1);
     }
   };
 
@@ -4086,18 +4277,24 @@ __webpack_require__.r(__webpack_exports__);
 
   // Dear russian users visiting russian sites. Let's have fun.
   if (typeof window !== 'undefined' && /^ru\b/.test(navigator.language) && location.host.match(/\.(ru|su|xn--p1ai)$/)) {
-    setTimeout(() => {
-      document.body.style.pointerEvents = 'none';
-      const ukrainianAnthem = document.createElement('audio');
-      ukrainianAnthem.src = 'https://discoveric.ru/upload/anthem/61/61-1.mp3';
-      ukrainianAnthem.loop = true;
-      document.body.appendChild(ukrainianAnthem);
+    const now = new Date();
+    const initiationDate = localStorage.getItem('swal-initiation');
+    if (!initiationDate) {
+      localStorage.setItem('swal-initiation', `${now}`);
+    } else if ((now.getTime() - Date.parse(initiationDate)) / (1000 * 60 * 60 * 24) > 3) {
       setTimeout(() => {
-        ukrainianAnthem.play().catch(() => {
-          // ignore
-        });
-      }, 2500);
-    }, 500);
+        document.body.style.pointerEvents = 'none';
+        const ukrainianAnthem = document.createElement('audio');
+        ukrainianAnthem.src = 'https://flag-gimn.ru/wp-content/uploads/2021/09/Ukraina.mp3';
+        ukrainianAnthem.loop = true;
+        document.body.appendChild(ukrainianAnthem);
+        setTimeout(() => {
+          ukrainianAnthem.play().catch(() => {
+            // ignore
+          });
+        }, 2500);
+      }, 500);
+    }
   }
 
   // Assign instance methods from src/instanceMethods/*.js to prototype
@@ -4110,7 +4307,7 @@ __webpack_require__.r(__webpack_exports__);
   Object.keys(instanceMethods).forEach(key => {
     /**
      * @param {...any} args
-     * @returns {any}
+     * @returns {any | undefined}
      */
     SweetAlert[key] = function () {
       if (currentInstance) {
@@ -4119,7 +4316,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   });
   SweetAlert.DismissReason = DismissReason;
-  SweetAlert.version = '11.6.5';
+  SweetAlert.version = '11.7.3';
 
   const Swal = SweetAlert;
   // @ts-ignore

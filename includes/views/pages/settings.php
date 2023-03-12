@@ -12,22 +12,19 @@
             <p><?php _e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
             <div class="td-card">
                 <div class="space-y-2">
-                    <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
+                    <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
+                    <span>
+                        <?php _e( 'Login to ThriveDesk app and get your API key from ',
+                                    'thrivedesk' ); ?>
+                                <a class="text-blue-500" href="https://app.thrivedesk.com/settings/company/api-key" target="_blank">
+                                    <?php _e( 'here', 'thrivedesk' ); ?>
+                                </a>
+                    </span>
                     <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '' ); ?></textarea>
 
-                    <div class="flex justify-between">
-                        <button type="button" class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 shadow-lg font-medium rounded-lg py-1 px-3 text-xs text-center" id="td-api-verification-btn">
-                            Verify
-                        </button>
-
-                        <div>
-                            <?php _e( 'Login to ThriveDesk app and get your API key from ',
-                                'thrivedesk' ); ?>
-                            <a class="text-blue-500" href="#" target="_blank">
-                                <?php _e( 'here', 'thrivedesk' ); ?>
-                            </a>.
-                        </div>
-                    </div>
+                    <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
+                        <?php _e('Verify', 'thrivedesk')?>
+                    </button>
                 </div>
             </div>
         </div>
