@@ -4,6 +4,7 @@
     $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
     $td_organizations = \ThriveDesk\Assistants\Assistant::organizations() ?? [];
     $td_assistants = \ThriveDesk\Assistants\Assistant::get_assistants() ?? [];
+    $td_api_key = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
     ?>
     <form class="space-y-8" id="td_helpdesk_form" action="#" method="POST">
         <!-- connection  -->
@@ -20,7 +21,7 @@
                                     <?php _e( 'here', 'thrivedesk' ); ?>
                                 </a>
                     </span>
-                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '' ); ?></textarea>
+                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_api_key ); ?></textarea>
 
                     <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
                         <?php _e('Verify', 'thrivedesk')?>
