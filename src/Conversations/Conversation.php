@@ -58,9 +58,29 @@ class Conversation
         // ajax call for sending reply
         add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
 
+		// ajax call for verifying the helpdesk setting
+	    add_action('wp_ajax_thrivedesk_api_key_verify', [$this, 'td_verify_helpdesk_api_key']);
+
         // ajax call for saving the helpdesk setting
         add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
     }
+
+	public function td_verify_helpdesk_api_key(  ) {
+		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+		if ( empty( $apiKey ) ) {
+			echo json_encode( [ 'status' => 'error', 'message' => 'API key is required' ] );
+			die();
+		}
+
+		$apiService = new TDApiService();
+		$apiService->setApiKey( $apiKey );
+		$assistance = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+
+		if ( $assistance ) {
+			echo json_encode( [ 'status' => 'true', 'data' => $assistance ] );
+			die();
+		}
+	}
 
     public function td_save_helpdesk_form()
     {

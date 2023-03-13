@@ -3,6 +3,9 @@ import Swal from 'sweetalert2';
 const api_url = 'https://api.thrivedesk.io/v1';
 
 jQuery(document).ready(($) => {
+
+	// remove the disabled attribute from #td-assistants
+
 	function thrivedeskTabManager(
 		tabElement,
 		contentElement,
@@ -169,57 +172,105 @@ jQuery(document).ready(($) => {
 		let $target = $(this);
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
-		// get request to verify the API key using fetch
-		await fetch(`${api_url}/me`, {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + apiKey,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					return response.json();
+		//
+
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_api_key_verify',
+				data: {
+					td_helpdesk_api_key: apiKey,
+				},
+			})
+			.success(function (response) {
+				// console.log(response.data);
+				let data = JSON.parse(response).data;
+				console.log(data.message);
+				if(data.message==='Unauthenticated.'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Invalid API Key',
+					});
+				}
+				else if (data.message==='Server Error'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Server Error',
+					});
 				} else {
-					throw new Error('Something went wrong');
+					$('#td-assistants').prop('disabled', false);
+
+					loadAssistants();
+
+					Swal.fire({
+						icon: 'success',
+						title: 'Success',
+						text: 'API Key Verified',
+					});
 				}
 			})
-			.then((data) => {
-				// change the button text to verified then disable the button
-				$target.text('Verified');
-				$target.prop('disabled', true);
-
-				loadAssistants();
-
-				Swal.fire({
-					title: 'Great',
-					icon: 'success',
-					text: 'API key verified successfully',
-					showClass: {
-						popup: 'animate__animated animate__fadeInDown',
-					},
-					hideClass: {
-						popup: 'animate__animated animate__fadeOutUp',
-					},
-					timer: 4000,
-				});
-			})
-			.catch((error) => {
+			.error(function (error) {
+				console.log('error')
 				console.log(error);
-				Swal.fire({
-					title: 'Error',
-					icon: 'error',
-					text: 'Something went wrong',
-					showClass: {
-						popup: 'animate__animated animate__fadeInDown',
-					},
-					hideClass: {
-						popup: 'animate__animated animate__fadeOutUp',
-					},
-					timer: 4000,
-				});
 			});
+
+		//
+
+		// get request to verify the API key using fetch
+		// await fetch(`${api_url}/me`, {
+		// 	method: 'GET',
+		// 	headers: {
+		// 		Accept: 'application/json',
+		// 		'Content-Type': 'application/json',
+		// 		Authorization: 'Bearer ' + apiKey,
+		// 	},
+		// })
+		// 	.then((response) => {
+		// 		if (response.ok) {
+		// 			return response.json();
+		// 		} else {
+		// 			throw new Error('Something went wrong');
+		// 		}
+		// 	})
+		// 	.then((data) => {
+		// 		// change the button text to verified then disable the button
+		// 		$target.text('Verified');
+		// 		$target.prop('disabled', true);
+		//
+		// 		// remove the disabled attribute from the id td-assistants
+		// 		$('#td-assistants').prop('disabled', false);
+		//
+		// 		loadAssistants();
+		//
+		// 		Swal.fire({
+		// 			title: 'Great',
+		// 			icon: 'success',
+		// 			text: 'API key verified successfully',
+		// 			showClass: {
+		// 				popup: 'animate__animated animate__fadeInDown',
+		// 			},
+		// 			hideClass: {
+		// 				popup: 'animate__animated animate__fadeOutUp',
+		// 			},
+		// 			timer: 4000,
+		// 		});
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(error);
+		// 		Swal.fire({
+		// 			title: 'Error',
+		// 			icon: 'error',
+		// 			text: 'Something went wrong',
+		// 			showClass: {
+		// 				popup: 'animate__animated animate__fadeInDown',
+		// 			},
+		// 			hideClass: {
+		// 				popup: 'animate__animated animate__fadeOutUp',
+		// 			},
+		// 			timer: 4000,
+		// 		});
+		// 	});
 	});
 
 	// load the assistant list on change of organization
@@ -228,49 +279,91 @@ jQuery(document).ready(($) => {
 		let orgSlug = $target.val();
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
-		await fetch(`${api_url}/assistants`, {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + apiKey,
-				'X-Td-Organization-Slug': orgSlug,
-			},
-		})
-			.then((response) => {
-				if (response.ok) {
-					return response.json();
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_load_assistants',
+				data: {
+					td_helpdesk_api_key: apiKey,
+					org_slug: orgSlug,
+				},
+			})
+			.success(function (response) {
+				// console.log(response.data);
+				let data = JSON.parse(response).data;
+
+				if(data.message==='Unauthenticated.'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Invalid API Key',
+					});
+				}
+				else if (data.message==='Server Error'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Server Error',
+					});
 				} else {
-					throw new Error('Something went wrong');
+
+					let assistantList = $('#td-assistants');
+					assistantList.html('');
+					assistantList.append('<option value="">Select Assistant</option>');
+					data.assistants.forEach(function (item) {
+						assistantList.append(
+							'<option value="' + item.id + '">' + item.name + '</option>'
+						);
+					});
 				}
 			})
-			.then((data) => {
-				console.log(data.assistants);
-				// show the assistants list
-				let assistantList = $('#td-assistants');
-				assistantList.html('');
-				assistantList.append('<option value="">Select Assistant</option>');
-				data.assistants.forEach(function (item) {
-					assistantList.append(
-						'<option value="' + item.id + '">' + item.name + '</option>'
-					);
-				});
-			})
-			.catch((error) => {
+			.error(function (error) {
+				console.log('error')
 				console.log(error);
-				Swal.fire({
-					title: 'Error',
-					icon: 'error',
-					text: 'Something went wrong',
-					showClass: {
-						popup: 'animate__animated animate__fadeInDown',
-					},
-					hideClass: {
-						popup: 'animate__animated animate__fadeOutUp',
-					},
-					timer: 4000,
-				});
 			});
+
+		// await fetch(`${api_url}/assistants`, {
+		// 	method: 'GET',
+		// 	headers: {
+		// 		Accept: 'application/json',
+		// 		'Content-Type': 'application/json',
+		// 		Authorization: 'Bearer ' + apiKey,
+		// 		'X-Td-Organization-Slug': orgSlug,
+		// 	},
+		// })
+		// 	.then((response) => {
+		// 		if (response.ok) {
+		// 			return response.json();
+		// 		} else {
+		// 			throw new Error('Something went wrong');
+		// 		}
+		// 	})
+		// 	.then((data) => {
+		// 		console.log(data.assistants);
+		// 		// show the assistants list
+		// 		let assistantList = $('#td-assistants');
+		// 		assistantList.html('');
+		// 		assistantList.append('<option value="">Select Assistant</option>');
+		// 		data.assistants.forEach(function (item) {
+		// 			assistantList.append(
+		// 				'<option value="' + item.id + '">' + item.name + '</option>'
+		// 			);
+		// 		});
+		// 	})
+		// 	.catch((error) => {
+		// 		console.log(error);
+		// 		Swal.fire({
+		// 			title: 'Error',
+		// 			icon: 'error',
+		// 			text: 'Something went wrong',
+		// 			showClass: {
+		// 				popup: 'animate__animated animate__fadeInDown',
+		// 			},
+		// 			hideClass: {
+		// 				popup: 'animate__animated animate__fadeOutUp',
+		// 			},
+		// 			timer: 4000,
+		// 		});
+		// 	});
 	}
 });
 

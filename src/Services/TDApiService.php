@@ -44,4 +44,8 @@ class TDApiService {
 
         return $body ?? [];
     }
+
+	public function setApiKey( $apiKey ) {
+		$this->api_token = $apiKey;
+	}
 }

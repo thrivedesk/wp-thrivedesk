@@ -15,7 +15,32 @@ class Assistant {
     public function __construct()
     {
         add_action('wp_head', [$this, 'load_assistant_script']);
+	    // ajax call for verifying the helpdesk setting
+	    add_action('wp_ajax_thrivedesk_load_assistants', [$this, 'thrivedesk_load_assistants']);
     }
+
+	public function thrivedesk_load_assistants(  ) {
+		$apiKey = $_POST['apiKey'] ?? '';
+		$orgSlug = $_POST['org_slug'] ?? '';
+
+		$args               = [
+			'headers' => [
+				'Authorization' => 'Bearer ' . $apiKey,
+				'Content-Type'  => 'application/json',
+				'Accept'        => 'application/json',
+				'X-Td-Organization-Slug' => $orgSlug
+			],
+		];
+
+		$response           = wp_remote_get(THRIVEDESK_API_URL . '/v1/assistants', $args);
+		$body               = wp_remote_retrieve_body($response);
+		$body               = json_decode($body, true);
+
+		if ( $body ) {
+			echo json_encode( [ 'status' => 'true', 'data' => $body ] );
+			die();
+		}
+	}
 
     public static function instance(): Assistant
     {
