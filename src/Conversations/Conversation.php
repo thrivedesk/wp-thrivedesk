@@ -211,7 +211,9 @@ class Conversation
             die;
         }
 
-        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=soreilly@yahoo.com';
+		$current_user_email = wp_get_current_user()->user_email;
+
+        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=' . $current_user_email;
 
         $data = [
             'message' => stripslashes($_POST['data']['reply_text']),

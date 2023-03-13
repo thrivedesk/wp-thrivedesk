@@ -1,5 +1,7 @@
 import Swal from 'sweetalert2';
 
+const api_url = 'https://api.thrivedesk.io/v1';
+
 jQuery(document).ready(($) => {
 	function thrivedeskTabManager(
 		tabElement,
@@ -168,7 +170,7 @@ jQuery(document).ready(($) => {
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
 		// get request to verify the API key using fetch
-		await fetch('https://api.thrivedesk.xyz/v1/me', {
+		await fetch(`${api_url}/me`, {
 			method: 'GET',
 			headers: {
 				Accept: 'application/json',
@@ -226,7 +228,7 @@ jQuery(document).ready(($) => {
 		let orgSlug = $target.val();
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
-		await fetch('https://api.thrivedesk.xyz/v1/assistants', {
+		await fetch(`${api_url}/assistants`, {
 			method: 'GET',
 			headers: {
 				Accept: 'application/json',

@@ -25,9 +25,6 @@ $links               = $conversations['meta']['links'] ?? [];
                     <th scope="col" class="w-auto">
                         <?php _e('Ticket', 'thrivedesk'); ?>
                     </th>
-                    <th scope="col" class="w-40 text-center">
-                        <?php _e('Last replied by', 'thrivedesk'); ?>
-                    </th>
                     <th scope="col" class="w-36 text-center">
                         <?php _e('Last update', 'thrivedesk'); ?>
                     </th>
@@ -43,6 +40,11 @@ $links               = $conversations['meta']['links'] ?? [];
                         </span>
                     </td>
                     <td>
+	                    <?php
+	                    $conv_page_url = add_query_arg( array(
+		                    'td_conversation_id' => $conversation['id']
+	                    ), get_permalink() );
+	                    ?>
                     <a href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
                         <div class="text-base font-medium">
                             <span class="text-slate-500">(#<?php echo $conversation['ticket_id']; ?>)</span>
@@ -52,13 +54,10 @@ $links               = $conversations['meta']['links'] ?? [];
                     </a>
                     </td>
                     <td class="text-center align-middle">
-						<?php echo $conversation['last_actor']['name'] ?? '-' ?>
-                    </td>
-                    <td class="text-center align-middle">
 						<?php echo diff_for_humans($conversation['updated_at']) ?>
                     </td>
                     <td class="text-center align-middle">
-                        <a href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>" class="td-btn-default">
+                        <a href="<?php echo $conv_page_url; ?>" class="td-btn-default">
                            <?php _e('View', 'thrivedesk'); ?>
                         </a>
                     </td>
