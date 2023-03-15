@@ -7,7 +7,6 @@ if (!defined('ABSPATH')) {
 }
 class TDApiService {
     private $api_token;
-    private $org_slug;
 
     public function __construct()
     {
@@ -36,6 +35,7 @@ class TDApiService {
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
             ],
+	        'timeout' => 60,
         ];
 
         $response           = wp_remote_get($url, $args);
@@ -45,7 +45,7 @@ class TDApiService {
         return $body ?? [];
     }
 
-	public function setApiKey( $apiKey ) {
+	public function setApiKey( $apiKey ): void {
 		$this->api_token = $apiKey;
 	}
 }
