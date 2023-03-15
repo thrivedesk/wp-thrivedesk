@@ -32,6 +32,13 @@ $links               = $conversations['meta']['links'] ?? [];
                 </tr>
             </thead>
             <tbody>
+            <?php if (empty($conversation_data)): ?>
+                <tr id="no-results">
+                    <td colspan="5" class="text-center">
+			            <?php _e('No ticket found', 'thrivedesk'); ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
 			<?php foreach($conversation_data as $key => $conversation): ?>
                 <tr>
                     <td scope="row" class="text-center align-middle">
@@ -65,7 +72,7 @@ $links               = $conversations['meta']['links'] ?? [];
 			<?php endforeach; ?>
             <tr id="no-results" style="display: none;">
                 <td colspan="5" class="text-center">
-                    <?php _e('No tickets found', 'thrivedesk'); ?>
+                    <?php _e('No ticket found', 'thrivedesk'); ?>
                 </td>
             </tr>
             </tbody>
