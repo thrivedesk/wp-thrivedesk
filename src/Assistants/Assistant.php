@@ -19,25 +19,20 @@ class Assistant {
 	    add_action('wp_ajax_thrivedesk_load_assistants', [$this, 'thrivedesk_load_assistants']);
     }
 
-	public function thrivedesk_load_assistants(  ) {
-		$apiKey = $_POST['apiKey'] ?? '';
-		$orgSlug = $_POST['org_slug'] ?? '';
+	public function thrivedesk_load_assistants(  ): void {
+		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
-		$args               = [
-			'headers' => [
-				'Authorization' => 'Bearer ' . $apiKey,
-				'Content-Type'  => 'application/json',
-				'Accept'        => 'application/json',
-				'X-Td-Organization-Slug' => $orgSlug
-			],
-		];
+		if (empty($apiKey)) {
+			echo json_encode( [ 'status' => 'false', 'data' => [] ] );
+			die();
+		}
 
-		$response           = wp_remote_get(THRIVEDESK_API_URL . '/v1/assistants', $args);
-		$body               = wp_remote_retrieve_body($response);
-		$body               = json_decode($body, true);
+		$apiService = new TDApiService();
+		$apiService->setApiKey( $apiKey );
+		$assistance = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/assistants' );
 
-		if ( $body ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $body ] );
+		if ( $assistance ) {
+			echo json_encode( [ 'status' => 'true', 'data' => $assistance ] );
 			die();
 		}
 	}
