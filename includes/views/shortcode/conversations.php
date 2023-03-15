@@ -7,7 +7,7 @@ $links               = $conversations['meta']['links'] ?? [];
 
 ?>
 
-<div id="thrivedesk" class="w-full prose max-w-none">
+<div id="thrivedesk" class="w-full prose prose-slate max-w-none">
     <div class="td-container">
         <div class="td-portal-header">
             <input type="search" class="td-ticket-search" id="td-ticket-search" placeholder="<?php _e('Search...')?>">
@@ -47,10 +47,10 @@ $links               = $conversations['meta']['links'] ?? [];
 	                    ?>
                     <a href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
                         <div class="text-base font-medium">
-                            <span class="text-slate-500">(#<?php echo $conversation['ticket_id']; ?>)</span>
+                            <span>(#<?php echo $conversation['ticket_id']; ?>)</span>
                             <span class="text-black"><?php echo $conversation['subject'];?></span>
                         </div>
-                        <div class="text-slate-500"><?php echo $conversation['excerpt']; ?>.</div>
+                        <div class="font-normal text-sm"><?php echo $conversation['excerpt']; ?>.</div>
                     </a>
                     </td>
                     <td class="text-center align-middle">
