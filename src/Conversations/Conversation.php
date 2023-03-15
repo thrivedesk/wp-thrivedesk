@@ -32,7 +32,7 @@ class Conversation
     /**
      * singleton class
      *
-     * @return \ThriveDesk\Conversations\Conversation
+     * @return Conversation
      */
     public static function instance(): Conversation
     {
@@ -65,7 +65,7 @@ class Conversation
         add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
     }
 
-	public function td_verify_helpdesk_api_key(  ) {
+	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 		if ( empty( $apiKey ) ) {
 			echo json_encode( [ 'status' => 'error', 'message' => 'API key is required' ] );
@@ -74,10 +74,10 @@ class Conversation
 
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
-		$assistance = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
 
-		if ( $assistance ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $assistance ] );
+		if ( $data ) {
+			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
 	}
@@ -90,7 +90,6 @@ class Conversation
             // add option to database
             $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
-                'td_helpdesk_organization_slug'         => $data['td_helpdesk_organization'],
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'],
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
