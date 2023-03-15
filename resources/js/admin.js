@@ -1,11 +1,6 @@
 import Swal from 'sweetalert2';
 
-const api_url = 'https://api.thrivedesk.io/v1';
-
 jQuery(document).ready(($) => {
-
-	// remove the disabled attribute from #td-assistants
-
 	function thrivedeskTabManager(
 		tabElement,
 		contentElement,
@@ -130,25 +125,20 @@ jQuery(document).ready(($) => {
 	$('#td_helpdesk_form').submit(function (e) {
 		e.preventDefault();
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
-		let td_helpdesk_organization = $('#td-organizations').val();
 		let td_helpdesk_assistant = $('#td-assistants').val();
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
 		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
 			.map((i, item) => item.value)
 			.get();
-		// let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
 
-		// jquery post with action
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_helpdesk_form',
 				data: {
 					td_helpdesk_api_key: td_helpdesk_api_key,
-					td_helpdesk_organization: td_helpdesk_organization,
 					td_helpdesk_assistant: td_helpdesk_assistant,
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
-					// td_helpdesk_form_style: td_helpdesk_form_style,
 				},
 			})
 			.success(function (response) {
@@ -172,8 +162,6 @@ jQuery(document).ready(($) => {
 		let $target = $(this);
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
-		//
-
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_api_key_verify',
@@ -182,9 +170,7 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				// console.log(response.data);
 				let data = JSON.parse(response).data;
-				console.log(data.message);
 				if(data.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
@@ -199,9 +185,16 @@ jQuery(document).ready(($) => {
 						text: 'Server Error',
 					});
 				} else {
-					$('#td-assistants').prop('disabled', false);
-
 					loadAssistants();
+
+					$target.text('Verified');
+					$target.prop('disabled', true);
+
+					// remove the disabled attribute from the id td-assistants
+					$('#td-assistants').prop('disabled', false);
+					// add hidden class to the id td-api-verification-btn
+					$('#no_api_key_alert').addClass('hidden');
+					$('#td_post_content').removeClass('hidden');
 
 					Swal.fire({
 						icon: 'success',
@@ -211,72 +204,15 @@ jQuery(document).ready(($) => {
 				}
 			})
 			.error(function (error) {
-				console.log('error')
-				console.log(error);
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
 			});
-
-		//
-
-		// get request to verify the API key using fetch
-		// await fetch(`${api_url}/me`, {
-		// 	method: 'GET',
-		// 	headers: {
-		// 		Accept: 'application/json',
-		// 		'Content-Type': 'application/json',
-		// 		Authorization: 'Bearer ' + apiKey,
-		// 	},
-		// })
-		// 	.then((response) => {
-		// 		if (response.ok) {
-		// 			return response.json();
-		// 		} else {
-		// 			throw new Error('Something went wrong');
-		// 		}
-		// 	})
-		// 	.then((data) => {
-		// 		// change the button text to verified then disable the button
-		// 		$target.text('Verified');
-		// 		$target.prop('disabled', true);
-		//
-		// 		// remove the disabled attribute from the id td-assistants
-		// 		$('#td-assistants').prop('disabled', false);
-		//
-		// 		loadAssistants();
-		//
-		// 		Swal.fire({
-		// 			title: 'Great',
-		// 			icon: 'success',
-		// 			text: 'API key verified successfully',
-		// 			showClass: {
-		// 				popup: 'animate__animated animate__fadeInDown',
-		// 			},
-		// 			hideClass: {
-		// 				popup: 'animate__animated animate__fadeOutUp',
-		// 			},
-		// 			timer: 4000,
-		// 		});
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error);
-		// 		Swal.fire({
-		// 			title: 'Error',
-		// 			icon: 'error',
-		// 			text: 'Something went wrong',
-		// 			showClass: {
-		// 				popup: 'animate__animated animate__fadeInDown',
-		// 			},
-		// 			hideClass: {
-		// 				popup: 'animate__animated animate__fadeOutUp',
-		// 			},
-		// 			timer: 4000,
-		// 		});
-		// 	});
 	});
 
-	// load the assistant list on change of organization
 	async function loadAssistants() {
-		let $target = $(this);
-		let orgSlug = $target.val();
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
 		jQuery
@@ -284,11 +220,9 @@ jQuery(document).ready(($) => {
 				action: 'thrivedesk_load_assistants',
 				data: {
 					td_helpdesk_api_key: apiKey,
-					org_slug: orgSlug,
 				},
 			})
 			.success(function (response) {
-				// console.log(response.data);
 				let data = JSON.parse(response).data;
 
 				if(data.message==='Unauthenticated.'){
@@ -316,54 +250,13 @@ jQuery(document).ready(($) => {
 					});
 				}
 			})
-			.error(function (error) {
-				console.log('error')
-				console.log(error);
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
 			});
-
-		// await fetch(`${api_url}/assistants`, {
-		// 	method: 'GET',
-		// 	headers: {
-		// 		Accept: 'application/json',
-		// 		'Content-Type': 'application/json',
-		// 		Authorization: 'Bearer ' + apiKey,
-		// 		'X-Td-Organization-Slug': orgSlug,
-		// 	},
-		// })
-		// 	.then((response) => {
-		// 		if (response.ok) {
-		// 			return response.json();
-		// 		} else {
-		// 			throw new Error('Something went wrong');
-		// 		}
-		// 	})
-		// 	.then((data) => {
-		// 		console.log(data.assistants);
-		// 		// show the assistants list
-		// 		let assistantList = $('#td-assistants');
-		// 		assistantList.html('');
-		// 		assistantList.append('<option value="">Select Assistant</option>');
-		// 		data.assistants.forEach(function (item) {
-		// 			assistantList.append(
-		// 				'<option value="' + item.id + '">' + item.name + '</option>'
-		// 			);
-		// 		});
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error);
-		// 		Swal.fire({
-		// 			title: 'Error',
-		// 			icon: 'error',
-		// 			text: 'Something went wrong',
-		// 			showClass: {
-		// 				popup: 'animate__animated animate__fadeInDown',
-		// 			},
-		// 			hideClass: {
-		// 				popup: 'animate__animated animate__fadeOutUp',
-		// 			},
-		// 			timer: 4000,
-		// 		});
-		// 	});
 	}
 });
 
