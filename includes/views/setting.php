@@ -67,7 +67,7 @@ $plugins = [
 $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
 ?>
 
-<div class="thrivedesk absolute w-full h-full top-0 left-0 flex flex-col bg-slate-50">
+<div class="thrivedesk w-full h-full top-0 left-0 flex flex-col bg-slate-50">
     <!-- header  -->
     <div class="flex items-center py-5 px-9">
         <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>"
