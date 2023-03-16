@@ -1,8 +1,8 @@
 <div class="tab-welcome flex flex-col space-y-4">
     <div class="flex space-x-4">
-        <div class="mr-28">
+        <div class="mr-28 thrivedesk">
         <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
-            <div class="space-y-3 flex flex-col">
+            <div class="space-y-3 flex flex-col tab-link">
                 <div class="td-steps">
                     <span class="active"></span><span></span><span></span>
                 </div>
@@ -14,7 +14,7 @@
                     <span class="flex-none uppercase text-xs text-gray-400 font-semibold">or</span>
                     <span class="bg-gray-300 h-px flex-grow t-2 relative top-2"></span>
                 </div>
-                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" href="#settings">Enter API Key</a>
+                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" data-target="tab-settings" href="#settings">Enter API Key</a>
             </div>
         <?php else: ?>
             <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">

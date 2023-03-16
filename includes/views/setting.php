@@ -67,7 +67,7 @@ $plugins = [
 $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
 ?>
 
-<div class="thrivedesk absolute w-full h-full top-0 left-0 flex flex-col bg-slate-50">
+<div class="thrivedesk w-full h-full top-0 left-0 flex flex-col bg-slate-50">
     <!-- header  -->
     <div class="flex items-center py-5 px-9">
         <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>"
@@ -126,10 +126,10 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
             <?php endif; ?>
 
 
-            <a data-target="tab-resource" href="#resource">
-                <?php thrivedesk_view('icons/resource'); ?>
-                <span><?php _e( 'Resource', 'thrivedesk' ) ?></span>
-            </a>
+            <!--<a data-target="tab-resource" href="#resource">
+                <?php /*thrivedesk_view('icons/resource'); */?>
+                <span><?php /*_e( 'Resource', 'thrivedesk' ) */?></span>
+            </a>-->
         </div>
         <!-- body  -->
         <div class="main-wrap">
@@ -204,7 +204,7 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                     <?php thrivedesk_view( 'pages/welcome' ); ?>
 
                     <!-- include the resource page -->
-                    <?php thrivedesk_view( 'pages/resource' ); ?>
+                   <!-- --><?php /*thrivedesk_view( 'pages/resource' ); */?>
                 </div>
             </div>
         </div>

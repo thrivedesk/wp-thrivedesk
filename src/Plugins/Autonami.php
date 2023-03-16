@@ -7,377 +7,368 @@ use ThriveDesk\Plugin;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
-final class Autonami extends Plugin
-{
-    /** The single instance of this class */
-    private static $instance = null;
+final class Autonami extends Plugin {
+	/** The single instance of this class */
+	private static $instance = null;
 
-    public const TYPE_CREATE_CONVERSATION        = 'create_conversation';
-    public const TYPE_DELETE_CONVERSATION        = 'delete_conversation';
-    public const TYPE_FORCE_DELETE_CONVERSATION  = 'force_delete_conversation';
-    public const TYPE_RESTORE_CONVERSATION       = 'restore_conversation';
-    public const TYPE_UPDATE_CONVERSATION_STATUS = 'update_conversation_status';
+	public const TYPE_CREATE_CONVERSATION        = 'create_conversation';
+	public const TYPE_DELETE_CONVERSATION        = 'delete_conversation';
+	public const TYPE_FORCE_DELETE_CONVERSATION  = 'force_delete_conversation';
+	public const TYPE_RESTORE_CONVERSATION       = 'restore_conversation';
+	public const TYPE_UPDATE_CONVERSATION_STATUS = 'update_conversation_status';
 
-    public const DB_TABLE_TD_CONVERSATION = 'td_conversations';
+	public const DB_TABLE_TD_CONVERSATION = 'td_conversations';
 
-    public function accepted_statuses(): array
-    {
-        return [];
-    }
+	public function accepted_statuses(): array {
+		return [];
+	}
 
-    /**
-     * Check if plugin active or not
-     *
-     * @return boolean
-     * @since 0.9.0
-     */
-    public static function is_plugin_active(): bool
-    {
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-        if (is_plugin_active('wp-marketing-automations-pro/wp-marketing-automations-pro.php')) {
-            return true;
-        }
+	/**
+	 * Check if plugin active or not
+	 *
+	 * @return boolean
+	 * @since 0.9.0
+	 */
+	public static function is_plugin_active(): bool {
+		include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		if (is_plugin_active('wp-marketing-automations-pro/wp-marketing-automations-pro.php')) {
+			return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    /**
-     * Check if customer exist or not
-     *
-     * @return boolean
-     * @since 0.9.0
-     */
-    public function is_customer_exist(): bool
-    {
-        if (!$this->customer_email) return false;
+	/**
+	 * Check if customer exist or not
+	 *
+	 * @return boolean
+	 * @since 0.9.0
+	 */
+	public function is_customer_exist(): bool {
+		if (!$this->customer_email) {
+			return false;
+		}
 
-        /**
-         * Autonami Pro plugin is required
-         */
-        if (!class_exists('BWF_Contacts')) {
-            return false;
-        }
+		/**
+		 * Autonami Pro plugin is required
+		 */
+		if (!class_exists('BWF_Contacts')) {
+			return false;
+		}
 
-        /**
-         * Contact class object
-         */
-        $contact_obj = \BWF_Contacts::get_instance();
+		/**
+		 * Contact class object
+		 */
+		$contact_obj = \BWF_Contacts::get_instance();
 
-        $contact = $contact_obj->get_contact_by('email', $this->customer_email);
+		$contact = $contact_obj->get_contact_by('email', $this->customer_email);
 
-        if (abs($contact->get_id()) === 0) {
-            return false;
-        }
+		if (abs($contact->get_id()) === 0) {
+			return false;
+		}
 
-        $this->customer = $contact;
+		$this->customer = $contact;
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * Main Autonami Instance.
-     *
-     * Ensures that only one instance of Autonami exists in memory at any one
-     * time. Also prevents needing to define globals all over the place.
-     *
-     * @return Autonami|null
-     * @access public
-     * @since  0.9.0
-     */
-    public static function instance(): ?Autonami
-    {
-        if (!isset(self::$instance) && !(self::$instance instanceof Autonami)) {
-            self::$instance = new self();
-        }
+	/**
+	 * Main Autonami Instance.
+	 *
+	 * Ensures that only one instance of Autonami exists in memory at any one
+	 * time. Also prevents needing to define globals all over the place.
+	 *
+	 * @return Autonami|null
+	 * @access public
+	 * @since  0.9.0
+	 */
+	public static function instance(): ?Autonami {
+		if (!isset(self::$instance) && !(self::$instance instanceof Autonami)) {
+			self::$instance = new self();
+		}
 
-        return self::$instance;
-    }
+		return self::$instance;
+	}
 
-    public function connect()
-    {
-        $thrivedesk_options                          = get_option('thrivedesk_options', []);
-        $thrivedesk_options['autonami']              = $thrivedesk_options['autonami'] ?? [];
-        $thrivedesk_options['autonami']['connected'] = true;
+	public function connect() {
+		$thrivedesk_options                          = get_option('thrivedesk_options', []);
+		$thrivedesk_options['autonami']              = $thrivedesk_options['autonami'] ?? [];
+		$thrivedesk_options['autonami']['connected'] = true;
 
-        update_option('thrivedesk_options', $thrivedesk_options);
-    }
+		update_option('thrivedesk_options', $thrivedesk_options);
+	}
 
-    public function disconnect()
-    {
-        $thrivedesk_options             = get_option('thrivedesk_options', []);
-        $thrivedesk_options['autonami'] = $thrivedesk_options['autonami'] ?? [];
-        $thrivedesk_options['autonami'] = [
-            'api_token' => '',
-            'connected' => false,
-        ];
+	public function disconnect() {
+		$thrivedesk_options             = get_option('thrivedesk_options', []);
+		$thrivedesk_options['autonami'] = $thrivedesk_options['autonami'] ?? [];
+		$thrivedesk_options['autonami'] = [
+			'api_token' => '',
+			'connected' => false,
+		];
 
-        update_option('thrivedesk_options', $thrivedesk_options);
-    }
+		update_option('thrivedesk_options', $thrivedesk_options);
+	}
 
-    /**
-     * prepare Autonami customer data
-     *
-     * @return array
-     */
-    public function prepare_data(): array
-    {
-        return $this->get_customer();
-    }
+	/**
+	 * prepare Autonami customer data
+	 *
+	 * @return array
+	 */
+	public function prepare_data(): array {
+		return $this->get_customer();
+	}
 
-    /**
-     * Get the customer orders
-     *
-     * @return array
-     */
-    public function get_orders(): array
-    {
-        return [];
-    }
+	/**
+	 * Get the customer orders
+	 *
+	 * @return array
+	 */
+	public function get_orders(): array {
+		return [];
+	}
 
-    public function get_plugin_data(string $key = '')
-    {
-        $thrivedesk_options = thrivedesk_options();
-        $options            = $thrivedesk_options['autonami'] ?? [];
+	public function get_plugin_data(string $key = '') {
+		$thrivedesk_options = thrivedesk_options();
+		$options            = $thrivedesk_options['autonami'] ?? [];
 
-        return $key ? ($options[$key] ?? '') : $options;
-    }
+		return $key ? ($options[$key] ?? '') : $options;
+	}
 
-    /**
-     * get customer tags
-     *
-     * @param $crm_contact
-     *
-     * @return array
-     *
-     * @since 0.9.0
-     */
-    public function get_customer_tags($crm_contact): array
-    {
-        $tags = [];
+	/**
+	 * get customer tags
+	 *
+	 * @param $crm_contact
+	 *
+	 * @return array
+	 *
+	 * @since 0.9.0
+	 */
+	public function get_customer_tags($crm_contact): array {
+		$tags = [];
 
-        if (!class_exists('BWFCRM_Lists')) {
-            return $tags;
-        }
+		if (!class_exists('BWFCRM_Lists')) {
+			return $tags;
+		}
 
-        $tag_object = \BWFCRM_Tag::get_tags($crm_contact->get_tags());
+		$tag_object = \BWFCRM_Tag::get_tags($crm_contact->get_tags());
 
-        foreach ($tag_object as $tag) {
-            array_push($tags, $tag['name']);
-        }
-        return $tags;
-    }
+		foreach ($tag_object as $tag) {
+			array_push($tags, $tag['name']);
+		}
 
-    /**
-     * get customer lists
-     *
-     * @param $crm_contact
-     *
-     * @return array
-     * @since 0.9.0
-     */
-    public function get_customer_lists($crm_contact): array
-    {
-        $lists = [];
+		return $tags;
+	}
 
-        if (!class_exists('BWFCRM_Lists')) {
-            return $lists;
-        }
+	/**
+	 * get customer lists
+	 *
+	 * @param $crm_contact
+	 *
+	 * @return array
+	 * @since 0.9.0
+	 */
+	public function get_customer_lists($crm_contact): array {
+		$lists = [];
 
-        $list_object = \BWFCRM_Lists::get_lists($crm_contact->get_lists());
+		if (!class_exists('BWFCRM_Lists')) {
+			return $lists;
+		}
 
-        foreach ($list_object as $list) {
-            array_push($lists, $list['name']);
-        }
-        return $lists;
-    }
+		$list_object = \BWFCRM_Lists::get_lists($crm_contact->get_lists());
 
-    /**
-     * Get the customer data
-     *
-     * @return array
-     * @since 0.9.0
-     */
-    public function get_customer(): array
-    {
-        $tags           = [];
-        $lists          = [];
-        $date_of_birth  = '';
-        $address_line_1 = '';
-        $address_line_2 = '';
+		foreach ($list_object as $list) {
+			array_push($lists, $list['name']);
+		}
 
-        if (class_exists('BWFCRM_Contact')) {
-            /** Passing Contact object as argument */
-            $crm_contact = new \BWFCRM_Contact($this->customer);
+		return $lists;
+	}
 
-            $crm_contact->get_dob();
+	/**
+	 * Get the customer data
+	 *
+	 * @return array
+	 * @since 0.9.0
+	 */
+	public function get_customer(): array {
+		$tags           = [];
+		$lists          = [];
+		$date_of_birth  = '';
+		$address_line_1 = '';
+		$address_line_2 = '';
 
-            $tags = $this->get_customer_tags($crm_contact);
+		if (class_exists('BWFCRM_Contact')) {
+			/** Passing Contact object as argument */
+			$crm_contact = new \BWFCRM_Contact($this->customer);
 
-            $lists = $this->get_customer_lists($crm_contact);
+			$crm_contact->get_dob();
 
-            $date_of_birth = $crm_contact->get_dob() ?? '';
+			$tags = $this->get_customer_tags($crm_contact);
 
-            $address_line_1 = $crm_contact->get_address_1() ?? '';
+			$lists = $this->get_customer_lists($crm_contact);
 
-            $address_line_2 = $crm_contact->get_address_2() ?? '';
-        }
+			$date_of_birth = $crm_contact->get_dob() ?? '';
 
-        return [
-            'id'             => abs($this->customer->get_id()) ?? 0,
-            'wpid'           => $this->customer->get_wpid(),
-            'email'          => $this->customer->get_email() ?? '',
-            'first_name'     => $this->customer->get_f_name() ?? '',
-            'last_name'      => $this->customer->get_l_name() ?? '',
-            'phone'          => $this->customer->get_contact_no() ?? '',
-            'address_line_1' => $address_line_1,
-            'address_line_2' => $address_line_2,
-            'country'        => $this->customer->get_country() ?? '',
-            'state'          => $this->customer->get_state() ?? '',
-            'timezone'       => $this->customer->get_timezone() ?? '',
-            'created_at'     => !empty($this->customer->get_creation_date()) ? get_date_from_gmt($this->customer->get_creation_date()) : '',
-            'last_modified'  => !empty($this->customer->get_last_modified()) ? get_date_from_gmt($this->customer->get_last_modified()) : '',
-            'source'         => $this->customer->get_source(),
-            'contact_type'   => $this->customer->get_type(),
-            'date_of_birth'  => $date_of_birth ? date('d M Y', strtotime($date_of_birth)) : '',
-            'status'         => $this->customer->get_status(),
-            'lists'          => $lists,
-            'tags'           => $tags,
-        ];
-    }
+			$address_line_1 = $crm_contact->get_address_1() ?? '';
 
-    /**
-     * create new contact
-     *
-     * @param string $contactName
-     *
-     * @return bool
-     * @since 0.9.0
-     */
-    public function create_new_contact(string $contactName): bool
-    {
-        if (!$this->customer_email) return false;
+			$address_line_2 = $crm_contact->get_address_2() ?? '';
+		}
 
-        /** Autonami Pro plugin is required */
-        if (!class_exists('BWFCRM_Contact')) {
-            return false;
-        }
+		return [
+			'id'             => abs($this->customer->get_id()) ?? 0,
+			'wpid'           => $this->customer->get_wpid(),
+			'email'          => $this->customer->get_email() ?? '',
+			'first_name'     => $this->customer->get_f_name() ?? '',
+			'last_name'      => $this->customer->get_l_name() ?? '',
+			'phone'          => $this->customer->get_contact_no() ?? '',
+			'address_line_1' => $address_line_1,
+			'address_line_2' => $address_line_2,
+			'country'        => $this->customer->get_country() ?? '',
+			'state'          => $this->customer->get_state() ?? '',
+			'timezone'       => $this->customer->get_timezone() ?? '',
+			'created_at'     => !empty($this->customer->get_creation_date()) ? get_date_from_gmt($this->customer->get_creation_date()) : '',
+			'last_modified'  => !empty($this->customer->get_last_modified()) ? get_date_from_gmt($this->customer->get_last_modified()) : '',
+			'source'         => $this->customer->get_source(),
+			'contact_type'   => $this->customer->get_type(),
+			'date_of_birth'  => $date_of_birth ? date('d M Y', strtotime($date_of_birth)) : '',
+			'status'         => $this->customer->get_status(),
+			'lists'          => $lists,
+			'tags'           => $tags,
+		];
+	}
 
-        /** Contact class object */
-        $contact_obj = \BWF_Contacts::get_instance();
+	/**
+	 * create new contact
+	 *
+	 * @param  string  $contactName
+	 *
+	 * @return bool
+	 * @since 0.9.0
+	 */
+	public function create_new_contact(string $contactName): bool {
+		if (!$this->customer_email) {
+			return false;
+		}
 
-        $contact = $contact_obj->get_contact_by('email', $this->customer_email);
+		/** Autonami Pro plugin is required */
+		if (!class_exists('BWFCRM_Contact')) {
+			return false;
+		}
 
-        if (abs($contact->get_id())) {
-            return false;
-        }
+		/** Contact class object */
+		$contact_obj = \BWF_Contacts::get_instance();
 
-        !empty($this->customer_email) && $contact->set_email($this->customer_email);
+		$contact = $contact_obj->get_contact_by('email', $this->customer_email);
 
-        $first_name = '';
-        $last_name  = '';
+		if (abs($contact->get_id())) {
+			return false;
+		}
 
-        $name_array = explode(" ", trim($contactName));
-        if (sizeof($name_array) < 2) {
-            $first_name = trim($contactName);
-        } else {
-            $last_name  = array_pop($name_array);
-            $first_name = implode(" ", $name_array);
-        }
+		!empty($this->customer_email) && $contact->set_email($this->customer_email);
 
-        !empty($first_name) && $contact->set_f_name($first_name);
-        !empty($last_name) && $contact->set_f_name($last_name);
+		$first_name = '';
+		$last_name  = '';
 
-        $contact->save();
+		$name_array = explode(" ", trim($contactName));
+		if (sizeof($name_array) < 2) {
+			$first_name = trim($contactName);
+		} else {
+			$last_name  = array_pop($name_array);
+			$first_name = implode(" ", $name_array);
+		}
 
-        return false;
-    }
+		!empty($first_name) && $contact->set_f_name($first_name);
+		!empty($last_name) && $contact->set_f_name($last_name);
 
-    /**
-     * Sync ThriveDesk conversation with Autonami
-     *
-     * @param string $syncType
-     * @param array  $extra
-     *
-     * @since 0.9.0
-     */
-    public function sync_conversation_with_autonami(string $syncType, array $extra = []): void
-    {
-        global $wpdb;
-        $table_name = $wpdb->prefix . self::DB_TABLE_TD_CONVERSATION;
+		$contact->save();
 
-        switch ($syncType) {
-            case self::TYPE_CREATE_CONVERSATION:
-                $extra['conversation'] && (
-                $wpdb->replace($table_name, $extra['conversation'])
-                );
+		return false;
+	}
 
-                $extra['create_new_contact'] && (
-                $this->create_new_contact($extra['contact_name'] ?? '')
-                );
-                break;
-            case self::TYPE_DELETE_CONVERSATION:
-                if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
-                    foreach ($extra['conversation_ids'] as $conversationId) {
-                        $wpdb->update(
-                            $table_name,
-                            array(
-                                'deleted_at' => current_time('mysql'),
-                            ),
-                            array(
-                                'id'       => $conversationId,
-                                'inbox_id' => $extra['inbox_id'] ?? '',
-                            )
-                        );
-                    }
-                }
-                break;
-            case self::TYPE_FORCE_DELETE_CONVERSATION:
-                if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
-                    foreach ($extra['conversation_ids'] as $conversationId) {
-                        $wpdb->delete(
-                            $table_name,
-                            array(
-                                'id'       => $conversationId,
-                                'inbox_id' => $extra['inbox_id'] ?? '',
-                            )
-                        );
-                    }
-                }
-                break;
-            case self::TYPE_RESTORE_CONVERSATION:
-                if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
-                    foreach ($extra['conversation_ids'] as $conversationId) {
-                        $wpdb->update(
-                            $table_name,
-                            array(
-                                'deleted_at' => null,
-                            ),
-                            array(
-                                'id'       => $conversationId,
-                                'inbox_id' => $extra['inbox_id'] ?? '',
-                            )
-                        );
-                    }
-                }
-                break;
-            case self::TYPE_UPDATE_CONVERSATION_STATUS:
-                $extra['status'] && $extra['conversation_id'] && (
-                $wpdb->update(
-                    $table_name,
-                    array(
-                        'status'     => $extra['status'],
-                        'updated_at' => current_time('mysql'),
-                    ),
-                    array(
-                        'id'       => $extra['conversation_id'],
-                        'inbox_id' => $extra['inbox_id'],
-                    )
-                )
-                );
-                break;
-        }
-    }
+	/**
+	 * Sync ThriveDesk conversation with Autonami
+	 *
+	 * @param  string  $syncType
+	 * @param  array  $extra
+	 *
+	 * @since 0.9.0
+	 */
+	public function sync_conversation_with_autonami(string $syncType, array $extra = []): void {
+		global $wpdb;
+		$table_name = $wpdb->prefix . self::DB_TABLE_TD_CONVERSATION;
+
+		switch ($syncType) {
+			case self::TYPE_CREATE_CONVERSATION:
+				$extra['conversation'] && (
+				$wpdb->replace($table_name, $extra['conversation'])
+				);
+
+				$extra['create_new_contact'] && (
+				$this->create_new_contact($extra['contact_name'] ?? '')
+				);
+				break;
+			case self::TYPE_DELETE_CONVERSATION:
+				if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
+					foreach ($extra['conversation_ids'] as $conversationId) {
+						$wpdb->update(
+							$table_name,
+							[
+								'deleted_at' => current_time('mysql'),
+							],
+							[
+								'id'       => $conversationId,
+								'inbox_id' => $extra['inbox_id'] ?? '',
+							]
+						);
+					}
+				}
+				break;
+			case self::TYPE_FORCE_DELETE_CONVERSATION:
+				if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
+					foreach ($extra['conversation_ids'] as $conversationId) {
+						$wpdb->delete(
+							$table_name,
+							[
+								'id'       => $conversationId,
+								'inbox_id' => $extra['inbox_id'] ?? '',
+							]
+						);
+					}
+				}
+				break;
+			case self::TYPE_RESTORE_CONVERSATION:
+				if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
+					foreach ($extra['conversation_ids'] as $conversationId) {
+						$wpdb->update(
+							$table_name,
+							[
+								'deleted_at' => null,
+							],
+							[
+								'id'       => $conversationId,
+								'inbox_id' => $extra['inbox_id'] ?? '',
+							]
+						);
+					}
+				}
+				break;
+			case self::TYPE_UPDATE_CONVERSATION_STATUS:
+				$extra['status'] && $extra['conversation_id'] && (
+				$wpdb->update(
+					$table_name,
+					[
+						'status'     => $extra['status'],
+						'updated_at' => current_time('mysql'),
+					],
+					[
+						'id'       => $extra['conversation_id'],
+						'inbox_id' => $extra['inbox_id'],
+					]
+				)
+				);
+				break;
+		}
+	}
 }

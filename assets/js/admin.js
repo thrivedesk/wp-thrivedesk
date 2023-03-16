@@ -16,7 +16,6 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var api_url = 'https://api.thrivedesk.io/v1';
 jQuery(document).ready(function ($) {
   function thrivedeskTabManager(tabElement, contentElement) {
     var currentTab = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -109,24 +108,18 @@ jQuery(document).ready(function ($) {
   $('#td_helpdesk_form').submit(function (e) {
     e.preventDefault();
     var td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
-    var td_helpdesk_organization = $('#td-organizations').val();
     var td_helpdesk_assistant = $('#td-assistants').val();
     var td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
     var td_helpdesk_post_types = $('.td_helpdesk_post_types:checked').map(function (i, item) {
       return item.value;
     }).get();
-    // let td_helpdesk_form_style = $('input[name="td_helpdesk_form_style"]:checked').val();
-
-    // jquery post with action
     jQuery.post(thrivedesk.ajax_url, {
       action: 'thrivedesk_helpdesk_form',
       data: {
         td_helpdesk_api_key: td_helpdesk_api_key,
-        td_helpdesk_organization: td_helpdesk_organization,
         td_helpdesk_assistant: td_helpdesk_assistant,
         td_helpdesk_page_id: td_helpdesk_page_id,
         td_helpdesk_post_types: td_helpdesk_post_types
-        // td_helpdesk_form_style: td_helpdesk_form_style,
       }
     }).success(function (response) {
       var icon;
@@ -150,54 +143,50 @@ jQuery(document).ready(function ($) {
           case 0:
             e.preventDefault();
             $target = $(this);
-            apiKey = $('#td_helpdesk_api_key').val().trim(); // get request to verify the API key using fetch
-            _context.next = 5;
-            return fetch("".concat(api_url, "/me"), {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + apiKey
+            apiKey = $('#td_helpdesk_api_key').val().trim();
+            jQuery.post(thrivedesk.ajax_url, {
+              action: 'thrivedesk_api_key_verify',
+              data: {
+                td_helpdesk_api_key: apiKey
               }
-            }).then(function (response) {
-              if (response.ok) {
-                return response.json();
+            }).success(function (response) {
+              var data = JSON.parse(response).data;
+              if (data.message === 'Unauthenticated.') {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Invalid API Key'
+                });
+              } else if (data.message === 'Server Error') {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Server Error'
+                });
               } else {
-                throw new Error('Something went wrong');
+                loadAssistants();
+                $target.text('Verified');
+                $target.prop('disabled', true);
+
+                // remove the disabled attribute from the id td-assistants
+                $('#td-assistants').prop('disabled', false);
+                // add hidden class to the id td-api-verification-btn
+                $('#no_api_key_alert').addClass('hidden');
+                $('#td_post_content').removeClass('hidden');
+                sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                  icon: 'success',
+                  title: 'Success',
+                  text: 'API Key Verified'
+                });
               }
-            }).then(function (data) {
-              // change the button text to verified then disable the button
-              $target.text('Verified');
-              $target.prop('disabled', true);
-              loadAssistants();
+            }).error(function (error) {
               sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-                title: 'Great',
-                icon: 'success',
-                text: 'API key verified successfully',
-                showClass: {
-                  popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                  popup: 'animate__animated animate__fadeOutUp'
-                },
-                timer: 4000
-              });
-            })["catch"](function (error) {
-              console.log(error);
-              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-                title: 'Error',
                 icon: 'error',
-                text: 'Something went wrong',
-                showClass: {
-                  popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                  popup: 'animate__animated animate__fadeOutUp'
-                },
-                timer: 4000
+                title: 'Error',
+                text: 'Something went wrong'
               });
             });
-          case 5:
+          case 4:
           case "end":
             return _context.stop();
         }
@@ -207,64 +196,55 @@ jQuery(document).ready(function ($) {
       return _ref.apply(this, arguments);
     };
   }());
-
-  // load the assistant list on change of organization
   function loadAssistants() {
     return _loadAssistants.apply(this, arguments);
   }
   function _loadAssistants() {
     _loadAssistants = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
-      var $target, orgSlug, apiKey;
+      var apiKey;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
-            $target = $(this);
-            orgSlug = $target.val();
             apiKey = $('#td_helpdesk_api_key').val().trim();
-            _context2.next = 5;
-            return fetch("".concat(api_url, "/assistants"), {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + apiKey,
-                'X-Td-Organization-Slug': orgSlug
+            jQuery.post(thrivedesk.ajax_url, {
+              action: 'thrivedesk_load_assistants',
+              data: {
+                td_helpdesk_api_key: apiKey
               }
-            }).then(function (response) {
-              if (response.ok) {
-                return response.json();
+            }).success(function (response) {
+              var data = JSON.parse(response).data;
+              if (data.message === 'Unauthenticated.') {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Invalid API Key'
+                });
+              } else if (data.message === 'Server Error') {
+                sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Server Error'
+                });
               } else {
-                throw new Error('Something went wrong');
+                var assistantList = $('#td-assistants');
+                assistantList.html('');
+                assistantList.append('<option value="">Select Assistant</option>');
+                data.assistants.forEach(function (item) {
+                  assistantList.append('<option value="' + item.id + '">' + item.name + '</option>');
+                });
               }
-            }).then(function (data) {
-              console.log(data.assistants);
-              // show the assistants list
-              var assistantList = $('#td-assistants');
-              assistantList.html('');
-              assistantList.append('<option value="">Select Assistant</option>');
-              data.assistants.forEach(function (item) {
-                assistantList.append('<option value="' + item.id + '">' + item.name + '</option>');
-              });
-            })["catch"](function (error) {
-              console.log(error);
+            }).error(function () {
               sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-                title: 'Error',
                 icon: 'error',
-                text: 'Something went wrong',
-                showClass: {
-                  popup: 'animate__animated animate__fadeInDown'
-                },
-                hideClass: {
-                  popup: 'animate__animated animate__fadeOutUp'
-                },
-                timer: 4000
+                title: 'Error',
+                text: 'Something went wrong'
               });
             });
-          case 5:
+          case 2:
           case "end":
             return _context2.stop();
         }
-      }, _callee2, this);
+      }, _callee2);
     }));
     return _loadAssistants.apply(this, arguments);
   }
