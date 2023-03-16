@@ -16,6 +16,7 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+var api_url = 'https://api.thrivedesk.io/v1';
 jQuery(document).ready(function ($) {
   function thrivedeskTabManager(tabElement, contentElement) {
     var currentTab = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -151,7 +152,7 @@ jQuery(document).ready(function ($) {
             $target = $(this);
             apiKey = $('#td_helpdesk_api_key').val().trim(); // get request to verify the API key using fetch
             _context.next = 5;
-            return fetch('https://api.thrivedesk.xyz/v1/me', {
+            return fetch("".concat(api_url, "/me"), {
               method: 'GET',
               headers: {
                 Accept: 'application/json',
@@ -221,7 +222,7 @@ jQuery(document).ready(function ($) {
             orgSlug = $target.val();
             apiKey = $('#td_helpdesk_api_key').val().trim();
             _context2.next = 5;
-            return fetch('https://api.thrivedesk.xyz/v1/assistants', {
+            return fetch("".concat(api_url, "/assistants"), {
               method: 'GET',
               headers: {
                 Accept: 'application/json',

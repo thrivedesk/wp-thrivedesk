@@ -48,8 +48,8 @@ $plugins = [
 	],
 	[
 		'namespace'   => 'autonami',
-		'name'        => __( 'Autonami', 'thrivedesk' ),
-		'description' => __( 'Share customer data with ThriveDesk.' ),
+		'name'        => __( 'FunnelKit Automations', 'thrivedesk' ),
+		'description' => __( 'Broadcast and automated email campaigns without leaving WordPress.' ),
 		'image'       => 'autonami.png',
 		'category'    => 'CRM',
 		'installed'   => $autonami->is_plugin_active(),
