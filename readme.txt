@@ -1,19 +1,19 @@
-=== ThriveDesk - Live Chat, Helpdesk & Community for WordPress ===
+=== ThriveDesk - Live Chat, Help Desk & Knolwedge Base for WordPress ===
 Contributors: thrivedesk
-Tags: livechat, chat, help desk, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, woocommerce, thrivedesk, zendesk, mailchimp
+Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 6.1.1
-Stable Tag: 0.10.2
+Stable Tag: 1.0.0
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
-Add ThriveDesk Live Chat to your WordPress to answer customers' questions, engage website visitors, generate leads, and increase sales. Setup knowledge base, community forum, and helpdesk in less than a minute.
+Elevate your WordPress support game with ThriveDesk Live Chat. Lightning-fast responses, engaging visitor interactions, and a full knowledge base in less than a minute.
 
 == Description ==
 
 ### Live Chat Plugin For WordPress ###
 
-[ThriveDesk](https://www.thrivedesk.com) ThriveDesk is arguably the best live chat software for WordPress. It’s simple, straightforward, and easy to use. This light and fast live chat assistant that will work to attract customers without slowing down your website. The live chat plugin encourages conversations and you can interact with your visitors one on one. You can also send automated messages to visitors and see the analytics of your chats.
+[ThriveDesk](https://www.thrivedesk.com) is the ultimate live chat software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing customer support.
 
 We designed ThriveDesk Live Chat to protect users’ privacy and align with the GDPR rules.
 
@@ -27,17 +27,13 @@ Avoid slow page loading times and lag in message delivery and reception.
 
 Check customer information, page browsing history, previous purchase history right from the agent dashboard. Manage refunds and serve customers on the go.
 
-Now, ThriveDesk allows customers to communicate with support staff in their native language, making it an ideal multilingual customer service solution.
-
-Grow and nurture your own community with ThriveDesk community features.
-
-Explore our free plan if you have a tight budget or want to explore more before committing to a professional plan.
+Now, ThriveDesk allows customers to communicate with support staff in their native language, making it an ideal **multilingual customer service solution**.
 
 ### Introducing ChatGPT Integration within Helpdesk System ###
 
-Now Thrivedesk is more powerful with ChatGPT integration directly with our helpdesk system. Now you can provide faster and more accurate responses to customer inquiries.
+Now ThriveDesk is more powerful with ChatGPT integration directly with our helpdesk system. Now you can provide faster and more accurate responses to customer inquiries.
 
-ChatGPT can assist support agents by providing suggested responses or templates for common inquiries. It can enhance the quality of support ticket responses to identify areas for improvement.
+**ChatGPT** can assist support agents by providing suggested responses or templates for common inquiries. It can enhance the quality of support ticket responses to identify areas for improvement.
 
 ### How can live chat increase your sales and conversion? ###
 
@@ -47,16 +43,7 @@ With ThriveDesk live chat plugin provides one-on-one conversations with your cus
 
 This will in turn increase your conversion rate and search ranking by reducing the number of people who are unhappy with their experience on your website.
 
-https://youtu.be/ODV2Hi2MabI
-
-### What do people have to say about ThriveDesk Live Chat? ###
-
-“They really stand behind their product and constantly pushing it forward. Its getting better every day! I can now have all my customers tickets in one place – thats peace of mind.”
-
-Marius Tyranowski, CMO of Angaben gemäß
-
-
-= 💬 Live Chat Features =
+### 💬 Live Chat Features ###
 
 - Real Time visitor tracking
 - Chatbots
@@ -72,13 +59,10 @@ Marius Tyranowski, CMO of Angaben gemäß
 - Seamless integration with other CRM
 - And much more...
 
-= 💬 Our Live Chat Apps Available On =
+Available on:
 
-We have developed our Live chat app for mobile and developing desktop software that is designed to work on both platforms. Our app is able to provide users with a better customer service experience because it allows them to connect with customers and agents at any time, from anywhere.
-
-- Web App
-- Android App
 - IOS App
+- Android App
 
 ### Helpdesk & Support Ticket Plugin for WordPress ###
 
@@ -86,15 +70,15 @@ Manage all customer conversations through Thrivedesk's Shared Inbox (aka Ticket 
 
 ThriveDesk makes it easy for your team to manage emails through a single shared inbox.
 
-= 🌟 Helpdesk Features =
+####🌟 Helpdesk Features ####
 
 - Shared Inbox
-- Saved replies
-- Tagging
+- Workflow automatio
 - Team collaboration
 - Merge conversation
 - Assignments
 - Collision Detection
+- Tagging
 - Canned replies
 - Spam filtering
 - Auto-responders
@@ -108,7 +92,6 @@ ThriveDesk makes it easy for your team to manage emails through a single shared 
 - Previous conversations
 - Satisfaction survey
 - Reporting
-- WooCommerce, Easy Digital Downloads, Envato, and more integrations
 - And much more...
 
 ### 🤔 Why Shared Inbox? ###
@@ -128,7 +111,7 @@ Which means all customer interactions are in one place, making it easier for age
 ✅ Better integration
 ✅ Seamless customer experience
 
-### Create Stunning Knowledge Base To Scale Customer Support(Coming soon) ###
+### CREATE STUNNING KNOWLEDGE BASE TO SCALE CUSTOMER SUPPORT ###
 
 Reduce ticket inflow, avoid repetitive incident logs, facilitate self-service on the portal, and improve resolution times with a repository of articles that can help the customers find answers to their problems.
 
@@ -141,6 +124,8 @@ If you sell your products through WooCommerce, there is no better way to handle 
 You can check the total number of orders, order details, shipping information right inside the ThriveDesk conversation page.
 
 ### SureCart ###
+
+https://youtu.be/fHQ9MIfDMMs
 
 SureCart is an e-commerce platform that allows businesses to easily sell their products online. By integrating SureCart with ThriveDesk we give SureCart business owners the ability to streamline their customer service and support processes by managing their orders and customer information all in one place.
 
@@ -166,15 +151,12 @@ Now, you have all the necessary customer information readily available without s
 - SureCart
 - Freemius
 - Custom Apps
-- Stripe (coming soon)
-- Paddle (coming soon)
 
-
-### Advanced reporting ###
+### 📊 Advanced reporting ###
 
 ThriveDesk is designed to be a simple-to-use, powerful reporting tool. Thrivedesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
 
-= 📈 Reporting Features =
+#### 📈 Reporting Features ####
 
 - Conversations reporting
 - Company reporting
@@ -184,6 +166,7 @@ ThriveDesk is designed to be a simple-to-use, powerful reporting tool. Thrivedes
 - Much more...
 
 == Installation ==
+
 The easiest way to install ThriveDesk is to search for it via your site's Dashboard.
 
 #### Step-By-Step Instructions ####
@@ -200,17 +183,20 @@ ThriveDesk is perfect for Bootstrapped SaaS startups, eCommerce businesses, Word
 
 = Do I need to have coding skills to use ThriveDesk? =
 
-Absolutely not. ThriveDesk is the most user-friendly live chat and helpdesk software on the market.
+Absolutely not. ThriveDesk provide the most user-friendly live chat and helpdesk plugin for WordPress.
 
 = How much does ThriveDesk cost? =
 
-ThriveDesk is free for 14 days, and we don't need your card details. Later on, you can extend your trial period and unlock new features by upgrading to premium plans.
+ThriveDesk is free for 7 days, and we don't need your card details. Later on, you can extend your trial period and unlock new features by upgrading to premium plans.
 
 = What is Shared Inbox? =
+
+Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
 
 A shared inbox is a central location where multiple agents can access and respond to customer inquiries, requests, and support tickets. It is a collaborative tool that allows teams to manage customer support requests and interact with customers in real-time.
 
 In a shared inbox, all customer conversations are visible to every agent, so each team member can see what has been discussed and what actions have been taken. This helps ensure that all customer inquiries are handled promptly and efficiently, without any duplication of effort or miscommunication.
+
 
 = Do I need to install any additional tools to use the live chat widget? =
 
@@ -237,8 +223,8 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
-= 0.10.2 =
-- Introduced WordPress portal
+= 1.0.0 =
+- NEW WordPress portal
 - Real-time knowledge base search added
 - Improved UI with new features and enhancements
 

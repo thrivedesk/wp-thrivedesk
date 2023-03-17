@@ -2,10 +2,10 @@
 
 /**
  * Plugin Name:         ThriveDesk
- * Description:         Live Chat, Helpdesk & Community plugin for WordPress
+ * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Tags:                live chat, free live chat, community, helpdesk, thrivedesk
- * Version:             0.10.2
+ * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
+ * Version:             1.0.0
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -46,7 +46,7 @@ final class ThriveDesk
 	 *
 	 * @var string
 	 */
-	public $version = '0.10.2';
+	public $version = '1.0.0';
 
 	/**
 	 * The single instance of this class
