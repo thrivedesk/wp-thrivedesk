@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '7e8875590b8a788960c5b200740c60199bc5749f',
+    'reference' => '23f544a7f9a34a1e77b6f8ed9dbbc51f2033480b',
     'name' => 'thrivedesk/wp-plugin',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '7e8875590b8a788960c5b200740c60199bc5749f',
+      'reference' => '23f544a7f9a34a1e77b6f8ed9dbbc51f2033480b',
     ),
   ),
 );
