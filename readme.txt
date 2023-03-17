@@ -1,4 +1,4 @@
-=== ThriveDesk - Live Chat, Help Desk & Knolwedge Base for WordPress ===
+=== ThriveDesk - Live Chat, Help Desk & Knowledge Base for WordPress ===
 Contributors: thrivedesk
 Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
@@ -73,7 +73,7 @@ ThriveDesk makes it easy for your team to manage emails through a single shared 
 ####🌟 Helpdesk Features ####
 
 - Shared Inbox
-- Workflow automatio
+- Workflow automation
 - Team collaboration
 - Merge conversation
 - Assignments
