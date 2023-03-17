@@ -1,4 +1,36 @@
+import Swal from 'sweetalert2';
+
 jQuery(document).ready(($) => {
+	function thrivedeskTabManager(
+		tabElement,
+		contentElement,
+		currentTab = null,
+		innerTab = false
+	) {
+		tabElement.forEach(function (linkElement) {
+			$(linkElement).removeClass('active');
+		});
+		contentElement.forEach(function (contentElement) {
+			$(contentElement).removeClass('block').addClass('hidden');
+		});
+
+		const selectedTab = currentTab.getAttribute('data-target');
+
+		$(currentTab).addClass('active');
+
+		if (innerTab) {
+			document
+				.getElementById('inner-tab-content')
+				.getElementsByClassName(selectedTab)[0]
+				.classList.remove('hidden');
+		} else {
+			document
+				.getElementById('tab-content')
+				.getElementsByClassName(selectedTab)[0]
+				.classList.remove('hidden');
+		}
+	}
+
 	$('.thrivedesk button.connect').on('click', function (e) {
 		e.preventDefault();
 
@@ -47,32 +79,184 @@ jQuery(document).ready(($) => {
 			);
 		}
 	});
+
 	/**
 	 * admin tab
 	 */
-	$('.wrap.thrivedesk .admin-tabs a').on('click', function (e) {
-		e.preventDefault();
+	$('.thrivedesk .tab-link a').on('click', function (e) {
+		// e.preventDefault();
 
-		var tabElement = document.querySelectorAll(
-			'.wrap.thrivedesk .admin-tabs a'
-		);
-		var contentElement = document.querySelectorAll(
-			'.wrap.thrivedesk #tab-content>div'
+		const tabElement = document.querySelectorAll('.thrivedesk .tab-link a');
+		const contentElement = document.querySelectorAll(
+			'.thrivedesk #tab-content>div'
 		);
 
-		tabElement.forEach(function (linkElement) {
-			$(linkElement).removeClass('border-blue-600 active border-b-2');
-		});
-		contentElement.forEach(function (contentElement) {
-			$(contentElement).removeClass('block').addClass('hidden');
-		});
-
-		var selectedTab = e.target.getAttribute('data-target');
-
-		$(e.target).addClass('border-blue-600 active border-b-2');
-		document
-			.getElementById('tab-content')
-			.getElementsByClassName(selectedTab)[0]
-			.classList.remove('hidden');
+		thrivedeskTabManager(tabElement, contentElement, this);
 	});
+
+	/**
+	 * Inner tab content
+	 */
+	$('.thrivedesk .inner-tab-link a').on('click', function (e) {
+		const innerTabElement = document.querySelectorAll(
+			'.thrivedesk .inner-tab-link a'
+		);
+		const contentElement = document.querySelectorAll(
+			'.thrivedesk #inner-tab-content>div'
+		);
+
+		thrivedeskTabManager(innerTabElement, contentElement, this, true);
+	});
+
+	// get the fragment from url
+	let fragment = window.location.hash;
+	if (fragment) {
+		// remove the # from the fragment
+		fragment = fragment.substr(1);
+		// get the element with the id of the fragment
+		const element = document.querySelector(`a[href="#${fragment}"]`);
+		if (element) {
+			// if the element exists, click it
+			element.click();
+		}
+	}
+
+	// helpdesk form
+	$('#td_helpdesk_form').submit(function (e) {
+		e.preventDefault();
+		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
+		let td_helpdesk_assistant = $('#td-assistants').val();
+		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
+		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
+			.map((i, item) => item.value)
+			.get();
+
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_helpdesk_form',
+				data: {
+					td_helpdesk_api_key: td_helpdesk_api_key,
+					td_helpdesk_assistant: td_helpdesk_assistant,
+					td_helpdesk_page_id: td_helpdesk_page_id,
+					td_helpdesk_post_types: td_helpdesk_post_types,
+				},
+			})
+			.success(function (response) {
+				let icon;
+				if (response) {
+					response.status === 'success' ? (icon = 'success') : (icon = 'error');
+					Swal.fire({
+						icon: icon,
+						title:
+							response.status.charAt(0).toUpperCase() +
+							`${response.status}`.slice(1),
+						text: response.message,
+					});
+				}
+			});
+	});
+
+	// verify the API key
+	$('#td-api-verification-btn').on('click', async function (e) {
+		e.preventDefault();
+		let $target = $(this);
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
+
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_api_key_verify',
+				data: {
+					td_helpdesk_api_key: apiKey,
+				},
+			})
+			.success(function (response) {
+				let data = JSON.parse(response).data;
+				if(data.message==='Unauthenticated.'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Invalid API Key',
+					});
+				}
+				else if (data.message==='Server Error'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Server Error',
+					});
+				} else {
+					loadAssistants();
+
+					$target.text('Verified');
+					$target.prop('disabled', true);
+
+					// remove the disabled attribute from the id td-assistants
+					$('#td-assistants').prop('disabled', false);
+					// add hidden class to the id td-api-verification-btn
+					$('#no_api_key_alert').addClass('hidden');
+					$('#td_post_content').removeClass('hidden');
+
+					Swal.fire({
+						icon: 'success',
+						title: 'Success',
+						text: 'API Key Verified',
+					});
+				}
+			})
+			.error(function (error) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	});
+
+	async function loadAssistants() {
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
+
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_load_assistants',
+				data: {
+					td_helpdesk_api_key: apiKey,
+				},
+			})
+			.success(function (response) {
+				let data = JSON.parse(response).data;
+
+				if(data.message==='Unauthenticated.'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Invalid API Key',
+					});
+				}
+				else if (data.message==='Server Error'){
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Server Error',
+					});
+				} else {
+
+					let assistantList = $('#td-assistants');
+					assistantList.html('');
+					assistantList.append('<option value="">Select Assistant</option>');
+					data.assistants.forEach(function (item) {
+						assistantList.append(
+							'<option value="' + item.id + '">' + item.name + '</option>'
+						);
+					});
+				}
+			})
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	}
 });
+

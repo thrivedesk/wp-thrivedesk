@@ -1,0 +1,138 @@
+/* ----------------------------- FRONTEND ONLY --------------------------------
+We are using Tailwind core with !important so try to use single selector.
+Anyone want to override can do so with parent + child selector with !important.
+eg: #thrivedesk .search{ display: flex !important; } 
+------------------------------------------------------------------------------- */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+	/* Common */
+	.td-container {
+		@apply rounded-lg drop-shadow bg-white border;
+	}
+	/* Buttons  */
+	.td-btn-primary {
+		@apply px-5 py-2 font-medium !text-white bg-blue-600 rounded hover:bg-blue-500 hover:text-white;
+	}
+	.td-btn-default {
+		@apply px-5 py-2 font-medium text-gray-600 bg-white border border-slate-300 rounded hover:bg-slate-100 hover:text-black hover:border-black outline-none;
+	}
+	.td-active {
+		@apply hidden border;
+	}
+	/* Status Tag  */
+	.status {
+		@apply px-2 rounded-full bg-slate-200 font-medium text-black inline-block leading-6;
+	}
+	a {
+		@apply no-underline !important;
+	}
+}
+
+/* Tickets */
+.td-ticket-search {
+	@apply px-3 py-1.5 w-64 bg-white border rounded focus:border focus:outline-0 !important;
+}
+.td-portal-header {
+	@apply flex justify-between items-center px-6 py-4;
+}
+.td-portal-tickets {
+	thead {
+		@apply bg-slate-100;
+		th {
+			@apply py-4 px-6;
+		}
+	}
+	tbody {
+		tr {
+			@apply border-b hover:bg-blue-50 cursor-pointer;
+		}
+		tr:nth-of-type(2) {
+			@apply bg-slate-50 hover:bg-blue-50;
+		}
+		td {
+			@apply py-2 px-4;
+		}
+	}
+}
+.td-portal-footer {
+	@apply px-6 py-4 flex justify-end;
+}
+.td-paginator {
+	@apply list-none p-0 m-0 flex bg-white drop-shadow rounded !important;
+	li a {
+		@apply py-1.5 px-3 hover:bg-slate-100 block !important;
+	}
+	li.active a {
+		@apply bg-blue-600 text-white;
+	}
+}
+/* Status active  */
+.status-active {
+	@apply bg-blue-600 text-white;
+}
+.status-pending {
+	@apply bg-yellow-200;
+}
+/* Search modal  */
+.td-search-items {
+	.td-search-item {
+		a {
+			@apply p-4 mx-6 relative bg-slate-100 hover:bg-blue-500 rounded-lg block;
+		}
+		a:hover * {
+			@apply text-white;
+		}
+		.td-search-content {
+			@apply flex flex-auto flex-col min-w-0 text-slate-500;
+		}
+		.td-search-tag {
+			@apply text-xs;
+		}
+		.td-search-title {
+			@apply font-medium text-black;
+		}
+		.td-search-excerpt {
+			@apply truncate;
+		}
+	}
+}
+
+.td-spinner {
+	@apply inline mr-2 w-8 h-6 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600;
+}
+
+/* Conversations  */
+.td-conversation {
+	@apply bg-white shadow rounded-lg;
+	.td-conversation-header {
+		@apply p-4 flex items-center bg-slate-50 rounded-t-lg;
+	}
+	.td-conversation-body {
+		@apply p-6;
+		a {
+			@apply text-blue-600 font-bold;
+		}
+		* {
+			@apply mt-0 mb-2;
+		}
+	}
+}
+/* // Conversation by agent */
+.td-conversation.actor-agent {
+	@apply shadow-blue-100;
+
+	.td-conversation-header {
+		@apply bg-blue-50;
+	}
+}
+
+/* Disable conversation page header  */
+.page {
+	.entry-header {
+		display: none !important;
+	}
+}
+
