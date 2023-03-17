@@ -1,6 +1,6 @@
 <div class="tab-welcome flex flex-col space-y-4">
     <div class="flex space-x-4">
-        <div class="mr-28 thrivedesk">
+        <div class="mr-28 w-1/2 thrivedesk">
         <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
             <div class="space-y-3 flex flex-col tab-link">
                 <div class="td-steps">
@@ -17,9 +17,16 @@
                 <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" data-target="tab-settings" href="#settings">Enter API Key</a>
             </div>
         <?php else: ?>
-            <div class="bg-white shadow-lg rounded-md p-16 space-y-3 flex flex-col">
-                <h1 class="font-medium text-2xl">ThriveDesk</h1>
-                <p class="text-base">Content will be updated here.</p>
+            <div class="space-y-3 flex flex-col tab-link">
+                <div class="td-steps">
+                    <span></span><span class="active"></span><span></span>
+                </div>
+                <h1 class="font-bold text-3xl">You are all set!</h1>
+                <p class="text-xl mb-4">Woohoo! You did it! Your connection with ThriveDesk is officially up and running!</p>
+                <p class="text-base">💬 Set up live chat Assistant with one click</p>
+                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" data-target="tab-settings" href="#settings">Add Live Chat</a>
+                <p class="text-base">🎡 Integrate with other WordPress plugins</p>
+                <a class="py-2.5 text-center border-2 border-blue-200 rounded text-blue-500 font-medium hover:bg-blue-100" data-target="tab-settings" href="#settings">Integrate now</a>
             </div>
         <?php endif; ?>
         </div>

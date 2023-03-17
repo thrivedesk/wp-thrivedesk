@@ -63,9 +63,9 @@
 @tailwind utilities;
 
 /* Reset wp  */
-/* #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
+#wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
 	@apply !h-full;
-} */
+}
 #wpbody-content, #wpcontent{
 	@apply !p-0 text-slate-700;
 }
