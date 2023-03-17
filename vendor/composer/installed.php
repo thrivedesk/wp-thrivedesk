@@ -1,24 +1,23 @@
-<?php return array (
-  'root' => 
-  array (
-    'pretty_version' => 'dev-develop',
-    'version' => 'dev-develop',
-    'aliases' => 
-    array (
+<?php return array(
+    'root' => array(
+        'name' => 'thrivedesk/wp-plugin',
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
+        'reference' => '9987850e317a71d2811d1189bb5b6d0c2ad864b7',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
     ),
-    'reference' => '23f544a7f9a34a1e77b6f8ed9dbbc51f2033480b',
-    'name' => 'thrivedesk/wp-plugin',
-  ),
-  'versions' => 
-  array (
-    'thrivedesk/wp-plugin' => 
-    array (
-      'pretty_version' => 'dev-develop',
-      'version' => 'dev-develop',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '23f544a7f9a34a1e77b6f8ed9dbbc51f2033480b',
+    'versions' => array(
+        'thrivedesk/wp-plugin' => array(
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
+            'reference' => '9987850e317a71d2811d1189bb5b6d0c2ad864b7',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
     ),
-  ),
 );
