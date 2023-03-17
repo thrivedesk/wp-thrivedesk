@@ -13,7 +13,6 @@ jobs:
       run: |
         composer install
     - name: WordPress Plugin Deploy
-      uses: 10up/action-wordpress-plugin-deploy@master
       uses: 10up/action-wordpress-plugin-asset-update@stable
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
