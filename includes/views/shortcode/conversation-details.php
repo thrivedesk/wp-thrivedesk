@@ -1,5 +1,6 @@
 <?php
 $td_reply_nonce = wp_create_nonce('td-reply-conversation-action');
+const ACTOR_TYPE = 'ThriveDesk\\Models\\User';
 
 if (isset($_GET['td_conversation_id'])) {
 	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['td_conversation_id']);
@@ -31,12 +32,13 @@ if (isset($_GET['td_conversation_id'])) {
     <div class="mt-5 space-y-6">
         <?php foreach ($conversation['events'] as $event): ?>
 	        <?php if ($event['event']): ?>
-                <div class="td-conversation <?php echo $event['actor_type'] == 'ThriveDesk\\Models\\User' ? 'actor-contact' : 'actor-agent';?>">
+                <?php $actor_name = $actor_name ?? ''; ?>
+                <div class="td-conversation <?php echo $event['actor_type'] == ACTOR_TYPE ? 'actor-contact' : 'actor-agent';?>">
                     <div class="td-conversation-header">
                         <div class="flex items-center space-x-2 flex-auto">
                             <img class="w-8 h-8 rounded-full m-0" src="<?php echo $event['actor']['avatar'] ?? '' ?>"
-                                 alt="<?php echo $event['actor']['name'] ?? '' ?> avatar" />
-                            <span class="font-bold"><?php echo $event['actor']['name']; ?></span>
+                                 alt="<?php echo $actor_name ?> avatar" />
+                            <span class="font-bold"><?php echo $actor_name; ?></span>
                             <span><?php echo $event['action'];?></span>
                         </div>
                         <span class="text-sm"><?php echo diff_for_humans($event['created_at']); ?></span>
