@@ -8,7 +8,14 @@ if (!defined('ABSPATH')) {
 
 class PortalService {
 
-	public array $plans = ['founder-ltd-business'];
+	public array $plans = [
+		'business_ltd_22',
+		'agency_plus_ltd',
+		'agency-ltd1',
+		'founder-ltd-business',
+		'pro',
+		'pro_annual'
+	];
 
 	public function current_plan(  ) {
 		$apiService = new TDApiService();
@@ -18,7 +25,7 @@ class PortalService {
 
 	public function is_allowed_portal_feature( ): bool {
 		$plan = $this->current_plan();
-		if ( in_array( $plan['overview']['slug'], $this->plans ) ) {
+		if ( in_array($plan['overview'] && $plan['overview']['slug'], $this->plans ) ) {
 			return true;
 		}
 		return false;
