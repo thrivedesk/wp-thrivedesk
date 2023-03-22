@@ -224,7 +224,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 1.0.3 =
-- Added ThriveDesk plan checker for portal feature
+- Added plan checker for portal feature
 
 = 1.0.2 =
 - Conversation details did not show properly
