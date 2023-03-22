@@ -151,6 +151,10 @@ jQuery(document).ready(($) => {
 							response.status.charAt(0).toUpperCase() +
 							`${response.status}`.slice(1),
 						text: response.message,
+					}).then((result) => {
+						if (result.isConfirmed) {
+							location.reload();
+						}
 					});
 				}
 			});

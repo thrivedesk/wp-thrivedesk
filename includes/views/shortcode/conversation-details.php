@@ -4,9 +4,10 @@ const ACTOR_TYPE = 'ThriveDesk\\Models\\User';
 
 if (isset($_GET['td_conversation_id'])) {
 	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['td_conversation_id']);
+	$is_portal_available = (new ThriveDesk\Services\PortalService())->is_allowed_portal_feature();
 }
 ?>
-<?php if ($conversation): ?>
+<?php if ($is_portal_available && $conversation): ?>
 <div class="td-portal-conversations prose max-w-none">
     <!-- header  -->
     <div class="flex">
@@ -72,4 +73,9 @@ if (isset($_GET['td_conversation_id'])) {
         </div>
     </div>
 </div>
+
+<?php else: ?>
+    <div class="p-10 text-center">
+        <span><?php _e('Portal feature is not available at this moment.', 'thrivedesk'); ?></span>
+    </div>
 <?php endif; ?>
