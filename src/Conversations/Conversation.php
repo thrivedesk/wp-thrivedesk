@@ -68,13 +68,30 @@ class Conversation
 	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 		if ( empty( $apiKey ) ) {
-			echo json_encode( [ 'status' => 'error', 'message' => 'API key is required' ] );
+			echo json_encode( [
+				'code' => 422,
+				'status' => 'error',
+				'data' => [
+				'message' => 'API Key is required'
+				]
+			] );
 			die();
 		}
 
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+
+		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
+			echo json_encode( [
+				'code' => 422,
+				'status' => 'error',
+				'data' => [
+					'message' => $data['message']
+				]
+			] );
+			die();
+		}
 
 		if ( $data ) {
 			echo json_encode( [ 'status' => 'true', 'data' => $data ] );

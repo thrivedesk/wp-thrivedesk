@@ -166,6 +166,15 @@ jQuery(document).ready(($) => {
 		let $target = $(this);
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
+		if (apiKey === '') {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'API Key is required',
+			});
+			return;
+		}
+
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_api_key_verify',
@@ -174,15 +183,26 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let data = JSON.parse(response).data;
-				if(data.message==='Unauthenticated.'){
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
+				if (parsedResponse?.code === 422) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: data?.message,
+					});
+
+					return;
+				}
+
+				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Invalid API Key',
 					});
 				}
-				else if (data.message==='Server Error'){
+				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
@@ -227,16 +247,17 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let data = JSON.parse(response).data;
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
 
-				if(data.message==='Unauthenticated.'){
+				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Invalid API Key',
 					});
 				}
-				else if (data.message==='Server Error'){
+				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
@@ -247,6 +268,15 @@ jQuery(document).ready(($) => {
 					let assistantList = $('#td-assistants');
 					assistantList.html('');
 					assistantList.append('<option value="">Select Assistant</option>');
+
+					// check assistants array is not empty
+					if (data?.assistants?.length === 0) {
+						assistantList.append(
+							'<option value="">No Assistants Found</option>'
+						);
+						return;
+					}
+
 					data.assistants.forEach(function (item) {
 						assistantList.append(
 							'<option value="' + item.id + '">' + item.name + '</option>'
