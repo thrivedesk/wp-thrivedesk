@@ -224,7 +224,8 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 1.0.3 =
-- Added plan checker for portal feature
+- Fixed an issue with an undefined variable that was causing errors in the console
+- Improved error handling for API calls to ensure that errors are properly handled and reported to the user
 
 = 1.0.2 =
 - Conversation details did not show properly
