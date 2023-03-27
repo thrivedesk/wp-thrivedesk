@@ -267,21 +267,22 @@ jQuery(document).ready(($) => {
 
 					let assistantList = $('#td-assistants');
 					assistantList.html('');
-					assistantList.append('<option value="">Select Assistant</option>');
 
-					// check assistants array is not empty
-					if (data?.assistants?.length === 0) {
+					if (data?.assistants?.length > 0) {
+						assistantList.append('<option value="">Select Assistant</option>');
+						data.assistants.forEach(function (item) {
+							assistantList.append(
+								'<option value="' + item.id + '">' + item.name + '</option>'
+							);
+						});
+					}else {
 						assistantList.append(
-							'<option value="">No Assistants Found</option>'
+							'<option value="">No Assistant Found</option>'
 						);
-						return;
+
+						assistantList.prop('disabled', true);
+
 					}
-
-					data.assistants.forEach(function (item) {
-						assistantList.append(
-							'<option value="' + item.id + '">' + item.name + '</option>'
-						);
-					});
 				}
 			})
 			.error(function () {
