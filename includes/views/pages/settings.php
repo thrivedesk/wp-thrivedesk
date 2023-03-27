@@ -72,7 +72,7 @@
                         <div class="space-y-4 flex-1">
                             <div class="space-y-2">
                                 <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e( 'New Ticket Page', 'thrivedesk' ); ?></label>
-                                <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" required>
+                                <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
                                     <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
 									<?php foreach ( get_pages() as $key => $page ) : ?>
                                         <option value="<?php echo $page->ID; ?>" <?php echo array_key_exists( 'td_helpdesk_page_id',
