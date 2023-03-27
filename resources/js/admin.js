@@ -151,6 +151,10 @@ jQuery(document).ready(($) => {
 							response.status.charAt(0).toUpperCase() +
 							`${response.status}`.slice(1),
 						text: response.message,
+					}).then((result) => {
+						if (result.isConfirmed) {
+							location.reload();
+						}
 					});
 				}
 			});
@@ -162,6 +166,15 @@ jQuery(document).ready(($) => {
 		let $target = $(this);
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
+		if (apiKey === '') {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'API Key is required',
+			});
+			return;
+		}
+
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_api_key_verify',
@@ -170,15 +183,26 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let data = JSON.parse(response).data;
-				if(data.message==='Unauthenticated.'){
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
+				if (parsedResponse?.code === 422) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: data?.message,
+					});
+
+					return;
+				}
+
+				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Invalid API Key',
 					});
 				}
-				else if (data.message==='Server Error'){
+				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
@@ -223,16 +247,17 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let data = JSON.parse(response).data;
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
 
-				if(data.message==='Unauthenticated.'){
+				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Invalid API Key',
 					});
 				}
-				else if (data.message==='Server Error'){
+				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
@@ -242,12 +267,22 @@ jQuery(document).ready(($) => {
 
 					let assistantList = $('#td-assistants');
 					assistantList.html('');
-					assistantList.append('<option value="">Select Assistant</option>');
-					data.assistants.forEach(function (item) {
+
+					if (data?.assistants?.length > 0) {
+						assistantList.append('<option value="">Select Assistant</option>');
+						data.assistants.forEach(function (item) {
+							assistantList.append(
+								'<option value="' + item.id + '">' + item.name + '</option>'
+							);
+						});
+					}else {
 						assistantList.append(
-							'<option value="' + item.id + '">' + item.name + '</option>'
+							'<option value="">No Assistant Found</option>'
 						);
-					});
+
+						assistantList.prop('disabled', true);
+
+					}
 				}
 			})
 			.error(function () {

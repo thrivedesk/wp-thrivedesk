@@ -39,6 +39,11 @@ class TDApiService {
         ];
 
         $response           = wp_remote_get($url, $args);
+
+		if ( is_wp_error( $response ) ) {
+			return ['wp_error' => true, 'message' => $response->get_error_message()];
+		}
+
         $body               = wp_remote_retrieve_body($response);
         $body               = json_decode($body, true);
 
