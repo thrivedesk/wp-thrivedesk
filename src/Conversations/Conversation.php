@@ -4,6 +4,7 @@ namespace ThriveDesk\Conversations;
 
 // Exit if accessed directly.
 use DOMDocument;
+use ThriveDesk\Services\PortalService;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -63,7 +64,31 @@ class Conversation
 
         // ajax call for saving the helpdesk setting
         add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
+
+        add_action('wp_ajax_thrivedesk_check_portal_access', [$this, 'check_portal_access']);
     }
+
+	public function check_portal_access(  ) {
+		$data = $_POST['data'];
+		$apiKey = $data['td_helpdesk_api_key'];
+		$portalService = new PortalService();
+		$APIService = new TDApiService();
+		$APIService->setApiKey( $apiKey );
+		$access = $portalService->is_allowed_portal_feature();
+//		if ( isset( $apiData['wp_error'] ) && $apiData['wp_error'] ) {
+//			echo json_encode( [
+//				'code' => 422,
+//				'status' => 'error',
+//				'data' => [
+//					'message' => $apiData['message']
+//				]
+//			] );
+//			die();
+//		}
+
+		echo json_encode( [ 'status' => 'true', 'data' => $access ] );
+		die();
+	}
 
 	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';

@@ -35,7 +35,7 @@ class TDApiService {
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
             ],
-	        'timeout' => 60,
+	        'timeout' => 120,
         ];
 
         $response           = wp_remote_get($url, $args);

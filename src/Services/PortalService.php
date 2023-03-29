@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 class PortalService {
 
-	public array $plans = [
+	public $plans = [
 		'business_ltd_22',
 		'agency_plus_ltd',
 		'agency-ltd1',

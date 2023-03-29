@@ -78,6 +78,10 @@ class Assistant {
      */
     public static function get_assistants()
     {
+	    $api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+		if ( empty( $api_key ) ) {
+			return [];
+		}
         $url = THRIVEDESK_API_URL .'/v1/assistants';
 
         $response_body = ( new TDApiService() )->getRequest($url);

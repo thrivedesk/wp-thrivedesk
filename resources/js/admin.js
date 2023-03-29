@@ -209,7 +209,7 @@ jQuery(document).ready(($) => {
 						text: 'Server Error',
 					});
 				} else {
-					loadAssistants();
+					loadAssistants(apiKey);
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
@@ -219,6 +219,8 @@ jQuery(document).ready(($) => {
 					// add hidden class to the id td-api-verification-btn
 					$('#no_api_key_alert').addClass('hidden');
 					$('#td_post_content').removeClass('hidden');
+
+					isAllowedPortal(apiKey)
 
 					Swal.fire({
 						icon: 'success',
@@ -236,9 +238,7 @@ jQuery(document).ready(($) => {
 			});
 	});
 
-	async function loadAssistants() {
-		let apiKey = $('#td_helpdesk_api_key').val().trim();
-
+	async function loadAssistants(apiKey) {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_load_assistants',
@@ -284,6 +284,47 @@ jQuery(document).ready(($) => {
 
 					}
 				}
+			})
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	}
+
+	async function isAllowedPortal(apiKey) {
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_check_portal_access',
+				data: {
+					td_helpdesk_api_key: apiKey,
+				},
+			})
+			.success(function (response) {
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
+
+				// if(data?.message==='Unauthenticated.'){
+				// 	Swal.fire({
+				// 		icon: 'error',
+				// 		title: 'Error',
+				// 		text: 'Invalid API Key',
+				// 	});
+				// }
+				// else if (data?.message==='Server Error'){
+				// 	Swal.fire({
+				// 		icon: 'error',
+				// 		title: 'Error',
+				// 		text: 'Server Error',
+				// 	});
+				// } else {
+					if(data===false){
+						$('#td_post_content').addClass('hidden');
+						$('#no_api_key_alert').removeClass('hidden');
+					}
+				// }
 			})
 			.error(function () {
 				Swal.fire({

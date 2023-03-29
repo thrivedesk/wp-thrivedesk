@@ -1,10 +1,10 @@
 <?php
+use ThriveDesk\Assistants\Assistant;
+
     $td_helpdesk_selected_option = get_td_helpdesk_options();
-    $td_selected_post_types = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
-    $td_organizations = \ThriveDesk\Assistants\Assistant::organizations() ?? [];
-    $td_assistants = \ThriveDesk\Assistants\Assistant::get_assistants() ?? [];
-    $td_api_key = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
-    $is_portal_allowed = (new \ThriveDesk\Services\PortalService())->is_allowed_portal_feature();
+    $td_selected_post_types  = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
+    $td_assistants           = Assistant::get_assistants() ?? [];
+    $td_api_key              = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
 ?>
 
 <div class="hidden tab-settings">
@@ -61,12 +61,11 @@
 						<?php _e('You need to add the API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
                     </div>
 
-				<?php elseif (!$is_portal_allowed): ?>
-					<?php // check the plan, if not PRO or above then, show the below warning ?>
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger hidden" id="portal-feature">
 						<?php _e('Portal feature is available from the PRO plan and above. Please upgrade your subscription', 'thrivedesk');?>
                         <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e( 'here', 'thrivedesk' ); ?></a>.
                     </div>
+
 				<?php else: ?>
                     <div class="flex space-x-4 <?php echo empty($td_api_key) ? 'hidden' : ''; ?>" id="td_post_content">
                         <div class="space-y-4 flex-1">
