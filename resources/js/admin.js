@@ -220,7 +220,7 @@ jQuery(document).ready(($) => {
 					$('#no_api_key_alert').addClass('hidden');
 					$('#td_post_content').removeClass('hidden');
 
-					isAllowedPortal(apiKey)
+					isAllowedPortal()
 
 					Swal.fire({
 						icon: 'success',
@@ -294,7 +294,8 @@ jQuery(document).ready(($) => {
 			});
 	}
 
-	async function isAllowedPortal(apiKey) {
+	async function isAllowedPortal() {
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_check_portal_access',
@@ -306,25 +307,9 @@ jQuery(document).ready(($) => {
 				let parsedResponse = JSON.parse(response);
 				let data = parsedResponse?.data;
 
-				// if(data?.message==='Unauthenticated.'){
-				// 	Swal.fire({
-				// 		icon: 'error',
-				// 		title: 'Error',
-				// 		text: 'Invalid API Key',
-				// 	});
-				// }
-				// else if (data?.message==='Server Error'){
-				// 	Swal.fire({
-				// 		icon: 'error',
-				// 		title: 'Error',
-				// 		text: 'Server Error',
-				// 	});
-				// } else {
-					if(data===false){
-						$('#td_post_content').addClass('hidden');
-						$('#no_api_key_alert').removeClass('hidden');
-					}
-				// }
+				if (data === true) {
+					$('#td_portal_access').removeClass('hidden');
+				}
 			})
 			.error(function () {
 				Swal.fire({

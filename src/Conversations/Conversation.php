@@ -71,9 +71,11 @@ class Conversation
 	public function check_portal_access(  ) {
 		$data = $_POST['data'];
 		$apiKey = $data['td_helpdesk_api_key'];
-		$portalService = new PortalService();
+
 		$APIService = new TDApiService();
 		$APIService->setApiKey( $apiKey );
+
+		$portalService = new PortalService();
 		$access = $portalService->is_allowed_portal_feature();
 //		if ( isset( $apiData['wp_error'] ) && $apiData['wp_error'] ) {
 //			echo json_encode( [
