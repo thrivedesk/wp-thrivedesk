@@ -65,7 +65,6 @@ use ThriveDesk\Assistants\Assistant;
 						<?php _e('Portal feature is available from the PRO plan and above. Please upgrade your subscription', 'thrivedesk');?>
                         <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e( 'here', 'thrivedesk' ); ?></a>.
                     </div>
-
 				<?php else: ?>
                     <div class="flex space-x-4 <?php echo empty($td_api_key) ? 'hidden' : ''; ?>" id="td_post_content">
                         <div class="space-y-4 flex-1">
