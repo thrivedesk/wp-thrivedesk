@@ -5,7 +5,7 @@ use ThriveDesk\Services\PortalService;
 $conversations       = Conversation::get_conversations();
 $conversation_data   = isset($conversations['data']) ? Conversation::td_conversation_sort_by_status($conversations['data']) : [];
 $links               = $conversations['meta']['links'] ?? [];
-$is_portal_available = (new PortalService())->is_allowed_portal_feature();
+$is_portal_available = (new PortalService())->has_portal_access();
 
 ?>
 

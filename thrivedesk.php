@@ -32,6 +32,7 @@ use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\PortalService;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH'))
@@ -114,6 +115,7 @@ final class ThriveDesk
 
             Conversation::instance();
             Assistant::instance();
+			PortalService::instance();
         }
 
         return self::$instance;
