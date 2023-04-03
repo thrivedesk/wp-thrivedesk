@@ -1,10 +1,12 @@
 <?php
 use ThriveDesk\Assistants\Assistant;
+use ThriveDesk\Services\PortalService;
 
-    $td_helpdesk_selected_option = get_td_helpdesk_options();
+$td_helpdesk_selected_option = get_td_helpdesk_options();
     $td_selected_post_types  = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
-    $td_assistants           = Assistant::get_assistants() ?? [];
+    $td_assistants           = Assistant::assistants();
     $td_api_key              = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
+    $has_portal_access          = ( new PortalService() )->has_portal_access();
 ?>
 
 <div class="hidden tab-settings">
@@ -61,56 +63,56 @@ use ThriveDesk\Assistants\Assistant;
 						<?php _e('You need to add the API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
                     </div>
 
-                    <div class="alert alert-danger hidden" id="portal-feature">
+                    <div class="alert alert-danger hidden" id="portal_feature">
 						<?php _e('Portal feature is available from the PRO plan and above. Please upgrade your subscription', 'thrivedesk');?>
                         <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e( 'here', 'thrivedesk' ); ?></a>.
                     </div>
 				<?php else: ?>
-                    <div class="flex space-x-4 <?php echo empty($td_api_key) ? 'hidden' : ''; ?>" id="td_post_content">
-                        <div class="space-y-4 flex-1">
-                            <div class="space-y-2">
-                                <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e( 'New Ticket Page', 'thrivedesk' ); ?></label>
-                                <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
-                                    <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
-									<?php foreach ( get_pages() as $key => $page ) : ?>
-                                        <option value="<?php echo $page->ID; ?>" <?php echo array_key_exists( 'td_helpdesk_page_id',
-											$td_helpdesk_selected_option ) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?> >
-											<?php echo $page->post_title; ?>
-                                        </option>
-									<?php endforeach; ?>
-                                </select>
-                                <div><?php _e( 'Use any form plugin to create new ticket page or use existing one. Learn more ','thrivedesk' ); ?><a class="text-blue-500" href="#">here</a>.</div>
-                            </div>
-                            <div class="space-y-2">
-                                <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
-								<?php
-								$wp_post_types = array_filter( get_post_types( array(
-									'public'       => true,
-									'show_in_rest' => true
-								) ), function ( $type ) {
-									return $type !== 'attachment';
-								} ); ?>
-                                <div class="flex items-center space-x-2">
-									<?php foreach ( $wp_post_types as $post_type ) : ?>
-                                        <div>
-                                            <input class="td_helpdesk_post_types" type="checkbox"
-                                                   name="td_helpdesk_post_types[]"
-                                                   value="<?php echo esc_attr( $post_type ); ?>" <?php echo in_array( $post_type,
-												$td_selected_post_types ) ? 'checked' : ''; ?>>
-                                            <label for="<?php echo esc_attr( $post_type ); ?>"> <?php echo esc_html( ucfirst( $post_type ) ); ?> </label>
-                                        </div>
-									<?php endforeach; ?>
-                                </div>
-                                <div><?php _e( 'Select a post type where user can search before raise a support ticket', 'thrivedesk' ); ?>.</div>
-                            </div>
+				<?php endif; ?>
+                <div class="flex space-x-4 <?php echo ($has_portal_access && !empty($td_api_key))  ? '' : 'hidden' ?>" id="td_post_content">
+                    <div class="space-y-4 flex-1">
+                        <div class="space-y-2">
+                            <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e( 'New Ticket Page', 'thrivedesk' ); ?></label>
+                            <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
+                                <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
+					            <?php foreach ( get_pages() as $key => $page ) : ?>
+                                    <option value="<?php echo $page->ID; ?>" <?php echo array_key_exists( 'td_helpdesk_page_id',
+							            $td_helpdesk_selected_option ) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?> >
+							            <?php echo $page->post_title; ?>
+                                    </option>
+					            <?php endforeach; ?>
+                            </select>
+                            <div><?php _e( 'Use any form plugin to create new ticket page or use existing one. Learn more ','thrivedesk' ); ?><a class="text-blue-500" href="#">here</a>.</div>
                         </div>
-                        <div class="p-4 bg-stone-100 border rounded w-64">
-                            <div class="text-base font-semibold"><?php _e( 'Shortcode', 'thrivedesk' ); ?></div>
-                            <code class="my-2 inline-block">[thrivedesk_portal]</code>
-                            <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
+                        <div class="space-y-2">
+                            <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
+				            <?php
+				            $wp_post_types = array_filter( get_post_types( array(
+					            'public'       => true,
+					            'show_in_rest' => true
+				            ) ), function ( $type ) {
+					            return $type !== 'attachment';
+				            } ); ?>
+                            <div class="flex items-center space-x-2">
+					            <?php foreach ( $wp_post_types as $post_type ) : ?>
+                                    <div>
+                                        <input class="td_helpdesk_post_types" type="checkbox"
+                                               name="td_helpdesk_post_types[]"
+                                               value="<?php echo esc_attr( $post_type ); ?>" <?php echo in_array( $post_type,
+								            $td_selected_post_types ) ? 'checked' : ''; ?>>
+                                        <label for="<?php echo esc_attr( $post_type ); ?>"> <?php echo esc_html( ucfirst( $post_type ) ); ?> </label>
+                                    </div>
+					            <?php endforeach; ?>
+                            </div>
+                            <div><?php _e( 'Select a post type where user can search before raise a support ticket', 'thrivedesk' ); ?>.</div>
                         </div>
                     </div>
-				<?php endif; ?>
+                    <div class="p-4 bg-stone-100 border rounded w-64">
+                        <div class="text-base font-semibold"><?php _e( 'Shortcode', 'thrivedesk' ); ?></div>
+                        <code class="my-2 inline-block">[thrivedesk_portal]</code>
+                        <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
+                    </div>
+                </div>
             </div>
         </div>
         <button type="submit" id="td_setting_btn_submit" class="btn-primary">

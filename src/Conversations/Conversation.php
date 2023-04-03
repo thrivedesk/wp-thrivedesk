@@ -4,7 +4,6 @@ namespace ThriveDesk\Conversations;
 
 // Exit if accessed directly.
 use DOMDocument;
-use ThriveDesk\Services\PortalService;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -53,43 +52,14 @@ class Conversation
         // add shortcode for the frontend when init action called
         add_action('init', [$this, 'add_td_conversation_shortcode']);
 
-        // load the necessary scripts
-        add_action('wp_enqueue_scripts', [$this, 'load_scripts']);
-
-        // ajax call for sending reply
-        add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
+		// ajax call for sending reply
+		add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
 
 		// ajax call for verifying the helpdesk setting
-	    add_action('wp_ajax_thrivedesk_api_key_verify', [$this, 'td_verify_helpdesk_api_key']);
+		add_action('wp_ajax_thrivedesk_api_key_verify', [$this, 'td_verify_helpdesk_api_key']);
 
-        // ajax call for saving the helpdesk setting
-        add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
-
-        add_action('wp_ajax_thrivedesk_check_portal_access', [$this, 'check_portal_access']);
-    }
-
-	public function check_portal_access(  ) {
-		$data = $_POST['data'];
-		$apiKey = $data['td_helpdesk_api_key'];
-
-		$APIService = new TDApiService();
-		$APIService->setApiKey( $apiKey );
-
-		$portalService = new PortalService();
-		$access = $portalService->is_allowed_portal_feature();
-//		if ( isset( $apiData['wp_error'] ) && $apiData['wp_error'] ) {
-//			echo json_encode( [
-//				'code' => 422,
-//				'status' => 'error',
-//				'data' => [
-//					'message' => $apiData['message']
-//				]
-//			] );
-//			die();
-//		}
-
-		echo json_encode( [ 'status' => 'true', 'data' => $access ] );
-		die();
+		// ajax call for saving the helpdesk setting
+		add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
 	}
 
 	public function td_verify_helpdesk_api_key(  ): void {
@@ -99,9 +69,15 @@ class Conversation
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
-				'message' => 'API Key is required'
+					'message' => 'API Key is required'
 				]
 			] );
+			die();
+		}
+
+		$data = get_transient( 'thrivedesk_me' );
+		if ( $data ) {
+			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
 
@@ -121,6 +97,7 @@ class Conversation
 		}
 
 		if ( $data ) {
+			set_transient( 'thrivedesk_me', $data, 60 * 60 * 6 );
 			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
@@ -183,20 +160,22 @@ class Conversation
         wp_enqueue_script('thrivedesk-conversations');
     }
 
-    /**
-     * redirect to the conversation page
-     * if conversation id then redirect to the conversation details page
-     *
-     */
-    public function conversation_page($atts, $content = null)
-    {
-        if (is_user_logged_in() && !is_null($content) && !is_feed()) {
-            ob_start();
-            if (isset($_GET['td_conversation_id']) && !empty($_GET['td_conversation_id'])) {
-                thrivedesk_view('shortcode/conversation-details');
-            } else {
-                thrivedesk_view('shortcode/conversations');
-            }
+	/**
+	 * redirect to the conversation page
+	 * if conversation id then redirect to the conversation details page
+	 *
+	 */
+	public function conversation_page($atts, $content = null)
+	{
+		$this->load_scripts();
+
+		if (is_user_logged_in() && !is_null($content) && !is_feed()) {
+			ob_start();
+			if (isset($_GET['td_conversation_id']) && !empty($_GET['td_conversation_id'])) {
+				thrivedesk_view('shortcode/conversation-details');
+			} else {
+				thrivedesk_view('shortcode/conversations');
+			}
 
             return ob_get_clean();
         }
@@ -224,39 +203,67 @@ class Conversation
         return $dom->saveHTML();
     }
 
-    /**
-     * get all conversations
-     *
-     * @return mixed|null
-     */
-    public static function get_conversations()
-    {
-        $page               = $_GET['cv_page'] ?? 1;
-        $current_user_email = wp_get_current_user()->user_email;
-        $url                = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
 
-        $response =( new TDApiService() )->getRequest($url);
+	/**
+	 * get all conversations
+	 *
+	 * @return mixed|null
+	 */
+	public static function get_conversations()
+	{
+		$page               = $_GET['cv_page'] ?? 1;
+		$current_user_email = wp_get_current_user()->user_email;
 
-        return $response ?? [];
-    }
+		$current_user_email = 'atiq.misterrahman@gmail.com';
 
-    /**
-     * get single conversation
-     *
-     * @param $conversation_id
-     *
-     * @return mixed|null
-     */
-    public static function get_conversation($conversation_id)
-    {
-        if (!$conversation_id) {
-            return null;
-        }
-        $current_user_email = wp_get_current_user()->user_email;
-        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
-        $response =( new TDApiService() )->getRequest($url);
-        return $response['data'] ?? [];
-    }
+		// get data from cache
+		$cache_key = 'thrivedesk_conversations_' . $page;
+		$data = get_transient($cache_key);
+
+
+		if (!$data) {
+			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=3';
+
+			$response =( new TDApiService() )->getRequest($url);
+
+			if ($response['data'] && count($response['data']) > 0){
+				$data = $response;
+				set_transient($cache_key, $response, 60 * 10);
+				set_transient('thrivedesk_conversations_total_pages', $response['meta']['last_page'], 60 * 10);
+			}
+		}
+
+		return $data ?? [];
+	}
+
+	/**
+	 * get single conversation
+	 *
+	 * @param $conversation_id
+	 *
+	 * @return mixed|null
+	 */
+	public static function get_conversation($conversation_id)
+	{
+		if (!$conversation_id) {
+			return null;
+		}
+
+		$response = get_transient('thrivedesk_conversation_' . $conversation_id);
+
+		if (!$response) {
+			$current_user_email = wp_get_current_user()->user_email;
+			$current_user_email = 'atiq.misterrahman@gmail.com';
+			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
+			$response =( new TDApiService() )->getRequest($url);
+
+			if ($response['data'] && count($response['data']) > 0) {
+				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
+			}
+		}
+
+		return $response['data'] ?? [];
+	}
 
     /**
      * send reply to the conversation
@@ -275,6 +282,7 @@ class Conversation
         }
 
 		$current_user_email = wp_get_current_user()->user_email;
+		$current_user_email = 'atiq.misterrahman@gmail.com';
 
         $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=' . $current_user_email;
 

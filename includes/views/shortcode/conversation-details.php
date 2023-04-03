@@ -1,10 +1,14 @@
 <?php
+
+use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\PortalService;
+
 $td_reply_nonce = wp_create_nonce('td-reply-conversation-action');
 const ACTOR_TYPE = 'ThriveDesk\\Models\\User';
 
 if (isset($_GET['td_conversation_id'])) {
-	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['td_conversation_id']);
-	$is_portal_available = (new ThriveDesk\Services\PortalService())->is_allowed_portal_feature();
+	$conversation =  Conversation::get_conversation($_GET['td_conversation_id']);
+	$is_portal_available = (new PortalService())->has_portal_access();
 }
 ?>
 <?php if ($is_portal_available && $conversation): ?>
@@ -46,7 +50,7 @@ if (isset($_GET['td_conversation_id'])) {
                     </div>
                     <div class="td-conversation-body">
 				        <?php if ($event['event']['html_body']): ?>
-					        <?php echo \ThriveDesk\Conversations\Conversation::validate_conversation_body($event['event']['html_body']); ?>
+					        <?php echo Conversation::validate_conversation_body($event['event']['html_body']); ?>
 				        <?php elseif($event['event']['text_body']): ?>
 					        <?php echo $event['event']['text_body']; ?>
 				        <?php endif; ?>
