@@ -213,9 +213,6 @@ class Conversation
 	{
 		$page               = $_GET['cv_page'] ?? 1;
 		$current_user_email = wp_get_current_user()->user_email;
-
-		$current_user_email = 'atiq.misterrahman@gmail.com';
-
 		// get data from cache
 		$cache_key = 'thrivedesk_conversations_' . $page;
 		$data = get_transient($cache_key);
@@ -253,7 +250,6 @@ class Conversation
 
 		if (!$response) {
 			$current_user_email = wp_get_current_user()->user_email;
-			$current_user_email = 'atiq.misterrahman@gmail.com';
 			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
 			$response =( new TDApiService() )->getRequest($url);
 
@@ -282,7 +278,6 @@ class Conversation
         }
 
 		$current_user_email = wp_get_current_user()->user_email;
-		$current_user_email = 'atiq.misterrahman@gmail.com';
 
         $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=' . $current_user_email;
 
