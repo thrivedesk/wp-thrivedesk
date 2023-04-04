@@ -306,8 +306,8 @@ jQuery(document).ready(($) => {
 				let parsedResponse = JSON.parse(response);
 				let data = parsedResponse?.data;
 
-				if (data === true) {
-					$('#portal_feature').removeClass('hidden');
+				if (data === 'true') {
+					$('#portal_feature').addClass('hidden');
 					$('#td_post_content').removeClass('hidden');
 				} else {
 					$('#portal-feature').addClass('hidden');

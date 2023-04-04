@@ -52,6 +52,8 @@ class Conversation
         // add shortcode for the frontend when init action called
         add_action('init', [$this, 'add_td_conversation_shortcode']);
 
+		add_action('wp_enqueue_scripts', [$this, 'load_scripts']);
+
 		// ajax call for sending reply
 		add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
 
@@ -167,8 +169,6 @@ class Conversation
 	 */
 	public function conversation_page($atts, $content = null)
 	{
-		$this->load_scripts();
-
 		if (is_user_logged_in() && !is_null($content) && !is_feed()) {
 			ob_start();
 			if (isset($_GET['td_conversation_id']) && !empty($_GET['td_conversation_id'])) {

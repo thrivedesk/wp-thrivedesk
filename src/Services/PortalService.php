@@ -63,14 +63,14 @@ class PortalService {
 			echo json_encode( [
 				'code' => 200,
 				'status' => 'success',
-				'data' => true
+				'data' => 'true'
 			] );
 		} else {
 			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
 			echo json_encode( [
 				'code' => 422,
 				'status' => 'error',
-				'data' => false
+				'data' => 'false'
 			] );
 		}
 		die();
@@ -84,10 +84,10 @@ class PortalService {
 
 		$plan = ( new TDApiService())->getRequest( THRIVEDESK_API_URL . '/v1/billing/plans/current' );
 		if ( in_array($plan['overview'] && $plan['overview']['slug'], $this->plans ) ) {
-			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
+			set_transient( 'thrivedesk_portal_access', 'true', 60 * 60 * 6 );
 			return true;
 		} else {
-			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
+			set_transient( 'thrivedesk_portal_access', 'false', 60 * 60 * 6 );
 			return false;
 		}
 	}
