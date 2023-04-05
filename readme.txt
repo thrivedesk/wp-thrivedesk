@@ -226,7 +226,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 = 1.0.4 =
 - Added caching to improve response times and overall performance
 - Fixed an issue where the portal area was blank after successful verification
-- Fixed a bug where documents were not being searched using the selected search provider
+- Fixed a bug where knowledge base docs were not being searched using the selected search provider
 - Fixed an issue where style and script files were being loaded on every page
 
 = 1.0.3 =
