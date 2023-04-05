@@ -45,35 +45,43 @@ class PortalService {
 		}
 
 		$hasAccess = get_transient( 'thrivedesk_portal_access' );
+
 		if ( $hasAccess ) {
 			echo json_encode( [
 				'code' => 200,
 				'status' => 'success',
-				'data' => $hasAccess
+				'data' => true
 			] );
 			die();
 		}
 
-		$apiService = new TDApiService();
-		$apiService->setApiKey( $apiKey );
-		$plan = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/billing/plans/current' );
+		$plan = $this->get_plan( $apiKey );
 
 		if ( in_array($plan['overview'] && $plan['overview']['slug'], $this->plans ) ) {
 			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
 			echo json_encode( [
 				'code' => 200,
 				'status' => 'success',
-				'data' => 'true'
+				'data' => true
 			] );
 		} else {
 			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
 			echo json_encode( [
 				'code' => 422,
 				'status' => 'error',
-				'data' => 'false'
+				'data' => false
 			] );
 		}
 		die();
+	}
+
+	public function get_plan( $apiKey = '' ) {
+		$apiService = new TDApiService();
+		if (!empty( $apiKey )) {
+			$apiService->setApiKey( $apiKey );
+		}
+
+		return $apiService->getRequest( THRIVEDESK_API_URL . '/v1/billing/plans/current' );
 	}
 
 	public function has_portal_access(  ) {
@@ -82,12 +90,13 @@ class PortalService {
 			return $hasAccess;
 		}
 
-		$plan = ( new TDApiService())->getRequest( THRIVEDESK_API_URL . '/v1/billing/plans/current' );
+		$plan = $this->get_plan();
+
 		if ( in_array($plan['overview'] && $plan['overview']['slug'], $this->plans ) ) {
-			set_transient( 'thrivedesk_portal_access', 'true', 60 * 60 * 6 );
+			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
 			return true;
 		} else {
-			set_transient( 'thrivedesk_portal_access', 'false', 60 * 60 * 6 );
+			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
 			return false;
 		}
 	}

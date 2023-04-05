@@ -306,11 +306,10 @@ jQuery(document).ready(($) => {
 				let parsedResponse = JSON.parse(response);
 				let data = parsedResponse?.data;
 
-				if (data === 'true') {
-					$('#portal_feature').addClass('hidden');
+				if (data === true) {
 					$('#td_post_content').removeClass('hidden');
 				} else {
-					$('#portal-feature').addClass('hidden');
+					$('#portal_feature').removeClass('hidden');
 				}
 			})
 			.error(function () {
