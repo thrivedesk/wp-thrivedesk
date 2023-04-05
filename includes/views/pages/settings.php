@@ -57,18 +57,17 @@ $td_helpdesk_selected_option = get_td_helpdesk_options();
             <p><?php _e( 'Help center inside your website. Customer can create and reply tickets, access Knowledge base.',
 					'thrivedesk' ); ?></p>
             <div class="td-card">
-
 				<?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
                     <div class="alert alert-info" id="no_api_key_alert">
 						<?php _e('You need to add the API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
                     </div>
-
-                    <div class="alert alert-danger hidden" id="portal_feature">
-						<?php _e('Portal feature is available from the PRO plan and above. Please upgrade your subscription', 'thrivedesk');?>
-                        <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e( 'here', 'thrivedesk' ); ?></a>.
-                    </div>
-				<?php else: ?>
 				<?php endif; ?>
+
+                <div class="alert alert-danger hidden" id="portal_feature">
+                    <?php _e('Portal feature is available from the PRO plan and above. Please upgrade your subscription', 'thrivedesk');?>
+                    <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e( 'here', 'thrivedesk' ); ?></a>.
+                </div>
+
                 <div class="flex space-x-4 <?php echo ($has_portal_access && !empty($td_api_key))  ? '' : 'hidden' ?>" id="td_post_content">
                     <div class="space-y-4 flex-1">
                         <div class="space-y-2">
