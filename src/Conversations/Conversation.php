@@ -219,7 +219,7 @@ class Conversation
 
 
 		if (!$data) {
-			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=3';
+			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
 
 			$response =( new TDApiService() )->getRequest($url);
 
