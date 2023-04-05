@@ -209,7 +209,7 @@ jQuery(document).ready(($) => {
 						text: 'Server Error',
 					});
 				} else {
-					loadAssistants();
+					loadAssistants(apiKey);
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
@@ -218,7 +218,8 @@ jQuery(document).ready(($) => {
 					$('#td-assistants').prop('disabled', false);
 					// add hidden class to the id td-api-verification-btn
 					$('#no_api_key_alert').addClass('hidden');
-					$('#td_post_content').removeClass('hidden');
+
+					isAllowedPortal()
 
 					Swal.fire({
 						icon: 'success',
@@ -236,9 +237,7 @@ jQuery(document).ready(($) => {
 			});
 	});
 
-	async function loadAssistants() {
-		let apiKey = $('#td_helpdesk_api_key').val().trim();
-
+	async function loadAssistants(apiKey) {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_load_assistants',
@@ -293,5 +292,57 @@ jQuery(document).ready(($) => {
 				});
 			});
 	}
+
+	async function isAllowedPortal() {
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_check_portal_access',
+				data: {
+					td_helpdesk_api_key: apiKey,
+				},
+			})
+			.success(function (response) {
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
+
+				if (data === true) {
+					$('#td_post_content').removeClass('hidden');
+				} else {
+					$('#portal_feature').removeClass('hidden');
+				}
+			})
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	}
+
+	// clear cache
+	$('#thrivedesk_clear_cache_btn').on('click', function (e) {
+		jQuery
+			.get(thrivedesk.ajax_url, {
+				action: 'thrivedesk_clear_cache',
+			})
+			.success(function (response) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Cache Cleared',
+				}).then((result) => {
+					location.reload();
+				});
+			})
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	});
 });
 

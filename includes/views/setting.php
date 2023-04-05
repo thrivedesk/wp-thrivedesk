@@ -1,5 +1,7 @@
 <?php
 
+use ThriveDesk\Assistants\Assistant;
+
 $edd         = ThriveDesk\Plugins\EDD::instance();
 $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 $fluentcrm   = ThriveDesk\Plugins\FluentCRM::instance();
@@ -7,8 +9,7 @@ $wppostsync  = ThriveDesk\Plugins\WPPostSync::instance();
 $autonami    = ThriveDesk\Plugins\Autonami::instance();
 // $smartpay = ThriveDesk\Plugins\SmartPay::instance();
 
-$assistants = \ThriveDesk\Assistants\Assistant::get_assistants()['assistants'] ?? [];
-$assistant_settings = \ThriveDesk\Assistants\Assistant::get_assistant_settings();
+$assistant_settings = Assistant::get_assistant_settings();
 $plugins = [
 	[
 		'namespace'   => 'woocommerce',
@@ -87,6 +88,9 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
             <a href="https://help.thrivedesk.com/en" target="_blank">
                 <?php _e( 'Help Center', 'thrivedesk' ) ?>
             </a>
+            <button id="thrivedesk_clear_cache_btn" class="hover:text-blue-600">
+                <?php _e( 'Clear Cache', 'thrivedesk' ) ?>
+            </button>
             <a href="https://status.thrivedesk.com/" target="_blank">
                 <?php _e( 'System Status', 'thrivedesk' ) ?>
             </a>
