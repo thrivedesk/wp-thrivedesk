@@ -125,11 +125,6 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                 <span><?php _e( 'Settings', 'thrivedesk' ); ?></span>
             </a>
 
-            <?php if ( $wppostsync->get_plugin_data( 'connected' ) ) : ?>
-                <a data-target="tab-post-types-sync" href="#"><?php _e( 'WP Post Sync', 'thrivedesk' ) ?></a>
-            <?php endif; ?>
-
-
             <!--<a data-target="tab-resource" href="#resource">
                 <?php /*thrivedesk_view('icons/resource'); */?>
                 <span><?php /*_e( 'Resource', 'thrivedesk' ) */?></span>
@@ -202,6 +197,7 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
                         </div>
                     </div>
 
+	                <!-- include the settings page -->
                     <?php thrivedesk_view( 'pages/settings' ); ?>
 
                     <!-- include the welcome page -->

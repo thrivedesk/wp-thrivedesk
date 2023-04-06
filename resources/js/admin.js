@@ -131,6 +131,10 @@ jQuery(document).ready(($) => {
 			.map((i, item) => item.value)
 			.get();
 
+		let td_helpdesk_post_sync = $('.td_helpdesk_post_sync:checked')
+			.map((i, item) => item.value)
+			.get();
+
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_helpdesk_form',
@@ -139,6 +143,7 @@ jQuery(document).ready(($) => {
 					td_helpdesk_assistant: td_helpdesk_assistant,
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
+					td_helpdesk_post_sync: td_helpdesk_post_sync,
 				},
 			})
 			.success(function (response) {

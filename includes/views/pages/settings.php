@@ -1,12 +1,19 @@
 <?php
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\Services\PortalService;
+    $td_helpdesk_selected_option = get_td_helpdesk_options();
+    $td_selected_post_types      = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
+    $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
+    $td_assistants               = Assistant::assistants();
+    $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
+    $has_portal_access           = ( new PortalService() )->has_portal_access();
 
-$td_helpdesk_selected_option = get_td_helpdesk_options();
-    $td_selected_post_types  = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
-    $td_assistants           = Assistant::assistants();
-    $td_api_key              = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
-    $has_portal_access          = ( new PortalService() )->has_portal_access();
+    $wp_post_types = array_filter( get_post_types( array(
+        'public'       => true,
+        'show_in_rest' => true
+    ) ), function ( $type ) {
+        return $type !== 'attachment';
+    } );
 ?>
 
 <div class="hidden tab-settings">
@@ -51,6 +58,33 @@ $td_helpdesk_selected_option = get_td_helpdesk_options();
                 </div>
             </div>
         </div>
+        <!-- WP Post Sync  -->
+        <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
+            <div class="space-y-1">
+                <div class="text-base font-bold"><?php _e( 'WP Post Sync', 'thrivedesk' ); ?></div>
+                <p><?php _e( 'Sync your WordPress posts with ThriveDesk for faster support',
+                        'thrivedesk' ); ?></p>
+                <div class="td-card">
+                    <div class="flex space-x-4" id="td_post_sync">
+                        <div class="flex-1">
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <?php foreach ( $wp_post_types as $post_sync ) : ?>
+                                        <div>
+                                            <input class="td_helpdesk_post_sync" type="checkbox"
+                                                   name="td_helpdesk_post_sync[]"
+                                                   value="<?php echo esc_attr( $post_sync ); ?>" <?php echo in_array( $post_sync,
+                                                $td_selected_post_sync ) ? 'checked' : ''; ?>>
+                                            <label for="<?php echo esc_attr( $post_sync ); ?>"> <?php echo esc_html( ucfirst( $post_sync ) ); ?> </label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
         <!-- portal  -->
         <div class="space-y-1">
             <div class="text-base font-bold"><?php _e( 'Portal', 'thrivedesk' ); ?></div>
@@ -85,13 +119,6 @@ $td_helpdesk_selected_option = get_td_helpdesk_options();
                         </div>
                         <div class="space-y-2">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
-				            <?php
-				            $wp_post_types = array_filter( get_post_types( array(
-					            'public'       => true,
-					            'show_in_rest' => true
-				            ) ), function ( $type ) {
-					            return $type !== 'attachment';
-				            } ); ?>
                             <div class="flex items-center space-x-2">
 					            <?php foreach ( $wp_post_types as $post_type ) : ?>
                                     <div>
