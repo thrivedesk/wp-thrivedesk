@@ -107,7 +107,7 @@ class Assistant {
 
 		$assistants = ( new Assistant )->get_assistants();
 
-		if ( $assistants['assistants'] ) {
+		if ( isset($assistants['assistants'] )) {
 			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
 		}
 
