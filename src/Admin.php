@@ -36,8 +36,17 @@ final class Admin
         register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
 
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
+
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
+
+		//remove wp footer text and version
+	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
     }
+
+	public function remove_wp_footer_text() {
+		remove_filter( 'update_footer', 'core_update_footer' );
+		add_filter( 'admin_footer_text', '__return_empty_string', 11 );
+	}
 
 	public function add_option_for_welcome_page_redirection(): void {
 		add_option('wp_thrivedesk_activation_redirect', true);
