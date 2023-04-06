@@ -52,26 +52,26 @@ use ThriveDesk\Plugins\WPPostSync;
                 <div class="space-y-2">
                     <label class="font-medium text-black text-sm"><?php _e( 'Select Assistant', 'thrivedesk' ); ?></label>
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>> <?php _e( 'Select an assistant', 'thrivedesk' ); ?> </option>
-						<?php foreach ( $td_assistants as $assistant ) : ?>
+                        <?php foreach ( $td_assistants as $assistant ) : ?>
                             <option value="<?php echo $assistant['id']; ?>" <?php echo $td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id'] ? 'selected' : ''; ?>>
-								<?php echo $assistant['name']; ?>
+                                <?php echo $assistant['name']; ?>
                             </option>
-						<?php endforeach; ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </div>
         </div>
         <!-- WP Post Sync  -->
-        <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-            <div class="space-y-1">
-                <div class="text-base font-bold"><?php _e( 'WP Post Sync', 'thrivedesk' ); ?></div>
-                <p><?php _e( 'Sync your WordPress posts with ThriveDesk for faster support',
-                        'thrivedesk' ); ?></p>
-                <div class="td-card">
-                    <div class="flex space-x-4" id="td_post_sync">
-                        <div class="flex-1">
-                            <div class="space-y-2">
-                                <div class="flex items-center space-x-2">
+        <div class="space-y-1">
+            <div class="text-base font-bold"><?php _e( 'WP Post Sync', 'thrivedesk' ); ?></div>
+            <p><?php _e( 'Sync your WordPress posts with ThriveDesk for faster support',
+                    'thrivedesk' ); ?></p>
+            <div class="td-card">
+                <div class="flex space-x-4" id="td_post_sync">
+                    <div class="flex-1">
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
                                     <?php foreach ( $wp_post_types as $post_sync ) : ?>
                                         <div>
                                             <input class="td_helpdesk_post_sync" type="checkbox"
@@ -81,24 +81,33 @@ use ThriveDesk\Plugins\WPPostSync;
                                             <label for="<?php echo esc_attr( $post_sync ); ?>"> <?php echo esc_html( ucfirst( $post_sync ) ); ?> </label>
                                         </div>
                                     <?php endforeach; ?>
-                                </div>
+                                <?php else: ?>
+                                    <div class="alert alert-info" id="no_api_key_alert">
+                                        <?php _e('You need to connect WordPress Post Sync with ThriveDesk to get the feature.', 'thrivedesk');?>
+                                        <?php $nonce = wp_create_nonce( 'thrivedesk-plugin-action' ); ?>
+                                        <button
+                                            data-plugin="wppostsync"
+                                            data-connected="0" data-nonce="<?php echo esc_attr( $nonce ); ?>"
+                                            class="connect font-medium">Connect Now</button>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        <?php endif; ?>
+        </div>
         <!-- portal  -->
         <div class="space-y-1">
             <div class="text-base font-bold"><?php _e( 'Portal', 'thrivedesk' ); ?></div>
             <p><?php _e( 'Help center inside your website. Customer can create and reply tickets, access Knowledge base.',
-					'thrivedesk' ); ?></p>
+                    'thrivedesk' ); ?></p>
             <div class="td-card">
-				<?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
+                <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
                     <div class="alert alert-info" id="no_api_key_alert">
-						<?php _e('You need to add the API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
+                        <?php _e('You need to add the API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
                     </div>
-				<?php endif; ?>
+                <?php endif; ?>
 
                 <div class="alert alert-danger hidden" id="portal_feature">
                     <?php _e('Portal feature is available from the PRO plan and above. Please upgrade your subscription', 'thrivedesk');?>
@@ -111,27 +120,27 @@ use ThriveDesk\Plugins\WPPostSync;
                             <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e( 'New Ticket Page', 'thrivedesk' ); ?></label>
                             <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
                                 <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
-					            <?php foreach ( get_pages() as $key => $page ) : ?>
+                                <?php foreach ( get_pages() as $key => $page ) : ?>
                                     <option value="<?php echo $page->ID; ?>" <?php echo array_key_exists( 'td_helpdesk_page_id',
-							            $td_helpdesk_selected_option ) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?> >
-							            <?php echo $page->post_title; ?>
+                                        $td_helpdesk_selected_option ) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?> >
+                                        <?php echo $page->post_title; ?>
                                     </option>
-					            <?php endforeach; ?>
+                                <?php endforeach; ?>
                             </select>
                             <div><?php _e( 'Use any form plugin to create new ticket page or use existing one. Learn more ','thrivedesk' ); ?><a class="text-blue-500" href="#">here</a>.</div>
                         </div>
                         <div class="space-y-2">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
                             <div class="flex items-center space-x-2">
-					            <?php foreach ( $wp_post_types as $post_type ) : ?>
+                                <?php foreach ( $wp_post_types as $post_type ) : ?>
                                     <div>
                                         <input class="td_helpdesk_post_types" type="checkbox"
                                                name="td_helpdesk_post_types[]"
                                                value="<?php echo esc_attr( $post_type ); ?>" <?php echo in_array( $post_type,
-								            $td_selected_post_types ) ? 'checked' : ''; ?>>
+                                            $td_selected_post_types ) ? 'checked' : ''; ?>>
                                         <label for="<?php echo esc_attr( $post_type ); ?>"> <?php echo esc_html( ucfirst( $post_type ) ); ?> </label>
                                     </div>
-					            <?php endforeach; ?>
+                                <?php endforeach; ?>
                             </div>
                             <div><?php _e( 'Select a post type where user can search before raise a support ticket', 'thrivedesk' ); ?>.</div>
                         </div>
@@ -145,7 +154,7 @@ use ThriveDesk\Plugins\WPPostSync;
             </div>
         </div>
         <button type="submit" id="td_setting_btn_submit" class="btn-primary">
-			<?php _e( 'Save', 'thrivedesk' ); ?>
+            <?php _e( 'Save', 'thrivedesk' ); ?>
         </button>
     </form>
 </div>
