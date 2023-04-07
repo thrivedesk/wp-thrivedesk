@@ -87,7 +87,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
                 </tbody>
             </table>
 
-	        <?php if (!count($conversations)): ?>
+	        <?php if ($conversations && count($conversations) ==0 ): ?>
                 <div class="p-10 text-center">
                     <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
                 </div>
