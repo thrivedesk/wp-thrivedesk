@@ -224,7 +224,7 @@ class Conversation
 
 			$response =( new TDApiService() )->getRequest($url);
 
-			if ($response['data'] && count($response['data']) > 0){
+			if (isset($response['data']) && count($response['data']) > 0){
 				$data = $response;
 				set_transient($cache_key, $response, 60 * 10);
 				set_transient('thrivedesk_conversations_total_pages', $response['meta']['last_page'], 60 * 10);
