@@ -44,7 +44,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
 		        <?php if (empty($conversation_data)): ?>
                     <tr id="no-results">
                         <td colspan="5" class="text-center">
-					        <?php _e('No ticket found', 'thrivedesk'); ?>
+                            <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
                         </td>
                     </tr>
 		        <?php endif; ?>
@@ -81,17 +81,11 @@ $is_portal_available = (new PortalService())->has_portal_access();
 		        <?php endforeach; ?>
                 <tr id="no-results" style="display: none;">
                     <td colspan="5" class="text-center">
-				        <?php _e('No ticket found', 'thrivedesk'); ?>
+                        <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
                     </td>
                 </tr>
                 </tbody>
             </table>
-
-	        <?php if ($conversations && count($conversations) ==0 ): ?>
-                <div class="p-10 text-center">
-                    <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
-                </div>
-	        <?php endif ?>
 
 	        <?php if($links): ?>
                 <div class="td-portal-footer">
