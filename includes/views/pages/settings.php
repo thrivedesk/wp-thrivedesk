@@ -10,13 +10,20 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
     $has_portal_access           = ( new PortalService() )->has_portal_access();
     $wppostsync                  = WPPostSync::instance();
-
-    $wp_post_types = array_filter( get_post_types( array(
+    
+    $wp_post_sync_types = array_filter( get_post_types( array(
         'public'       => true,
         'show_in_rest' => true
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
+    
+    $knowledge_base_wp_post_types = array_filter( get_post_types( array(
+        'public'       => true
+    ) ), function ( $type ) {
+        return $type !== 'attachment';
+    } );
+
 ?>
 
 <div class="hidden tab-settings">
@@ -30,7 +37,7 @@ use ThriveDesk\Plugins\WPPostSync;
                     <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
                     <span>
                         <?php _e( 'Login to ThriveDesk app and get your API key from ',
-	                        'thrivedesk' ); ?>
+                            'thrivedesk' ); ?>
                                 <a class="text-blue-500" href="https://app.thrivedesk.com/settings/company/api-key" target="_blank">
                                     <?php _e( 'here', 'thrivedesk' ); ?>
                                 </a>
@@ -38,7 +45,7 @@ use ThriveDesk\Plugins\WPPostSync;
                     <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_api_key ); ?></textarea>
 
                     <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
-						<?php _e('Verify', 'thrivedesk')?>
+                        <?php _e('Verify', 'thrivedesk')?>
                     </button>
                 </div>
             </div>
@@ -74,7 +81,7 @@ use ThriveDesk\Plugins\WPPostSync;
                         <div class="space-y-2">
                             <div class="flex items-center space-x-2">
                                 <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-                                    <?php foreach ( $wp_post_types as $post_sync ) : ?>
+                                    <?php foreach ( $wp_post_sync_types as $post_sync ) : ?>
                                         <div>
                                             <input class="td_helpdesk_post_sync" type="checkbox"
                                                    name="td_helpdesk_post_sync[]"
@@ -134,7 +141,7 @@ use ThriveDesk\Plugins\WPPostSync;
                         <div class="space-y-2">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
                             <div class="flex items-center space-x-2">
-                                <?php foreach ( $wp_post_types as $post_type ) : ?>
+                                <?php foreach ( $knowledge_base_wp_post_types as $post_type ) : ?>
                                     <div>
                                         <input class="td_helpdesk_post_types" type="checkbox"
                                                name="td_helpdesk_post_types[]"
