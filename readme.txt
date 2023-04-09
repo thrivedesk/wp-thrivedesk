@@ -226,6 +226,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 = 1.0.6 =
 - Fixed no way to deselect the assistant once selected
 - Fixed an issue where conversation was not being fetched from the API
+- Updated the no ticket message on the conversation page
 
 = 1.0.5 =
 - Added WP Post Sync option in the settings page
