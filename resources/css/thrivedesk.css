@@ -57,8 +57,16 @@ eg: #thrivedesk .search{ display: flex !important; }
 		}
 	}
 }
-.td-portal-footer {
-	@apply px-6 py-4 flex justify-end;
+
+.td-portal-footer-container {
+	@apply px-6 py-2 flex justify-between;
+
+	a {
+		@apply flex items-center cursor-pointer rounded;
+		span {
+			@apply mr-1 text-sm opacity-50;
+		}
+	}
 }
 .td-paginator {
 	@apply list-none p-0 m-0 flex bg-white drop-shadow rounded !important;
