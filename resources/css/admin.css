@@ -43,7 +43,7 @@
 	}
 
 	.main-wrap{
-		@apply flex-1 rounded-l-lg shadow-lg;
+		@apply flex-1 rounded-l-lg shadow-lg relative z-10;
 		background: url("../images/footer-bg.png") center bottom no-repeat #fff;
 		background-size: 100% 10%;
 	}
