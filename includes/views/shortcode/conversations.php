@@ -90,7 +90,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
             <div class="td-portal-footer-container">
                 <a href="https://www.thrivedesk.com/introducing-wpportal" target="_blank">
                     <span>Powered by</span>
-                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="" style="height: 20px;">
+                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="" style="height: 15px;">
                 </a>
                 <?php
                 if ( $links ): ?>
