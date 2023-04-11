@@ -3,6 +3,8 @@
 namespace ThriveDesk;
 
 use ThriveDesk\Api\ApiResponse;
+use WC_Product_Query;
+use ThriveDesk\Plugins\WooCommerce;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -119,8 +121,12 @@ final class Api {
 			} elseif (isset($action) && 'get_wppostsync_data' === $action) {
 				$remote_query_string = strtolower($_GET['query'] ?? '');
 				$this->wp_postsync_data_handler($remote_query_string);
+			} elseif (isset($action) && 'get_woocommerce_product_list' === $action) {
+				$this->get_woocommerce_product_list();
 			} elseif (isset($action) && 'get_woocommerce_order_status' === $action) {
 				$this->get_woocommerce_order_status();
+			} elseif (isset($action) && 'get_woocommerce_order_status_list' === $action) {
+				$this->get_woocommerce_status_list();
 			} else {
 				$this->plugin_data_action_handler();
 			}
@@ -177,6 +183,45 @@ final class Api {
 		$data = $this->plugin->order_status($order_id);
 
 		$this->apiResponse->success(200, $data, 'Success');
+	}
+
+	public function get_woocommerce_product_list() {
+		 
+
+		$query = new WC_Product_Query( array(
+			'status' => 'publish',
+			'return' => 'ids',
+		) );
+		
+		$products = $query->get_products();
+		$productList = [];
+		// $woocommerce = new WooCommerce();
+
+		foreach($products as $product_id){
+			// error_log($product_id);
+
+			$product = wc_get_product($product_id);
+
+			$productInfo = array(
+				"product_id"    	=> $product_id,
+				"title"  			=> $product->get_name(),
+				"product_permalink" => get_permalink($product_id),
+				"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($product_id))[0],
+				"sale_price"    	=> $product->get_regular_price(),
+				"stock"    			=> $product->get_stock_quantity(),
+			);
+			array_push($productList, $productInfo);
+		}
+
+		$data = $productList;
+		$this->apiResponse->success(200, $data, 'Success');
+	}
+
+	public function get_woocommerce_status_list(){
+
+		$statuses = wc_get_order_statuses();
+
+		$this->apiResponse->success(200, $statuses, 'Success');
 	}
 
 	/**

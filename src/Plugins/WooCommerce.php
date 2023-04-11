@@ -166,7 +166,7 @@ final class WooCommerce extends Plugin {
 			foreach ($customer_orders as $order) {
 				array_push($this->orders, [
 					'order_id'        => $order->get_id(),
-					'amount'          => (float) $order->get_total(),
+					'amount'          => $this->get_formated_amount((float) $order->get_total()),
 					'amount_formated' => $this->get_formated_amount($order->get_total()),
 					'date'            => date('d M Y', strtotime($order->get_date_created())),
 					'order_status'    => ucfirst($order->get_status()),
@@ -310,27 +310,63 @@ final class WooCommerce extends Plugin {
 				}
 			}
 		}
+		
 		foreach ($items as $item) {
-			if (array_key_exists($item->get_id(), $license_info)) {
-				array_push($download_item, [
-					"title"             => $item["name"],
-					"product_id"        => $item["product_id"],
-					"product_permalink" => get_permalink($item["product_id"]),
-					"quantity"          => $item["quantity"],
-					"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
-					"price"             => $this->get_formated_amount((float) $item["subtotal"]),
-					"license"           => $license_info[$item->get_id()],
-				]);
-			} else {
-				array_push($download_item, [
-					"title"             => $item["name"],
-					"product_id"        => $item["product_id"],
-					"product_permalink" => get_permalink($item["product_id"]),
-					"quantity"          => $item["quantity"],
-					"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
-					"price"             => $this->get_formated_amount((float) $item["subtotal"]),
-				]);
+			$product = wc_get_product( $item["product_id"] );
+
+			$productInfo = array(
+				"product_id"    	=> $item["product_id"],
+				"title"  			=> $product->get_name(),
+				"product_permalink" => get_permalink($item["product_id"]),
+				"quantity"          => $item["quantity"],
+				"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
+				"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($item["product_id"]))[0],
+				"type"   			=> $product->get_type(),
+				"status"			=> $product->get_status(),
+				"sku"				=> $product->get_sku(),
+				"price"         	=> $this->get_formated_amount((float) $item["subtotal"]),
+				"regular_price" 	=> $this->get_formated_amount((float) $product->get_regular_price()),
+				"sale_price"    	=> $this->get_formated_amount((float)$product->get_sale_price()),
+				"tax_status"    	=> $product->get_tax_status(),
+				"stock"    			=> $product->get_stock_quantity(),
+				"weight"    		=> $product->get_weight(),
+				"sale_price"    	=> $product->get_sale_price(),
+				"discount"			=> $this->get_formated_amount((float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' )),				
+			);
+			if(array_key_exists($item->get_id(), $license_info)){
+				$productInfo['license'] = $license_info[$item->get_id()];
 			}
+
+			array_push($download_item, $productInfo);
+
+			// error_log("product");
+
+			// if (array_key_exists($item->get_id(), $license_info)) {
+			// 	array_push($download_item, [
+			// 		"title"             => $item["name"],
+			// 		"product_id"        => $item["product_id"],
+			// 		"product_permalink" => get_permalink($item["product_id"]),
+			// 		"quantity"          => $item["quantity"],
+			// 		"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
+			// 		"price"             => $this->get_formated_amount((float) $item["subtotal"]),
+			// 		"license"           => $license_info[$item->get_id()],
+			// 		"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($item["product_id"]))[0],
+			// 		"discount"			=> $this->get_formated_amount((float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' )),
+			// 		// "sku"				=> $item->get_description() ?? '',
+			// 	]);
+			// } else {
+			// 	array_push($download_item, [
+			// 		"title"             => $item["name"],
+			// 		"product_id"        => $item["product_id"],
+			// 		"product_permalink" => get_permalink($item["product_id"]),
+			// 		"quantity"          => $item["quantity"],
+			// 		"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
+			// 		"price"             => $this->get_formated_amount((float) $item["subtotal"]),
+			// 		"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($item["product_id"]))[0],
+			// 		"discount"			=> $this->get_formated_amount((float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' )),
+			// 		// "sku"				=> $item->get_description(),
+			// 	]);
+			// }
 		}
 
 		return $download_item;
