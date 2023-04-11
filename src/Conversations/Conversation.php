@@ -198,10 +198,12 @@ class Conversation
      */
     public static function validate_conversation_body($content)
     {
-        $dom = new DOMDocument('1.0', 'UTF-8');
+		return $content;
+
+        /*$dom = new DOMDocument('1.0', 'UTF-8');
         @$dom->loadHTML($content);
 
-        return $dom->saveHTML();
+        return $dom->saveHTML();*/
     }
 
 
