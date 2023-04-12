@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 6.2
-Stable Tag: 1.0.6
+Stable Tag: 1.0.7
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -223,6 +223,11 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+= 1.0.7 =
+- Added footer credit on conversations page
+- Fixed WP footer overlapping issue on portal settings
+- Fixed UTF-8 email parsing issue
+
 = 1.0.6 =
 - Fixed no way to deselect the assistant once selected
 - Fixed an issue where conversation was not being fetched from the API

@@ -87,25 +87,39 @@ $is_portal_available = (new PortalService())->has_portal_access();
                 </tbody>
             </table>
 
-	        <?php if($links): ?>
-                <div class="td-portal-footer">
-                    <ul class="td-paginator not-prose divide-x">
-				        <?php foreach ($links as $key => $link): ?>
-					        <?php
-					        $params =  parse_url($link['url'] ?? '', PHP_URL_QUERY);
-					        parse_str($params, $query);
-					        $page = $query['page'] ?? 1;
-					        ?>
-                            <li class="<?php echo $link['active'] ? 'active' : ''; ?>">
-                                <a href="<?php echo $link['url'] ? get_permalink() .'?cv_page='.$page : 'javascript:void(0)' ?>">
-							        <?php echo $link['label']?>
-                                </a>
-                            </li>
-				        <?php endforeach; ?>
-                    </ul>
-                </div>
-	        <?php endif; ?>
-        <?php endif; ?>
+            <div class="td-portal-footer-container">
+                <a href="https://www.thrivedesk.com/introducing-wpportal" target="_blank">
+                    <span>Powered by</span>
+                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="" style="height: 15px;">
+                </a>
+                <?php
+                if ( $links ): ?>
+                    <div class="py-3">
+                        <ul class="td-paginator not-prose divide-x">
+                            <?php
+                            foreach ( $links as $key => $link ): ?>
+                                <?php
+                                $params = parse_url( $link['url'] ?? '', PHP_URL_QUERY );
+                                parse_str( $params, $query );
+                                $page = $query['page'] ?? 1;
+                                ?>
+                                <li class="<?php
+                                echo $link['active'] ? 'active' : ''; ?>">
+                                    <a href="<?php
+                                    echo $link['url'] ? get_permalink() . '?cv_page=' . $page : 'javascript:void(0)' ?>">
+                                        <?php
+                                        echo $link['label'] ?>
+                                    </a>
+                                </li>
+                            <?php
+                            endforeach; ?>
+                        </ul>
+                    </div>
+                <?php
+                endif; ?>
+            </div>
+        <?php
+        endif; ?>
     </div>
 </div>
 

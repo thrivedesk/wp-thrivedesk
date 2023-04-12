@@ -57,11 +57,22 @@ eg: #thrivedesk .search{ display: flex !important; }
 		}
 	}
 }
-.td-portal-footer {
-	@apply px-6 py-4 flex justify-end;
+
+.td-portal-footer-container {
+	@apply px-6 py-2 flex justify-between;
+
+	a {
+		@apply flex items-center cursor-pointer rounded;
+		span {
+			@apply mr-1 text-sm opacity-50;
+		}
+		img {
+			filter: grayscale(70%);
+		}
+	}
 }
 .td-paginator {
-	@apply list-none p-0 m-0 flex bg-white drop-shadow rounded !important;
+	@apply mt-2 list-none p-0 m-0 flex bg-white drop-shadow rounded !important;
 	li a {
 		@apply py-1.5 px-3 hover:bg-slate-100 block !important;
 	}
