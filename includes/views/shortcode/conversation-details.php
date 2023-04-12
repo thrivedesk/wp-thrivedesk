@@ -48,7 +48,7 @@ if (isset($_GET['td_conversation_id'])) {
                         </div>
                         <span class="text-sm"><?php echo diff_for_humans($event['created_at']); ?></span>
                     </div>
-                    <div class="td-conversation-body">
+                    <div class="td-conversation-body" dir="auto">
 				        <?php if ($event['event']['html_body']): ?>
 					        <?php echo Conversation::validate_conversation_body($event['event']['html_body']); ?>
 				        <?php elseif($event['event']['text_body']): ?>
