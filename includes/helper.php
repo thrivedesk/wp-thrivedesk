@@ -117,3 +117,13 @@ add_action('wp_ajax_thrivedesk_clear_cache', function () {
 	remove_thrivedesk_conversation_cache();
 	wp_send_json_success();
 });
+
+/*
+ * Make a gravatar url from the current user email
+ */
+if (!function_exists('get_gravatar_url')) {
+	function get_gravatar_url($email, $size = 80): string {
+		$hash = md5(strtolower(trim($email)));
+		return "https://www.gravatar.com/avatar/$hash?s=$size";
+	}
+}
