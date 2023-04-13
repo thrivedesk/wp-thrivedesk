@@ -29,6 +29,9 @@ eg: #thrivedesk .search{ display: flex !important; }
 	a {
 		@apply no-underline !important;
 	}
+	.td-action-btn {
+		@apply px-2 font-medium text-gray-600 bg-white border border-slate-300 rounded hover:bg-slate-100 hover:text-black hover:border-black outline-none;
+	}
 }
 
 /* Tickets */

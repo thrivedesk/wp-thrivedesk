@@ -34,10 +34,10 @@ $is_portal_available = (new PortalService())->has_portal_access();
                     <th scope="col" class="w-auto">
 				        <?php _e('Ticket', 'thrivedesk'); ?>
                     </th>
-                    <th scope="col" class="w-36 text-center">
+                    <th scope="col" class="w-auto text-center">
 				        <?php _e('Last update', 'thrivedesk'); ?>
                     </th>
-                    <th scope="col" class="w-36"></th>
+                    <th scope="col" class="w-auto"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -72,10 +72,14 @@ $is_portal_available = (new PortalService())->has_portal_access();
                         <td class="text-center align-middle">
 					        <?php echo diff_for_humans($conversation['updated_at']) ?>
                         </td>
-                        <td class="text-center align-middle">
-                            <a href="<?php echo $conv_page_url; ?>" class="td-btn-default">
-						        <?php _e('View', 'thrivedesk'); ?>
-                            </a>
+                        <td class="text-center align-middle  max-w-[100px]">
+                            <div class="td-action-btn">
+                                <p class="truncate">
+                                    <a href="<?php echo $conv_page_url; ?>" class="">
+                                        <?php _e('View', 'thrivedesk'); ?>
+                                    </a>                                </p>
+                            </div>
+
                         </td>
                     </tr>
 		        <?php endforeach; ?>
@@ -90,7 +94,8 @@ $is_portal_available = (new PortalService())->has_portal_access();
             <div class="td-portal-footer-container">
                 <a href="https://www.thrivedesk.com/introducing-wpportal" target="_blank">
                     <span>Powered by</span>
-                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="" style="height: 15px;">
+                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt=""
+                         style="height: 15px; width: 84px;">
                 </a>
                 <?php
                 if ( $links ): ?>
