@@ -139,6 +139,12 @@ class RestRoute
 		$query_string = $_POST['query_string'] ?? '';
 		$select_post_types = get_option('td_helpdesk_settings')['td_helpdesk_post_types'];
 
+		if (empty($select_post_types)) {
+			return [
+				'data' => []
+			];
+		}
+
 		$x_query = new \WP_Query(
 			array(
 				's'         => $query_string,
