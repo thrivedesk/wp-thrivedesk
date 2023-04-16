@@ -86,18 +86,17 @@ class PortalService {
 
 	public function has_portal_access(  ) {
 		$hasAccess = get_transient( 'thrivedesk_portal_access' );
-		if ( $hasAccess ) {
-			return $hasAccess;
-		}
+		if ( !empty($hasAccess) ) {		
 
-		$plan = $this->get_plan();
+			$plan = $this->get_plan();
 
-		if ($plan['overview'] && in_array($plan['overview']['slug'], $this->plans ) ) {
-			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
-			return true;
-		} else {
-			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
-			return false;
+			if ($plan['overview'] && in_array($plan['overview']['slug'], $this->plans ) ) {
+				set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
+				return true;
+			} else {
+				set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
+				return false;
+			}
 		}
 	}
 }

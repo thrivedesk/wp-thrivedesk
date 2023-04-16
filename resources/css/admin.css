@@ -43,12 +43,6 @@
 		@apply bg-rose-50 border-rose-300 text-rose-600;
 	}
 
-	.main-wrap{
-		@apply flex-1 rounded-l-lg shadow-lg relative z-10;
-		background: url("../images/footer-bg.png") center bottom no-repeat #fff;
-		background-size: 100% 10%;
-	}
-
 	.td-steps{
 		@apply mb-2 flex space-x-1;
 		>span{

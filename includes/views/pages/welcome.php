@@ -1,5 +1,5 @@
 <div class="tab-welcome flex flex-col space-y-4">
-    <div class="flex space-x-4">
+    <div class="flex space-x-4 items-center">
         <div class="mr-28 w-1/2 thrivedesk">
         <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
             <div class="space-y-3 flex flex-col tab-link">
@@ -14,7 +14,7 @@
                     <span class="flex-none uppercase text-xs text-gray-400 font-semibold">or</span>
                     <span class="bg-gray-300 h-px flex-grow t-2 relative top-2"></span>
                 </div>
-                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" data-target="tab-settings" href="#settings">Enter API Key</a>
+                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium bg-white hover:bg-gray-100" data-target="tab-settings" href="#settings">Enter API Key</a>
             </div>
         <?php else: ?>
             <div class="space-y-3 flex flex-col tab-link">
@@ -57,7 +57,7 @@
         ?>
         <div class="flex space-x-3">
             <?php foreach($items as $item):?>
-                <div class="w-1/3 border py-2 px-3 rounded">
+                <div class="w-1/3 border py-2 px-3 rounded bg-white">
                     <a href="<?php echo esc_url( $item->get_permalink() ); ?>" target="_blank">
                         <?php echo esc_html( $item->get_title() ); ?>
                     </a>

@@ -88,13 +88,13 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
             <a href="https://help.thrivedesk.com/en" target="_blank">
                 <?php _e( 'Help Center', 'thrivedesk' ) ?>
             </a>
+            <a href="https://status.thrivedesk.com/" target="_blank">
+                <?php _e( 'System Status', 'thrivedesk' ) ?>
+            </a>
             <a href="#" onclick="Assistant('contact', {
                 subject: 'Issue/Feedback from WP Plugin',
                 body: 'Write your issue/feedback details here...',
             })"><?php _e( 'Support', 'thrivedesk' ) ?></a>
-            <span class="py-1 px-2 bg-slate-200 font-medium rounded">
-                <?php _e( 'Version', 'thrivedesk' ) ?> <?php echo THRIVEDESK_VERSION;?>
-            </span>
         </div>
     </div>
     <nav class="flex items-center py-2 px-9 bg-white border-y">
@@ -125,9 +125,9 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
             <button id="thrivedesk_clear_cache_btn" class="hover:text-blue-600">
                 <?php _e( 'Clear Cache', 'thrivedesk' ) ?>
             </button>
-            <a href="https://status.thrivedesk.com/" target="_blank">
-                <?php _e( 'System Status', 'thrivedesk' ) ?>
-            </a>
+            <span class="py-1 px-2 bg-slate-200 font-medium rounded">
+                <?php _e( 'Version', 'thrivedesk' ) ?> <?php echo THRIVEDESK_VERSION;?>
+            </span>
         </div>
     </nav>
 

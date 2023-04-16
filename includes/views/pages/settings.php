@@ -91,13 +91,11 @@ use ThriveDesk\Plugins\WPPostSync;
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <div class="alert alert-info" id="no_api_key_alert">
-                                        <?php _e('You need to connect WordPress Post Sync with ThriveDesk to get the feature.', 'thrivedesk');?>
+                                    <div class="w-full text-center text-base tab-link" id="no_api_key_alert">
+                                        <?php _e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk');?>
                                         <?php $nonce = wp_create_nonce( 'thrivedesk-plugin-action' ); ?>
-                                        <button
-                                            data-plugin="wppostsync"
-                                            data-connected="0" data-nonce="<?php echo esc_attr( $nonce ); ?>"
-                                            class="connect font-medium">Connect Now</button>
+                                        <a data-target="tab-integrations" href="#integrations"
+                                            class="btn-primary py-1 px-3">Connect Now</a>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -113,8 +111,8 @@ use ThriveDesk\Plugins\WPPostSync;
                     'thrivedesk' ); ?></p>
             <div class="td-card">
                 <?php if (empty(get_td_helpdesk_options()['td_helpdesk_api_key'])): ?>
-                    <div class="alert alert-info" id="no_api_key_alert">
-                        <?php _e('You need to add the API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
+                    <div class="w-full text-center text-base" id="no_api_key_alert">
+                        <?php _e('Please insert ThriveDesk API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk');?>
                     </div>
                 <?php endif; ?>
 
