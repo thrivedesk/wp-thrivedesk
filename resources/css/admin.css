@@ -6,9 +6,10 @@
 	.td-card{
 		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
 	}
-	.sidebar-nav{
+	.main-nav{
+		@apply flex space-x-2;
 		a{
-			@apply py-2 px-4 rounded text-sm text-slate-800 flex items-center space-x-2 hover:bg-blue-600 hover:text-white;
+			@apply flex space-x-1 py-2 px-3 rounded text-sm text-slate-800 items-center hover:bg-blue-600 hover:text-white;
 		}
 		.active{
 			@apply bg-gradient-to-b from-blue-500 to-blue-600 text-white;
