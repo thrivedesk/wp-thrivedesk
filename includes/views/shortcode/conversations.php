@@ -27,18 +27,18 @@ $is_portal_available = (new PortalService())->has_portal_access();
 
             <table class="td-portal-tickets !m-0" id="conversation-table">
                 <thead>
-                <tr>
-                    <th scope="col" class="w-28">
-				        <?php _e('Status', 'thrivedesk'); ?>
-                    </th>
-                    <th scope="col" class="w-auto">
-				        <?php _e('Ticket', 'thrivedesk'); ?>
-                    </th>
-                    <th scope="col" class="w-auto text-center">
-				        <?php _e('Last update', 'thrivedesk'); ?>
-                    </th>
-                    <th scope="col" class="w-auto"></th>
-                </tr>
+                    <tr>
+                        <th scope="col" class="w-28">
+                            <?php _e('Status', 'thrivedesk'); ?>
+                        </th>
+                        <th scope="col" class="w-auto">
+                            <?php _e('Ticket', 'thrivedesk'); ?>
+                        </th>
+                        <th scope="col" class="w-auto text-center">
+                            <?php _e('Last update', 'thrivedesk'); ?>
+                        </th>
+                        <th scope="col" class="w-auto"></th>
+                    </tr>
                 </thead>
                 <tbody>
 		        <?php if (empty($conversation_data)): ?>
@@ -61,12 +61,12 @@ $is_portal_available = (new PortalService())->has_portal_access();
 						        'td_conversation_id' => $conversation['id']
 					        ), get_permalink() );
 					        ?>
-                            <a href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
-                                <div class="text-base font-medium">
+                            <a class="text-sm" href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
+                                <div class="font-bold">
                                     <span>(#<?php echo $conversation['ticket_id']; ?>)</span>
                                     <span class="text-black"><?php echo $conversation['subject'];?></span>
                                 </div>
-                                <div class="font-normal text-sm"><?php echo $conversation['excerpt']; ?>.</div>
+                                <div class="font-normal"><?php echo $conversation['excerpt']; ?>.</div>
                             </a>
                         </td>
                         <td class="text-center align-middle">
@@ -74,10 +74,9 @@ $is_portal_available = (new PortalService())->has_portal_access();
                         </td>
                         <td class="text-center align-middle  max-w-[100px]">
                             <div class="td-action-btn">
-                                <p class="truncate">
-                                    <a href="<?php echo $conv_page_url; ?>" class="">
-                                        <?php _e('View', 'thrivedesk'); ?>
-                                    </a>                                </p>
+                                <div class="truncate">
+                                    <a  href="<?php echo $conv_page_url; ?>"><?php _e('View', 'thrivedesk'); ?></a>                                
+                                </div>
                             </div>
 
                         </td>
@@ -92,34 +91,32 @@ $is_portal_available = (new PortalService())->has_portal_access();
             </table>
 
             <div class="td-portal-footer-container">
-                <a href="https://www.thrivedesk.com/introducing-wpportal" target="_blank">
+                <a class="powered-by" href="https://www.thrivedesk.com/introducing-wpportal?utm_source=wpportal&utm_medium=<?php echo get_site_url(); ?>&utm_campaign=powered-by" target="_blank">
                     <span>Powered by</span>
-                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt=""
+                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="ThriveDesk Logo"
                          style="height: 15px; width: 84px;">
                 </a>
                 <?php
                 if ( $links ): ?>
-                    <div class="py-3">
-                        <ul class="td-paginator not-prose divide-x">
+                    <ul class="td-paginator not-prose divide-x">
+                        <?php
+                        foreach ( $links as $key => $link ): ?>
                             <?php
-                            foreach ( $links as $key => $link ): ?>
-                                <?php
-                                $params = parse_url( $link['url'] ?? '', PHP_URL_QUERY );
-                                parse_str( $params, $query );
-                                $page = $query['page'] ?? 1;
-                                ?>
-                                <li class="<?php
-                                echo $link['active'] ? 'active' : ''; ?>">
-                                    <a href="<?php
-                                    echo $link['url'] ? get_permalink() . '?cv_page=' . $page : 'javascript:void(0)' ?>">
-                                        <?php
-                                        echo $link['label'] ?>
-                                    </a>
-                                </li>
-                            <?php
-                            endforeach; ?>
-                        </ul>
-                    </div>
+                            $params = parse_url( $link['url'] ?? '', PHP_URL_QUERY );
+                            parse_str( $params, $query );
+                            $page = $query['page'] ?? 1;
+                            ?>
+                            <li class="<?php
+                            echo $link['active'] ? 'active' : ''; ?>">
+                                <a href="<?php
+                                echo $link['url'] ? get_permalink() . '?cv_page=' . $page : 'javascript:void(0)' ?>">
+                                    <?php
+                                    echo $link['label'] ?>
+                                </a>
+                            </li>
+                        <?php
+                        endforeach; ?>
+                    </ul>
                 <?php
                 endif; ?>
             </div>
