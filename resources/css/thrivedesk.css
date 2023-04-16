@@ -34,6 +34,10 @@ eg: #thrivedesk .search{ display: flex !important; }
 	}
 }
 
+.thrivedesk {
+	@apply w-full prose prose-slate max-w-none;
+}
+
 .td-modal-container {
 	@apply hidden fixed top-0 left-0 z-100 max-w-full flex flex-col h-screen w-screen p-6 md:p-[10vh] 2xl:p-[12vh] bg-slate-900 bg-opacity-50 backdrop-blur-sm;
 }
