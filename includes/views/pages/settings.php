@@ -91,7 +91,7 @@ use ThriveDesk\Plugins\WPPostSync;
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <div class="alert alert-info" id="no_api_key_alert">
+                                    <div class="alert alert-info">
                                         <?php _e('You need to connect WordPress Post Sync with ThriveDesk to get the feature.', 'thrivedesk');?>
                                         <?php $nonce = wp_create_nonce( 'thrivedesk-plugin-action' ); ?>
                                         <button
