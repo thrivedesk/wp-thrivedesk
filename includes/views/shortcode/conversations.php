@@ -9,7 +9,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
 
 ?>
 
-<div id="thrivedesk" class="w-full prose prose-slate max-w-none">
+<div id="thrivedesk" class="thrivedesk">
     <div class="td-container">
 
         <?php if (!$is_portal_available): ?>
