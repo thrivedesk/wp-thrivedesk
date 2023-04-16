@@ -57,7 +57,7 @@ class PortalService {
 
 		$plan = $this->get_plan( $apiKey );
 
-		if ( in_array($plan['overview'] && $plan['overview']['slug'], $this->plans ) ) {
+		if ( $plan['overview'] && in_array($plan['overview']['slug'], $this->plans ) ) {
 			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
 			echo json_encode( [
 				'code' => 200,
@@ -92,7 +92,7 @@ class PortalService {
 
 		$plan = $this->get_plan();
 
-		if ($plan['overview'] && in_array($plan['overview'] && $plan['overview']['slug'], $this->plans ) ) {
+		if ($plan['overview'] && in_array($plan['overview']['slug'], $this->plans ) ) {
 			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
 			return true;
 		} else {
