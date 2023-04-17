@@ -91,7 +91,7 @@ use ThriveDesk\Plugins\WPPostSync;
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <div class="w-full text-center text-base tab-link" id="no_api_key_alert">
+                                    <div class="w-full text-center text-base tab-link">
                                         <?php _e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk');?>
                                         <?php $nonce = wp_create_nonce( 'thrivedesk-plugin-action' ); ?>
                                         <a data-target="tab-integrations" href="#integrations"

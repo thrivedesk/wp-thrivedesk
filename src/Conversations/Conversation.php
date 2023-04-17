@@ -256,7 +256,7 @@ class Conversation
 			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
 			$response =( new TDApiService() )->getRequest($url);
 
-			if ($response['data'] && count($response['data']) > 0) {
+			if (isset($response['data']) && count($response['data']) > 0) {
 				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
 			}
 		}
