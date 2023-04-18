@@ -224,6 +224,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 1.0.9 =
+- Updated admin layout
 - Added gravatar support for the conversation details page
 - Fixed knowledge base search did not filter the results properly
 - Fixed various style issues
