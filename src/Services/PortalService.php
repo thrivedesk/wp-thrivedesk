@@ -65,7 +65,6 @@ class PortalService {
 				'data' => true
 			] );
 		} else {
-			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
 			echo json_encode( [
 				'code' => 422,
 				'status' => 'error',
@@ -97,7 +96,6 @@ class PortalService {
 			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
 			return true;
 		} else {
-			set_transient( 'thrivedesk_portal_access', false, 60 * 60 * 6 );
 			return false;
 		}
 	}
