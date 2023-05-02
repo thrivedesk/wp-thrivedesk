@@ -124,7 +124,7 @@ final class WPPostSync extends Plugin {
 		$x_query      = new \WP_Query(
 			[
 				's'         => $query_string,
-				'post_type' => get_option('thrivedesk_post_type_sync_option'),
+				'post_type' => get_option('td_helpdesk_post_sync'),
 			]
 		);
 		$search_posts = [];
