@@ -19,17 +19,10 @@ class MigrationScript {
 	}
 
 	public function run() {
-		$migration = get_option( 'thrivedesk_migration_version', THRIVEDESK_VERSION );
-		if ( $migration ) {
-			$this->runMigration();
-		}
+		$this->runMigrationScript();
 	}
 
-	private function runMigration( ) {
-		$this->v1_0_12();
-	}
-
-	private function v1_0_12( ) {
+	private function runMigrationScript(  ) {
 		$this->migratePostSyncOption();
 	}
 
@@ -40,7 +33,6 @@ class MigrationScript {
 			if ( $td_post_type_sync_option ) {
 				update_option( 'td_helpdesk_post_sync', $thrivedesk_post_type_sync_option );
 				delete_option( 'thrivedesk_post_type_sync_option' );
-				add_option( 'thrivedesk_migration_version', THRIVEDESK_VERSION );
 			}
 		}
 	}
