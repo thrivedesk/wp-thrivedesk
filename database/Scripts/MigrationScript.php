@@ -11,7 +11,7 @@ class MigrationScript {
 	}
 
 	public static function instance(): MigrationScript {
-		if (!isset(self::$instance) && !(self::$instance instanceof MigrationScript)) {
+		if ( !isset(self::$instance) ) {
 			self::$instance = new self();
 		}
 
