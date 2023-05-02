@@ -1,8 +1,6 @@
 <?php
 
-namespace ThriveDesk;
-
-use ThriveDesk\Services\PortalService;
+namespace ThriveDeskDBMigrations\Scripts;
 
 class MigrationScript {
 
@@ -31,11 +29,11 @@ class MigrationScript {
 		$this->v1_0_12();
 	}
 
-	private function v1_0_12() {
+	private function v1_0_12( ) {
 		$this->migratePostSyncOption();
 	}
 
-	private function migratePostSyncOption(  ) {
+	private function migratePostSyncOption( ) {
 		$thrivedesk_post_type_sync_option = get_option( 'thrivedesk_post_type_sync_option');
 		if ( $thrivedesk_post_type_sync_option ) {
 			$td_post_type_sync_option = get_option( 'td_helpdesk_post_sync');

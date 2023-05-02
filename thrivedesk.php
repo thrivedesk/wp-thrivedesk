@@ -30,10 +30,10 @@ use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
-use ThriveDesk\MigrationScript;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
 use ThriveDesk\Services\PortalService;
+use ThriveDeskDBMigrations\Scripts\MigrationScript;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH'))
@@ -113,6 +113,8 @@ final class ThriveDesk
             if (is_admin()) {
                 self::$instance->admin = Admin::instance();
             }
+
+	        require_once(THRIVEDESK_DIR . '/database/Scripts/MigrationScript.php');
 
 	        MigrationScript::instance();
             Conversation::instance();
