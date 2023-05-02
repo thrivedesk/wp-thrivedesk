@@ -224,7 +224,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 1.0.12 =
-- Fix: post sync was not working for rest route
+- Fix: Legacy post types support for WPPostSync integration
 
 = 1.0.11 =
 - Updated ThriveDesk plan list
