@@ -29,13 +29,19 @@ class MigrationScript {
 	private function migratePostSyncOption( ) {
 		$old_post_sync_option = get_option( 'thrivedesk_post_type_sync_option' );
 
-		if ( !$old_post_sync_option ) {
+		if ( $old_post_sync_option === false ) {
 			return;
 		}
 
+
 		$td_helpdesk_settings = get_td_helpdesk_options();
-		$td_helpdesk_settings['td_helpdesk_post_sync'] = $old_post_sync_option;
-		update_option( 'td_helpdesk_settings', $td_helpdesk_settings );
+
+		if(!array_key_exists('td_helpdesk_post_sync', $td_helpdesk_settings)
+		   || !$td_helpdesk_settings['td_helpdesk_post_sync']) {
+			$td_helpdesk_settings['td_helpdesk_post_sync'] = $old_post_sync_option;
+			update_option( 'td_helpdesk_settings', $td_helpdesk_settings );
+		}
+
 		delete_option( 'thrivedesk_post_type_sync_option' );
 	}
 }
