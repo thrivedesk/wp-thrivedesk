@@ -103,7 +103,9 @@ $is_portal_available = (new PortalService())->has_portal_access();
                         foreach ( $links as $key => $link ): ?>
                             <?php
                             $params = parse_url( $link['url'] ?? '', PHP_URL_QUERY );
-                            parse_str( $params, $query );
+                            if ( $params ) {
+                                parse_str( $params, $query );
+                            }
                             $page = $query['page'] ?? 1;
                             ?>
                             <li class="<?php
