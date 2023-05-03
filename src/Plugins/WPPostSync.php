@@ -122,7 +122,7 @@ final class WPPostSync extends Plugin {
 	 */
 	public function get_post_search_result(string $query_string = ''): array {
 		$td_helpdesk_settings = get_td_helpdesk_options();
-		$post_sync_types = $td_helpdesk_settings['td_helpdesk_post_sync'];
+		$post_sync_types = $td_helpdesk_settings['td_helpdesk_post_sync'] ?? false;
 
 		if ( !$post_sync_types ) {
 			return [
