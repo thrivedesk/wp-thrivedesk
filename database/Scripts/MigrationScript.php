@@ -7,6 +7,7 @@ class MigrationScript {
 	private static $instance = null;
 
 	public function __construct() {
+		register_activation_hook( THRIVEDESK_FILE, [ $this, 'run' ] );
 		add_action( 'upgrader_process_complete', 'wp_td_update_completed', 10, 2 );
 	}
 
