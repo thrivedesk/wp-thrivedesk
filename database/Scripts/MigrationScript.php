@@ -7,7 +7,7 @@ class MigrationScript {
 	private static $instance = null;
 
 	public function __construct() {
-		$this->run();
+		register_activation_hook( THRIVEDESK_FILE, array( $this, 'run' ));
 	}
 
 	public static function instance(): MigrationScript {
