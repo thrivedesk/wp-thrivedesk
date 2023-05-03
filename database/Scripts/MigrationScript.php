@@ -7,8 +7,7 @@ class MigrationScript {
 	private static $instance = null;
 
 	public function __construct() {
-		register_activation_hook( THRIVEDESK_FILE, [ $this, 'run' ] );
-		add_action( 'upgrader_process_complete', 'wp_td_update_completed', 10, 2 );
+		add_action( 'plugins_loaded', [ $this, 'run' ], 10, 2 );
 	}
 
 	public static function instance(): MigrationScript {
@@ -17,17 +16,6 @@ class MigrationScript {
 		}
 
 		return self::$instance;
-	}
-
-	public function wp_td_update_completed( $upgrader_object, $options ) {
-		if ( $options['action'] == 'update' && $options['type'] == 'plugin' && isset( $options['plugins'] ) ) {
-			foreach ( $options['plugins'] as $plugin ) {
-				if ( $plugin == plugin_basename( THRIVEDESK_FILE ) ) {
-					$this->run();
-					break;
-				}
-			}
-		}
 	}
 
 	public function run() {
@@ -39,6 +27,10 @@ class MigrationScript {
 	}
 
 	private function migratePostSyncOption() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$old_post_sync_option = get_option( 'thrivedesk_post_type_sync_option' );
 
 		if ( $old_post_sync_option === false ) {
