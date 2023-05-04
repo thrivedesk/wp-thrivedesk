@@ -173,7 +173,9 @@ final class WooCommerce extends Plugin {
 					'shipping'        => $this->shipping_param ? $this->get_shipping_details($order) : [],
 					'downloads'       => $this->get_order_items($order),
 					'order_url'       => method_exists($order,
-						'get_edit_order_url') ? $order->get_edit_order_url() : '#',
+					'get_edit_order_url') ? $order->get_edit_order_url() : '#',
+					'coupon'		  => $order->get_coupon_codes() ?? null,
+					
 				]);
 			}
 		}

@@ -4,22 +4,29 @@ namespace ThriveDesk;
 
 use ThriveDesk\Api\ApiResponse;
 use WC_Product_Query;
-use ThriveDesk\Plugins\WooCommerce;
+use WC_Order;
+use WC_Order_Item_Product;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
 	exit;
 }
 
-final class Api {
+final class Api
+{
 	/**
 	 * The single instance of this class
 	 */
 	private static $instance = null;
 
 	private $apiResponse;
-
 	private $plugin = null;
+	private $orderId = null;
+	private $orderStatus = null;
+	private $quantity = null;
+	private $item = null;
+	private $coupon = null;
+	private $itemId = null;
 
 	/**
 	 * Construct Api class.
@@ -27,7 +34,8 @@ final class Api {
 	 * @since  0.0.1
 	 * @access private
 	 */
-	private function __construct() {
+	private function __construct()
+	{
 		add_action('init', [$this, 'api_listener']);
 
 		$this->apiResponse = new ApiResponse();
@@ -44,7 +52,8 @@ final class Api {
 	 * @access public
 	 * @since  0.0.1
 	 */
-	public static function instance(): object {
+	public static function instance(): object
+	{
 		if (!isset(self::$instance) && !(self::$instance instanceof Admin)) {
 			self::$instance = new self();
 		}
@@ -58,7 +67,8 @@ final class Api {
 	 * @return array
 	 * @since 0.0.1
 	 */
-	private function _available_plugins(): array {
+	private function _available_plugins(): array
+	{
 		return [
 			'edd'         => 'EDD',
 			'woocommerce' => 'WooCommerce',
@@ -74,7 +84,8 @@ final class Api {
 	 * @return void
 	 * @since 0.0.1
 	 */
-	public function api_listener(): void {
+	public function api_listener(): void
+	{
 		$listener = sanitize_key($_GET['listener'] ?? '');
 		if (!isset($listener) || 'thrivedesk' !== $listener) {
 			return;
@@ -84,6 +95,13 @@ final class Api {
 			$action = strtolower(sanitize_key($_GET['action'] ?? ''));
 			$plugin = strtolower(sanitize_key($_GET['plugin'] ?? 'edd'));
 
+			$this->orderId = sanitize_key($_GET['order_id'] ?? '');
+			$this->orderStatus = sanitize_key($_GET['order_status'] ?? '');
+			$this->quantity = sanitize_key($_GET['quantity'] ?? '');
+			$this->item = sanitize_key($_GET['item'] ?? '');
+			$this->itemId = sanitize_key($_GET['item_id'] ?? '');
+			$this->coupon = sanitize_key($_GET['coupon'] ?? '');
+			
 			// Plugin invalid response
 			if (!in_array($plugin, array_keys($this->_available_plugins()))) {
 				$this->apiResponse->error(401, 'Plugin is invalid or not available now.');
@@ -127,6 +145,16 @@ final class Api {
 				$this->get_woocommerce_order_status();
 			} elseif (isset($action) && 'get_woocommerce_order_status_list' === $action) {
 				$this->get_woocommerce_status_list();
+			} elseif (isset($action) && 'woocommerce_order_status_update' === $action) {
+				$this->woocommerce_order_status_update($this->orderId, $this->orderStatus);
+			} elseif (isset($action) && 'woocommerce_order_quantity_update' === $action) {
+				$this->woocommerce_order_quantity_update($this->orderId, $this->itemId, $this->quantity);
+			} elseif (isset($action) && 'woocommerce_order_apply_coupon' === $action) {
+				$this->woocommerce_order_apply_coupon($this->orderId, $this->coupon);
+			} elseif (isset($action) && 'add_item_on_woocommerce_order' === $action) {
+				$this->wc_order_add_new_item($this->orderId, $this->item);
+			} elseif (isset($action) && 'remove_item_from_woocommerce_order' === $action) {
+				$this->wc_order_remove_item($this->orderId, $this->item);
 			} else {
 				$this->plugin_data_action_handler();
 			}
@@ -140,7 +168,8 @@ final class Api {
 	/**
 	 * handler autonami action
 	 */
-	public function autonami_handler() {
+	public function autonami_handler()
+	{
 		$syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
 		$this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
 
@@ -168,7 +197,7 @@ final class Api {
 	 */
 	public function get_woocommerce_order_status() {
 		$email    = sanitize_email($_REQUEST['email'] ?? '');
-		$order_id = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
+		$orderId = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
 
 		if (!method_exists($this->plugin, 'order_status')) {
 			$this->apiResponse->error(500, "Method 'order_status' not exist in plugin");
@@ -180,25 +209,22 @@ final class Api {
 			$this->apiResponse->error(404, "Customer not found.");
 		}
 
-		$data = $this->plugin->order_status($order_id);
+		$data = $this->plugin->order_status($orderId);
 
 		$this->apiResponse->success(200, $data, 'Success');
 	}
 
-	public function get_woocommerce_product_list() {
-		 
-
-		$query = new WC_Product_Query( array(
+	public function get_woocommerce_product_list()
+	{
+		$query = new WC_Product_Query(array(
 			'status' => 'publish',
 			'return' => 'ids',
-		) );
-		
+		));
+
 		$products = $query->get_products();
 		$productList = [];
-		// $woocommerce = new WooCommerce();
-
-		foreach($products as $product_id){
-			// error_log($product_id);
+		foreach ($products as $product_id)
+		{
 
 			$product = wc_get_product($product_id);
 
@@ -207,7 +233,7 @@ final class Api {
 				"title"  			=> $product->get_name(),
 				"product_permalink" => get_permalink($product_id),
 				"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($product_id))[0],
-				"sale_price"    	=> $product->get_regular_price(),
+				"sale_price"    	=> get_woocommerce_currency_symbol() . $product->get_regular_price(),
 				"stock"    			=> $product->get_stock_quantity(),
 			);
 			array_push($productList, $productInfo);
@@ -217,11 +243,75 @@ final class Api {
 		$this->apiResponse->success(200, $data, 'Success');
 	}
 
-	public function get_woocommerce_status_list(){
+	public function get_woocommerce_status_list()
+	{
 
 		$statuses = wc_get_order_statuses();
 
 		$this->apiResponse->success(200, $statuses, 'Success');
+	}
+
+	public function wc_order_add_new_item($orderId, $item)
+	{
+		$product = wc_get_product_object('line_item', $item);
+
+		$item = new WC_Order_Item_Product();
+		$item->set_name($product->name);
+		$item->set_quantity($this->quantity);
+		$item->set_product_id($product->id);
+		$item->set_subtotal($product->price ?? 0);
+		$item->set_total($product->price * $this->quantity  ?? 0);
+		$order = wc_get_order($orderId);
+		$order->add_item($item);
+		$order->calculate_totals();
+
+		$this->apiResponse->success(200, [], 'Success');
+	}
+
+	public function wc_order_remove_item($orderId, $product_id)
+	{
+		$order = wc_get_order($orderId);
+		foreach ($order->get_items() as $item_id => $item) {
+			if ($item["product_id"] == $product_id) {
+				wc_delete_order_item($item_id);
+			}
+		}
+		$order->calculate_totals();
+		$this->apiResponse->success(200, [], 'Success');
+	}
+
+	public function woocommerce_order_status_update($orderId, $orderStatus)
+	{
+		$order = new WC_Order($orderId);
+		$order->update_status($orderStatus, '');
+		$this->apiResponse->success(200, [], 'Success');
+	}
+
+	public function woocommerce_order_quantity_update($orderId, $product_id, $quantity)
+	{
+
+		$order = wc_get_order($orderId);
+		if($quantity>0)
+		{
+			foreach ($order->get_items() as $item_id => $item) {
+				
+				if ($item["product_id"] == (string)$product_id) {
+					wc_update_order_item_meta( $item_id, '_qty', $quantity );
+					$order->calculate_totals();
+				}
+			}
+			$this->apiResponse->success(200, [], 'Success');
+		}
+	}
+
+	public function woocommerce_order_apply_coupon($orderId, $coupon)
+	{
+		$order = wc_get_order($orderId);
+		if($coupon)
+		{
+			$order->apply_coupon($coupon);
+		}
+		$this->apiResponse->success(200, [], 'Success');
 	}
 
 	/**
@@ -327,12 +417,10 @@ final class Api {
 					continue;
 				}
 				switch (strtolower($value)) {
-					case "1":
 					case "true":
 						$payload[$key] = true;
 						break;
 
-					case "0":
 					case "false":
 						$payload[$key] = false;
 						break;
