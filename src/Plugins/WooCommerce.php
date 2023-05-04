@@ -340,35 +340,6 @@ final class WooCommerce extends Plugin {
 			}
 
 			array_push($download_item, $productInfo);
-
-			// error_log("product");
-
-			// if (array_key_exists($item->get_id(), $license_info)) {
-			// 	array_push($download_item, [
-			// 		"title"             => $item["name"],
-			// 		"product_id"        => $item["product_id"],
-			// 		"product_permalink" => get_permalink($item["product_id"]),
-			// 		"quantity"          => $item["quantity"],
-			// 		"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
-			// 		"price"             => $this->get_formated_amount((float) $item["subtotal"]),
-			// 		"license"           => $license_info[$item->get_id()],
-			// 		"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($item["product_id"]))[0],
-			// 		"discount"			=> $this->get_formated_amount((float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' )),
-			// 		// "sku"				=> $item->get_description() ?? '',
-			// 	]);
-			// } else {
-			// 	array_push($download_item, [
-			// 		"title"             => $item["name"],
-			// 		"product_id"        => $item["product_id"],
-			// 		"product_permalink" => get_permalink($item["product_id"]),
-			// 		"quantity"          => $item["quantity"],
-			// 		"total_tax"         => $this->get_formated_amount((float) $item["total_tax"]),
-			// 		"price"             => $this->get_formated_amount((float) $item["subtotal"]),
-			// 		"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($item["product_id"]))[0],
-			// 		"discount"			=> $this->get_formated_amount((float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' )),
-			// 		// "sku"				=> $item->get_description(),
-			// 	]);
-			// }
 		}
 
 		return $download_item;
