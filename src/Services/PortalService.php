@@ -12,6 +12,7 @@ class PortalService {
 	public $plans = [
 		'business_ltd_22',
 		'agency_plus_ltd',
+		'agency_20_workspaces_ltd',
 		'agency-ltd',
 		'founder-ltd-business',
 		'pro',
