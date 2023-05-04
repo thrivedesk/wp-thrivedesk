@@ -1,6 +1,6 @@
 {
 	"name": "thrivedesk",
-	"version": "1.0.13",
+	"version": "1.0.15",
 	"description": "ThriveDesk - Customer Support & Helpdesk Software for WordPress Startups",
 	"scripts": {
 		"dev": "npm run development",
