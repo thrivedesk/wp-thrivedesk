@@ -8,12 +8,11 @@ use WC_Order;
 use WC_Order_Item_Product;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-final class Api
-{
+final class Api {
 	/**
 	 * The single instance of this class
 	 */
@@ -34,9 +33,8 @@ final class Api
 	 * @since  0.0.1
 	 * @access private
 	 */
-	private function __construct()
-	{
-		add_action('init', [$this, 'api_listener']);
+	private function __construct() {
+		add_action( 'init', [ $this, 'api_listener' ] );
 
 		$this->apiResponse = new ApiResponse();
 	}
@@ -52,9 +50,8 @@ final class Api
 	 * @access public
 	 * @since  0.0.1
 	 */
-	public static function instance(): object
-	{
-		if (!isset(self::$instance) && !(self::$instance instanceof Admin)) {
+	public static function instance(): object {
+		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Admin ) ) {
 			self::$instance = new self();
 		}
 
@@ -67,8 +64,7 @@ final class Api
 	 * @return array
 	 * @since 0.0.1
 	 */
-	private function _available_plugins(): array
-	{
+	private function _available_plugins(): array {
 		return [
 			'edd'         => 'EDD',
 			'woocommerce' => 'WooCommerce',
@@ -84,82 +80,81 @@ final class Api
 	 * @return void
 	 * @since 0.0.1
 	 */
-	public function api_listener(): void
-	{
-		$listener = sanitize_key($_GET['listener'] ?? '');
-		if (!isset($listener) || 'thrivedesk' !== $listener) {
+	public function api_listener(): void {
+		$listener = sanitize_key( $_GET['listener'] ?? '' );
+		if ( ! isset( $listener ) || 'thrivedesk' !== $listener ) {
 			return;
 		}
 
 		try {
-			$action = strtolower(sanitize_key($_GET['action'] ?? ''));
-			$plugin = strtolower(sanitize_key($_GET['plugin'] ?? 'edd'));
+			$action = strtolower( sanitize_key( $_GET['action'] ?? '' ) );
+			$plugin = strtolower( sanitize_key( $_GET['plugin'] ?? 'edd' ) );
 
-			$this->orderId = sanitize_key($_GET['order_id'] ?? '');
-			$this->orderStatus = sanitize_key($_GET['order_status'] ?? '');
-			$this->quantity = sanitize_key($_GET['quantity'] ?? '');
-			$this->item = sanitize_key($_GET['item'] ?? '');
-			$this->itemId = sanitize_key($_GET['item_id'] ?? '');
-			$this->coupon = sanitize_key($_GET['coupon'] ?? '');
-			
+			$this->orderId     = sanitize_key( $_GET['order_id'] ?? '' );
+			$this->orderStatus = sanitize_key( $_GET['order_status'] ?? '' );
+			$this->quantity    = sanitize_key( $_GET['quantity'] ?? '' );
+			$this->item        = sanitize_key( $_GET['item'] ?? '' );
+			$this->itemId      = sanitize_key( $_GET['item_id'] ?? '' );
+			$this->coupon      = sanitize_key( $_GET['coupon'] ?? '' );
+
 			// Plugin invalid response
-			if (!in_array($plugin, array_keys($this->_available_plugins()))) {
-				$this->apiResponse->error(401, 'Plugin is invalid or not available now.');
+			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
+				$this->apiResponse->error( 401, 'Plugin is invalid or not available now.' );
 			}
 
-			$plugin_name       = $this->_available_plugins()[$plugin] ?? 'EDD';
+			$plugin_name       = $this->_available_plugins()[ $plugin ] ?? 'EDD';
 			$plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
 
-			if (!class_exists($plugin_class_name)) {
-				$this->apiResponse->error(500, "Class not found for the '{$plugin_name}' plugin");
+			if ( ! class_exists( $plugin_class_name ) ) {
+				$this->apiResponse->error( 500, "Class not found for the '{$plugin_name}' plugin" );
 			}
 
 			$this->plugin = $plugin_class_name::instance();
 
-			if (!method_exists($this->plugin, 'is_plugin_active')) {
-				$this->apiResponse->error(500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'");
+			if ( ! method_exists( $this->plugin, 'is_plugin_active' ) ) {
+				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'" );
 			}
 
-			if (!$this->plugin->is_plugin_active()) {
-				$this->apiResponse->error(500, "The plugin '{$plugin_name}' isn't installed or active.");
+			if ( ! $this->plugin->is_plugin_active() ) {
+				$this->apiResponse->error( 500, "The plugin '{$plugin_name}' isn't installed or active." );
 			}
 
-			if (!$this->verify_token()) {
-				$this->apiResponse->error(401, 'Request unauthorized');
+			if ( ! $this->verify_token() ) {
+				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
-			if (isset($action) && 'connect' === $action) {
+			if ( isset( $action ) && 'connect' === $action ) {
 				$this->connect_action_handler();
-			} elseif (isset($action) && 'disconnect' === $action) {
+			} elseif ( isset( $action ) && 'disconnect' === $action ) {
 				$this->disconnect_action_handler();
-			} elseif (isset($action) && 'get_fluentcrm_data' === $action) {
+			} elseif ( isset( $action ) && 'get_fluentcrm_data' === $action ) {
 				$this->fluentcrm_handler();
-			} elseif (isset($action) && 'handle_autonami' === $action) {
+			} elseif ( isset( $action ) && 'handle_autonami' === $action ) {
 				$this->autonami_handler();
-			} elseif (isset($action) && 'get_wppostsync_data' === $action) {
-				$remote_query_string = strtolower($_GET['query'] ?? '');
-				$this->wp_postsync_data_handler($remote_query_string);
-			} elseif (isset($action) && 'get_woocommerce_product_list' === $action) {
+			} elseif ( isset( $action ) && 'get_wppostsync_data' === $action ) {
+				$remote_query_string = strtolower( $_GET['query'] ?? '' );
+				$this->wp_postsync_data_handler( $remote_query_string );
+			} elseif ( isset( $action ) && 'get_woocommerce_product_list' === $action ) {
 				$this->get_woocommerce_product_list();
-			} elseif (isset($action) && 'get_woocommerce_order_status' === $action) {
+			} elseif ( isset( $action ) && 'get_woocommerce_order_status' === $action ) {
 				$this->get_woocommerce_order_status();
-			} elseif (isset($action) && 'get_woocommerce_order_status_list' === $action) {
+			} elseif ( isset( $action ) && 'get_woocommerce_order_status_list' === $action ) {
 				$this->get_woocommerce_status_list();
-			} elseif (isset($action) && 'woocommerce_order_status_update' === $action) {
-				$this->woocommerce_order_status_update($this->orderId, $this->orderStatus);
-			} elseif (isset($action) && 'woocommerce_order_quantity_update' === $action) {
-				$this->woocommerce_order_quantity_update($this->orderId, $this->itemId, $this->quantity);
-			} elseif (isset($action) && 'woocommerce_order_apply_coupon' === $action) {
-				$this->woocommerce_order_apply_coupon($this->orderId, $this->coupon);
-			} elseif (isset($action) && 'add_item_on_woocommerce_order' === $action) {
-				$this->wc_order_add_new_item($this->orderId, $this->item);
-			} elseif (isset($action) && 'remove_item_from_woocommerce_order' === $action) {
-				$this->wc_order_remove_item($this->orderId, $this->item);
+			} elseif ( isset( $action ) && 'woocommerce_order_status_update' === $action ) {
+				$this->woocommerce_order_status_update( $this->orderId, $this->orderStatus );
+			} elseif ( isset( $action ) && 'woocommerce_order_quantity_update' === $action ) {
+				$this->woocommerce_order_quantity_update( $this->orderId, $this->itemId, $this->quantity );
+			} elseif ( isset( $action ) && 'woocommerce_order_apply_coupon' === $action ) {
+				$this->woocommerce_order_apply_coupon( $this->orderId, $this->coupon );
+			} elseif ( isset( $action ) && 'add_item_on_woocommerce_order' === $action ) {
+				$this->wc_order_add_new_item( $this->orderId, $this->item );
+			} elseif ( isset( $action ) && 'remove_item_from_woocommerce_order' === $action ) {
+				$this->wc_order_remove_item( $this->orderId, $this->item );
 			} else {
 				$this->plugin_data_action_handler();
 			}
-		} catch (\Exception $e) {
-			$this->apiResponse->error(500, 'Can\'t not prepare data');
+		} catch ( \Exception $e ) {
+			$this->apiResponse->error( 500, 'Can\'t not prepare data' );
 		}
 
 		wp_die();
@@ -168,25 +163,24 @@ final class Api
 	/**
 	 * handler autonami action
 	 */
-	public function autonami_handler()
-	{
-		$syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
-		$this->plugin->customer_email = sanitize_email($_GET['email'] ?? '');
+	public function autonami_handler() {
+		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
+		$this->plugin->customer_email = sanitize_email( $_GET['email'] ?? '' );
 
-		if ($syncType) {
-			$this->plugin->sync_conversation_with_autonami($syncType, $_REQUEST['extra'] ?? []);
+		if ( $syncType ) {
+			$this->plugin->sync_conversation_with_autonami( $syncType, $_REQUEST['extra'] ?? [] );
 		} else {
-			if (!method_exists($this->plugin, 'prepare_data')) {
-				$this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
+			if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
+				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
 			}
 
-			if (!$this->plugin->is_customer_exist()) {
-				$this->apiResponse->error(404, "Customer not found.");
+			if ( ! $this->plugin->is_customer_exist() ) {
+				$this->apiResponse->error( 404, "Customer not found." );
 			}
 
 			$data = $this->plugin->prepare_data();
 
-			$this->apiResponse->success(200, $data, 'Success');
+			$this->apiResponse->success( 200, $data, 'Success' );
 		}
 	}
 
@@ -196,122 +190,155 @@ final class Api
 	 * @since 0.9.0
 	 */
 	public function get_woocommerce_order_status() {
-		$email    = sanitize_email($_REQUEST['email'] ?? '');
-		$orderId = strtolower(sanitize_key($_REQUEST['order_id'] ?? ''));
+		$email   = sanitize_email( $_REQUEST['email'] ?? '' );
+		$orderId = strtolower( sanitize_key( $_REQUEST['order_id'] ?? '' ) );
 
-		if (!method_exists($this->plugin, 'order_status')) {
-			$this->apiResponse->error(500, "Method 'order_status' not exist in plugin");
+		if ( ! method_exists( $this->plugin, 'order_status' ) ) {
+			$this->apiResponse->error( 500, "Method 'order_status' not exist in plugin" );
 		}
 
 		$this->plugin->customer_email = $email;
 
-		if (!$this->plugin->is_customer_exist()) {
-			$this->apiResponse->error(404, "Customer not found.");
+		if ( ! $this->plugin->is_customer_exist() ) {
+			$this->apiResponse->error( 404, "Customer not found." );
 		}
 
-		$data = $this->plugin->order_status($orderId);
+		$data = $this->plugin->order_status( $orderId );
 
-		$this->apiResponse->success(200, $data, 'Success');
+		$this->apiResponse->success( 200, $data, 'Success' );
 	}
 
-	public function get_woocommerce_product_list()
-	{
-		$query = new WC_Product_Query(array(
+	/**
+	 * @return void
+	 */
+	public function get_woocommerce_product_list() {
+		$query = new WC_Product_Query( array(
 			'status' => 'publish',
 			'return' => 'ids',
-		));
+		) );
 
-		$products = $query->get_products();
+		$products    = $query->get_products();
 		$productList = [];
-		foreach ($products as $product_id)
-		{
 
-			$product = wc_get_product($product_id);
+		foreach ( $products as $product_id ) {
+			$product = wc_get_product( $product_id );
 
 			$productInfo = array(
-				"product_id"    	=> $product_id,
-				"title"  			=> $product->get_name(),
-				"product_permalink" => get_permalink($product_id),
-				"image"				=> wp_get_attachment_image_src(get_post_thumbnail_id($product_id))[0],
-				"sale_price"    	=> get_woocommerce_currency_symbol() . $product->get_regular_price(),
-				"stock"    			=> $product->get_stock_quantity(),
+				"product_id"        => $product_id,
+				"title"             => $product->get_name(),
+				"product_permalink" => get_permalink( $product_id ),
+				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id( $product_id ) )[0],
+				"sale_price"        => get_woocommerce_currency_symbol() . $product->get_regular_price(),
+				"stock"             => $product->get_stock_quantity(),
 			);
-			array_push($productList, $productInfo);
+
+			array_push( $productList, $productInfo );
 		}
 
 		$data = $productList;
-		$this->apiResponse->success(200, $data, 'Success');
+
+		$this->apiResponse->success( 200, $data, 'Success' );
 	}
 
-	public function get_woocommerce_status_list()
-	{
-
+	/**
+	 * @return void
+	 */
+	public function get_woocommerce_status_list() {
 		$statuses = wc_get_order_statuses();
 
-		$this->apiResponse->success(200, $statuses, 'Success');
+		$this->apiResponse->success( 200, $statuses, 'Success' );
 	}
 
-	public function wc_order_add_new_item($orderId, $item)
-	{
-		$product = wc_get_product_object('line_item', $item);
+	/**
+	 * @param $orderId
+	 * @param $item
+	 *
+	 * @return void
+	 */
+	public function wc_order_add_new_item( $orderId, $item ) {
+		$product = wc_get_product_object( 'line_item', $item );
 
 		$item = new WC_Order_Item_Product();
-		$item->set_name($product->name);
-		$item->set_quantity($this->quantity);
-		$item->set_product_id($product->id);
-		$item->set_subtotal($product->price ?? 0);
-		$item->set_total($product->price * $this->quantity  ?? 0);
-		$order = wc_get_order($orderId);
-		$order->add_item($item);
+		$item->set_name( $product->name );
+		$item->set_quantity( $this->quantity );
+		$item->set_product_id( $product->id );
+		$item->set_subtotal( $product->price ?? 0 );
+		$item->set_total( $product->price * $this->quantity ?? 0 );
+		$order = wc_get_order( $orderId );
+		$order->add_item( $item );
 		$order->calculate_totals();
 
-		$this->apiResponse->success(200, [], 'Success');
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
-	public function wc_order_remove_item($orderId, $product_id)
-	{
-		$order = wc_get_order($orderId);
-		foreach ($order->get_items() as $item_id => $item) {
-			if ($item["product_id"] == $product_id) {
-				wc_delete_order_item($item_id);
+	/**
+	 * @param $orderId
+	 * @param $product_id
+	 *
+	 * @return void
+	 */
+	public function wc_order_remove_item( $orderId, $product_id ) {
+		$order = wc_get_order( $orderId );
+
+		foreach ( $order->get_items() as $item_id => $item ) {
+			if ( $item["product_id"] == $product_id ) {
+				wc_delete_order_item( $item_id );
 			}
 		}
+
 		$order->calculate_totals();
-		$this->apiResponse->success(200, [], 'Success');
+
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
-	public function woocommerce_order_status_update($orderId, $orderStatus)
-	{
-		$order = new WC_Order($orderId);
-		$order->update_status($orderStatus, '');
-		$this->apiResponse->success(200, [], 'Success');
+	/**
+	 * @param $orderId
+	 * @param $orderStatus
+	 *
+	 * @return void
+	 */
+	public function woocommerce_order_status_update( $orderId, $orderStatus ) {
+		$order = new WC_Order( $orderId );
+		$order->update_status( $orderStatus, '' );
+
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
-	public function woocommerce_order_quantity_update($orderId, $product_id, $quantity)
-	{
+	/**
+	 * @param $orderId
+	 * @param $product_id
+	 * @param $quantity
+	 *
+	 * @return void
+	 */
+	public function woocommerce_order_quantity_update( $orderId, $product_id, $quantity ) {
 
-		$order = wc_get_order($orderId);
-		if($quantity>0)
-		{
-			foreach ($order->get_items() as $item_id => $item) {
-				
-				if ($item["product_id"] == (string)$product_id) {
+		$order = wc_get_order( $orderId );
+		if ( $quantity > 0 ) {
+			foreach ( $order->get_items() as $item_id => $item ) {
+
+				if ( $item["product_id"] == (string) $product_id ) {
 					wc_update_order_item_meta( $item_id, '_qty', $quantity );
 					$order->calculate_totals();
 				}
 			}
-			$this->apiResponse->success(200, [], 'Success');
+			$this->apiResponse->success( 200, [], 'Success' );
 		}
 	}
 
-	public function woocommerce_order_apply_coupon($orderId, $coupon)
-	{
-		$order = wc_get_order($orderId);
-		if($coupon)
-		{
-			$order->apply_coupon($coupon);
+	/**
+	 * @param $orderId
+	 * @param $coupon
+	 *
+	 * @return void
+	 */
+	public function woocommerce_order_apply_coupon( $orderId, $coupon ) {
+		$order = wc_get_order( $orderId );
+		if ( $coupon ) {
+			$order->apply_coupon( $coupon );
 		}
-		$this->apiResponse->success(200, [], 'Success');
+
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
 	/**
@@ -321,22 +348,22 @@ final class Api
 	 * @since 0.7.0
 	 */
 	public function fluentcrm_handler(): void {
-		$syncType                     = strtolower(sanitize_key($_REQUEST['sync_type'] ?? ''));
-		$this->plugin->customer_email = sanitize_email($_REQUEST['email'] ?? '');
+		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
+		$this->plugin->customer_email = sanitize_email( $_REQUEST['email'] ?? '' );
 
-		if ($syncType) {
-			$this->plugin->sync_conversation_with_fluentcrm($syncType, $_REQUEST['extra'] ?? []);
+		if ( $syncType ) {
+			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $_REQUEST['extra'] ?? [] );
 		} else {
-			if (!method_exists($this->plugin, 'prepare_fluentcrm_data')) {
-				$this->apiResponse->error(500, "Method 'prepare_fluentcrm_data' not exist in plugin");
+			if ( ! method_exists( $this->plugin, 'prepare_fluentcrm_data' ) ) {
+				$this->apiResponse->error( 500, "Method 'prepare_fluentcrm_data' not exist in plugin" );
 			}
 
-			if (!$this->plugin->is_customer_exist()) {
-				$this->apiResponse->error(404, "Customer not found.");
+			if ( ! $this->plugin->is_customer_exist() ) {
+				$this->apiResponse->error( 404, "Customer not found." );
 			}
 			$data = $this->plugin->prepare_fluentcrm_data();
 
-			$this->apiResponse->success(200, $data, 'Success');
+			$this->apiResponse->success( 200, $data, 'Success' );
 		}
 	}
 
@@ -347,9 +374,10 @@ final class Api
 	 *
 	 * @since 0.8.0
 	 */
-	public function wp_postsync_data_handler($remote_query_string): void {
-		$search_data = $this->plugin->get_post_search_result($remote_query_string);
-		$this->apiResponse->success(200, $search_data, 'Success');
+	public function wp_postsync_data_handler( $remote_query_string ): void {
+		$search_data = $this->plugin->get_post_search_result( $remote_query_string );
+
+		$this->apiResponse->success( 200, $search_data, 'Success' );
 	}
 
 	/**
@@ -361,7 +389,7 @@ final class Api
 	public function connect_action_handler(): void {
 		$this->plugin->connect();
 
-		$this->apiResponse->success(200, [], 'Site connected successfully');
+		$this->apiResponse->success( 200, [], 'Site connected successfully' );
 	}
 
 	/**
@@ -373,7 +401,7 @@ final class Api
 	public function disconnect_action_handler(): void {
 		$this->plugin->disconnect();
 
-		$this->apiResponse->success(200, [], 'Site has been disconnected');
+		$this->apiResponse->success( 200, [], 'Site has been disconnected' );
 	}
 
 	/**
@@ -383,23 +411,23 @@ final class Api
 	 * @since 0.0.4
 	 */
 	public function plugin_data_action_handler() {
-		$email          = sanitize_email($_REQUEST['email'] ?? '');
+		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
 		$enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
 
-		if (!method_exists($this->plugin, 'prepare_data')) {
-			$this->apiResponse->error(500, "Method 'prepare_data' not exist in plugin");
+		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
+			$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
 		}
 
 		$this->plugin->customer_email = $email;
 		$this->plugin->shipping_param = $enableShipping;
 
-		if (!$this->plugin->is_customer_exist()) {
-			$this->apiResponse->error(404, "Customer not found.");
+		if ( ! $this->plugin->is_customer_exist() ) {
+			$this->apiResponse->error( 404, "Customer not found." );
 		}
 
 		$data = $this->plugin->prepare_data();
 
-		$this->apiResponse->success(200, $data, 'Success');
+		$this->apiResponse->success( 200, $data, 'Success' );
 	}
 
 	/**
@@ -411,27 +439,27 @@ final class Api
 	private function verify_token(): bool {
 		$payload = $_REQUEST;
 
-		if ($payload) {
-			foreach ($payload as $key => $value) {
-				if (!is_string($value)) {
+		if ( $payload ) {
+			foreach ( $payload as $key => $value ) {
+				if ( ! is_string( $value ) ) {
 					continue;
 				}
-				switch (strtolower($value)) {
+				switch ( strtolower( $value ) ) {
 					case "true":
-						$payload[$key] = true;
+						$payload[ $key ] = true;
 						break;
 
 					case "false":
-						$payload[$key] = false;
+						$payload[ $key ] = false;
 						break;
 				}
 			}
 		}
 
-		$api_token = $this->plugin->get_plugin_data('api_token');
+		$api_token = $this->plugin->get_plugin_data( 'api_token' );
 
 		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-		return hash_equals($signature, hash_hmac('SHA1', json_encode($payload), $api_token));
+		return hash_equals( $signature, hash_hmac( 'SHA1', json_encode( $payload ), $api_token ) );
 	}
 }

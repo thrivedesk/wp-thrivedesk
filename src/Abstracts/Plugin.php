@@ -3,7 +3,7 @@
 namespace ThriveDesk;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -60,11 +60,11 @@ abstract class Plugin {
 	/**
 	 * Get plugin data
 	 *
-	 * @param  string  $key
+	 * @param string $key
 	 *
 	 * @return mixed
 	 */
-	abstract public function get_plugin_data(string $key = '');
+	abstract public function get_plugin_data( string $key = '' );
 
 	/**
 	 * Update plugin connect information
@@ -83,11 +83,11 @@ abstract class Plugin {
 	/**
 	 * Get the formated amount
 	 *
-	 * @param  float  $amount
+	 * @param float $amount
 	 *
 	 * @return string
 	 */
-	public function get_formated_amount(float $amount): string {
+	public function get_formated_amount( float $amount ): string {
 		return $amount;
 	}
 
@@ -101,52 +101,46 @@ abstract class Plugin {
 	/**
 	 * Get the accepted orders only
 	 *
-	 * @param  array  $orders
+	 * @param array $orders
 	 *
 	 * @return array
 	 */
-	public function filter_accepted_orders(array $orders): array {
+	public function filter_accepted_orders( array $orders ): array {
 		$accepted_statuses = $this->accepted_statuses() ?? [];
 
-		return array_filter($orders, function ($order) use ($accepted_statuses) {
-			return in_array($order['order_status'], $accepted_statuses);
-		});
+		return array_filter( $orders, function ( $order ) use ( $accepted_statuses ) {
+			return in_array( $order['order_status'], $accepted_statuses );
+		} );
 	}
 
 	/**
 	 * Get the lifetime order value of the customer
 	 *
-	 * @param  array  $orders
+	 * @param array $orders
 	 *
 	 * @return float
 	 */
-	public function get_lifetime_order(array $orders): float {
+	public function get_lifetime_order( array $orders ): float {
 		// TODO: Ignore pending or refunded amounts
-		$amount = array_sum(array_column($orders, 'amount'));
-
-		return $amount;
+		return array_sum( array_column( $orders, 'amount' ) );
 	}
 
 	/**
 	 * Get this year order value of the customer
 	 *
-	 * @param  array  $orders
+	 * @param array $orders
 	 *
 	 * @return float
 	 */
-	public function get_this_year_order(array $orders): float {
+	public function get_this_year_order( array $orders ): float {
 		// TODO: Ignore pending or refunded amounts
-		$amount = 0;
-
-		$amount = array_reduce($orders, function ($carry, $item) {
-			if (strtotime($item['date']) >= strtotime('-1 year')) {
+		return array_reduce( $orders, function ( $carry, $item ) {
+			if ( strtotime( $item['date'] ) >= strtotime( '-1 year' ) ) {
 				$carry += $item['amount'];
 			}
 
 			return $carry;
-		}, 0);
-
-		return $amount;
+		}, 0 );
 	}
 
 	/**
@@ -159,24 +153,24 @@ abstract class Plugin {
 
 		$orders = $this->get_orders();
 
-		$accepted_orders = $this->filter_accepted_orders($orders);
+		$accepted_orders = $this->filter_accepted_orders( $orders );
 
-		$this_year_order = $this->get_this_year_order($accepted_orders);
+		$this_year_order = $this->get_this_year_order( $accepted_orders );
 
-		$lifetime_order = $this->get_lifetime_order($accepted_orders);
+		$lifetime_order = $this->get_lifetime_order( $accepted_orders );
 
-		$avg_order = $lifetime_order ? ($lifetime_order / count($accepted_orders)) : 0;
+		$avg_order = $lifetime_order ? ( $lifetime_order / count( $accepted_orders ) ) : 0;
 
-		$avg_order = number_format((float) $avg_order, 2, '.', '');
+		$avg_order = number_format( (float) $avg_order, 2, '.', '' );
 
 		return [
-			"customer"        => $customer ?? [],
+			"customer"        => $customer,
 			"customer_since"  => $customer['registered_at'] ?? '',
-			"lifetime_order"  => $this->get_formated_amount($lifetime_order),
-			"this_year_order" => $this->get_formated_amount($this_year_order),
-			"avg_order"       => $this->get_formated_amount($avg_order),
+			"lifetime_order"  => $this->get_formated_amount( $lifetime_order ),
+			"this_year_order" => $this->get_formated_amount( $this_year_order ),
+			"avg_order"       => $this->get_formated_amount( $avg_order ),
 			"orders"          => $orders,
-			'add_order'		  => admin_url("post-new.php?post_type=shop_order" ),
+			'add_order'       => admin_url( "post-new.php?post_type=shop_order" ),
 		];
 	}
 }
