@@ -170,7 +170,7 @@ abstract class Plugin {
 			"this_year_order" => $this->get_formated_amount( $this_year_order ),
 			"avg_order"       => $this->get_formated_amount( $avg_order ),
 			"orders"          => $orders,
-			'add_order'       => admin_url( "post-new.php?post_type=shop_order" ),
+			'add_order'       => admin_url( "post-new.php?post_type=shop_order" ) ?? '',
 		];
 	}
 }

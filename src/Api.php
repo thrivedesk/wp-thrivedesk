@@ -25,6 +25,8 @@ final class Api {
 	private $quantity = null;
 	private $item = null;
 	private $coupon = null;
+	private $amount = null;
+	private $reason = null;
 	private $itemId = null;
 
 	/**
@@ -96,6 +98,8 @@ final class Api {
 			$this->item        = sanitize_key( $_GET['item'] ?? '' );
 			$this->itemId      = sanitize_key( $_GET['item_id'] ?? '' );
 			$this->coupon      = sanitize_key( $_GET['coupon'] ?? '' );
+			$this->amount      = sanitize_key( $_GET['amount'] ?? '' );
+			$this->reason      = sanitize_key( $_GET['reason'] ?? '' );
 
 			// Plugin invalid response
 			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
@@ -150,7 +154,11 @@ final class Api {
 				$this->wc_order_add_new_item( $this->orderId, $this->item );
 			} elseif ( isset( $action ) && 'remove_item_from_woocommerce_order' === $action ) {
 				$this->wc_order_remove_item( $this->orderId, $this->item );
-			} else {
+			} 
+			// elseif ( isset( $action ) && 'partial_refund_for_woocommerce_order' === $action ) {
+			// 	$this->wc_order_partial_refund( $this->orderId, $this->amount, $this->reason );
+			// } 
+			else {
 				$this->plugin_data_action_handler();
 			}
 		} catch ( \Exception $e ) {
@@ -229,7 +237,7 @@ final class Api {
 				"product_permalink" => get_permalink( $product_id ),
 				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id( $product_id ) )[0],
 				"sale_price"        => get_woocommerce_currency_symbol() . $product->get_regular_price(),
-				"stock"             => $product->get_stock_quantity(),
+				"stock"             => ( 'instock' === $product->get_stock_status() ) ? 'In Stock': 'Out of Stock',
 			);
 
 			array_push( $productList, $productInfo );
@@ -291,6 +299,17 @@ final class Api {
 		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
+	// public function wc_order_partial_refund($orderId, $refundAmount,  $refundReason){
+	// 	$refund = wc_create_refund( array(
+	// 		'amount'         => $refundAmount,
+	// 		'reason'         => $refundReason,
+	// 		'order_id'       => $orderId,
+	// 		'refund_payment' => true,
+	// 		'restock_items'  => true
+	// 		));
+	// 		return $refund;
+	// }
+
 	/**
 	 * @param $orderId
 	 * @param $orderStatus
@@ -334,11 +353,22 @@ final class Api {
 	 */
 	public function woocommerce_order_apply_coupon( $orderId, $coupon ) {
 		$order = wc_get_order( $orderId );
+
+		
+		
 		if ( $coupon ) {
-			$order->apply_coupon( $coupon );
+			$res = $order->apply_coupon($coupon);
+			
+			error_log(json_encode($res));
+
+			if(isset($res->errors)){
+				$this->apiResponse->error(404, "Coupon does not exist!." );
+			}
+			else{
+				$this->apiResponse->success( 200, [], 'Success' );
+			}
 		}
 
-		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
 	/**
@@ -411,6 +441,7 @@ final class Api {
 	 * @since 0.0.4
 	 */
 	public function plugin_data_action_handler() {
+		
 		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
 		$enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
 

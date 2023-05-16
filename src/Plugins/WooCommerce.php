@@ -333,6 +333,7 @@ final class WooCommerce extends Plugin {
 				"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
 				"tax_status"        => $product->get_tax_status(),
 				"stock"             => $product->get_stock_quantity(),
+				"stock_status"      => $product->get_stock_status(),
 				"weight"            => $product->get_weight(),
 				"sale_price"        => $product->get_sale_price(),
 				"discount"          => $this->get_formated_amount( (float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' ) ),
