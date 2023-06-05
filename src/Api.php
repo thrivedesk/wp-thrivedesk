@@ -221,10 +221,6 @@ final class Api {
 	 */
 	public function get_woocommerce_product_list() {
 
-		if ( ! $this->plugin->is_customer_exist() ) {
-			$this->apiResponse->error( 404, "Customer not found." );
-		}
-
 		$query = new WC_Product_Query( array(
 			'status' => 'publish',
 			'return' => 'ids',
@@ -257,10 +253,6 @@ final class Api {
 	 * @return void
 	 */
 	public function get_woocommerce_status_list() {
-
-		if ( ! $this->plugin->is_customer_exist() ) {
-			$this->apiResponse->error( 404, "Customer not found." );
-		}
 
 		$statuses = wc_get_order_statuses();
 
