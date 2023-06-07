@@ -30,6 +30,7 @@ use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
+use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
 use ThriveDesk\Services\PortalService;
@@ -120,6 +121,7 @@ final class ThriveDesk
             Conversation::instance();
             Assistant::instance();
 			PortalService::instance();
+			UserAccountPages::instance();
         }
 
         return self::$instance;
