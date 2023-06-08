@@ -57,11 +57,13 @@ $is_portal_available = (new PortalService())->has_portal_access();
                         </td>
                         <td>
 					        <?php
+					        global $wp;
+					        $url =  home_url( $wp->request );
 					        $conv_page_url = add_query_arg( array(
 						        'td_conversation_id' => $conversation['id']
-					        ), get_permalink() );
+					        ), $url );
 					        ?>
-                            <a class="text-sm" href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
+                            <a class="text-sm" href="<?php echo $conv_page_url; ?>">
                                 <div class="font-bold">
                                     <span>(#<?php echo $conversation['ticket_id']; ?>)</span>
                                     <span class="text-black"><?php echo $conversation['subject'];?></span>
