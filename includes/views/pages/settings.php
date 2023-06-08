@@ -15,7 +15,7 @@ use ThriveDesk\Plugins\WPPostSync;
 
     $user_account_pages = array(
             'woocommerce' => 'Add support to WooCommerce my account page',
-            'easy-digital-downloads' => 'Add support to Easy Digital Downloads my account page',
+//            'easy-digital-downloads' => 'Add support to Easy Digital Downloads my account page',
     );
 
     $wp_post_sync_types = array_filter( get_post_types( array(
@@ -30,7 +30,8 @@ use ThriveDesk\Plugins\WPPostSync;
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
-
+    $woo_plugin_installed = defined('WC_VERSION');;
+    $edd_plugin_installed = defined('EDD_VERSION');;
 ?>
 
 <div class="hidden tab-settings">
@@ -163,11 +164,11 @@ use ThriveDesk\Plugins\WPPostSync;
                             <label for="user_account_pages" class="font-medium text-black text-sm"><?php _e( 'Add Support Page', 'thrivedesk' ); ?></label>
                             <div class="">
                                 <?php foreach ( $user_account_pages as $key => $page ) : ?>
-                                    <div class="mb-1">
+                                    <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title = "You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
                                         <input class="user_account_pages" type="checkbox"
                                                name="user_account_pages[]"
                                                value="<?php echo esc_attr( $key ); ?>" <?php echo in_array( $key,
-	                                        $td_selected_user_account_pages ) ? 'checked' : ''; ?>>
+	                                        $td_selected_user_account_pages ) ? 'checked ' : ''; echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
                                         <label for="<?php echo esc_attr( $page ); ?>"> <?php echo esc_html( $page ); ?> </label>
                                     </div>
                                 <?php endforeach; ?>
