@@ -14,8 +14,7 @@ use ThriveDesk\Plugins\WPPostSync;
     $wppostsync                  = WPPostSync::instance();
 
     $user_account_pages = array(
-            'woocommerce' => 'Add support to WooCommerce my account page',
-//            'easy-digital-downloads' => 'Add support to Easy Digital Downloads my account page',
+            'woocommerce' => 'Add support to WooCommerce my account page'
     );
 
     $wp_post_sync_types = array_filter( get_post_types( array(
@@ -30,8 +29,8 @@ use ThriveDesk\Plugins\WPPostSync;
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
+
     $woo_plugin_installed = defined('WC_VERSION');;
-    $edd_plugin_installed = defined('EDD_VERSION');;
 ?>
 
 <div class="hidden tab-settings">
@@ -173,7 +172,6 @@ use ThriveDesk\Plugins\WPPostSync;
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                            <div><?php _e( 'Check the user account pages where you would like to show Portal feature', 'thrivedesk' ); ?>.</div>
                         </div>
                     </div>
                     <div class="p-4 bg-stone-100 border rounded w-64">
@@ -181,7 +179,7 @@ use ThriveDesk\Plugins\WPPostSync;
                         <code class="my-2 inline-block">[thrivedesk_portal]</code>
                         <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
                         <div class="text-base font-semibold mt-3"><?php _e( 'Support Page', 'thrivedesk' ); ?></div>
-                        <p><?php _e('You can add Support tab to WooCommerce or EDD my account page depending on the plugin availability.', 'thrivedesk')?></p>
+                        <p><?php _e('You can add Support tab to WooCommerce my account page depending on the plugin availability.', 'thrivedesk')?></p>
                     </div>
                 </div>
             </div>
