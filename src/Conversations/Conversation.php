@@ -77,6 +77,10 @@ class Conversation
 
 		$data = get_transient( 'thrivedesk_me' );
 		if ( $data ) {
+			$td_helpdesk_settings = [ 'td_helpdesk_api_key' => trim($apiKey)];
+			update_option( 'td_helpdesk_settings', $td_helpdesk_settings );
+
+			set_transient( 'thrivedesk_me', $data, 60 * 60 * 6 );
 			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
@@ -116,6 +120,7 @@ class Conversation
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
 	            'user_account_pages'                    => $data['user_account_pages'],
+	            'knowledge_base_search_modal'           => $data['knowledge_base_search_modal'],
             ];
 
             if (get_option('td_helpdesk_settings')) {
@@ -138,6 +143,7 @@ class Conversation
     public function add_td_conversation_shortcode(): void
     {
         add_shortcode('thrivedesk_portal', [$this, 'conversation_page']);
+		add_shortcode('thrivedesk_knowledgebase_search', [$this, 'knowledgebase_search_page']);
     }
 
     /**
@@ -188,6 +194,21 @@ class Conversation
                 'thrivedesk') . '. Click <a class="text-blue-600" href="' . esc_url(wp_login_url
             ($redirect)) . '"> here</a> to login.
 			</p>';
+    }
+
+
+	public function knowledgebase_search_page($atts, $content = null)
+	{
+		$this->load_scripts();
+
+		if (is_user_logged_in() && !is_null($content) && !is_feed()) {
+			ob_start();
+			thrivedesk_view('shortcode/search');
+
+            return ob_get_clean();
+        }
+
+
     }
 
 

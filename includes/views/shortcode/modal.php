@@ -22,7 +22,7 @@
                     </div>
                 </div>
 				<div>
-					<ul id="td-search-results" class="space-y-2">
+					<ul id="td-search-results" class="space-y-2" style="list-style: none; padding: 0; margin: 0;">
 						<li class="h-36 flex items-center justify-center text-slate-500">
 							<span> <?php _e('Search before creating a new ticket', 'thrivedesk'); ?></span>
 						</li>
