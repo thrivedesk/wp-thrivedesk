@@ -50,7 +50,7 @@ class Conversation
     public function __construct()
     {
         // add shortcode for the frontend when init action called
-        add_action('init', [$this, 'add_td_conversation_shortcode']);
+        add_action('init', [$this, 'add_td_shortcode']);
 
 		// ajax call for sending reply
 		add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
@@ -140,10 +140,10 @@ class Conversation
      *
      * @return void
      */
-    public function add_td_conversation_shortcode(): void
+    public function add_td_shortcode(): void
     {
         add_shortcode('thrivedesk_portal', [$this, 'conversation_page']);
-		add_shortcode('thrivedesk_knowledgebase_search', [$this, 'knowledgebase_search_page']);
+		add_shortcode('thrivedesk_search', [$this, 'thrivedesk_search_page']);
     }
 
     /**
@@ -197,7 +197,7 @@ class Conversation
     }
 
 
-	public function knowledgebase_search_page($atts, $content = null)
+	public function thrivedesk_search_page($atts, $content = null)
 	{
 		$this->load_scripts();
 
@@ -208,7 +208,7 @@ class Conversation
             return ob_get_clean();
         }
 
-
+		return null;
     }
 
 
