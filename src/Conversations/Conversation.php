@@ -113,7 +113,7 @@ class Conversation
         $data = $_POST['data'];
 
 	    if ( $data['user_account_pages'] && in_array( 'woocommerce', $data['user_account_pages'] ) ) {
-		    delete_option('td_rewrite_rules_flushed');
+		    flush_rewrite_rules();
 	    }
 
         if (isset($data['td_helpdesk_api_key'])) {
