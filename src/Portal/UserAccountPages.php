@@ -39,6 +39,12 @@ class UserAccountPages {
 
 	public function register_td_portal_endpoint_for_woocommerce_account_page() {
 		add_rewrite_endpoint( 'td-support', EP_ROOT | EP_PAGES );
+
+		// flush rewrite rules for once
+		if ( ! get_option( 'td_rewrite_rules_flushed' ) ) {
+			flush_rewrite_rules();
+			update_option( 'td_rewrite_rules_flushed', true );
+		}
 	}
 
 	public function td_portal_query_vars( $vars ) {

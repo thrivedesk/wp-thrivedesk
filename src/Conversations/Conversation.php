@@ -111,6 +111,11 @@ class Conversation
     {
         header('Content-Type: application/json');
         $data = $_POST['data'];
+
+	    if ( $data['user_account_pages'] && in_array( 'woocommerce', $data['user_account_pages'] ) ) {
+		    delete_option('td_rewrite_rules_flushed');
+	    }
+
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
             $td_helpdesk_settings = [
