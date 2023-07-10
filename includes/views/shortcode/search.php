@@ -16,9 +16,9 @@
 				<span class="sr-only">Loading...</span>
 			</div>
 		</div>
-		<div>
+		<div class="max-h-72 overflow-y-auto">
 			<ul id="td-search-results" class="space-y-2" style="list-style: none; padding: 0; margin: 0;">
-				<li class=" flex items-center justify-center text-slate-500">
+				<li class="flex items-center justify-center text-slate-500">
 					<span> <?php _e('Search your documentation', 'thrivedesk'); ?></span>
 				</li>
 			</ul>
