@@ -193,8 +193,8 @@ use ThriveDesk\Plugins\WPPostSync;
                         <div class="text-base font-semibold"><?php _e( 'Shortcode', 'thrivedesk' ); ?></div>
                         <code class="my-2 inline-block">[thrivedesk_portal]</code>
                         <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
-                        <code class="my-2 inline-block">[td_knowledgebase_search]</code>
-                        <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
+                        <code class="my-2 inline-block">[thrivedesk_search]</code>
+                        <p><?php _e( 'ThriveDesk search can be used in any page', 'thrivedesk' ); ?>.</p>
                         <div class="text-base font-semibold mt-3"><?php _e( 'Support Page', 'thrivedesk' ); ?></div>
                         <p><?php _e('You can add Support tab to WooCommerce my account page depending on the plugin availability.', 'thrivedesk')?></p>
                     </div>
