@@ -201,14 +201,10 @@ class Conversation
 	{
 		$this->load_scripts();
 
-		if (is_user_logged_in() && !is_null($content) && !is_feed()) {
-			ob_start();
-			thrivedesk_view('shortcode/search');
+		ob_start();
+		thrivedesk_view('shortcode/search');
 
-            return ob_get_clean();
-        }
-
-		return null;
+		return ob_get_clean();
     }
 
 
