@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 6.2.2
-Stable Tag: 1.0.16
+Stable Tag: 1.1.0
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -223,8 +223,12 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
-= 1.0.16 =
+= 1.1.0 =
 - Add: Support tab to WooCommerce my account page
+- Add: API key now saved after successful verification
+- Add: Shortcode for search
+- Add: Select 2 for custom post types and post sync
+- Add: Search modal visibility option in settings page
 
 = 1.0.15 =
 - Update: ThriveDesk plan list for Portal feature
