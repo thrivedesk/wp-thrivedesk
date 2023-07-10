@@ -8,7 +8,7 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
     $td_assistants               = Assistant::assistants();
     $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
-    $user_account_pages          = get_option( 'user_account_pages' );
+    $user_account_pages          = [];
     $td_selected_user_account_pages      = $td_helpdesk_selected_option['user_account_pages'] ?? [];
     $has_portal_access           = ( new PortalService() )->has_portal_access();
     $wppostsync                  = WPPostSync::instance();
@@ -136,7 +136,7 @@ use ThriveDesk\Plugins\WPPostSync;
 
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" value="" id="td_helpdesk_enable_knowledge_base" class="sr-only peer" <?php echo (!isset($td_helpdesk_selected_option['knowledge_base_search_modal']) || $td_helpdesk_selected_option['knowledge_base_search_modal']) ? 'checked' : ''; ?>>
-                                        <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                                        <div class="td-toggle-switch peer peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-checked:bg-blue-600"></div>
                                         <span class="ml-1"></span>
                                     </label>
 
