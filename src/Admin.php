@@ -125,6 +125,9 @@ final class Admin
     public function admin_scripts($hook): void
     {
         if ('settings_page_thrivedesk-setting' == $hook) {
+	        wp_enqueue_style( 'select2-css', THRIVEDESK_PLUGIN_ASSETS . '/plugins/select2/select2.min.css', '', THRIVEDESK_VERSION);
+	        wp_enqueue_script( 'select2-js', THRIVEDESK_PLUGIN_ASSETS . '/plugins/select2/select2.min.js', ['jquery'], THRIVEDESK_VERSION);
+
             wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
         }
 

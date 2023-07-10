@@ -8,22 +8,29 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
     $td_assistants               = Assistant::assistants();
     $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
+    $user_account_pages          = [];
+    $td_selected_user_account_pages      = $td_helpdesk_selected_option['user_account_pages'] ?? [];
     $has_portal_access           = ( new PortalService() )->has_portal_access();
     $wppostsync                  = WPPostSync::instance();
-    
+
+    $user_account_pages = array(
+            'woocommerce' => 'Add support to WooCommerce my account page'
+    );
+
     $wp_post_sync_types = array_filter( get_post_types( array(
         'public'       => true,
         'show_in_rest' => true
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
-    
+
     $knowledge_base_wp_post_types = array_filter( get_post_types( array(
         'public'       => true
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
 
+    $woo_plugin_installed = defined('WC_VERSION');;
 ?>
 
 <div class="hidden tab-settings">
@@ -79,26 +86,24 @@ use ThriveDesk\Plugins\WPPostSync;
                 <div class="flex space-x-4" id="td_post_sync">
                     <div class="flex-1">
                         <div class="space-y-2">
-                            <div class="flex items-center space-x-2">
-                                <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-                                    <?php foreach ( $wp_post_sync_types as $post_sync ) : ?>
-                                        <div>
-                                            <input class="td_helpdesk_post_sync" type="checkbox"
-                                                   name="td_helpdesk_post_sync[]"
-                                                   value="<?php echo esc_attr( $post_sync ); ?>" <?php echo in_array( $post_sync,
-                                                $td_selected_post_sync ) ? 'checked' : ''; ?>>
-                                            <label for="<?php echo esc_attr( $post_sync ); ?>"> <?php echo esc_html( ucfirst( $post_sync ) ); ?> </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="w-full text-center text-base tab-link">
-                                        <?php _e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk');?>
-                                        <?php $nonce = wp_create_nonce( 'thrivedesk-plugin-action' ); ?>
-                                        <a data-target="tab-integrations" href="#integrations"
-                                            class="btn-primary py-1 px-3">Connect Now</a>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
+	                        <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
+                                <label for="td_helpdesk_post_sync"></label>
+                                <select id="td_helpdesk_post_sync" name="td_helpdesk_post_sync[]" multiple>
+			                        <?php foreach ( $wp_post_sync_types as $post_sync ) : ?>
+                                        <option value="<?php echo esc_attr( $post_sync ); ?>"
+					                        <?php echo in_array( $post_sync,
+						                        $td_selected_post_sync ) ? 'selected' : ''; ?>
+                                        ><?php echo esc_html( ucfirst( $post_sync ) ); ?></option>
+			                        <?php endforeach; ?>
+                                </select>
+	                        <?php else: ?>
+                                <div class="w-full text-center text-base tab-link">
+			                        <?php _e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk');?>
+			                        <?php $nonce = wp_create_nonce( 'thrivedesk-plugin-action' ); ?>
+                                    <a data-target="tab-integrations" href="#integrations"
+                                       class="btn-primary py-1 px-3">Connect Now</a>
+                                </div>
+	                        <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -124,6 +129,25 @@ use ThriveDesk\Plugins\WPPostSync;
                 <div class="flex space-x-4 <?php echo ($has_portal_access && !empty($td_api_key))  ? '' : 'hidden' ?>" id="td_post_content">
                     <div class="space-y-4 flex-1">
                         <div class="space-y-2">
+                            <label for="enable_knowledge_base_modal" class="font-medium text-black text-sm"><?php _e( 'Knowledge base', 'thrivedesk' ); ?></label>
+                            <!--Checkbox-->
+                            <div>
+                                <label class="inline-flex items-center">
+
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" value="" id="td_helpdesk_enable_knowledge_base" class="sr-only peer" <?php echo (!isset($td_helpdesk_selected_option['knowledge_base_search_modal']) || $td_helpdesk_selected_option['knowledge_base_search_modal']) ? 'checked' : ''; ?>>
+                                        <div class="td-toggle-switch peer peer-focus:ring-4 peer-focus:ring-blue-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-checked:bg-blue-600"></div>
+                                        <span class="ml-1"></span>
+                                    </label>
+
+                                    <span class="ml-1"><?php _e( 'Knowledge base Search', 'thrivedesk' ); ?></span>
+                                </label>
+                            </div>
+
+                            <div><?php _e( 'This will disable search modal before creating a new ticket ','thrivedesk' ); ?>.</div>
+                        </div>
+
+                        <div class="space-y-2">
                             <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e( 'New Ticket Page', 'thrivedesk' ); ?></label>
                             <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
                                 <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
@@ -136,26 +160,43 @@ use ThriveDesk\Plugins\WPPostSync;
                             </select>
                             <div><?php _e( 'Use any form plugin to create new ticket page or use existing one. Learn more ','thrivedesk' ); ?><a class="text-blue-500" href="#">here</a>.</div>
                         </div>
+
                         <div class="space-y-2">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
-                            <div class="flex items-center space-x-2">
-                                <?php foreach ( $knowledge_base_wp_post_types as $post_type ) : ?>
-                                    <div>
-                                        <input class="td_helpdesk_post_types" type="checkbox"
-                                               name="td_helpdesk_post_types[]"
-                                               value="<?php echo esc_attr( $post_type ); ?>" <?php echo in_array( $post_type,
-                                            $td_selected_post_types ) ? 'checked' : ''; ?>>
-                                        <label for="<?php echo esc_attr( $post_type ); ?>"> <?php echo esc_html( ucfirst( $post_type ) ); ?> </label>
+                            <select id="td_helpdesk_post_types" name="td_helpdesk_post_types[]" multiple>
+		                        <?php foreach ( $knowledge_base_wp_post_types as $post_type ) : ?>
+                                    <option value="<?php echo esc_attr( $post_type ); ?>"
+	                                    <?php echo in_array( $post_type,
+		                                    $td_selected_post_types ) ? 'selected' : ''; ?>
+                                    ><?php echo esc_html( ucfirst( $post_type ) ); ?></option>
+		                        <?php endforeach; ?>
+                            </select>
+                            <div><?php _e( 'Select a post type where user can search before raise a support ticket', 'thrivedesk' ); ?>.</div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="user_account_pages" class="font-medium text-black text-sm"><?php _e( 'Add Support Page', 'thrivedesk' ); ?></label>
+                            <div class="">
+                                <?php foreach ( $user_account_pages as $key => $page ) : ?>
+                                    <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title = "You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
+                                        <input class="user_account_pages" type="checkbox"
+                                               name="user_account_pages[]"
+                                               value="<?php echo esc_attr( $key ); ?>" <?php echo in_array( $key,
+	                                        $td_selected_user_account_pages ) ? 'checked ' : ''; echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
+                                        <label for="<?php echo esc_attr( $page ); ?>"> <?php echo esc_html( $page ); ?> </label>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-                            <div><?php _e( 'Select a post type where user can search before raise a support ticket', 'thrivedesk' ); ?>.</div>
                         </div>
                     </div>
                     <div class="p-4 bg-stone-100 border rounded w-64">
                         <div class="text-base font-semibold"><?php _e( 'Shortcode', 'thrivedesk' ); ?></div>
                         <code class="my-2 inline-block">[thrivedesk_portal]</code>
                         <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
+                        <code class="my-2 inline-block">[thrivedesk_search]</code>
+                        <p><?php _e( 'ThriveDesk search can be used in any page', 'thrivedesk' ); ?>.</p>
+                        <div class="text-base font-semibold mt-3"><?php _e( 'Support Page', 'thrivedesk' ); ?></div>
+                        <p><?php _e('You can add Support tab to WooCommerce my account page depending on the plugin availability.', 'thrivedesk')?></p>
                     </div>
                 </div>
             </div>

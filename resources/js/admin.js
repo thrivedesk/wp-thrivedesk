@@ -1,5 +1,22 @@
 import Swal from 'sweetalert2';
 
+jQuery(document).ready(function($) {
+	if (typeof $.fn.select2 === 'undefined') {
+		return;
+	}
+
+	$('#td_helpdesk_post_types').select2({
+		placeholder: 'Select post types',
+		width: '100%'
+	});
+
+	$('#td_helpdesk_post_sync').select2({
+		placeholder: 'Select post sync types',
+		width: '100%'
+	});
+});
+
+
 jQuery(document).ready(($) => {
 	function thrivedeskTabManager(
 		tabElement,
@@ -127,13 +144,30 @@ jQuery(document).ready(($) => {
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 		let td_helpdesk_assistant = $('#td-assistants').val();
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
-		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
+
+		// 'td_helpdesk_page_id' is implemented by select2, so need to get the value from select2
+		let td_helpdesk_post_types = [];
+		let selected_post_types = $('#td_helpdesk_post_types').select2('data');
+		if (selected_post_types && selected_post_types.length > 0) {
+			for (let i = 0; i < selected_post_types.length; i++) {
+				td_helpdesk_post_types[i] = selected_post_types[i].id;
+			}
+		}
+
+		let td_helpdesk_post_sync = [];
+		let selected_post_sync = $('#td_helpdesk_post_sync').select2('data');
+		if (selected_post_sync && selected_post_sync.length > 0) {
+			for (let i = 0; i < selected_post_sync.length; i++) {
+				td_helpdesk_post_sync[i] = selected_post_sync[i].id;
+			}
+		}
+
+		let user_account_pages = $('.user_account_pages:checked')
 			.map((i, item) => item.value)
 			.get();
 
-		let td_helpdesk_post_sync = $('.td_helpdesk_post_sync:checked')
-			.map((i, item) => item.value)
-			.get();
+		let td_helpdesk_enable_knowledge_base = $('#td_helpdesk_enable_knowledge_base').is(':checked') ? 1 : 0;
+		console.log(td_helpdesk_enable_knowledge_base);
 
 		jQuery
 			.post(thrivedesk.ajax_url, {
@@ -144,6 +178,8 @@ jQuery(document).ready(($) => {
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
 					td_helpdesk_post_sync: td_helpdesk_post_sync,
+					user_account_pages: user_account_pages,
+					knowledge_base_search_modal: td_helpdesk_enable_knowledge_base,
 				},
 			})
 			.success(function (response) {

@@ -5,7 +5,7 @@
  * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
- * Version:             1.0.15
+ * Version:             1.1.0
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -13,7 +13,7 @@
  *
  * Requires PHP:        5.5
  * Requires at least:   4.9
- * Tested up to:        6.2
+ * Tested up to:        6.2.2
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
+use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
 use ThriveDesk\Services\PortalService;
@@ -49,7 +50,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '1.0.15';
+    public $version = '1.1.0';
 
     /**
      * The single instance of this class
@@ -120,6 +121,7 @@ final class ThriveDesk
             Conversation::instance();
             Assistant::instance();
 			PortalService::instance();
+			UserAccountPages::instance();
         }
 
         return self::$instance;

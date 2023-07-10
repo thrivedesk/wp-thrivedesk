@@ -6,7 +6,7 @@ $conversations       = Conversation::get_conversations();
 $conversation_data   = isset($conversations['data']) ? Conversation::td_conversation_sort_by_status($conversations['data']) : [];
 $links               = $conversations['meta']['links'] ?? [];
 $is_portal_available = (new PortalService())->has_portal_access();
-
+$td_helpdesk_selected_option = get_td_helpdesk_options();
 ?>
 
 <div id="thrivedesk" class="w-full prose prose-slate max-w-none">
@@ -20,9 +20,17 @@ $is_portal_available = (new PortalService())->has_portal_access();
         <?php else: ?>
             <div class="td-portal-header">
                 <input type="search" class="td-ticket-search" id="td-ticket-search" placeholder="<?php _e('Search...')?>">
-                <button type="submit" id="openConversationModal" class="td-btn-primary" data-modal-toggle="tdConversationModal">
-                    <span><?php _e('Create a new ticket', 'thrivedesk'); ?></span>
-                </button>
+                <?php if (!isset($td_helpdesk_selected_option['knowledge_base_search_modal']) || $td_helpdesk_selected_option['knowledge_base_search_modal']): ?>
+
+                    <button type="submit" id="openConversationModal" class="td-btn-primary" data-modal-toggle="tdConversationModal">
+                        <span><?php _e('Create a new ticket', 'thrivedesk'); ?></span>
+                    </button>
+                <?php else: ?>
+                    <a href="<?php echo get_page_link( get_post(get_td_helpdesk_options('td_helpdesk_settings')['td_helpdesk_page_id']))?>" id="td-new-ticket-url" target="_blank" class="td-btn-primary">
+		                <?php _e('Create a new ticket', 'thrivedesk'); ?>
+                    </a>
+                <?php endif; ?>
+
             </div>
 
             <table class="td-portal-tickets !m-0" id="conversation-table">
@@ -57,11 +65,13 @@ $is_portal_available = (new PortalService())->has_portal_access();
                         </td>
                         <td>
 					        <?php
+					        global $wp;
+					        $url =  home_url( $wp->request );
 					        $conv_page_url = add_query_arg( array(
 						        'td_conversation_id' => $conversation['id']
-					        ), get_permalink() );
+					        ), $url );
 					        ?>
-                            <a class="text-sm" href="<?php echo get_permalink() .'?td_conversation_id='.$conversation['id']; ?>">
+                            <a class="text-sm" href="<?php echo $conv_page_url; ?>">
                                 <div class="font-bold">
                                     <span>(#<?php echo $conversation['ticket_id']; ?>)</span>
                                     <span class="text-black"><?php echo $conversation['subject'];?></span>

@@ -50,7 +50,7 @@ class Conversation
     public function __construct()
     {
         // add shortcode for the frontend when init action called
-        add_action('init', [$this, 'add_td_conversation_shortcode']);
+        add_action('init', [$this, 'add_td_shortcode']);
 
 		// ajax call for sending reply
 		add_action('wp_ajax_td_reply_conversation', [$this, 'td_send_reply']);
@@ -77,6 +77,10 @@ class Conversation
 
 		$data = get_transient( 'thrivedesk_me' );
 		if ( $data ) {
+			$td_helpdesk_settings = [ 'td_helpdesk_api_key' => trim($apiKey)];
+			update_option( 'td_helpdesk_settings', $td_helpdesk_settings );
+
+			set_transient( 'thrivedesk_me', $data, 60 * 60 * 6 );
 			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
@@ -107,6 +111,11 @@ class Conversation
     {
         header('Content-Type: application/json');
         $data = $_POST['data'];
+
+	    if ( $data['user_account_pages'] && in_array( 'woocommerce', $data['user_account_pages'] ) ) {
+		    flush_rewrite_rules();
+	    }
+
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
             $td_helpdesk_settings = [
@@ -115,6 +124,8 @@ class Conversation
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
+	            'user_account_pages'                    => $data['user_account_pages'],
+	            'knowledge_base_search_modal'           => $data['knowledge_base_search_modal'],
             ];
 
             if (get_option('td_helpdesk_settings')) {
@@ -134,9 +145,10 @@ class Conversation
      *
      * @return void
      */
-    public function add_td_conversation_shortcode(): void
+    public function add_td_shortcode(): void
     {
         add_shortcode('thrivedesk_portal', [$this, 'conversation_page']);
+		add_shortcode('thrivedesk_search', [$this, 'thrivedesk_search_page']);
     }
 
     /**
@@ -187,6 +199,17 @@ class Conversation
                 'thrivedesk') . '. Click <a class="text-blue-600" href="' . esc_url(wp_login_url
             ($redirect)) . '"> here</a> to login.
 			</p>';
+    }
+
+
+	public function thrivedesk_search_page($atts, $content = null)
+	{
+		$this->load_scripts();
+
+		ob_start();
+		thrivedesk_view('shortcode/search');
+
+		return ob_get_clean();
     }
 
 

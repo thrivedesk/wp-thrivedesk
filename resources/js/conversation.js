@@ -61,7 +61,11 @@ jQuery(document).ready(($) => {
     function search_query(){
         let search_query = $('#td-search-input').val();
         let tdSearchSpinner = $('#td-search-spinner');
-        if (!search_query) return;
+        if (!search_query || search_query === ''){
+            // clear search results
+            $('#td-search-results').html('');
+            return;
+        }
         tdSearchSpinner.show();
         $.ajax({
             type: "POST",

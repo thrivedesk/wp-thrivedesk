@@ -43,6 +43,10 @@
 		@apply bg-rose-50 border-rose-300 text-rose-600;
 	}
 
+	.td-toggle-switch {
+		@apply w-9 h-5 bg-gray-200 rounded-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all;
+	}
+
 	.td-steps{
 		@apply mb-2 flex space-x-1;
 		>span{
