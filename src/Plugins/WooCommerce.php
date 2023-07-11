@@ -4,6 +4,7 @@ namespace ThriveDesk\Plugins;
 
 use ThriveDesk\Plugin;
 use WC_Order_Query;
+use WC_Subscriptions_Product;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -231,11 +232,12 @@ final class WooCommerce extends Plugin {
 		$shipping_details = [];
 
 		array_push( $shipping_details, [
-			'street'  => $order->get_shipping_address_1() ?? '',
+			'street'  => $order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2() ?? '',
 			'city'    => $order->get_shipping_city() ?? '',
 			'zip'     => $order->get_shipping_postcode() ?? '',
 			'state'   => $state,
 			'country' => WC()->countries->countries[ $order->get_shipping_country() ] ?? '',
+			'shipping_address_overview' => $order->get_formatted_shipping_address() ?? '',
 		] );
 
 		return $shipping_details;
@@ -263,8 +265,9 @@ final class WooCommerce extends Plugin {
 	public function get_order_items( $order ): array {
 		$items = $order->get_items();
 
-		$download_item = [];
-		$license_info  = [];
+		$download_item 	   = [];
+		$license_info      = [];
+		$subscription_info = [];
 
 		if ( method_exists( 'WOO_SL_functions', 'get_order_licence_details' ) ) {
 
@@ -315,8 +318,26 @@ final class WooCommerce extends Plugin {
 			}
 		}
 
+		
+
+		
+
 		foreach ( $items as $item ) {
+
 			$product = wc_get_product( $item["product_id"] );
+
+			if (class_exists( 'WC_Subscriptions_Product') && WC_Subscriptions_Product::is_subscription($product)){
+
+				$subscription_info = [
+					"is_subscription" => true,
+					"period"          => WC_Subscriptions_Product::get_period($product),
+					"trial_length"    => WC_Subscriptions_Product::get_trial_length($product),
+					"trial_period"    => WC_Subscriptions_Product::get_trial_period($product),
+					"trial_expiration_date" => WC_Subscriptions_Product::get_trial_expiration_date($product),
+					"sign_up_fee"     => WC_Subscriptions_Product::get_sign_up_fee($product),
+					"expiration_date" => WC_Subscriptions_Product::get_expiration_date($product),
+				];
+			}
 
 			$productInfo = array(
 				"product_id"        => $item["product_id"],
@@ -328,16 +349,20 @@ final class WooCommerce extends Plugin {
 				"type"              => $product->get_type(),
 				"status"            => $product->get_status(),
 				"sku"               => $product->get_sku(),
-				"price"             => $this->get_formated_amount( (float) $item["subtotal"] ),
+				"price"             => $this->get_formated_amount( (float) $item["subtotal"]),
 				"regular_price"     => $this->get_formated_amount( (float) $product->get_regular_price() ),
 				"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
 				"tax_status"        => $product->get_tax_status(),
 				"stock"             => $product->get_stock_quantity(),
 				"stock_status"      => $product->get_stock_status(),
 				"weight"            => $product->get_weight(),
-				"sale_price"        => $product->get_sale_price(),
-				"discount"          => $this->get_formated_amount( (float) wc_format_decimal( $item->get_subtotal() - $item->get_total(), '' ) ),
+				"discount"          => $this->get_formated_amount( (float) $item->get_total() ),
+				"subscription"		=> $subscription_info,
+
 			);
+
+			$subscription_info = [];
+
 			if ( array_key_exists( $item->get_id(), $license_info ) ) {
 				$productInfo['license'] = $license_info[ $item->get_id() ];
 			}
