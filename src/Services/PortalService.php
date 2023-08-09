@@ -16,7 +16,9 @@ class PortalService {
 		'agency-ltd',
 		'founder-ltd-business',
 		'pro',
-		'pro_annual'
+		'pro_annual',
+		'plus_annual_july_2023',
+		'plus_july_2023',
 	];
 
 	public function __construct(  ) {
