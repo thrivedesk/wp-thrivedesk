@@ -20,14 +20,14 @@ final class Api {
 
 	private $apiResponse;
 	private $plugin = null;
-	private $orderId = null;
-	private $orderStatus = null;
+	private $order_id = null;
+	private $order_status = null;
 	private $quantity = null;
 	private $item = null;
 	private $coupon = null;
 	private $amount = null;
 	private $reason = null;
-	private $itemId = null;
+	private $item_id = null;
 
 	/**
 	 * Construct Api class.
@@ -92,11 +92,11 @@ final class Api {
 			$action = strtolower( sanitize_key( $_GET['action'] ?? '' ) );
 			$plugin = strtolower( sanitize_key( $_GET['plugin'] ?? 'edd' ) );
 
-			$this->orderId     = sanitize_key( $_GET['order_id'] ?? '' );
-			$this->orderStatus = sanitize_key( $_GET['order_status'] ?? '' );
+			$this->order_id     = sanitize_key( $_GET['order_id'] ?? '' );
+			$this->order_status = sanitize_key( $_GET['order_status'] ?? '' );
 			$this->quantity    = sanitize_key( $_GET['quantity'] ?? '' );
 			$this->item        = sanitize_key( $_GET['item'] ?? '' );
-			$this->itemId      = sanitize_key( $_GET['item_id'] ?? '' );
+			$this->item_id     = sanitize_key( $_GET['item_id'] ?? '' );
 			$this->coupon      = sanitize_key( $_GET['coupon'] ?? '' );
 			$this->amount      = sanitize_key( $_GET['amount'] ?? '' );
 			$this->reason      = sanitize_key( $_GET['reason'] ?? '' );
@@ -145,19 +145,16 @@ final class Api {
 			} elseif ( isset( $action ) && 'get_woocommerce_order_status_list' === $action ) {
 				$this->get_woocommerce_status_list();
 			} elseif ( isset( $action ) && 'woocommerce_order_status_update' === $action ) {
-				$this->woocommerce_order_status_update( $this->orderId, $this->orderStatus );
+				$this->woocommerce_order_status_update( $this->order_id, $this->order_status );
 			} elseif ( isset( $action ) && 'woocommerce_order_quantity_update' === $action ) {
-				$this->woocommerce_order_quantity_update( $this->orderId, $this->itemId, $this->quantity );
+				$this->woocommerce_order_quantity_update( $this->order_id, $this->item_id, $this->quantity );
 			} elseif ( isset( $action ) && 'woocommerce_order_apply_coupon' === $action ) {
-				$this->woocommerce_order_apply_coupon( $this->orderId, $this->coupon );
+				$this->woocommerce_order_apply_coupon( $this->order_id, $this->coupon );
 			} elseif ( isset( $action ) && 'add_item_on_woocommerce_order' === $action ) {
-				$this->wc_order_add_new_item( $this->orderId, $this->item );
+				$this->wc_order_add_new_item( $this->order_id, $this->item );
 			} elseif ( isset( $action ) && 'remove_item_from_woocommerce_order' === $action ) {
-				$this->wc_order_remove_item( $this->orderId, $this->item );
-			} 
-			// elseif ( isset( $action ) && 'partial_refund_for_woocommerce_order' === $action ) {
-			// 	$this->wc_order_partial_refund( $this->orderId, $this->amount, $this->reason );
-			// } 
+				$this->wc_order_remove_item( $this->order_id, $this->item );
+			}
 			else {
 				$this->plugin_data_action_handler();
 			}
@@ -199,7 +196,7 @@ final class Api {
 	 */
 	public function get_woocommerce_order_status() {
 		$email   = sanitize_email( $_REQUEST['email'] ?? '' );
-		$orderId = strtolower( sanitize_key( $_REQUEST['order_id'] ?? '' ) );
+		$order_id = strtolower( sanitize_key( $_REQUEST['order_id'] ?? '' ) );
 
 		if ( ! method_exists( $this->plugin, 'order_status' ) ) {
 			$this->apiResponse->error( 500, "Method 'order_status' not exist in plugin" );
@@ -211,7 +208,7 @@ final class Api {
 			$this->apiResponse->error( 404, "Customer not found." );
 		}
 
-		$data = $this->plugin->order_status( $orderId );
+		$data = $this->plugin->order_status( $order_id );
 
 		$this->apiResponse->success( 200, $data, 'Success' );
 	}
@@ -260,12 +257,12 @@ final class Api {
 	}
 
 	/**
-	 * @param $orderId
+	 * @param $order_id
 	 * @param $item
 	 *
 	 * @return void
 	 */
-	public function wc_order_add_new_item( $orderId, $item ) {
+	public function wc_order_add_new_item( string $order_id, $item ) {
 		$product = wc_get_product_object( 'line_item', $item );
 
 		$item = new WC_Order_Item_Product();
@@ -274,7 +271,7 @@ final class Api {
 		$item->set_product_id( $product->id );
 		$item->set_subtotal( $product->price ?? 0 );
 		$item->set_total( $product->price * $this->quantity ?? 0 );
-		$order = wc_get_order( $orderId );
+		$order = wc_get_order( $order_id );
 		$order->add_item( $item );
 		$order->calculate_totals();
 
@@ -282,13 +279,13 @@ final class Api {
 	}
 
 	/**
-	 * @param $orderId
+	 * @param $order_id
 	 * @param $product_id
 	 *
 	 * @return void
 	 */
-	public function wc_order_remove_item( $orderId, $product_id ) {
-		$order = wc_get_order( $orderId );
+	public function wc_order_remove_item( string $order_id, string $product_id ) {
+		$order = wc_get_order( $order_id );
 
 		foreach ( $order->get_items() as $item_id => $item ) {
 			if ( $item["product_id"] == $product_id ) {
@@ -301,40 +298,30 @@ final class Api {
 		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
-	// public function wc_order_partial_refund($orderId, $refundAmount,  $refundReason){
-	// 	$refund = wc_create_refund( array(
-	// 		'amount'         => $refundAmount,
-	// 		'reason'         => $refundReason,
-	// 		'order_id'       => $orderId,
-	// 		'refund_payment' => true,
-	// 		'restock_items'  => true
-	// 		));
-	// 		return $refund;
-	// }
 
 	/**
-	 * @param $orderId
+	 * @param $order_id
 	 * @param $orderStatus
 	 *
 	 * @return void
 	 */
-	public function woocommerce_order_status_update( $orderId, $orderStatus ) {
-		$order = new WC_Order( $orderId );
+	public function woocommerce_order_status_update( string $order_id, string $orderStatus ) {
+		$order = new WC_Order( $order_id );
 		$order->update_status( $orderStatus, '' );
 
 		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
 	/**
-	 * @param $orderId
+	 * @param $order_id
 	 * @param $product_id
 	 * @param $quantity
 	 *
 	 * @return void
 	 */
-	public function woocommerce_order_quantity_update( $orderId, $product_id, $quantity ) {
+	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
 
-		$order = wc_get_order( $orderId );
+		$order = wc_get_order( $order_id );
 		if ( $quantity > 0 ) {
 			foreach ( $order->get_items() as $item_id => $item ) {
 
@@ -348,13 +335,13 @@ final class Api {
 	}
 
 	/**
-	 * @param $orderId
+	 * @param $order_id
 	 * @param $coupon
 	 *
 	 * @return void
 	 */
-	public function woocommerce_order_apply_coupon( $orderId, $coupon ) {
-		$order = wc_get_order( $orderId );
+	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ) {
+		$order = wc_get_order( $order_id );
 
 		if ( $coupon ) {
 			$res = $order->apply_coupon($coupon);

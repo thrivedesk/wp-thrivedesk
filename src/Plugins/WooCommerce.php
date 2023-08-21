@@ -232,7 +232,7 @@ final class WooCommerce extends Plugin {
 		$shipping_details = [];
 
 		array_push( $shipping_details, [
-			'street'  => $order->get_shipping_address_1() . ' ' . $order->get_shipping_address_2() ?? '',
+			'street'  => $order->get_shipping_address_1() . ' ' . ($order->get_shipping_address_2() ?? ''),
 			'city'    => $order->get_shipping_city() ?? '',
 			'zip'     => $order->get_shipping_postcode() ?? '',
 			'state'   => $state,
