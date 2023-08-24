@@ -14,6 +14,7 @@ class PortalService {
 		'agency_plus_ltd',
 		'agency_20_workspaces_ltd',
 		'agency-ltd',
+        'pro',
 		'founder-ltd-business',
 		'pro_annual',
 		'plus_annual_july_2023',
