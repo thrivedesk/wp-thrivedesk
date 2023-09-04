@@ -136,7 +136,7 @@ abstract class Plugin {
 		// TODO: Ignore pending or refunded amounts
 		return array_reduce( $orders, function ( $carry, $item ) {
 			if ( strtotime( $item['date'] ) >= strtotime( '-1 year' ) ) {
-				$carry += $item['amount'];
+				$carry += (float)$item['amount'];
 			}
 
 			return $carry;

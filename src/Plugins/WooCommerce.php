@@ -251,8 +251,7 @@ final class WooCommerce extends Plugin {
 	 * @return bool
 	 */
 	public function check_site_url( $site_url ): bool {
-		return substr( $site_url, 0, 7 ) === "http://" ||
-		       substr( $site_url, 0, 8 ) === "https://";
+		return substr( $site_url, 0, 7 ) === "http://" || substr( $site_url, 0, 8 ) === "https://";
 	}
 
 	/**
@@ -317,10 +316,6 @@ final class WooCommerce extends Plugin {
 				}
 			}
 		}
-
-		
-
-		
 
 		foreach ( $items as $item ) {
 
