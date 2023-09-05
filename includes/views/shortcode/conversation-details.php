@@ -1,10 +1,14 @@
 <?php
+
+use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\PortalService;
+
 $td_reply_nonce = wp_create_nonce('td-reply-conversation-action');
 const ACTOR_TYPE = 'ThriveDesk\\Models\\User';
 
 if (isset($_GET['td_conversation_id'])) {
-	$conversation =  \ThriveDesk\Conversations\Conversation::get_conversation($_GET['td_conversation_id']);
-	$is_portal_available = (new ThriveDesk\Services\PortalService())->is_allowed_portal_feature();
+	$conversation =  Conversation::get_conversation($_GET['td_conversation_id']);
+	$is_portal_available = (new PortalService())->has_portal_access();
 }
 ?>
 <?php if ($is_portal_available && $conversation): ?>
@@ -37,16 +41,18 @@ if (isset($_GET['td_conversation_id'])) {
                 <div class="td-conversation <?php echo $event['actor_type'] == ACTOR_TYPE ? 'actor-contact' : 'actor-agent';?>">
                     <div class="td-conversation-header">
                         <div class="flex items-center space-x-2 flex-auto">
-                            <img class="w-8 h-8 rounded-full m-0" src="<?php echo $event['actor']['avatar'] ?? '' ?>"
+                            <img class="w-8 h-8 rounded-full m-0"
+                                 src="<?php echo $event['actor']['avatar'] ??
+                                                 get_gravatar_url(wp_get_current_user()->user_email) ?>"
                                  alt="<?php echo $actor_name ?> avatar" />
                             <span class="font-bold"><?php echo $actor_name; ?></span>
                             <span><?php echo $event['action'];?></span>
                         </div>
                         <span class="text-sm"><?php echo diff_for_humans($event['created_at']); ?></span>
                     </div>
-                    <div class="td-conversation-body">
+                    <div class="td-conversation-body" dir="auto">
 				        <?php if ($event['event']['html_body']): ?>
-					        <?php echo \ThriveDesk\Conversations\Conversation::validate_conversation_body($event['event']['html_body']); ?>
+					        <?php echo Conversation::validate_conversation_body($event['event']['html_body']); ?>
 				        <?php elseif($event['event']['text_body']): ?>
 					        <?php echo $event['event']['text_body']; ?>
 				        <?php endif; ?>

@@ -27,14 +27,21 @@ class Assistant {
 			die();
 		}
 
-		$apiService = new TDApiService();
-		$apiService->setApiKey( $apiKey );
-		$assistance = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/assistants' );
-
-		if ( $assistance ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $assistance ] );
+		$assistants = get_transient( 'thrivedesk_assistants' );
+		if ( $assistants ) {
+			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 			die();
 		}
+
+		$assistants = $this->get_assistants( $apiKey );
+
+		if ( $assistants['assistants'] ) {
+			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
+			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
+		} else {
+			echo json_encode( [ 'status' => 'false', 'data' => [] ] );
+		}
+		die();
 	}
 
     public static function instance(): Assistant
@@ -71,47 +78,46 @@ class Assistant {
         echo $assistant_script;
     }
 
+	public function get_assistants(  $apiKey = '' ) {
+		$apiService = new TDApiService();
+		if ( $apiKey ) {
+			$apiService->setApiKey( $apiKey );
+		}
 
-    /**
-     * retrieve the assistant list
-     * @return array|mixed|object
-     */
-    public static function get_assistants()
-    {
-        $url = THRIVEDESK_API_URL .'/v1/assistants';
+		return $apiService->getRequest( THRIVEDESK_API_URL . '/v1/assistants' );
+	}
 
-        $response_body = ( new TDApiService() )->getRequest($url);
 
-        return $response_body['assistants'] ?? [];
-    }
+	/**
+	 * retrieve the assistant list
+	 * @return array|mixed|object
+	 */
+	public static function assistants()
+	{
+		$api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+		if ( empty( $api_key ) ) {
+			return [];
+		}
+		$assistants = get_transient( 'thrivedesk_assistants' );
 
-    public static function get_assistant_settings()
-    {
-        $assistant_settings = get_option('td_assistant_settings');
 
-        return $assistant_settings ?? [];
-    }
+		if ( $assistants ) {
+			return $assistants['assistants'] ?? [];
+		}
 
-    /** get the organization list
-     * @return mixed
-     */
-    public static function organizations()
-    {
-        $token              = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
-        $url = THRIVEDESK_API_URL .'/v1/me';
+		$assistants = ( new Assistant )->get_assistants();
 
-        $args               = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $token,
-                'Accept'        => 'application/json',
-                'Content-Type'  => 'application/json',
-            ],
-        ];
+		if ( isset($assistants['assistants'] )) {
+			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
+		}
 
-        $response = wp_remote_get($url, $args);
-        $body     = wp_remote_retrieve_body($response);
-        $body     = json_decode($body, true);
+		return $assistants['assistants'] ?? [];
+	}
 
-        return $body['organizations'] ?? [];
-    }
+	public static function get_assistant_settings()
+	{
+		$assistant_settings = get_option('td_assistant_settings');
+
+		return $assistant_settings ?? [];
+	}
 }

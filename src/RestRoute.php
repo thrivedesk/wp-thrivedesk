@@ -137,12 +137,21 @@ class RestRoute
 	 */
 	public function get_search_data(): array {
 		$query_string = $_POST['query_string'] ?? '';
+		$select_post_types = get_option('td_helpdesk_settings')['td_helpdesk_post_types'];
+
+		if (empty($select_post_types)) {
+			return [
+				'data' => []
+			];
+		}
+
 		$x_query = new \WP_Query(
 			array(
 				's'         => $query_string,
-				'post_type' => get_option('td_helpdesk_post_types')
+				'post_type' => $select_post_types
 			)
 		);
+
 		$search_posts = [];
 		while ($x_query->have_posts()) :
 			$x_query->the_post();

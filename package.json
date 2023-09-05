@@ -1,6 +1,6 @@
 {
 	"name": "thrivedesk",
-	"version": "1.0.3",
+	"version": "1.0.18",
 	"description": "ThriveDesk - Customer Support & Helpdesk Software for WordPress Startups",
 	"scripts": {
 		"dev": "npm run development",
@@ -10,7 +10,8 @@
 		"production": "mix --production",
 		"watch:wp-scripts": "wp-scripts start resources/js/wp-scripts/thrivedesk-autonami-tab.js --output-path=assets/js/wp-scripts",
 		"build:wp-scripts": "wp-scripts build resources/js/wp-scripts/thrivedesk-autonami-tab.js --output-path=assets/js/wp-scripts",
-		"build": "npm run production && npm run build:wp-scripts"
+		"build": "npm run production && npm run build:wp-scripts",
+		"release": "scripts/release.sh"
 	},
 	"repository": {
 		"type": "git",

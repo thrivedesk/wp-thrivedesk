@@ -2,8 +2,8 @@
 Contributors: thrivedesk
 Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
-Tested up to: 6.1.1
-Stable Tag: 1.0.3
+Tested up to: 6.3
+Stable Tag: 1.0.18
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -223,6 +223,63 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+= 1.0.18 =
+- Fix: Revert pro plan
+
+= 1.0.17 =
+- Update: Starter plan support for Portal
+
+= 1.0.16 =
+- Update: New plan added for Portal
+
+= 1.0.15 =
+- Update: ThriveDesk plan list for Portal feature
+
+= 1.0.14 =
+- Add: Permission check to run migration script
+
+= 1.0.13 =
+- Update: Migration Script
+
+= 1.0.12 =
+- Fix: Legacy post types support for WPPostSync integration
+
+= 1.0.11 =
+- Updated ThriveDesk plan list
+
+= 1.0.10 =
+- Fixed portal feature availability issue
+
+= 1.0.9 =
+- Updated admin layout
+- Added gravatar support for the conversation details page
+- Fixed knowledge base search did not filter the results properly
+- Fixed various style issues
+- Fixed minor bugs
+
+= 1.0.8 =
+- Added translation file
+- Added RTL support for conversations
+
+= 1.0.7 =
+- Added footer credit on conversations page
+- Fixed WP footer overlapping issue on portal settings
+- Fixed UTF-8 email parsing issue
+
+= 1.0.6 =
+- Fixed no way to deselect the assistant once selected
+- Fixed an issue where conversation was not being fetched from the API
+- Updated the no ticket message on the conversation page
+
+= 1.0.5 =
+- Added WP Post Sync option in the settings page
+
+= 1.0.4 =
+- Added caching to improve response times and overall performance
+- Fixed an issue where the portal area was blank after successful verification
+- Fixed a bug where knowledge base docs were not being searched using the selected search provider
+- Fixed an issue where style and script files were being loaded on every page
+
 = 1.0.3 =
 - Fixed an issue with an undefined variable that was causing errors in the console
 - Improved error handling for API calls to ensure that errors are properly handled and reported to the user

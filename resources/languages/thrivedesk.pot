@@ -1,0 +1,293 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ThriveDesk\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-12 08:00+0000\n"
+"PO-Revision-Date: 2023-04-12 08:18+0000\n"
+"Last-Translator: \n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.3; wp-6.2\n"
+"X-Domain: thrivedesk"
+
+#: includes/views/pages/settings.php:57
+msgid "Add live chat assistant to your website"
+msgstr ""
+
+#: includes/views/pages/settings.php:37
+msgid "API Key"
+msgstr ""
+
+#: includes/views/pages/settings.php:56
+msgid "Assistant"
+msgstr ""
+
+#: includes/views/shortcode/conversation-details.php:21
+msgid "Back to tickets"
+msgstr ""
+
+#: includes/views/setting.php:92
+msgid "Clear Cache"
+msgstr ""
+
+#: includes/views/setting.php:171
+msgid "Connect"
+msgstr ""
+
+#: includes/views/setting.php:177 includes/views/setting.php:183
+msgid "Connected"
+msgstr ""
+
+#: includes/views/pages/settings.php:33
+msgid "Connection Details"
+msgstr ""
+
+#: includes/views/shortcode/modal.php:37
+#: includes/views/shortcode/conversations.php:24
+msgid "Create a new ticket"
+msgstr ""
+
+#: includes/views/setting.php:165
+msgid "Disconnect"
+msgstr ""
+
+#: includes/views/setting.php:25
+msgid "Easy Digital Downloads"
+msgstr ""
+
+#: includes/views/shortcode/modal.php:11
+msgid "Esc"
+msgstr ""
+
+#: includes/views/setting.php:34
+msgid "FluentCRM"
+msgstr ""
+
+#: includes/views/setting.php:52
+msgid "FunnelKit Automations"
+msgstr ""
+
+#: includes/views/setting.php:115
+msgid "Get Started"
+msgstr ""
+
+#: includes/views/setting.php:89
+msgid "Help Center"
+msgstr ""
+
+#: includes/views/pages/settings.php:112
+msgid ""
+"Help center inside your website. Customer can create and reply tickets, "
+"access Knowledge base."
+msgstr ""
+
+#: includes/views/pages/settings.php:42 includes/views/pages/settings.php:123
+msgid "here"
+msgstr ""
+
+#: includes/views/pages/resource.php:2
+msgid "Here are some helpful resources to get you started"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://profiles.wordpress.org/thrivedesk/"
+msgstr ""
+
+#. URI of the plugin
+msgid ""
+"https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-"
+"uri&utm_medium=wp-dash"
+msgstr ""
+
+#: includes/views/setting.php:120 includes/views/setting.php:140
+msgid "Integrations"
+msgstr ""
+
+#: includes/views/shortcode/conversation-details.php:30
+#: includes/views/shortcode/conversations.php:38
+msgid "Last update"
+msgstr ""
+
+#. Description of the plugin
+msgid "Live Chat, Help Desk & Knowledge Base plugin for WordPress"
+msgstr ""
+
+#: includes/views/pages/settings.php:39
+msgid "Login to ThriveDesk app and get your API key from "
+msgstr ""
+
+#: includes/views/pages/settings.php:129
+msgid "New Ticket Page"
+msgstr ""
+
+#: includes/views/shortcode/conversations.php:47
+#: includes/views/shortcode/conversations.php:84
+msgid "No tickets found. Open new ticket and start the conversation."
+msgstr ""
+
+#: includes/views/setting.php:187
+msgid "Plugin not installed or not activated yet"
+msgstr ""
+
+#: includes/views/pages/resource.php:5
+msgid "Plugins"
+msgstr ""
+
+#: includes/views/pages/settings.php:111
+msgid "Portal"
+msgstr ""
+
+#: includes/views/pages/settings.php:160
+msgid "Portal can only be accessible by logged in users"
+msgstr ""
+
+#: includes/views/pages/settings.php:122
+msgid ""
+"Portal feature is available from the PRO plan and above. Please upgrade your "
+"subscription"
+msgstr ""
+
+#: includes/views/shortcode/conversation-details.php:83
+#: includes/views/shortcode/conversations.php:17
+msgid "Portal feature is not available at this moment."
+msgstr ""
+
+#: includes/views/shortcode/conversation-details.php:71
+msgid "Reply"
+msgstr ""
+
+#: includes/views/pages/settings.php:166
+msgid "Save"
+msgstr ""
+
+#: includes/views/shortcode/modal.php:27
+msgid "Search before creating a new ticket"
+msgstr ""
+
+#: includes/views/pages/settings.php:142
+msgid "Search Provider"
+msgstr ""
+
+#: includes/views/pages/settings.php:131
+msgid "Select a page"
+msgstr ""
+
+#: includes/views/pages/settings.php:154
+msgid "Select a post type where user can search before raise a support ticket"
+msgstr ""
+
+#: includes/views/pages/settings.php:61 includes/views/pages/settings.php:62
+msgid "Select an assistant"
+msgstr ""
+
+#: includes/views/pages/settings.php:60
+msgid "Select Assistant"
+msgstr ""
+
+#: includes/views/pages/resource.php:12
+msgid "Services"
+msgstr ""
+
+#: includes/views/setting.php:125
+msgid "Settings"
+msgstr ""
+
+#: includes/views/pages/settings.php:158
+msgid "Shortcode"
+msgstr ""
+
+#: includes/views/shortcode/conversations.php:32
+msgid "Status"
+msgstr ""
+
+#: includes/views/setting.php:100
+msgid "Support"
+msgstr ""
+
+#: Hooks/FluentCrmHooks.php:47
+msgid "Support Tickets by ThriveDesk"
+msgstr ""
+
+#: includes/views/pages/settings.php:76
+msgid "Sync your WordPress posts with ThriveDesk for faster support"
+msgstr ""
+
+#: includes/views/setting.php:95
+msgid "System Status"
+msgstr ""
+
+#: includes/views/pages/resource.php:9
+msgid "Themes"
+msgstr ""
+
+#. Name of the plugin
+#. Author of the plugin
+#: Hooks/FluentCrmHooks.php:48
+msgid "ThriveDesk"
+msgstr ""
+
+#: includes/views/shortcode/conversations.php:35
+msgid "Ticket"
+msgstr ""
+
+#: includes/views/pages/settings.php:34
+msgid "Update your api token to change or update the connection to ThriveDesk."
+msgstr ""
+
+#: includes/views/pages/settings.php:139
+msgid ""
+"Use any form plugin to create new ticket page or use existing one. Learn "
+"more "
+msgstr ""
+
+#: includes/views/pages/settings.php:48
+msgid "Verify"
+msgstr ""
+
+#: includes/views/setting.php:102
+msgid "Version"
+msgstr ""
+
+#: includes/views/shortcode/conversations.php:77
+msgid "View"
+msgstr ""
+
+#: includes/views/setting.php:86
+msgid "Visit ThriveDesk"
+msgstr ""
+
+#: includes/views/setting.php:16
+msgid "WooCommerce"
+msgstr ""
+
+#: includes/views/setting.php:43
+msgid "WordPress Post Sync"
+msgstr ""
+
+#: includes/views/pages/settings.php:75
+msgid "WP Post Sync"
+msgstr ""
+
+#: src/Conversations/Conversation.php:186
+msgid "You must be logged in to view the ticket or conversation"
+msgstr ""
+
+#: includes/views/pages/settings.php:117
+msgid ""
+"You need to add the API key above ☝️ to use the Portal feature inside your "
+"site."
+msgstr ""
+
+#: includes/views/pages/settings.php:95
+msgid ""
+"You need to connect WordPress Post Sync with ThriveDesk to get the feature."
+msgstr ""
+
+msgid ""
+"Click here to login."
+msgstr ""
