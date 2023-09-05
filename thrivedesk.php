@@ -5,7 +5,7 @@
  * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
- * Version:             1.0.1
+ * Version:             1.1.0
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -13,7 +13,7 @@
  *
  * Requires PHP:        5.5
  * Requires at least:   4.9
- * Tested up to:        6.1.1
+ * Tested up to:        6.3.1
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\PortalService;
+use ThriveDeskDBMigrations\Scripts\MigrationScript;
 
 // Exit if accessed directly.
 if (! defined('ABSPATH'))
@@ -47,7 +49,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '1.0.1';
+    public $version = '1.1.0';
 
     /**
      * The single instance of this class
@@ -112,8 +114,12 @@ final class ThriveDesk
                 self::$instance->admin = Admin::instance();
             }
 
+	        require_once(THRIVEDESK_DIR . '/database/Scripts/MigrationScript.php');
+
+	        MigrationScript::instance();
             Conversation::instance();
             Assistant::instance();
+			PortalService::instance();
         }
 
         return self::$instance;
@@ -136,7 +142,7 @@ final class ThriveDesk
         $this->define('THRIVEDESK_PLUGIN_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets');
         // Url with no ending /
         $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.com');
-        $this->define('THRIVEDESK_API_URL', 'http://api.thrivedesk.com');
+        $this->define('THRIVEDESK_API_URL', 'https://api.thrivedesk.com');
         $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
         $this->define('THRIVEDESK_DB_VERSION', 1.2);
         $this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');

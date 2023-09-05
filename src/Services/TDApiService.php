@@ -20,6 +20,7 @@ class TDApiService {
                 'Authorization' => 'Bearer ' . $this->api_token,
             ],
             'body'    => $data,
+            'timeout' => 90,
         ];
 
         $response           = wp_remote_post($url, $args);
@@ -35,10 +36,15 @@ class TDApiService {
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
             ],
-	        'timeout' => 60,
+	        'timeout' => 90,
         ];
 
         $response           = wp_remote_get($url, $args);
+
+		if ( is_wp_error( $response ) ) {
+			return ['wp_error' => true, 'message' => $response->get_error_message()];
+		}
+
         $body               = wp_remote_retrieve_body($response);
         $body               = json_decode($body, true);
 

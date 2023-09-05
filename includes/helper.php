@@ -85,3 +85,45 @@ if (!function_exists('get_td_helpdesk_options')) {
 		return get_option('td_helpdesk_settings', []);
 	}
 }
+
+if (!function_exists('remove_thrivedesk_cache_by_key')) {
+	function remove_thrivedesk_cache_by_key(string $key) {
+		delete_transient($key);
+	}
+}
+
+if (!function_exists('remove_thrivedesk_all_cache')) {
+	function remove_thrivedesk_all_cache() {
+		global $wpdb;
+		$wpdb->query(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_thrivedesk_%' 
+                          OR option_name LIKE '_transient_timeout_thrivedesk_%'");
+	}
+}
+
+if (!function_exists('remove_thrivedesk_conversation_cache')) {
+	function remove_thrivedesk_conversation_cache() {
+		global $wpdb;
+		$wpdb->query(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_thrivedesk_conversation%' ");
+	}
+}
+
+/*
+ * Clear cache from ajax call
+ */
+add_action('wp_ajax_thrivedesk_clear_cache', function () {
+	remove_thrivedesk_all_cache();
+	remove_thrivedesk_conversation_cache();
+	wp_send_json_success();
+});
+
+/*
+ * Make a gravatar url from the current user email
+ */
+if (!function_exists('get_gravatar_url')) {
+	function get_gravatar_url($email, $size = 80): string {
+		$hash = md5(strtolower(trim($email)));
+		return "https://www.gravatar.com/avatar/$hash?s=$size";
+	}
+}

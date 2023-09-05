@@ -131,6 +131,10 @@ jQuery(document).ready(($) => {
 			.map((i, item) => item.value)
 			.get();
 
+		let td_helpdesk_post_sync = $('.td_helpdesk_post_sync:checked')
+			.map((i, item) => item.value)
+			.get();
+
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_helpdesk_form',
@@ -139,6 +143,7 @@ jQuery(document).ready(($) => {
 					td_helpdesk_assistant: td_helpdesk_assistant,
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
+					td_helpdesk_post_sync: td_helpdesk_post_sync,
 				},
 			})
 			.success(function (response) {
@@ -151,6 +156,10 @@ jQuery(document).ready(($) => {
 							response.status.charAt(0).toUpperCase() +
 							`${response.status}`.slice(1),
 						text: response.message,
+					}).then((result) => {
+						if (result.isConfirmed) {
+							location.reload();
+						}
 					});
 				}
 			});
@@ -162,6 +171,15 @@ jQuery(document).ready(($) => {
 		let $target = $(this);
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 
+		if (apiKey === '') {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'API Key is required',
+			});
+			return;
+		}
+
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_api_key_verify',
@@ -170,22 +188,33 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let data = JSON.parse(response).data;
-				if(data.message==='Unauthenticated.'){
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
+				if (parsedResponse?.code === 422) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: data?.message,
+					});
+
+					return;
+				}
+
+				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Invalid API Key',
 					});
 				}
-				else if (data.message==='Server Error'){
+				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Server Error',
 					});
 				} else {
-					loadAssistants();
+					loadAssistants(apiKey);
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
@@ -194,7 +223,8 @@ jQuery(document).ready(($) => {
 					$('#td-assistants').prop('disabled', false);
 					// add hidden class to the id td-api-verification-btn
 					$('#no_api_key_alert').addClass('hidden');
-					$('#td_post_content').removeClass('hidden');
+
+					isAllowedPortal()
 
 					Swal.fire({
 						icon: 'success',
@@ -212,9 +242,7 @@ jQuery(document).ready(($) => {
 			});
 	});
 
-	async function loadAssistants() {
-		let apiKey = $('#td_helpdesk_api_key').val().trim();
-
+	async function loadAssistants(apiKey) {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_load_assistants',
@@ -223,16 +251,17 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let data = JSON.parse(response).data;
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
 
-				if(data.message==='Unauthenticated.'){
+				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
 						text: 'Invalid API Key',
 					});
 				}
-				else if (data.message==='Server Error'){
+				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
@@ -242,12 +271,22 @@ jQuery(document).ready(($) => {
 
 					let assistantList = $('#td-assistants');
 					assistantList.html('');
-					assistantList.append('<option value="">Select Assistant</option>');
-					data.assistants.forEach(function (item) {
+
+					if (data?.assistants?.length > 0) {
+						assistantList.append('<option value="">Select Assistant</option>');
+						data.assistants.forEach(function (item) {
+							assistantList.append(
+								'<option value="' + item.id + '">' + item.name + '</option>'
+							);
+						});
+					}else {
 						assistantList.append(
-							'<option value="' + item.id + '">' + item.name + '</option>'
+							'<option value="">No Assistant Found</option>'
 						);
-					});
+
+						assistantList.prop('disabled', true);
+
+					}
 				}
 			})
 			.error(function () {
@@ -258,5 +297,57 @@ jQuery(document).ready(($) => {
 				});
 			});
 	}
+
+	async function isAllowedPortal() {
+		let apiKey = $('#td_helpdesk_api_key').val().trim();
+		jQuery
+			.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_check_portal_access',
+				data: {
+					td_helpdesk_api_key: apiKey,
+				},
+			})
+			.success(function (response) {
+				let parsedResponse = JSON.parse(response);
+				let data = parsedResponse?.data;
+
+				if (data === true) {
+					$('#td_post_content').removeClass('hidden');
+				} else {
+					$('#portal_feature').removeClass('hidden');
+				}
+			})
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	}
+
+	// clear cache
+	$('#thrivedesk_clear_cache_btn').on('click', function (e) {
+		jQuery
+			.get(thrivedesk.ajax_url, {
+				action: 'thrivedesk_clear_cache',
+			})
+			.success(function (response) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Cache Cleared',
+				}).then((result) => {
+					location.reload();
+				});
+			})
+			.error(function () {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Something went wrong',
+				});
+			});
+	});
 });
 
