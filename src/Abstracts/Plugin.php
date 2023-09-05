@@ -60,7 +60,7 @@ abstract class Plugin {
 	/**
 	 * Get plugin data
 	 *
-	 * @param string $key
+	 * @param  string  $key
 	 *
 	 * @return mixed
 	 */
@@ -83,7 +83,7 @@ abstract class Plugin {
 	/**
 	 * Get the formated amount
 	 *
-	 * @param float $amount
+	 * @param  float  $amount
 	 *
 	 * @return string
 	 */
@@ -101,7 +101,7 @@ abstract class Plugin {
 	/**
 	 * Get the accepted orders only
 	 *
-	 * @param array $orders
+	 * @param  array  $orders
 	 *
 	 * @return array
 	 */
@@ -116,7 +116,7 @@ abstract class Plugin {
 	/**
 	 * Get the lifetime order value of the customer
 	 *
-	 * @param array $orders
+	 * @param  array  $orders
 	 *
 	 * @return float
 	 */
@@ -128,7 +128,7 @@ abstract class Plugin {
 	/**
 	 * Get this year order value of the customer
 	 *
-	 * @param array $orders
+	 * @param  array  $orders
 	 *
 	 * @return float
 	 */
@@ -136,7 +136,7 @@ abstract class Plugin {
 		// TODO: Ignore pending or refunded amounts
 		return array_reduce( $orders, function ( $carry, $item ) {
 			if ( strtotime( $item['date'] ) >= strtotime( '-1 year' ) ) {
-				$carry += (float)$item['amount'];
+				$carry += (float) $item['amount'];
 			}
 
 			return $carry;

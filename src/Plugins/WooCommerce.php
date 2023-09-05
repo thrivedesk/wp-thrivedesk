@@ -145,7 +145,7 @@ final class WooCommerce extends Plugin {
 	/**
 	 * Get the formatted amount
 	 *
-	 * @param float $amount
+	 * @param  float  $amount
 	 *
 	 * @return string
 	 */
@@ -175,7 +175,8 @@ final class WooCommerce extends Plugin {
 					'order_status'    => ucfirst( $order->get_status() ),
 					'shipping'        => $this->shipping_param ? $this->get_shipping_details( $order ) : [],
 					'downloads'       => $this->get_order_items( $order ),
-					'order_url'       => method_exists( $order, 'get_edit_order_url' ) ? $order->get_edit_order_url() : '#',
+					'order_url'       => method_exists( $order,
+						'get_edit_order_url' ) ? $order->get_edit_order_url() : '#',
 					'coupon'          => $order->get_coupon_codes() ?? null,
 
 				] );
@@ -232,11 +233,11 @@ final class WooCommerce extends Plugin {
 		$shipping_details = [];
 
 		array_push( $shipping_details, [
-			'street'  => $order->get_shipping_address_1() . ' ' . ($order->get_shipping_address_2() ?? ''),
-			'city'    => $order->get_shipping_city() ?? '',
-			'zip'     => $order->get_shipping_postcode() ?? '',
-			'state'   => $state,
-			'country' => WC()->countries->countries[ $order->get_shipping_country() ] ?? '',
+			'street'                    => $order->get_shipping_address_1() . ' ' . ( $order->get_shipping_address_2() ?? '' ),
+			'city'                      => $order->get_shipping_city() ?? '',
+			'zip'                       => $order->get_shipping_postcode() ?? '',
+			'state'                     => $state,
+			'country'                   => WC()->countries->countries[ $order->get_shipping_country() ] ?? '',
 			'shipping_address_overview' => $order->get_formatted_shipping_address() ?? '',
 		] );
 
@@ -264,7 +265,7 @@ final class WooCommerce extends Plugin {
 	public function get_order_items( $order ): array {
 		$items = $order->get_items();
 
-		$download_item 	   = [];
+		$download_item     = [];
 		$license_info      = [];
 		$subscription_info = [];
 
@@ -321,16 +322,16 @@ final class WooCommerce extends Plugin {
 
 			$product = wc_get_product( $item["product_id"] );
 
-			if (class_exists( 'WC_Subscriptions_Product') && WC_Subscriptions_Product::is_subscription($product)){
+			if ( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) ) {
 
 				$subscription_info = [
-					"is_subscription" => true,
-					"period"          => WC_Subscriptions_Product::get_period($product),
-					"trial_length"    => WC_Subscriptions_Product::get_trial_length($product),
-					"trial_period"    => WC_Subscriptions_Product::get_trial_period($product),
-					"trial_expiration_date" => WC_Subscriptions_Product::get_trial_expiration_date($product),
-					"sign_up_fee"     => WC_Subscriptions_Product::get_sign_up_fee($product),
-					"expiration_date" => WC_Subscriptions_Product::get_expiration_date($product),
+					"is_subscription"       => true,
+					"period"                => WC_Subscriptions_Product::get_period( $product ),
+					"trial_length"          => WC_Subscriptions_Product::get_trial_length( $product ),
+					"trial_period"          => WC_Subscriptions_Product::get_trial_period( $product ),
+					"trial_expiration_date" => WC_Subscriptions_Product::get_trial_expiration_date( $product ),
+					"sign_up_fee"           => WC_Subscriptions_Product::get_sign_up_fee( $product ),
+					"expiration_date"       => WC_Subscriptions_Product::get_expiration_date( $product ),
 				];
 			}
 
@@ -344,7 +345,7 @@ final class WooCommerce extends Plugin {
 				"type"              => $product->get_type(),
 				"status"            => $product->get_status(),
 				"sku"               => $product->get_sku(),
-				"price"             => $this->get_formated_amount( (float) $item["subtotal"]),
+				"price"             => $this->get_formated_amount( (float) $item["subtotal"] ),
 				"regular_price"     => $this->get_formated_amount( (float) $product->get_regular_price() ),
 				"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
 				"tax_status"        => $product->get_tax_status(),
@@ -352,7 +353,7 @@ final class WooCommerce extends Plugin {
 				"stock_status"      => $product->get_stock_status(),
 				"weight"            => $product->get_weight(),
 				"discount"          => $this->get_formated_amount( (float) $item->get_total() ),
-				"subscription"		=> $subscription_info,
+				"subscription"      => $subscription_info,
 
 			);
 

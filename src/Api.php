@@ -94,12 +94,12 @@ final class Api {
 
 			$this->order_id     = sanitize_key( $_GET['order_id'] ?? '' );
 			$this->order_status = sanitize_key( $_GET['order_status'] ?? '' );
-			$this->quantity    = sanitize_key( $_GET['quantity'] ?? '' );
-			$this->item        = sanitize_key( $_GET['item'] ?? '' );
-			$this->item_id     = sanitize_key( $_GET['item_id'] ?? '' );
-			$this->coupon      = sanitize_key( $_GET['coupon'] ?? '' );
-			$this->amount      = sanitize_key( $_GET['amount'] ?? '' );
-			$this->reason      = sanitize_key( $_GET['reason'] ?? '' );
+			$this->quantity     = sanitize_key( $_GET['quantity'] ?? '' );
+			$this->item         = sanitize_key( $_GET['item'] ?? '' );
+			$this->item_id      = sanitize_key( $_GET['item_id'] ?? '' );
+			$this->coupon       = sanitize_key( $_GET['coupon'] ?? '' );
+			$this->amount       = sanitize_key( $_GET['amount'] ?? '' );
+			$this->reason       = sanitize_key( $_GET['reason'] ?? '' );
 
 			// Plugin invalid response
 			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
@@ -154,8 +154,7 @@ final class Api {
 				$this->wc_order_add_new_item( $this->order_id, $this->item );
 			} elseif ( isset( $action ) && 'remove_item_from_woocommerce_order' === $action ) {
 				$this->wc_order_remove_item( $this->order_id, $this->item );
-			}
-			else {
+			} else {
 				$this->plugin_data_action_handler();
 			}
 		} catch ( \Exception $e ) {
@@ -195,7 +194,7 @@ final class Api {
 	 * @since 0.9.0
 	 */
 	public function get_woocommerce_order_status() {
-		$email   = sanitize_email( $_REQUEST['email'] ?? '' );
+		$email    = sanitize_email( $_REQUEST['email'] ?? '' );
 		$order_id = strtolower( sanitize_key( $_REQUEST['order_id'] ?? '' ) );
 
 		if ( ! method_exists( $this->plugin, 'order_status' ) ) {
@@ -235,7 +234,7 @@ final class Api {
 				"product_permalink" => get_permalink( $product_id ),
 				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id( $product_id ) )[0],
 				"sale_price"        => get_woocommerce_currency_symbol() . $product->get_regular_price(),
-				"stock"             => ( 'instock' === $product->get_stock_status() ) ? 'In Stock': 'Out of Stock',
+				"stock"             => ( 'instock' === $product->get_stock_status() ) ? 'In Stock' : 'Out of Stock',
 			);
 
 			array_push( $productList, $productInfo );
@@ -344,11 +343,10 @@ final class Api {
 		$order = wc_get_order( $order_id );
 
 		if ( $coupon ) {
-			$res = $order->apply_coupon($coupon);
-			if(isset($res->errors)){
-				$this->apiResponse->error(404, "Coupon does not exist!." );
-			}
-			else{
+			$res = $order->apply_coupon( $coupon );
+			if ( isset( $res->errors ) ) {
+				$this->apiResponse->error( 404, "Coupon does not exist!." );
+			} else {
 				$this->apiResponse->success( 200, [], 'Success' );
 			}
 		}
@@ -425,7 +423,7 @@ final class Api {
 	 * @since 0.0.4
 	 */
 	public function plugin_data_action_handler() {
-		
+
 		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
 		$enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
 
