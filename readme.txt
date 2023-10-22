@@ -66,7 +66,7 @@ Available on:
 
 ### Helpdesk & Support Ticket Plugin for WordPress ###
 
-Manage all customer conversations through Thrivedesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+Manage all customer conversations through ThriveDesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
 
 ThriveDesk makes it easy for your team to manage emails through a single shared inbox.
 
@@ -119,7 +119,7 @@ Knowledge Base is a self-service system that works perfectly with the Live Chat 
 
 ### WooCommerce Integration ###
 
-If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a Thrivedesk.
+If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a ThriveDesk.
 
 You can check the total number of orders, order details, shipping information right inside the ThriveDesk conversation page.
 
@@ -154,7 +154,7 @@ Now, you have all the necessary customer information readily available without s
 
 ### 📊 Advanced reporting ###
 
-ThriveDesk is designed to be a simple-to-use, powerful reporting tool. Thrivedesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
+ThriveDesk is designed to be a simple-to-use, powerful reporting tool. ThriveDesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
 
 #### 📈 Reporting Features ####
 
@@ -212,7 +212,7 @@ Yes. You can also transfer conversations between operators. It means that operat
 
 = Are you GDPR friendly? =
 
-Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDRP.
+Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDPR.
 
 == Screenshots ==
 
