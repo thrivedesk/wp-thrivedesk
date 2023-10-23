@@ -56,9 +56,12 @@ class Assistant {
     public function load_assistant_script()
     {
         $assistant_id = get_td_helpdesk_options()['td_helpdesk_assistant_id'] ?? '';
+
         if (empty($assistant_id)) {
             return;
         }
+
+	$current_user = wp_get_current_user();
         $assistant_script = '
         <script>
             !function(t,e,n){function s(){
@@ -70,8 +73,8 @@ class Assistant {
             (window,document,window.Assistant||function(){}),window.Assistant("init","'.$assistant_id.'");
 
             Assistant("identify", {
-                name: "'.wp_get_current_user()->display_name.'",
-                email: "'.wp_get_current_user()->user_email.'"})
+                name: "'.$current_user->display_name.'",
+                email: "'.$current_user->user_email.'"})
         </script>
         ';
 
