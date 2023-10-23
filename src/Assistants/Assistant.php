@@ -55,7 +55,7 @@ class Assistant {
 
     public function load_assistant_script()
     {
-        $assistant_id = get_td_helpdesk_options()['td_helpdesk_assistant_id'];
+        $assistant_id = get_td_helpdesk_options()['td_helpdesk_assistant_id'] ?? '';
         if (empty($assistant_id)) {
             return;
         }
