@@ -169,7 +169,7 @@ final class WooCommerce extends Plugin {
 			foreach ( $customer_orders as $order ) {
 				array_push( $this->orders, [
 					'order_id'        => $order->get_id(),
-					'amount'          => $this->get_formated_amount( (float) $order->get_total() ),
+					'amount'          => (float) $order->get_total(),
 					'amount_formated' => $this->get_formated_amount( $order->get_total() ),
 					'date'            => date( 'd M Y', strtotime( $order->get_date_created() ) ),
 					'order_status'    => ucfirst( $order->get_status() ),
