@@ -171,9 +171,13 @@ class Conversation
 	{
 		$this->load_scripts();
 
-		if (is_user_logged_in() && !is_null($content) && !is_feed()) {
+        $url_parts = add_query_arg( NULL, NULL );
+        $parts = (parse_url($url_parts, PHP_URL_QUERY));
+        parse_str($parts, $query_params);
+
+		if (is_user_logged_in()) {
 			ob_start();
-			if (isset($_GET['td_conversation_id']) && !empty($_GET['td_conversation_id'])) {
+			if (isset($query_params['td_conversation_id'])) {
 				thrivedesk_view('shortcode/conversation-details');
 			} else {
 				thrivedesk_view('shortcode/conversations');
