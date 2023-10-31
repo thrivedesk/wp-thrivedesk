@@ -8,22 +8,29 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
     $td_assistants               = Assistant::assistants();
     $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
+    $td_user_account_pages          = get_option( 'td_user_account_pages' );
+    $td_selected_user_account_pages      = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
     $has_portal_access           = ( new PortalService() )->has_portal_access();
     $wppostsync                  = WPPostSync::instance();
-    
+
+    $td_user_account_pages = array(
+            'woocommerce' => 'Add support to WooCommerce my account page'
+    );
+
     $wp_post_sync_types = array_filter( get_post_types( array(
         'public'       => true,
         'show_in_rest' => true
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
-    
+
     $knowledge_base_wp_post_types = array_filter( get_post_types( array(
         'public'       => true
     ) ), function ( $type ) {
         return $type !== 'attachment';
     } );
 
+    $woo_plugin_installed = defined('WC_VERSION');;
 ?>
 
 <div class="hidden tab-settings">
@@ -151,11 +158,28 @@ use ThriveDesk\Plugins\WPPostSync;
                             </div>
                             <div><?php _e( 'Select a post type where user can search before raise a support ticket', 'thrivedesk' ); ?>.</div>
                         </div>
+
+                        <div class="space-y-2">
+                            <label for="td_user_account_pages" class="font-medium text-black text-sm"><?php _e( 'Add Support Page', 'thrivedesk' ); ?></label>
+                            <div class="">
+                                <?php foreach ( $td_user_account_pages as $key => $page ) : ?>
+                                    <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title = "You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
+                                        <input class="td_user_account_pages" type="checkbox"
+                                               name="td_user_account_pages[]"
+                                               value="<?php echo esc_attr( $key ); ?>" <?php echo in_array( $key,
+	                                        $td_selected_user_account_pages ) ? 'checked ' : ''; echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
+                                        <label for="<?php echo esc_attr( $page ); ?>"> <?php echo esc_html( $page ); ?> </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
                     </div>
                     <div class="p-4 bg-stone-100 border rounded w-64">
                         <div class="text-base font-semibold"><?php _e( 'Shortcode', 'thrivedesk' ); ?></div>
                         <code class="my-2 inline-block">[thrivedesk_portal]</code>
                         <p><?php _e( 'Portal can only be accessible by logged in users', 'thrivedesk' ); ?>.</p>
+                        <div class="text-base font-semibold mt-3"><?php _e( 'Support Page', 'thrivedesk' ); ?></div>
+                        <p><?php _e('You can add Support tab to WooCommerce my account page depending on the plugin availability.', 'thrivedesk')?></p>
                     </div>
                 </div>
             </div>

@@ -6,8 +6,12 @@ use ThriveDesk\Services\PortalService;
 $td_reply_nonce = wp_create_nonce('td-reply-conversation-action');
 const ACTOR_TYPE = 'ThriveDesk\\Models\\User';
 
-if (isset($_GET['td_conversation_id'])) {
-	$conversation =  Conversation::get_conversation($_GET['td_conversation_id']);
+$url_parts = add_query_arg( NULL, NULL );
+$parts = (parse_url($url_parts, PHP_URL_QUERY));
+parse_str($parts, $query_params);
+
+if (isset($query_params['td_conversation_id'])) {
+	$conversation =  Conversation::get_conversation($query_params['td_conversation_id']);
 	$is_portal_available = (new PortalService())->has_portal_access();
 }
 ?>
@@ -65,7 +69,11 @@ if (isset($_GET['td_conversation_id'])) {
         <div class="mt-10 pt-10 border-t">
             <form action="" id="td_conversation_reply" method="POST">
                 <input type="hidden" id="td_reply_none" value="<?php echo $td_reply_nonce; ?>">
-                <input type="hidden" id="td_conversation_id" value="<?php echo $_GET['td_conversation_id']; ?>">
+                
+                <?php
+                echo '<input type="hidden" id="td_conversation_id" value="'. $query_params['td_conversation_id'] .'">'
+                ?>
+                
                 <?php wp_editor('', 'td_conversation_editor', ['editor_height' => '120'] ); ?>
 
                 <button type="submit" id="td_conversation_reply_submit" data-nonce="<?php echo esc_attr($td_reply_nonce); ?>"
