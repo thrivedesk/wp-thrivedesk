@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 6.3.1
-Stable Tag: 1.1.0
+Stable Tag: 1.1.1
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
