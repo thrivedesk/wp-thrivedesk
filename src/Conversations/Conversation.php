@@ -115,7 +115,7 @@ class Conversation
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
-	            'user_account_pages'                    => $data['user_account_pages'],
+	            'td_user_account_pages'                 => $data['td_user_account_pages'],
             ];
 
             if (get_option('td_helpdesk_settings')) {

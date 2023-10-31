@@ -8,12 +8,12 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
     $td_assistants               = Assistant::assistants();
     $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
-    $user_account_pages          = get_option( 'user_account_pages' );
-    $td_selected_user_account_pages      = $td_helpdesk_selected_option['user_account_pages'] ?? [];
+    $td_user_account_pages          = get_option( 'td_user_account_pages' );
+    $td_selected_user_account_pages      = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
     $has_portal_access           = ( new PortalService() )->has_portal_access();
     $wppostsync                  = WPPostSync::instance();
 
-    $user_account_pages = array(
+    $td_user_account_pages = array(
             'woocommerce' => 'Add support to WooCommerce my account page'
     );
 
@@ -160,12 +160,12 @@ use ThriveDesk\Plugins\WPPostSync;
                         </div>
 
                         <div class="space-y-2">
-                            <label for="user_account_pages" class="font-medium text-black text-sm"><?php _e( 'Add Support Page', 'thrivedesk' ); ?></label>
+                            <label for="td_user_account_pages" class="font-medium text-black text-sm"><?php _e( 'Add Support Page', 'thrivedesk' ); ?></label>
                             <div class="">
-                                <?php foreach ( $user_account_pages as $key => $page ) : ?>
+                                <?php foreach ( $td_user_account_pages as $key => $page ) : ?>
                                     <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title = "You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
-                                        <input class="user_account_pages" type="checkbox"
-                                               name="user_account_pages[]"
+                                        <input class="td_user_account_pages" type="checkbox"
+                                               name="td_user_account_pages[]"
                                                value="<?php echo esc_attr( $key ); ?>" <?php echo in_array( $key,
 	                                        $td_selected_user_account_pages ) ? 'checked ' : ''; echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
                                         <label for="<?php echo esc_attr( $page ); ?>"> <?php echo esc_html( $page ); ?> </label>

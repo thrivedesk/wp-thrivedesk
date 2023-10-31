@@ -135,7 +135,7 @@ jQuery(document).ready(($) => {
 			.map((i, item) => item.value)
 			.get();
 
-		let user_account_pages = $('.user_account_pages:checked')
+		let td_user_account_pages = $('.td_user_account_pages:checked')
 			.map((i, item) => item.value)
 			.get();
 
@@ -148,7 +148,7 @@ jQuery(document).ready(($) => {
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
 					td_helpdesk_post_sync: td_helpdesk_post_sync,
-					user_account_pages: user_account_pages,
+					td_user_account_pages: td_user_account_pages,
 				},
 			})
 			.success(function (response) {
