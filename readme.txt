@@ -225,6 +225,8 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 == Changelog ==
 = 1.1.1 =
 - Add: Support tab to WooCommerce my account page
+- Fix: Token verification issues
+- Update: Routing update
 
 = 1.1.0
 - Update: Woocommerce Integration V2
