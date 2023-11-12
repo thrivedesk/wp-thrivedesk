@@ -170,6 +170,11 @@ jQuery(document).ready(($) => {
 			});
 	});
 
+	let $element = $('#td_helpdesk_api_key')[0].innerHTML;
+	if($element){
+		$('#api_key_alert').addClass('hidden');
+	}
+
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {
 		e.preventDefault();
@@ -220,6 +225,7 @@ jQuery(document).ready(($) => {
 					});
 				} else {
 					loadAssistants(apiKey);
+					isAllowedPortal()
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
@@ -227,9 +233,7 @@ jQuery(document).ready(($) => {
 					// remove the disabled attribute from the id td-assistants
 					$('#td-assistants').prop('disabled', false);
 					// add hidden class to the id td-api-verification-btn
-					$('#no_api_key_alert').addClass('hidden');
-
-					isAllowedPortal()
+					$('#api_key_alert').addClass('hidden');
 
 					Swal.fire({
 						icon: 'success',
@@ -313,12 +317,14 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let parsedResponse = JSON.parse(response);
-				let data = parsedResponse?.data;
-
-				if (data === true) {
-					$('#td_post_content').removeClass('hidden');
-				} else {
+				if(response.status === 'success'){
+					let parsedResponse = JSON.parse(response);
+					let data = parsedResponse?.data;
+					if (data === true) {
+						$('#td_post_content').removeClass('hidden');
+					}
+				}
+				else{
 					$('#portal_feature').removeClass('hidden');
 				}
 			})
