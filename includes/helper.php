@@ -94,7 +94,9 @@ if (!function_exists('remove_thrivedesk_cache_by_key')) {
 
 if (!function_exists('remove_thrivedesk_all_cache')) {
 	function remove_thrivedesk_all_cache() {
+
 		global $wpdb;
+		
 		$wpdb->query(
 			"DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_thrivedesk_%' 
                           OR option_name LIKE '_transient_timeout_thrivedesk_%'");

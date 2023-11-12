@@ -64,6 +64,7 @@ class Conversation
 
 	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+        
 		if ( empty( $apiKey ) ) {
 			echo json_encode( [
 				'code' => 422,
@@ -75,15 +76,20 @@ class Conversation
 			die();
 		}
 
-		$data = get_transient( 'thrivedesk_me' );
-		if ( $data ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
-			die();
-		}
-
 		$apiService = new TDApiService();
-		$apiService->setApiKey( $apiKey );
+		$apiService->setApiKey($apiKey);
+
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+        if(!isset($data['company'])){
+            echo json_encode( [
+				'code' => 401,
+				'status' => 'error',
+				'data' => [
+					'message' =>  $data['message']
+				]
+			] );
+			die();
+        }
 
 		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 			echo json_encode( [
@@ -93,12 +99,6 @@ class Conversation
 					'message' => $data['message']
 				]
 			] );
-			die();
-		}
-
-		if ( $data ) {
-			set_transient( 'thrivedesk_me', $data, 60 * 60 * 6 );
-			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
 	}

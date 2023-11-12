@@ -50,7 +50,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '1.1.1';
+    public $version = '1.1.2';
 
     /**
      * The single instance of this class
