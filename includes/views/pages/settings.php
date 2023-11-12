@@ -82,15 +82,14 @@ use ThriveDesk\Plugins\WPPostSync;
         <div class="space-y-1">
             <div class="text-base font-bold"><?php _e( 'WP Post Sync', 'thrivedesk' ); ?></div>
             <p><?php _e( 'Sync your WordPress posts with ThriveDesk for faster support',
-                    'thrivedesk'
-                ); ?></p>
+                    'thrivedesk'); ?></p>
             <div class="td-card">
                 <div class="flex space-x-4" id="td_post_sync">
                     <div class="flex-1">
                         <div class="space-y-2">
                             <div class="flex items-center space-x-2">
                                 <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-                                    <?php foreach ($wp_post_sync_types as $post_sync) : ?>
+                                    <?php foreach ( $wp_post_sync_types as $post_sync ) : ?>
                                         <div>
                                             <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array(
                                                                                                                                                                                     $post_sync,
@@ -115,7 +114,7 @@ use ThriveDesk\Plugins\WPPostSync;
 
         <!-- portal  -->
         <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e('Portal', 'thrivedesk'); ?></div>
+            <div class="text-base font-bold"><?php _e( 'Portal', 'thrivedesk' ); ?></div>
             <p><?php _e('Help center inside your website. Customer can create and reply tickets, access Knowledge base.','thrivedesk'); ?></p>
             <div class="td-card">
                 <div class="text-center text-base" id="api_key_alert">
@@ -132,8 +131,8 @@ use ThriveDesk\Plugins\WPPostSync;
                         <div class="space-y-2">
                             <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e('New Ticket Page', 'thrivedesk'); ?></label>
                             <select id="td_helpdesk_page_id" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
-                                <option value=""> <?php _e('Select a page', 'thrivedesk'); ?> </option>
-                                <?php foreach (get_pages() as $key => $page) : ?>
+                                <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
+                                <?php foreach ( get_pages() as $key => $page ) : ?>
                                     <option value="<?php echo $page->ID; ?>" <?php echo array_key_exists( 'td_helpdesk_page_id',
                                      $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?>>
                                         <?php echo $page->post_title; ?>

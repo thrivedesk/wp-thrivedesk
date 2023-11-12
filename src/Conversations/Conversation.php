@@ -77,7 +77,7 @@ class Conversation
 		}
 
 		$apiService = new TDApiService();
-		$apiService->setApiKey($apiKey);
+		$apiService->setApiKey( $apiKey );
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
         if(!isset($data['company'])){

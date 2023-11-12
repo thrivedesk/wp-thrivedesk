@@ -317,7 +317,6 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				console.log(response);
 				if(response.status === 'success'){
 					let parsedResponse = JSON.parse(response);
 					let data = parsedResponse?.data;
