@@ -10,6 +10,8 @@ class PortalService {
 	private static $instance = null;
 
 	public $plans = [
+		'founder-ltd-pro',
+		'business_ltd_23',
 		'business_ltd_22',
 		'agency_plus_ltd',
 		'agency_20_workspaces_ltd',
