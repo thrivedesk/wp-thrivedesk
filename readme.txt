@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
 Requires at least: 4.9
 Tested up to: 6.3.1
-Stable Tag: 1.1.3
+Stable Tag: 1.1.4
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -223,6 +223,10 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 1.1.4 =
+- Fix: EDD order overview issue resolved.
+- Update: WooCommerce shipping details checkbox warning handled.
 
 = 1.1.3 =
 - Fix: Portal access issue resolved.
