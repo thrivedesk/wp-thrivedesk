@@ -222,11 +222,12 @@ class Conversation
 		$page               = $_GET['cv_page'] ?? 1;
 		$current_user_email = wp_get_current_user()->user_email;
 		// get data from cache
-		$cache_key = 'thrivedesk_conversations_' . $page;
+		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email;
 		$data = get_transient($cache_key);
 
 
 		if (!$data) {
+            delete_expired_transients( true );
 			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
 
 			$response =( new TDApiService() )->getRequest($url);
