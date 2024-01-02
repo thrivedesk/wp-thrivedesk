@@ -211,6 +211,21 @@ class Conversation
         return $dom->saveHTML();*/
     }
 
+    public static function delete_thrivedesk_expired_transients(){
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
+                WHERE a.option_name LIKE %s
+                AND a.option_name NOT LIKE %s
+                AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )
+                AND b.option_value < %d",
+                $wpdb->esc_like( '_transient_thrivedesk_' ) . '%',
+                $wpdb->esc_like( '_transient_timeout_' ) . '%',
+                time()
+            )
+        );
+    }
 
 	/**
 	 * get all conversations
@@ -219,6 +234,7 @@ class Conversation
 	 */
 	public static function get_conversations()
 	{
+        self::delete_thrivedesk_expired_transients();
 		$page               = $_GET['cv_page'] ?? 1;
 		$current_user_email = wp_get_current_user()->user_email;
 		// get data from cache
@@ -227,7 +243,6 @@ class Conversation
 
 
 		if (!$data) {
-            delete_expired_transients( true );
 			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
 
 			$response =( new TDApiService() )->getRequest($url);
@@ -239,7 +254,7 @@ class Conversation
 			}
 		}
 
-		return $data ?? [];
+        return $data ?? [];
 	}
 
 	/**

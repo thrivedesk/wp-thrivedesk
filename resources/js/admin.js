@@ -171,9 +171,6 @@ jQuery(document).ready(($) => {
 	});
 
 	let $element = $('#td_helpdesk_api_key')[0].innerHTML;
-	if($element){
-		$('#api_key_alert').addClass('hidden');
-	}
 
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {
@@ -223,7 +220,9 @@ jQuery(document).ready(($) => {
 						title: 'Error',
 						text: 'Server Error',
 					});
-				} else {
+				} 
+				
+				else {
 					loadAssistants(apiKey);
 					isAllowedPortal()
 
@@ -317,15 +316,18 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				if(response.status === 'success'){
+				let data = JSON.parse(response);
+				if(data.status == 'success'){
 					let parsedResponse = JSON.parse(response);
 					let data = parsedResponse?.data;
 					if (data === true) {
-						$('#td_post_content').removeClass('hidden');
+						$('#api_key_alert').addClass('hidden');
+						$('#td_portal').removeClass('hidden');
+						
 					}
 				}
 				else{
-					$('#portal_feature').removeClass('hidden');
+					$('#portal_feature_alert').removeClass('hidden');
 				}
 			})
 			.error(function () {
