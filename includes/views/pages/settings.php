@@ -147,7 +147,7 @@ use ThriveDesk\Plugins\WPPostSync;
                         </div>
                         <div class="space-y-2">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-sm"><?php _e( 'Search Provider', 'thrivedesk' ); ?></label>
-                            <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-2 flex-wrap">
                                 <?php foreach ( $knowledge_base_wp_post_types as $post_type ) : ?>
                                     <div>
                                         <input class="td_helpdesk_post_types" type="checkbox"
