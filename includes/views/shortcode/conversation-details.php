@@ -16,7 +16,7 @@ if (isset($query_params['td_conversation_id'])) {
 }
 ?>
 <?php if ($is_portal_available && $conversation): ?>
-<div class="td-portal-conversations prose max-w-none">
+<div class="td-portal-conversations">
     <!-- header  -->
     <div class="flex">
         <a href="<?php echo get_permalink(); ?>" class="text-slate-500 flex items-center mb-4 space-x-0
