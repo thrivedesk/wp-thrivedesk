@@ -10,8 +10,12 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
     $td_user_account_pages          = get_option( 'td_user_account_pages' );
     $td_selected_user_account_pages      = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
-    $has_portal_access           = ( new PortalService() )->has_portal_access() ?? '';
+    $has_portal_access           = ( new PortalService() )->has_portal_access() ? true : false;
     $wppostsync                  = WPPostSync::instance();
+
+    $show_api_key_alert  = (count($td_assistants) == 0) ? '' : 'hidden';
+    $show_portal         = !$has_portal_access ? 'hidden' : '';
+    $show_portal_warning = (!$has_portal_access && count($td_assistants) == 0) ? 'hidden' : '';
 
     $td_user_account_pages = array(
             'woocommerce' => 'Add support to WooCommerce my account page'
@@ -117,16 +121,16 @@ use ThriveDesk\Plugins\WPPostSync;
             <div class="text-base font-bold"><?php _e( 'Portal', 'thrivedesk' ); ?></div>
             <p><?php _e('Help center inside your website. Customer can create and reply tickets, access Knowledge base.','thrivedesk'); ?></p>
             <div class="td-card">
-                <div class="text-center text-base" id="api_key_alert">
-                    <?php _e('Please insert ThriveDesk API key above ☝️ to use the Portal feature inside your site.', 'thrivedesk'); ?>
+                <div class="text-center text-base <?php echo ($show_api_key_alert) ?>" id="api_key_alert">
+                    <?php _e('Please insert or verify your ThriveDesk API key ☝️ to use the Portal feature inside your site.', 'thrivedesk'); ?>
                 </div>
 
-                <div class="alert alert-danger text-center <?php echo ($td_api_key && !$has_portal_access) ? '' : 'hidden' ?>" id="portal_feature">
+                <div class="alert alert-danger text-center <?php echo ($show_portal_warning) ?>" id="portal_feature_alert">
                     <?php _e('Portal feature is available from the PRO plan. For plans details click', 'thrivedesk'); ?>
                     <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
                 </div>
 
-                <div class="flex space-x-4 <?php echo ($has_portal_access && !empty($td_api_key))  ? '' : 'hidden' ?>" id="td_post_content">
+                <div class="flex space-x-4 <?php echo ($show_portal) ?>" id="td_portal">
                     <div class="space-y-4 flex-1">
                         <div class="space-y-2">
                             <label for="td_helpdesk_page_id" class="font-medium text-black text-sm"><?php _e('New Ticket Page', 'thrivedesk'); ?></label>
@@ -134,7 +138,7 @@ use ThriveDesk\Plugins\WPPostSync;
                                 <option value=""> <?php _e( 'Select a page', 'thrivedesk' ); ?> </option>
                                 <?php foreach ( get_pages() as $key => $page ) : ?>
                                     <option value="<?php echo $page->ID; ?>" <?php echo array_key_exists( 'td_helpdesk_page_id',
-                                     $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?>>
+                                    $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID ? 'selected' : '' ?>>
                                         <?php echo $page->post_title; ?>
                                     </option>
                                 <?php endforeach; ?>
