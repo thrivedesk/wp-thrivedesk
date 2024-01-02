@@ -14,8 +14,8 @@ use ThriveDesk\Plugins\WPPostSync;
     $wppostsync                  = WPPostSync::instance();
 
     $show_api_key_alert  = (count($td_assistants) == 0) ? '' : 'hidden';
-    $show_portal         = !$has_portal_access ? 'hidden' : '';
-    $show_portal_warning = (!$has_portal_access && count($td_assistants) == 0) ? 'hidden' : '';
+    $show_portal         = (!$has_portal_access ||empty($td_api_key))  ? 'hidden' : '';
+    $show_portal_warning = (empty($td_api_key) || (!$has_portal_access && count($td_assistants) == 0) ||($has_portal_access && count($td_assistants) != 0))  ? 'hidden' : '';
 
     $td_user_account_pages = array(
             'woocommerce' => 'Add support to WooCommerce my account page'
