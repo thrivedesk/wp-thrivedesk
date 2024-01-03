@@ -128,35 +128,27 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 		@apply inline mr-2 w-10 h-8 text-slate-200 animate-spin dark:text-slate-600 fill-blue-500;
 	}
 
-	/* Conversations  */
-	.td-conversation {
-		@apply bg-white shadow rounded-lg;
-		.td-conversation-header {
-			@apply p-4 flex items-center bg-slate-50 rounded-t-lg;
-		}
-		.td-conversation-body {
-			@apply p-6;
-			a {
-				@apply text-blue-600 font-bold;
-			}
-			* {
-				@apply mt-0 mb-2;
-			}
+	/* ------------- Conversation ------------- */
+	.td-conversation{
+		@apply bg-white border border-solid border-slate-200 rounded p-4 shadow-sm;
+	}
+	.td-conversation-header{
+		@apply flex items-center border-b pb-3;
+	}
+	/* Agent reply */
+	.actor-agent{
+		@apply bg-blue-50 border-blue-200;
+		.td-conversation-header{
+			@apply border-blue-200;
 		}
 	}
-	/* // Conversation by agent */
-	.td-conversation.actor-agent {
-		@apply shadow-blue-100;
+}
 
-		.td-conversation-header {
-			@apply bg-blue-50;
-		}
-	}
-
-	/* Disable conversation page header  */
-	.page {
-		.entry-header {
-			display: none !important;
-		}
+/* Disable conversation page header  */
+.page {
+	.page-header,
+	.entry-header,
+	.wp-block-post-title {
+		display: none !important;
 	}
 }
