@@ -2,6 +2,7 @@
 
 namespace ThriveDesk\Plugins;
 
+use AfterShip_Actions;
 use ThriveDesk\Plugin;
 use WC_Order_Query;
 use WC_Subscriptions_Product;
@@ -21,6 +22,11 @@ final class WooCommerce extends Plugin {
 	 * To store customers order details.
 	 */
 	public $orders = [];
+
+	/**
+	 * To store tracking details.
+	 */
+	public $tracking = [];
 
 	/**
 	 * To track the get_orders method is already called or not.
@@ -153,6 +159,14 @@ final class WooCommerce extends Plugin {
 		return get_woocommerce_currency_symbol() . $amount;
 	}
 
+	public function get_tracking_info($order_id){
+		if ( in_array( 'aftership-woocommerce-tracking/aftership-woocommerce-tracking.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+			$afterShip = new AfterShip_Actions();
+			array_push($this->tracking, $afterShip->get_tracking_items($order_id));
+		}
+		return $this->tracking;
+	}
+
 	/**
 	 * Get the customer orders
 	 *
@@ -168,7 +182,7 @@ final class WooCommerce extends Plugin {
 
 			foreach ( $customer_orders as $order ) {
 				array_push( $this->orders, [
-					'order_id'        => $order->get_id(),
+					'order_id'        => $order->get_order_number(),
 					'amount'          => (float) $order->get_total(),
 					'amount_formated' => $this->get_formated_amount( $order->get_total() ),
 					'date'            => date( 'd M Y', strtotime( $order->get_date_created() ) ),
@@ -178,7 +192,7 @@ final class WooCommerce extends Plugin {
 					'order_url'       => method_exists( $order,
 					'get_edit_order_url' ) ? $order->get_edit_order_url() : '#',
 					'coupon'          => $order->get_coupon_codes() ?? null,
-
+					'tracking_info'   => $this->get_tracking_info($order->get_id()),
 				] );
 			}
 		}
@@ -208,7 +222,7 @@ final class WooCommerce extends Plugin {
 		}
 
 		return [
-			'order_id'         => $order->get_id(),
+			'order_id'         => $order->get_order_number(),
 			'amount'           => $order->get_total(),
 			'amount_formatted' => $this->get_formated_amount( $order->get_total() ),
 			'date'             => date( 'd M Y', strtotime( $order->get_date_created() ) ),
