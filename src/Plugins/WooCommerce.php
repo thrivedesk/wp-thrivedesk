@@ -162,7 +162,9 @@ final class WooCommerce extends Plugin {
 	public function get_tracking_info($order_id){
 		if ( in_array( 'aftership-woocommerce-tracking/aftership-woocommerce-tracking.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
 			$afterShip = new AfterShip_Actions();
-			$this->tracking = array_merge($this->tracking, array('aftership' => $afterShip->get_tracking_items($order_id)));
+			if($afterShip->get_tracking_items($order_id)){
+				$this->tracking = array_merge($this->tracking, array('aftership' => $afterShip->get_tracking_items($order_id)));
+			}
 		}
 		return $this->tracking;
 	}
