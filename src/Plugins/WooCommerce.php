@@ -197,10 +197,10 @@ final class WooCommerce extends Plugin {
 					'coupon'          => $order->get_coupon_codes() ?? null,
 					'tracking_info'   => $this->get_tracking_info( $order->get_id() ),
 				] );
+                $this->tracking = [];
 			}
 		}
 
-        $this->tracking = [];
 		return $this->orders;
 	}
 
