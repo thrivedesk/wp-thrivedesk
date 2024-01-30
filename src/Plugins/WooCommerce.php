@@ -200,6 +200,7 @@ final class WooCommerce extends Plugin {
 			}
 		}
 
+        $this->tracking = [];
 		return $this->orders;
 	}
 
