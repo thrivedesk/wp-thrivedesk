@@ -159,16 +159,19 @@ final class WooCommerce extends Plugin {
 		return get_woocommerce_currency_symbol() . $amount;
 	}
 
-	public function get_tracking_info($order_id){
-		if ( in_array( 'aftership-woocommerce-tracking/aftership-woocommerce-tracking.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
-			$afterShip = new AfterShip_Actions();
-			if($afterShip->get_tracking_items($order_id)){
-				$this->tracking = array_merge($this->tracking, array('aftership' => $afterShip->get_tracking_items($order_id)));
-			}
-		}
+    public function get_tracking_info($order_id){
+        if ( in_array( 'aftership-woocommerce-tracking/aftership-woocommerce-tracking.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+            $afterShip = new AfterShip_Actions();
+            $data = $afterShip->get_tracking_items($order_id);
+            $aftership_tracking_link = $afterShip->generate_tracking_page_link($data[0]);
 
-		return $this->tracking;
-	}
+            if($data){
+                $this->tracking = array_merge($this->tracking, array('aftership' => ['data' => $data, 'url' => $aftership_tracking_link]));
+            }
+        }
+
+        return $this->tracking;
+    }
 
 	/**
 	 * Get the customer orders
