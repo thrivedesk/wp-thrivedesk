@@ -2,8 +2,8 @@
 Contributors: thrivedesk
 Tags: helpdesk, support ticket, livechat, support plugin, ticket system chat, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk
 Requires at least: 4.9
-Tested up to: 6.3.1
-Stable Tag: 1.1.0
+Tested up to: 6.4
+Stable Tag: 1.2.1
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -73,7 +73,7 @@ Available on:
 
 ### Helpdesk & Support Ticket Plugin for WordPress ###
 
-Manage all customer conversations through Thrivedesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+Manage all customer conversations through ThriveDesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
 
 https://www.youtube.com/watch?v=n2rUreB_aso&t=6s
 
@@ -128,7 +128,7 @@ Knowledge Base is a self-service system that works perfectly with the Live Chat 
 
 ### WooCommerce Integration ###
 
-If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a Thrivedesk.
+If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a ThriveDesk.
 
 You can check the total number of orders, order details, shipping information right inside the ThriveDesk conversation page.
 
@@ -163,7 +163,7 @@ Now, you have all the necessary customer information readily available without s
 
 ### 📊 Advanced reporting ###
 
-ThriveDesk is designed to be a simple-to-use, powerful reporting tool. Thrivedesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
+ThriveDesk is designed to be a simple-to-use, powerful reporting tool. ThriveDesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
 
 #### 📈 Reporting Features ####
 
@@ -221,7 +221,7 @@ Yes. You can also transfer conversations between operators. It means that operat
 
 = Are you GDPR friendly? =
 
-Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDRP.
+Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDPR.
 
 == Screenshots ==
 
@@ -232,6 +232,34 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+= 1.2.1 =
+- Feat: Woocommerce custom order ID support added.
+- Feat: Woocommerce AfterShip plugin support added.
+
+= 1.2 =
+- Fix: User data conflict issue fixed. 
+- Fix: Portal page caching issue fixed.
+- Fix: API key verification state issue fixed(Stable).
+- Update: Portal page UI improve with all major themes(10+).
+
+= 1.1.4 =
+- Fix: EDD order overview issue resolved.
+- Update: WooCommerce shipping details checkbox warning handled.
+
+= 1.1.3 =
+- Fix: Portal access issue resolved.
+- Update: New plans are added for WPPortal support.  
+
+= 1.1.2 =
+- Fix: Token authentication 2.0
+- Update: Warning messages
+- Update: Error handling
+
+= 1.1.1 =
+- Add: Support tab to WooCommerce my account page
+- Fix: Token verification issues
+- Update: Routing update
+
 = 1.1.0
 - Update: Woocommerce Integration V2
 

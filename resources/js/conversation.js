@@ -89,7 +89,7 @@ jQuery(document).ready(($) => {
                     tdSearchSpinner.hide();
                     let new_ticket_url = $('#td-new-ticket-url').attr('href');
                     search_results += `<li class="h-36 flex items-center justify-center text-slate-500">
-                            <div>No documentation found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
+                            <div>No article found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
                         </li>`
                 }
                 list.html(search_results);

@@ -83,7 +83,7 @@ final class EDD extends Plugin {
 	 * @return array
 	 */
 	public function accepted_statuses(): array {
-		return ['Complete'];
+		return ['Completed'];
 	}
 
 	/**

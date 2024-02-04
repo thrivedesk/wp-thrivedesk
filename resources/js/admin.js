@@ -135,6 +135,10 @@ jQuery(document).ready(($) => {
 			.map((i, item) => item.value)
 			.get();
 
+		let td_user_account_pages = $('.td_user_account_pages:checked')
+			.map((i, item) => item.value)
+			.get();
+
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_helpdesk_form',
@@ -144,6 +148,7 @@ jQuery(document).ready(($) => {
 					td_helpdesk_page_id: td_helpdesk_page_id,
 					td_helpdesk_post_types: td_helpdesk_post_types,
 					td_helpdesk_post_sync: td_helpdesk_post_sync,
+					td_user_account_pages: td_user_account_pages,
 				},
 			})
 			.success(function (response) {
@@ -164,6 +169,8 @@ jQuery(document).ready(($) => {
 				}
 			});
 	});
+
+	let $element = $('#td_helpdesk_api_key')[0].innerHTML;
 
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {
@@ -213,8 +220,11 @@ jQuery(document).ready(($) => {
 						title: 'Error',
 						text: 'Server Error',
 					});
-				} else {
+				} 
+				
+				else {
 					loadAssistants(apiKey);
+					isAllowedPortal()
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
@@ -222,9 +232,7 @@ jQuery(document).ready(($) => {
 					// remove the disabled attribute from the id td-assistants
 					$('#td-assistants').prop('disabled', false);
 					// add hidden class to the id td-api-verification-btn
-					$('#no_api_key_alert').addClass('hidden');
-
-					isAllowedPortal()
+					$('#api_key_alert').addClass('hidden');
 
 					Swal.fire({
 						icon: 'success',
@@ -308,13 +316,18 @@ jQuery(document).ready(($) => {
 				},
 			})
 			.success(function (response) {
-				let parsedResponse = JSON.parse(response);
-				let data = parsedResponse?.data;
-
-				if (data === true) {
-					$('#td_post_content').removeClass('hidden');
-				} else {
-					$('#portal_feature').removeClass('hidden');
+				let data = JSON.parse(response);
+				if(data.status == 'success'){
+					let parsedResponse = JSON.parse(response);
+					let data = parsedResponse?.data;
+					if (data === true) {
+						$('#api_key_alert').addClass('hidden');
+						$('#td_portal').removeClass('hidden');
+						
+					}
+				}
+				else{
+					$('#portal_feature_alert').removeClass('hidden');
 				}
 			})
 			.error(function () {

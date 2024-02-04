@@ -64,6 +64,7 @@ class Conversation
 
 	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+        
 		if ( empty( $apiKey ) ) {
 			echo json_encode( [
 				'code' => 422,
@@ -75,15 +76,20 @@ class Conversation
 			die();
 		}
 
-		$data = get_transient( 'thrivedesk_me' );
-		if ( $data ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
-			die();
-		}
-
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
+
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+        if(!isset($data['company'])){
+            echo json_encode( [
+				'code' => 401,
+				'status' => 'error',
+				'data' => [
+					'message' =>  $data['message']
+				]
+			] );
+			die();
+        }
 
 		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 			echo json_encode( [
@@ -93,12 +99,6 @@ class Conversation
 					'message' => $data['message']
 				]
 			] );
-			die();
-		}
-
-		if ( $data ) {
-			set_transient( 'thrivedesk_me', $data, 60 * 60 * 6 );
-			echo json_encode( [ 'status' => 'true', 'data' => $data ] );
 			die();
 		}
 	}
@@ -115,6 +115,7 @@ class Conversation
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
+	            'td_user_account_pages'                 => $data['td_user_account_pages'],
             ];
 
             if (get_option('td_helpdesk_settings')) {
@@ -170,9 +171,13 @@ class Conversation
 	{
 		$this->load_scripts();
 
-		if (is_user_logged_in() && !is_null($content) && !is_feed()) {
+        $url_parts = add_query_arg( NULL, NULL );
+        $parts = (parse_url($url_parts, PHP_URL_QUERY));
+        parse_str($parts, $query_params);
+
+		if (is_user_logged_in()) {
 			ob_start();
-			if (isset($_GET['td_conversation_id']) && !empty($_GET['td_conversation_id'])) {
+			if (isset($query_params['td_conversation_id'])) {
 				thrivedesk_view('shortcode/conversation-details');
 			} else {
 				thrivedesk_view('shortcode/conversations');
@@ -206,6 +211,21 @@ class Conversation
         return $dom->saveHTML();*/
     }
 
+    public static function delete_thrivedesk_expired_transients(){
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
+                WHERE a.option_name LIKE %s
+                AND a.option_name NOT LIKE %s
+                AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )
+                AND b.option_value < %d",
+                $wpdb->esc_like( '_transient_thrivedesk_' ) . '%',
+                $wpdb->esc_like( '_transient_timeout_' ) . '%',
+                time()
+            )
+        );
+    }
 
 	/**
 	 * get all conversations
@@ -214,10 +234,11 @@ class Conversation
 	 */
 	public static function get_conversations()
 	{
+        self::delete_thrivedesk_expired_transients();
 		$page               = $_GET['cv_page'] ?? 1;
 		$current_user_email = wp_get_current_user()->user_email;
 		// get data from cache
-		$cache_key = 'thrivedesk_conversations_' . $page;
+		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email;
 		$data = get_transient($cache_key);
 
 
@@ -233,7 +254,7 @@ class Conversation
 			}
 		}
 
-		return $data ?? [];
+        return $data ?? [];
 	}
 
 	/**

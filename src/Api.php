@@ -425,7 +425,7 @@ final class Api {
 	public function plugin_data_action_handler() {
 
 		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
-		$enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
+		$enableShipping = isset($_REQUEST['shipping_param']) == 1 ? true : false;
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 			$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
