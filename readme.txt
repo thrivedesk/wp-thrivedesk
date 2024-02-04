@@ -1,6 +1,6 @@
-=== ThriveDesk - Live Chat, Help Desk & Knowledge Base for WordPress ===
+=== WordPress Helpdesk & Live Chat Plugin Powered by AI - ThriveDesk ===
 Contributors: thrivedesk
-Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
+Tags: helpdesk, support ticket, livechat, support plugin, ticket system chat, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk
 Requires at least: 4.9
 Tested up to: 6.3.1
 Stable Tag: 1.1.0
@@ -10,12 +10,13 @@ License: GNU General Public License v2.0 or later
 Elevate your WordPress support game with ThriveDesk Live Chat. Lightning-fast responses, engaging visitor interactions, and a full knowledge base in less than a minute.
 
 == Description ==
+Your search for [WordPress helpdesk plugin](https://www.thrivedesk.com/wordpress) ends here. ThriveDesk is complete support ticketing, live chat and knowledge base solution for WordPress powered website.
 
-### Live Chat Plugin For WordPress ###
+### Help Desk Plugin For WordPress ###
 
-[ThriveDesk](https://www.thrivedesk.com) is the ultimate live chat software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing customer support.
+[ThriveDesk](https://www.thrivedesk.com) is the ultimate helpdesk and ticketing software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing customer support.
 
-We designed ThriveDesk Live Chat to protect users’ privacy and align with the GDPR rules.
+We designed ThriveDesk helpdesk to protect users’ privacy and align with the GDPR rules.
 
 https://youtu.be/8aN5UWMOdjg
 
@@ -28,6 +29,12 @@ Avoid slow page loading times and lag in message delivery and reception.
 Check customer information, page browsing history, previous purchase history right from the agent dashboard. Manage refunds and serve customers on the go.
 
 Now, ThriveDesk allows customers to communicate with support staff in their native language, making it an ideal **multilingual customer service solution**.
+
+### HelpDesk for WooCommerce ###
+
+Your customers will love you for using ThriveDesk live chat with WooCommerce. Engage customers at the right time, prevent cart abandonment & manage WooCommerce store right inside ThriveDesk — No more switching between multiple tabs.
+
+https://www.youtube.com/watch?v=lmajbvfY_GQ
 
 ### Introducing ChatGPT Integration within Helpdesk System ###
 
@@ -67,6 +74,8 @@ Available on:
 ### Helpdesk & Support Ticket Plugin for WordPress ###
 
 Manage all customer conversations through Thrivedesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+
+https://www.youtube.com/watch?v=n2rUreB_aso&t=6s
 
 ThriveDesk makes it easy for your team to manage emails through a single shared inbox.
 
