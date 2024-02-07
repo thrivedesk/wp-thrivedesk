@@ -224,7 +224,7 @@ Yes. You can also transfer conversations between operators. It means that operat
 Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDPR.
 
 == Screenshots ==
-
+ 
 - WordPress Helpdesk plugin: Check all your tickets in one place
 - Reply ticket faster with real-time customer insights
 - Advance reporting: Complete overview of customer support and happiness score
