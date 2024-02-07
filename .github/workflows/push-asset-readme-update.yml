@@ -8,7 +8,6 @@ jobs:
     name: Push to master
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/stash@master
     - uses: actions/checkout@master
     - uses: actions/stash@master
     - name: WordPress.org plugin asset/readme update
