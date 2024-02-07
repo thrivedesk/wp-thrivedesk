@@ -8,8 +8,7 @@ jobs:
     name: Push to master
     runs-on: ubuntu-latest
     steps:
-    -name: Checkout
-     uses: actions/checkout@master
+    -uses: actions/checkout@master
 
     - name: Stash changes
       run: git stash
