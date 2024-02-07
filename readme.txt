@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: helpdesk, support ticket, livechat, support plugin, ticket system chat, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk
 Requires at least: 4.9
 Tested up to: 6.4
-Stable Tag: 1.2.1
+Stable Tag: 1.2.2
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -163,7 +163,7 @@ Now, you have all the necessary customer information readily available without s
 
 ### 📊 Advanced reporting ###
 
-ThriveDesk is designed to be a simple-to-use, powerful reporting tool. ThriveDesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
+ThriveDesk is designed to be a simple-to-use, powerful reporting tool. Thrivedesk’s Reporting tool offers a variety of metrics and reports that can help you make data-driven decisions to make sure you are serving your customers to the best of your abilities. It is a great tool for those who want to understand their progress and make changes accordingly.
 
 #### 📈 Reporting Features ####
 
@@ -221,7 +221,7 @@ Yes. You can also transfer conversations between operators. It means that operat
 
 = Are you GDPR friendly? =
 
-Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDPR.
+Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDRP.
 
 == Screenshots ==
  
@@ -232,6 +232,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+= 1.2.2 =
+- Assets Update
+
 = 1.2.1 =
 - Feat: Woocommerce custom order ID support added.
 - Feat: Woocommerce AfterShip plugin support added.
