@@ -15,8 +15,6 @@ jobs:
         slug: thrivedesk
         asset-dir: wp-content/plugins/wp-thrivedesk/assets
         readme-file: wp-content/plugins/wp-thrivedesk/readme.txt
-        svn-username: ${{ secrets.SVN_USERNAME }}
-        svn-password: ${{ secrets.SVN_PASSWORD }}
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@stable
       env:
