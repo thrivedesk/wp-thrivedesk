@@ -8,13 +8,11 @@ jobs:
     name: Push to master
     runs-on: ubuntu-latest
     steps:
-    -uses: actions/checkout@master
-
+    - uses: actions/checkout@master
     - name: Stash changes
       run: git stash
-      
     - name: WordPress.org plugin asset/readme update
-      uses: 10up/action-wordpress-plugin-asset-update@2.1.2
+      uses: 10up/action-wordpress-plugin-asset-update@stable
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
