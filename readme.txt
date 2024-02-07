@@ -413,3 +413,4 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 = 0.0.1 =
 - Initial release
+
