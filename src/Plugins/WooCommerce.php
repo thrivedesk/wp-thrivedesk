@@ -192,7 +192,7 @@ final class WooCommerce extends Plugin {
 					'amount'          => (float) $order->get_total(),
 					'amount_formated' => $this->get_formated_amount( $order->get_total() ),
 					'date'            => date( 'd M Y', strtotime( $order->get_date_created() ) ),
-					'order_status'    => ucfirst( $order->get_status() ),
+					'order_status'    => ucfirst( wc_get_order_status_name( $order->get_status() )),
 					'shipping'        => $this->shipping_param ? $this->get_shipping_details( $order ) : [],
 					'downloads'       => $this->get_order_items( $order ),
 					'order_url'       => method_exists( $order,
