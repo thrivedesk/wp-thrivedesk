@@ -87,6 +87,8 @@ final class ThriveDesk
     {
         // Define constants.
         $this->define_constants();
+
+        add_action( 'admin_menu', array( $this, 'thrivedesk_admin_menu' ) );
     }
 
     /**
@@ -125,6 +127,24 @@ final class ThriveDesk
         }
 
         return self::$instance;
+    }
+
+    public function thrivedesk_admin_menu() {
+        add_menu_page(
+            'ThriveDesk',
+            'ThriveDesk',
+            'manage_options',
+            'thrivedesk',
+            array( $this, 'thrivedesk_setting_page_callback' ),
+            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/icon.svg',
+            100
+        );
+    }
+
+    function thrivedesk_setting_page_callback() {
+        wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
+        wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+        echo thrivedesk_view('setting');
     }
 
     /**
