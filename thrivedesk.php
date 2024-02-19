@@ -5,7 +5,7 @@
  * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
- * Version:             1.2.3
+ * Version:             1.2.4
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -50,7 +50,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '1.2.3';
+    public $version = '1.2.4';
 
     /**
      * The single instance of this class
@@ -87,6 +87,8 @@ final class ThriveDesk
     {
         // Define constants.
         $this->define_constants();
+
+        add_action( 'admin_menu', array( $this, 'thrivedesk_admin_menu' ) );
     }
 
     /**
@@ -125,6 +127,24 @@ final class ThriveDesk
         }
 
         return self::$instance;
+    }
+
+    public function thrivedesk_admin_menu() {
+        add_menu_page(
+            'ThriveDesk',
+            'ThriveDesk',
+            'manage_options',
+            'thrivedesk',
+            array( $this, 'thrivedesk_setting_page_callback' ),
+            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/icon.svg',
+            100
+        );
+    }
+
+    function thrivedesk_setting_page_callback() {
+        wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
+        wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+        echo thrivedesk_view('setting');
     }
 
     /**
