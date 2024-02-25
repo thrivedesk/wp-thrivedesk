@@ -170,7 +170,12 @@ jQuery(document).ready(($) => {
 			});
 	});
 
-	let $element = $('#td_helpdesk_api_key')[0].innerHTML;
+
+	var $key = $('#td_helpdesk_api_key').val().trim();
+	if ($key) {
+		loadAssistants($('#td_helpdesk_api_key').val());
+		isAllowedPortal();
+	}
 
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {

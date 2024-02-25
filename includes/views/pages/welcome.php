@@ -8,7 +8,9 @@
                 </div>
                 <h1 class="font-bold text-3xl">Welcome To ThriveDesk</h1>
                 <p class="text-base">Customer support on WordPress has never been easier, faster, or more flexible.</p>
-                <a class="btn-primary text-center" href="https://app.thrivedesk.com/register/?email=<?php echo wp_get_current_user()->user_email?>&company=<?php echo get_bloginfo('name');?>" target="_blank">Set Up My Account</a>
+
+                <a href="<?php echo THRIVEDESK_APP_URL . '/handshake?store=' . get_bloginfo('url') . '/wp-admin/admin.php?page=thrivedesk' ?>" class="btn-primary text-center">Connect To ThriveDesk</a>
+                
                 <div class="flex justify-evenly space-x-2 w-full mt-4">
                     <span class="bg-gray-300 h-px flex-grow t-2 relative top-2"></span>
                     <span class="flex-none uppercase text-xs text-gray-400 font-semibold">or</span>
@@ -23,10 +25,11 @@
                 </div>
                 <h1 class="font-bold text-3xl">You are all set!</h1>
                 <p class="text-xl mb-4">Woohoo! You did it! Your connection with ThriveDesk is officially up and running!</p>
-                <p class="text-base">💬 Set up live chat Assistant with one click</p>
-                <a class="py-2.5 text-center border-2 border-gray-200 rounded text-black font-medium hover:bg-gray-100" data-target="tab-settings" href="#settings">Add Live Chat</a>
-                <p class="text-base">🎡 Integrate with other WordPress plugins</p>
-                <a class="py-2.5 text-center border-2 border-blue-200 rounded text-blue-500 font-medium hover:bg-blue-100" data-target="tab-settings" href="#settings">Integrate now</a>
+
+                <a class="btn-primary text-center" data-target="tab-welcome" href="<?php echo THRIVEDESK_APP_URL ?>" target="_blank">Open Thrivedesk</a>
+                <p class="text-base">🎡 Connect your plugins with your ThriveDesk</p>
+                <a class="py-2.5 text-center border-2 border-blue-200 rounded text-blue-500 font-medium hover:bg-blue-100" data-target="tab-integrations" href="#integrations">Integrate now</a>
+                
             </div>
         <?php endif; ?>
         </div>

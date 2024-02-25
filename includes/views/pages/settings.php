@@ -7,7 +7,7 @@ use ThriveDesk\Plugins\WPPostSync;
     $td_selected_post_types      = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
     $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
     $td_assistants               = Assistant::assistants();
-    $td_api_key                  = $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '';
+    $td_api_key                  = isset($_GET['token']) ? $_GET['token'] : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
     $td_user_account_pages          = get_option( 'td_user_account_pages' );
     $td_selected_user_account_pages      = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
     $has_portal_access           = ( new PortalService() )->has_portal_access() ? true : false;
@@ -49,14 +49,14 @@ use ThriveDesk\Plugins\WPPostSync;
                     <span>
                         <?php _e( 'Login to ThriveDesk app and get your API key from ',
                             'thrivedesk' ); ?>
-                                <a class="text-blue-500" href="https://app.thrivedesk.com/settings/company/api-key" target="_blank">
+                                <a class="text-blue-500" href="<?php echo THRIVEDESK_APP_URL.'/settings/company/api-key' ?>" target="_blank">
                                     <?php _e( 'here', 'thrivedesk' ); ?>
                                 </a>
                     </span>
                     <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_api_key ); ?></textarea>
 
                     <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
-                        <?php _e('Verify', 'thrivedesk')?>
+                        <?php _e('Verify', 'thrivedesk');?>
                     </button>
                 </div>
             </div>
@@ -64,12 +64,12 @@ use ThriveDesk\Plugins\WPPostSync;
 
         <!-- assistant  -->
         <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e('Assistant', 'thrivedesk'); ?></div>
-            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="https://app.thrivedesk.com/assistants" target="_blank">
+            <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
+            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="'. THRIVEDESK_APP_URL . '/assistants" target="_blank">
             <span class="text-blue-500">here</span></a>', 'thrivedesk'); ?></p>
             <div class="td-card">
                 <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php _e( 'Select Assistant', 'thrivedesk' ); ?></label>
+                    <label class="font-medium text-black text-sm"><?php _e( 'Select your Live Chat Assistant', 'thrivedesk' ); ?></label>
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>> <?php _e( 'Select an assistant', 'thrivedesk' ); ?> </option>
                         <option value=""><?php _e( 'Select an assistant', 'thrivedesk' ); ?>
                         </option>
@@ -95,10 +95,8 @@ use ThriveDesk\Plugins\WPPostSync;
                                 <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
                                     <?php foreach ( $wp_post_sync_types as $post_sync ) : ?>
                                         <div>
-                                            <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array(
-                                                                                                                                                                                    $post_sync,
-                                                                                                                                                                                    $td_selected_post_sync
-                                                                                                                                                                                ) ? 'checked' : ''; ?>>
+                                            <input class="td_helpdesk_post_sync" type="checkbox" 
+                                            name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array($post_sync,$td_selected_post_sync) ? 'checked' : ''; ?>>
                                             <label for="<?php echo esc_attr($post_sync); ?>"> <?php echo esc_html(ucfirst($post_sync)); ?> </label>
                                         </div>
                                     <?php endforeach; ?>
