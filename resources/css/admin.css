@@ -4,6 +4,9 @@
 		border-style: none;
 		display: initial;
 	}
+	.thrivedesk{
+		@apply text-base;
+	}
 	.td-card{
 		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
 	}
