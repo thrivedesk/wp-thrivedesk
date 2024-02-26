@@ -20,6 +20,7 @@
             </div>
         <?php else: ?>
             <div class="space-y-3 flex flex-col tab-link">
+                <canvas id="confetti-canvas" style="position: absolute;"></canvas>
                 <div class="td-steps">
                     <span></span><span class="active"></span><span></span>
                 </div>
@@ -69,3 +70,5 @@
         </div>
     </div>
 </div>
+<script src="node_modules/confetti-js/dist/index.min.js"></script>
+

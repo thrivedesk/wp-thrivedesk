@@ -1,4 +1,6 @@
 import Swal from 'sweetalert2';
+import ConfettiGenerator from "confetti-js";
+var assistants = [];
 
 jQuery(document).ready(($) => {
 	function thrivedeskTabManager(
@@ -153,29 +155,115 @@ jQuery(document).ready(($) => {
 			})
 			.success(function (response) {
 				let icon;
-				if (response) {
+				if (response.status === 'success') {
 					response.status === 'success' ? (icon = 'success') : (icon = 'error');
 					Swal.fire({
 						icon: icon,
-						title:
-							response.status.charAt(0).toUpperCase() +
-							`${response.status}`.slice(1),
+						title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
 						text: response.message,
 					}).then((result) => {
+						localStorage.setItem('shouldTriggerConfetti', 'true');
 						if (result.isConfirmed) {
-							location.reload();
+							window.location.href = '/wp-admin/admin.php?page=thrivedesk#welcome';
+							window.location.reload();
 						}
 					});
 				}
 			});
 	});
 
+	async function triggerConfetti() {
+		var confettiElement = document.getElementById('confetti-canvas');
+		
+		var confettiSettings = { 
+			target: confettiElement,
+			max: 100,
+			size: 1,
+			animate: true,
+			props: ['circle', 'square',],
+			colors: [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [0, 255, 255], [255, 0, 255]],
+			clock: 30,
+			rotate: true,
+			width: window.innerWidth,
+			height: window.innerHeight,
+			start_from_edge: true,
+			respawn: true,
+			width: 960,
+			height: 767,
+		};
+
+
+		var confetti = new ConfettiGenerator(confettiSettings);
+		confetti.render();
+		
+		setTimeout(() => {
+			confetti.clear();
+			document.getElementById('confetti-canvas').style.display = 'none';
+		}, 3000);
+
+	}
+	
+
 
 	var $key = $('#td_helpdesk_api_key').val().trim();
 	if ($key) {
-		loadAssistants($('#td_helpdesk_api_key').val());
-		isAllowedPortal();
+		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
+		const token = new URLSearchParams(window.location.search).get('token');
+
+		if(localStorage.getItem('shouldTriggerConfetti') === 'true'){
+			loadAssistants(td_helpdesk_api_key);
+			triggerConfetti();
+			localStorage.setItem('shouldTriggerConfetti', 'false');
+		}
+		
+		// if(localStorage.getItem('shouldSave') != 'false'){
+		// 	localStorage.setItem('shouldSave', 'true');
+		// }
+
+		// if(localStorage.getItem('shouldSave') === 'true' && token){
+		// 	localStorage.setItem('shouldSave', 'false');
+		// 	jQuery
+		// 	.post(thrivedesk.ajax_url, {
+		// 		action: 'thrivedesk_load_assistants',
+		// 		data: {
+		// 			td_helpdesk_api_key: td_helpdesk_api_key,
+		// 		},
+		// 	})
+		// 	.success(function (response) {
+		// 		let parsedResponse = JSON.parse(response);
+		// 		let data = parsedResponse?.data;				
+		// 		let payload = {
+		// 				td_helpdesk_api_key: td_helpdesk_api_key,
+		// 				td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
+		// 			}
+				
+		// 		jQuery.post(thrivedesk.ajax_url, {
+		// 			action: 'thrivedesk_helpdesk_form',
+		// 			data: {
+		// 				td_helpdesk_api_key: payload.td_helpdesk_api_key,
+		// 				td_helpdesk_assistant: payload.td_helpdesk_assistant,
+		// 			},
+		// 		}).success(function (response) {
+		// 			let icon;
+		// 			if (response) {
+		// 				response.status === 'success' ? (icon = 'success') : (icon = 'error');
+		// 				Swal.fire({
+		// 					icon: icon,
+		// 					title: 'Your almost linked up!',
+		// 					text: 'Now, click active to to Successful your setup!',
+		// 					confirmButtonText: 'Active',
+		// 				}).then((result) => {
+		// 					if (result.isConfirmed) {
+		// 						triggerConfetti();
+		// 					}
+		// 				});
+		// 			}
+		// 		});
+		// 	});
+		// }
 	}
+
+	
 
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {
@@ -286,6 +374,7 @@ jQuery(document).ready(($) => {
 					assistantList.html('');
 
 					if (data?.assistants?.length > 0) {
+						assistants = data?.assistants;
 						assistantList.append('<option value="">Select Assistant</option>');
 						data.assistants.forEach(function (item) {
 							assistantList.append(
