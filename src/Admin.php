@@ -41,6 +41,10 @@ final class Admin
 
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
+        // remove all annyoing admin notice
+	    add_action( 'admin_notices', [$this, 'disable_plugin_notices'] );
+        // menu icon style 
+        add_action( 'admin_enqueue_scripts', [ $this, 'menu_icon_style' ] );
     }
 
 	public function remove_wp_footer_text() {
@@ -232,4 +236,27 @@ final class Admin
         // migrate action for thrivedesk database
         do_action('thrivedesk_db_migrate');
     }
+    /**
+     * Disable plugin notices within the plugin screen.
+     */
+    function disable_plugin_notices() {
+        if ( function_exists( 'get_current_screen' ) ) {
+            $current_screen = get_current_screen();
+            if( $current_screen->id !== 'toplevel_page_thrivedesk' ) { 
+                return;
+            }
+    
+            remove_all_actions( 'admin_notices' );
+        }
+    }
+
+    /**
+	 * Add menu icon style.
+	 *
+	 * @return void
+	 */
+	public function menu_icon_style() {
+		echo '<style>#toplevel_page_thrivedesk img{ max-width:22px;padding-top:6px!important;opacity:.9!important;} #toplevel_page_thrivedesk li.wp-first-item{ display:none }</style>';
+	}
+
 }

@@ -136,7 +136,7 @@ final class ThriveDesk
             'manage_options',
             'thrivedesk',
             array( $this, 'thrivedesk_setting_page_callback' ),
-            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/menu-icon.svg',
+            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg',
             100
         );
     }
@@ -185,6 +185,7 @@ final class ThriveDesk
             define($name, $value);
         }
     }
+    
 }
 
 // Initialize ThriveDesk.

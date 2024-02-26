@@ -2,6 +2,7 @@
 @layer base {
 	img {
 		border-style: none;
+		display: initial;
 	}
 	.td-card{
 		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
