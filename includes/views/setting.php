@@ -13,7 +13,7 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     <div class="flex items-center py-5 px-9">
         <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>"
                 alt="ThriveDesk Logo">
-        <div class="flex space-x-4 ml-2">
+        <div class="flex items-center space-x-4 ml-2">
             <span class="py-0.5 px-2 bg-slate-200 text-slate-700 text-[12px] rounded-full">
                 <?php _e( 'Version', 'thrivedesk' ) ?> <?php echo THRIVEDESK_VERSION;?>
             </span>
@@ -47,9 +47,10 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     </div>
 
     <!-- body  -->
-    <div class="p-10 grid grid-cols-4 gap-12">        
+    <div class="p-10 grid grid-cols-1 md:grid-cols-4 gap-12">        
         <div class="col-span-3 space-y-6">
             <?php thrivedesk_view( 'partials/integrations' ); ?>
+
             <!-- include the settings page -->
             <?php thrivedesk_view( 'partials/settings' ); ?>
         </div>

@@ -1,23 +1,23 @@
 <div class="sidebar space-y-6">
     <!-- cloudflare  -->
-    <div class="td-card bg-orange-50 border border-orange-400">
-        <img class="w-36" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"; ?>">
-        <h3 class="text-lg font-medium my-4">Using Cloudflare?</h3>
-        <p>If you're site is behind Cloudflare you need to whitelist ThriveDesk IP address in order to integration properly work.</p>
-        <a href="#" target="_blank" class="mt-2 text-blue-500 inline-block">Learn more</a>
+    <div class="td-card bg-orange-50 border border-orange-400 space-y-2">
+        <img class="w-36 ml-auto" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"; ?>">
+        <h3 class="text-lg font-medium">Using Cloudflare?</h3>
+        <p><?php _e('To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly.', 'thrivedesk');?></p>
+        <a href="https://help.thrivedesk.com/en/troubleshooting-with-cloudflare" target="_blank" class="inline-block">Learn more</a>
     </div>
     <!-- Assistant  -->
     <div class="td-card">
         <img src="https://www.thrivedesk.com/wp-content/uploads/2023/11/livechat-hero.jpg" alt="Assistant">
         <h3 class="text-lg font-medium my-4">What is Assistant?</h3>
         <p>Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant.</p>
-        <a href="https://www.thrivedesk.com/live-chat/" target="_blank" class="mt-2 text-blue-500 inline-block">Learn more</a>
+        <a href="https://www.thrivedesk.com/live-chat/" target="_blank" class="mt-2 inline-block">Learn more</a>
     </div>
     <!-- wpportal  -->
     <div class="td-card">
-        <img src="https://www.thrivedesk.com/wp-content/uploads/2022/12/wp-portal.png" alt="WPPortal">
-        <h3 class="text-lg font-medium my-4">What is WPPortal?</h3>
+        <div style="position:relative;padding-top:56.25%;"><iframe src="https://iframe.mediadelivery.net/embed/10114/9f38fded-ddd9-44ba-bdfe-7d362235d40c?autoplay=false&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen="true"></iframe></div>
+        <h3 class="text-lg font-medium my-4">What is Portal?</h3>
         <p>Embed Help Center into your site that won’t make any database calls, no extra plugins dependency.</p>
-        <a href="https://www.thrivedesk.com/wordpress/" target="_blank" class="mt-2 text-blue-500 inline-block">Learn more</a>
+        <a href="https://www.thrivedesk.com/wordpress/" target="_blank" class="mt-2 inline-block">Learn more</a>
     </div>
 </div>

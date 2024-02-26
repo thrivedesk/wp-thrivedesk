@@ -5,7 +5,18 @@
 		display: initial;
 	}
 	.thrivedesk{
-		@apply text-base;
+		p{
+			@apply text-sm;
+		}
+
+		a{
+			@apply text-blue-500 text-sm;
+		}
+	}
+	.top-nav{
+		a{
+			@apply text-gray-500 hover:text-blue-500;
+		}
 	}
 	.td-card{
 		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
