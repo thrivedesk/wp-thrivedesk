@@ -39,29 +39,6 @@ use ThriveDesk\Plugins\WPPostSync;
 
 <div class="tab-settings">
     <form class="space-y-12" id="td_helpdesk_form" action="#" method="POST">
-        <!-- connection  -->
-        <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e( 'Connection Details', 'thrivedesk' ); ?></div>
-            <p><?php _e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
-            <div class="td-card">
-                <div class="space-y-2">
-                    <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
-                    <span>
-                        <?php _e( 'Login to ThriveDesk app and get your API key from ',
-                            'thrivedesk' ); ?>
-                                <a class="text-blue-500" href="<?php echo THRIVEDESK_APP_URL.'/settings/company/api-key' ?>" target="_blank">
-                                    <?php _e( 'here', 'thrivedesk' ); ?>
-                                </a>
-                    </span>
-                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_api_key ); ?></textarea>
-
-                    <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
-                        <?php _e('Verify', 'thrivedesk');?>
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- assistant  -->
         <div class="space-y-1">
             <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
@@ -183,6 +160,30 @@ use ThriveDesk\Plugins\WPPostSync;
                 </div>
             </div>
         </div>
+
+         <!-- connection  -->
+         <div class="space-y-1">
+            <div class="text-base font-bold"><?php _e( 'Connection Details', 'thrivedesk' ); ?></div>
+            <p><?php _e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
+            <div class="td-card">
+                <div class="space-y-2">
+                    <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
+                    <span>
+                        <?php _e( 'Login to ThriveDesk app and get your API key from ',
+                            'thrivedesk' ); ?>
+                                <a class="text-blue-500" href="<?php echo THRIVEDESK_APP_URL.'/settings/company/api-key' ?>" target="_blank">
+                                    <?php _e( 'here', 'thrivedesk' ); ?>
+                                </a>
+                    </span>
+                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_api_key ); ?></textarea>
+
+                    <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
+                        <?php _e('Verify', 'thrivedesk');?>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <button type="submit" id="td_setting_btn_submit" class="btn-primary">
             <?php _e( 'Save', 'thrivedesk' ); ?>
         </button>
