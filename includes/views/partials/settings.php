@@ -41,10 +41,13 @@ use ThriveDesk\Plugins\WPPostSync;
     <form class="space-y-12" id="td_helpdesk_form" action="#" method="POST">
         <!-- assistant  -->
         <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="'. THRIVEDESK_APP_URL . '/assistants" target="_blank">
-            <span class="text-blue-500">here</span></a>', 'thrivedesk'); ?></p>
+            <div class="td-card-heading">
+                <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
+                <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="'. THRIVEDESK_APP_URL . '/assistants" target="_blank">
+                <span class="text-blue-500">here</span></a>', 'thrivedesk'); ?></p>
+            </div>
             <div class="td-card">
+                <?php if( count($td_assistants) != 0 ) :?>
                 <div class="space-y-2">
                     <label class="font-medium text-black text-sm"><?php _e( 'Select your Live Chat Assistant', 'thrivedesk' ); ?></label>
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>> <?php _e( 'Select an assistant', 'thrivedesk' ); ?> </option>
@@ -56,13 +59,22 @@ use ThriveDesk\Plugins\WPPostSync;
                         <?php endforeach; ?>
                     </select>
                 </div>
+                <?php else: ?>
+                    <p class="text-lg flex flex-col items-center">
+                        <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none"><path opacity=".4" d="M2 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 17h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                        <span><?php _e('No Assistant found. Please <a href="https://app.thrivedesk.com/chat/assistants" target="_blank" class="text-blue-500">create a new Assistant</a> and return at a later time.', 'thrivedesk')?></span>
+                    </p>
+                <?php endif;?>
             </div>
         </div>
+        
+        <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
         <!-- WP Post Sync  -->
         <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e( 'WP Post Sync', 'thrivedesk' ); ?></div>
-            <p><?php _e( 'Sync your WordPress posts with ThriveDesk for faster support',
-                    'thrivedesk'); ?></p>
+            <div class="td-card-heading">
+                <div class="text-base font-bold"><?php _e( 'WP Post Sync', 'thrivedesk' ); ?></div>
+                <p><?php _e( 'Sync your WordPress posts with ThriveDesk for faster support','thrivedesk'); ?></p>
+            </div>
             <div class="td-card">
                 <div class="flex space-x-4" id="td_post_sync">
                     <div class="flex-1">
@@ -89,11 +101,14 @@ use ThriveDesk\Plugins\WPPostSync;
                 </div>
             </div>
         </div>
+        <?php endif; ?>
 
         <!-- portal  -->
         <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e( 'Portal', 'thrivedesk' ); ?></div>
-            <p><?php _e('Help center inside your website. Customer can create and reply tickets, access Knowledge base.','thrivedesk'); ?></p>
+            <div class="td-card-heading">
+                <div class="text-base font-bold"><?php _e( 'Portal', 'thrivedesk' ); ?></div>
+                <p><?php _e('Help center inside your website. Customer can create and reply tickets, access Knowledge base.','thrivedesk'); ?></p>
+            </div>
             <div class="td-card">
                 <div class="text-center text-base <?php echo ($show_api_key_alert) ?>" id="api_key_alert">
                     <?php _e('Please insert or verify your ThriveDesk API key ☝️ to use the Portal feature inside your site.', 'thrivedesk'); ?>
@@ -163,8 +178,10 @@ use ThriveDesk\Plugins\WPPostSync;
 
          <!-- connection  -->
          <div class="space-y-1">
-            <div class="text-base font-bold"><?php _e( 'Connection Details', 'thrivedesk' ); ?></div>
-            <p><?php _e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
+            <div class="td-card-heading">
+                <div class="text-base font-bold"><?php _e( 'Connection Details', 'thrivedesk' ); ?></div>
+                <p><?php _e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
+            </div>
             <div class="td-card">
                 <div class="space-y-2">
                     <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e( 'API Key', 'thrivedesk' ); ?></label>
@@ -175,15 +192,21 @@ use ThriveDesk\Plugins\WPPostSync;
                                     <?php _e( 'here', 'thrivedesk' ); ?>
                                 </a>
                     </span>
-                    <textarea id="td_helpdesk_api_key" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Enter your API key here." name="td_helpdesk_api_key"><?php echo esc_attr( $td_api_key ); ?></textarea>
+                    <div class="flex items-center api-key-preview">
+                        <input class="truncate w-2/3 bg-gray-50" type="password" disabled value="<?php echo esc_attr( $td_api_key ); ?>" />
+                        <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger">Update</span>
+                    </div>
+                    <div class="api-key-editable hidden">
+                        <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr( $td_api_key ); ?>" class="block p-2.5 w-full text-sm" />
 
-                    <button type="button" class="btn-primary py-1.5" id="td-api-verification-btn">
-                        <?php _e('Verify', 'thrivedesk');?>
-                    </button>
+                        <button type="button" class="btn-primary py-1.5 mt-3" id="td-api-verification-btn">
+                            <?php _e('Verify', 'thrivedesk');?>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        
+
         <button type="submit" id="td_setting_btn_submit" class="btn-primary">
             <?php _e( 'Save', 'thrivedesk' ); ?>
         </button>
