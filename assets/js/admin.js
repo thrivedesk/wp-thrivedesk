@@ -11,11 +11,17 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var confetti_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! confetti-js */ "./node_modules/confetti-js/dist/index.es.js");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return e; }; var t, e = {}, r = Object.prototype, n = r.hasOwnProperty, o = Object.defineProperty || function (t, e, r) { t[e] = r.value; }, i = "function" == typeof Symbol ? Symbol : {}, a = i.iterator || "@@iterator", c = i.asyncIterator || "@@asyncIterator", u = i.toStringTag || "@@toStringTag"; function define(t, e, r) { return Object.defineProperty(t, e, { value: r, enumerable: !0, configurable: !0, writable: !0 }), t[e]; } try { define({}, ""); } catch (t) { define = function define(t, e, r) { return t[e] = r; }; } function wrap(t, e, r, n) { var i = e && e.prototype instanceof Generator ? e : Generator, a = Object.create(i.prototype), c = new Context(n || []); return o(a, "_invoke", { value: makeInvokeMethod(t, r, c) }), a; } function tryCatch(t, e, r) { try { return { type: "normal", arg: t.call(e, r) }; } catch (t) { return { type: "throw", arg: t }; } } e.wrap = wrap; var h = "suspendedStart", l = "suspendedYield", f = "executing", s = "completed", y = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var p = {}; define(p, a, function () { return this; }); var d = Object.getPrototypeOf, v = d && d(d(values([]))); v && v !== r && n.call(v, a) && (p = v); var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p); function defineIteratorMethods(t) { ["next", "throw", "return"].forEach(function (e) { define(t, e, function (t) { return this._invoke(e, t); }); }); } function AsyncIterator(t, e) { function invoke(r, o, i, a) { var c = tryCatch(t[r], t, o); if ("throw" !== c.type) { var u = c.arg, h = u.value; return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) { invoke("next", t, i, a); }, function (t) { invoke("throw", t, i, a); }) : e.resolve(h).then(function (t) { u.value = t, i(u); }, function (t) { return invoke("throw", t, i, a); }); } a(c.arg); } var r; o(this, "_invoke", { value: function value(t, n) { function callInvokeWithMethodAndArg() { return new e(function (e, r) { invoke(t, n, e, r); }); } return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(e, r, n) { var o = h; return function (i, a) { if (o === f) throw new Error("Generator is already running"); if (o === s) { if ("throw" === i) throw a; return { value: t, done: !0 }; } for (n.method = i, n.arg = a;;) { var c = n.delegate; if (c) { var u = maybeInvokeDelegate(c, n); if (u) { if (u === y) continue; return u; } } if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) { if (o === h) throw o = s, n.arg; n.dispatchException(n.arg); } else "return" === n.method && n.abrupt("return", n.arg); o = f; var p = tryCatch(e, r, n); if ("normal" === p.type) { if (o = n.done ? s : l, p.arg === y) continue; return { value: p.arg, done: n.done }; } "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg); } }; } function maybeInvokeDelegate(e, r) { var n = r.method, o = e.iterator[n]; if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y; var i = tryCatch(o, e.iterator, r.arg); if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y; var a = i.arg; return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y); } function pushTryEntry(t) { var e = { tryLoc: t[0] }; 1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e); } function resetTryEntry(t) { var e = t.completion || {}; e.type = "normal", delete e.arg, t.completion = e; } function Context(t) { this.tryEntries = [{ tryLoc: "root" }], t.forEach(pushTryEntry, this), this.reset(!0); } function values(e) { if (e || "" === e) { var r = e[a]; if (r) return r.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) { var o = -1, i = function next() { for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next; return next.value = t, next.done = !0, next; }; return i.next = i; } } throw new TypeError(_typeof(e) + " is not iterable"); } return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), o(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) { var e = "function" == typeof t && t.constructor; return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name)); }, e.mark = function (t) { return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t; }, e.awrap = function (t) { return { __await: t }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () { return this; }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) { void 0 === i && (i = Promise); var a = new AsyncIterator(wrap(t, r, n, o), i); return e.isGeneratorFunction(r) ? a : a.next().then(function (t) { return t.done ? t.value : a.next(); }); }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () { return this; }), define(g, "toString", function () { return "[object Generator]"; }), e.keys = function (t) { var e = Object(t), r = []; for (var n in e) r.push(n); return r.reverse(), function next() { for (; r.length;) { var t = r.pop(); if (t in e) return next.value = t, next.done = !1, next; } return next.done = !0, next; }; }, e.values = values, Context.prototype = { constructor: Context, reset: function reset(e) { if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t); }, stop: function stop() { this.done = !0; var t = this.tryEntries[0].completion; if ("throw" === t.type) throw t.arg; return this.rval; }, dispatchException: function dispatchException(e) { if (this.done) throw e; var r = this; function handle(n, o) { return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o; } for (var o = this.tryEntries.length - 1; o >= 0; --o) { var i = this.tryEntries[o], a = i.completion; if ("root" === i.tryLoc) return handle("end"); if (i.tryLoc <= this.prev) { var c = n.call(i, "catchLoc"), u = n.call(i, "finallyLoc"); if (c && u) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } else if (c) { if (this.prev < i.catchLoc) return handle(i.catchLoc, !0); } else { if (!u) throw new Error("try statement without catch or finally"); if (this.prev < i.finallyLoc) return handle(i.finallyLoc); } } } }, abrupt: function abrupt(t, e) { for (var r = this.tryEntries.length - 1; r >= 0; --r) { var o = this.tryEntries[r]; if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) { var i = o; break; } } i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null); var a = i ? i.completion : {}; return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a); }, complete: function complete(t, e) { if ("throw" === t.type) throw t.arg; return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y; }, finish: function finish(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y; } }, "catch": function _catch(t) { for (var e = this.tryEntries.length - 1; e >= 0; --e) { var r = this.tryEntries[e]; if (r.tryLoc === t) { var n = r.completion; if ("throw" === n.type) { var o = n.arg; resetTryEntry(r); } return o; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(e, r, n) { return this.delegate = { iterator: values(e), resultName: r, nextLoc: n }, "next" === this.method && (this.arg = t), y; } }, e; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+
+var assistants = [];
 jQuery(document).ready(function ($) {
   function thrivedeskTabManager(tabElement, contentElement) {
     var currentTab = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
@@ -131,24 +137,115 @@ jQuery(document).ready(function ($) {
       }
     }).success(function (response) {
       var icon;
-      if (response) {
+      if (response.status === 'success') {
         response.status === 'success' ? icon = 'success' : icon = 'error';
         sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
           icon: icon,
           title: response.status.charAt(0).toUpperCase() + "".concat(response.status).slice(1),
           text: response.message
         }).then(function (result) {
+          localStorage.setItem('shouldTriggerConfetti', 'true');
           if (result.isConfirmed) {
-            location.reload();
+            window.location.href = '/wp-admin/admin.php?page=thrivedesk#welcome';
+            window.location.reload();
           }
         });
       }
     });
   });
+  function triggerConfetti() {
+    return _triggerConfetti.apply(this, arguments);
+  }
+  function _triggerConfetti() {
+    _triggerConfetti = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var confettiElement, confettiSettings, confetti;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            confettiElement = document.getElementById('confetti-canvas');
+            confettiSettings = _defineProperty(_defineProperty({
+              target: confettiElement,
+              max: 100,
+              size: 1,
+              animate: true,
+              props: ['circle', 'square'],
+              colors: [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [0, 255, 255], [255, 0, 255]],
+              clock: 30,
+              rotate: true,
+              width: window.innerWidth,
+              height: window.innerHeight,
+              start_from_edge: true,
+              respawn: true
+            }, "width", 960), "height", 767);
+            confetti = new confetti_js__WEBPACK_IMPORTED_MODULE_1__["default"](confettiSettings);
+            confetti.render();
+            setTimeout(function () {
+              confetti.clear();
+              document.getElementById('confetti-canvas').style.display = 'none';
+            }, 3000);
+          case 5:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }));
+    return _triggerConfetti.apply(this, arguments);
+  }
   var $key = $('#td_helpdesk_api_key').val().trim();
   if ($key) {
-    loadAssistants($('#td_helpdesk_api_key').val());
-    isAllowedPortal();
+    var td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
+    var token = new URLSearchParams(window.location.search).get('token');
+    if (localStorage.getItem('shouldTriggerConfetti') === 'true') {
+      loadAssistants(td_helpdesk_api_key);
+      triggerConfetti();
+      localStorage.setItem('shouldTriggerConfetti', 'false');
+    }
+
+    // if(localStorage.getItem('shouldSave') != 'false'){
+    // 	localStorage.setItem('shouldSave', 'true');
+    // }
+
+    // if(localStorage.getItem('shouldSave') === 'true' && token){
+    // 	localStorage.setItem('shouldSave', 'false');
+    // 	jQuery
+    // 	.post(thrivedesk.ajax_url, {
+    // 		action: 'thrivedesk_load_assistants',
+    // 		data: {
+    // 			td_helpdesk_api_key: td_helpdesk_api_key,
+    // 		},
+    // 	})
+    // 	.success(function (response) {
+    // 		let parsedResponse = JSON.parse(response);
+    // 		let data = parsedResponse?.data;				
+    // 		let payload = {
+    // 				td_helpdesk_api_key: td_helpdesk_api_key,
+    // 				td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
+    // 			}
+
+    // 		jQuery.post(thrivedesk.ajax_url, {
+    // 			action: 'thrivedesk_helpdesk_form',
+    // 			data: {
+    // 				td_helpdesk_api_key: payload.td_helpdesk_api_key,
+    // 				td_helpdesk_assistant: payload.td_helpdesk_assistant,
+    // 			},
+    // 		}).success(function (response) {
+    // 			let icon;
+    // 			if (response) {
+    // 				response.status === 'success' ? (icon = 'success') : (icon = 'error');
+    // 				Swal.fire({
+    // 					icon: icon,
+    // 					title: 'Your almost linked up!',
+    // 					text: 'Now, click active to to Successful your setup!',
+    // 					confirmButtonText: 'Active',
+    // 				}).then((result) => {
+    // 					if (result.isConfirmed) {
+    // 						triggerConfetti();
+    // 					}
+    // 				});
+    // 			}
+    // 		});
+    // 	});
+    // }
   }
 
   // verify the API key
@@ -237,9 +334,9 @@ jQuery(document).ready(function ($) {
     return _loadAssistants.apply(this, arguments);
   }
   function _loadAssistants() {
-    _loadAssistants = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(apiKey) {
-      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-        while (1) switch (_context2.prev = _context2.next) {
+    _loadAssistants = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(apiKey) {
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
             jQuery.post(thrivedesk.ajax_url, {
               action: 'thrivedesk_load_assistants',
@@ -266,6 +363,7 @@ jQuery(document).ready(function ($) {
                 var assistantList = $('#td-assistants');
                 assistantList.html('');
                 if ((data === null || data === void 0 || (_data$assistants = data.assistants) === null || _data$assistants === void 0 ? void 0 : _data$assistants.length) > 0) {
+                  assistants = data === null || data === void 0 ? void 0 : data.assistants;
                   assistantList.append('<option value="">Select Assistant</option>');
                   data.assistants.forEach(function (item) {
                     assistantList.append('<option value="' + item.id + '">' + item.name + '</option>');
@@ -284,9 +382,9 @@ jQuery(document).ready(function ($) {
             });
           case 1:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
-      }, _callee2);
+      }, _callee3);
     }));
     return _loadAssistants.apply(this, arguments);
   }
@@ -294,10 +392,10 @@ jQuery(document).ready(function ($) {
     return _isAllowedPortal.apply(this, arguments);
   } // clear cache
   function _isAllowedPortal() {
-    _isAllowedPortal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+    _isAllowedPortal = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
       var apiKey;
-      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-        while (1) switch (_context3.prev = _context3.next) {
+      return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        while (1) switch (_context4.prev = _context4.next) {
           case 0:
             apiKey = $('#td_helpdesk_api_key').val().trim();
             jQuery.post(thrivedesk.ajax_url, {
@@ -326,9 +424,9 @@ jQuery(document).ready(function ($) {
             });
           case 2:
           case "end":
-            return _context3.stop();
+            return _context4.stop();
         }
-      }, _callee3);
+      }, _callee4);
     }));
     return _isAllowedPortal.apply(this, arguments);
   }
@@ -352,6 +450,270 @@ jQuery(document).ready(function ($) {
     });
   });
 });
+
+/***/ }),
+
+/***/ "./node_modules/confetti-js/dist/index.es.js":
+/*!***************************************************!*\
+  !*** ./node_modules/confetti-js/dist/index.es.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function ConfettiGenerator(params) {
+  //////////////
+  // Defaults
+  var appstate = {
+    target: 'confetti-holder', // Id of the canvas
+    max: 80, // Max itens to render
+    size: 1, // prop size
+    animate: true, // Should animate?
+    respawn: true, // Should confettis be respawned when getting out of screen?
+    props: ['circle', 'square', 'triangle', 'line'], // Types of confetti
+    colors: [[165,104,246],[230,61,135],[0,199,228],[253,214,126]], // Colors to render confetti
+    clock: 25, // Speed of confetti fall
+    interval: null, // Draw interval holder
+    rotate: false, // Whenever to rotate a prop
+    start_from_edge: false, // Should confettis spawn at the top/bottom of the screen?
+    width: window.innerWidth, // canvas width (as int, in px)
+    height: window.innerHeight // canvas height (as int, in px)
+  };
+
+  //////////////
+  // Setting parameters if received
+  if(params) {
+    if(params.target)
+      appstate.target = params.target;
+    if(params.max)
+      appstate.max = params.max;
+    if(params.size)
+      appstate.size = params.size;
+    if(params.animate !== undefined && params.animate !== null)
+      appstate.animate = params.animate;
+    if(params.respawn !== undefined && params.respawn !== null)
+      appstate.respawn = params.respawn;
+    if(params.props)
+      appstate.props = params.props;
+    if(params.colors)
+      appstate.colors = params.colors;
+    if(params.clock)
+      appstate.clock = params.clock;
+    if(params.start_from_edge !== undefined && params.start_from_edge !== null)
+      appstate.start_from_edge = params.start_from_edge;
+    if(params.width)
+      appstate.width = params.width;
+    if(params.height)
+      appstate.height = params.height;
+    if(params.rotate !== undefined && params.rotate !== null)
+      appstate.rotate = params.rotate;
+  }
+
+  //////////////
+  // Early exit if the target is not the correct type, or is null
+  if(
+    typeof appstate.target != 'object' &&
+    typeof appstate.target != 'string'
+  ) {
+    throw new TypeError('The target parameter should be a node or string');
+  }
+
+  if(
+    (typeof appstate.target == 'object' && (appstate.target === null || !appstate.target instanceof HTMLCanvasElement)) ||
+    (typeof appstate.target == 'string' && (document.getElementById(appstate.target) === null || !document.getElementById(appstate.target) instanceof HTMLCanvasElement))
+  ) {
+    throw new ReferenceError('The target element does not exist or is not a canvas element');
+  }
+
+  //////////////
+  // Properties
+  var cv = typeof appstate.target == 'object'
+    ? appstate.target
+    : document.getElementById(appstate.target);
+  var ctx = cv.getContext("2d");
+  var particles = [];
+
+  //////////////
+  // Random helper (to minimize typing)
+  function rand(limit, floor) {
+    if(!limit) limit = 1;
+    var rand = Math.random() * limit;
+    return !floor ? rand : Math.floor(rand);
+  }
+
+  var totalWeight = appstate.props.reduce(function(weight, prop) {
+    return weight + (prop.weight || 1);
+  }, 0);
+  function selectProp() {
+    var rand = Math.random() * totalWeight;
+    for (var i = 0; i < appstate.props.length; ++i) {
+      var weight = appstate.props[i].weight || 1;
+      if (rand < weight) return i;
+      rand -= weight;
+    }
+  }
+
+  //////////////
+  // Confetti particle generator
+  function particleFactory() {
+    var prop = appstate.props[selectProp()];
+    var p = {
+      prop: prop.type ? prop.type : prop, //prop type
+      x: rand(appstate.width), //x-coordinate
+      y: appstate.start_from_edge ? (appstate.clock >= 0 ? -10 : parseFloat(appstate.height) + 10) : rand(appstate.height), //y-coordinate
+      src: prop.src,
+      radius: rand(4) + 1, //radius
+      size: prop.size,
+      rotate: appstate.rotate,
+      line: Math.floor(rand(65) - 30), // line angle
+      angles: [rand(10, true) + 2, rand(10, true) + 2, rand(10, true) + 2, rand(10, true) + 2], // triangle drawing angles
+      color: appstate.colors[rand(appstate.colors.length, true)], // color
+      rotation: rand(360, true) * Math.PI/180,
+      speed: rand(appstate.clock / 7) + (appstate.clock / 30)
+    };
+
+    return p;
+  }
+
+  //////////////
+  // Confetti drawing on canvas
+  function particleDraw(p) {
+    if (!p) {
+      return;
+    }
+
+    var op = (p.radius <= 3) ? 0.4 : 0.8;
+
+    ctx.fillStyle = ctx.strokeStyle = "rgba(" + p.color + ", "+ op +")";
+    ctx.beginPath();
+
+    switch(p.prop) {
+      case 'circle':{
+        ctx.moveTo(p.x, p.y);
+        ctx.arc(p.x, p.y, p.radius * appstate.size, 0, Math.PI * 2, true);
+        ctx.fill();
+        break;
+      }
+      case 'triangle': {
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + (p.angles[0] * appstate.size), p.y + (p.angles[1] * appstate.size));
+        ctx.lineTo(p.x + (p.angles[2] * appstate.size), p.y + (p.angles[3] * appstate.size));
+        ctx.closePath();
+        ctx.fill();
+        break;
+      }
+      case 'line':{
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + (p.line * appstate.size), p.y + (p.radius * 5));
+        ctx.lineWidth = 2 * appstate.size;
+        ctx.stroke();
+        break;
+      }
+      case 'square': {
+        ctx.save();
+        ctx.translate(p.x+15, p.y+5);
+        ctx.rotate(p.rotation);
+        ctx.fillRect(-15 * appstate.size,-5 * appstate.size,15 * appstate.size,5 * appstate.size);
+        ctx.restore();
+        break;
+      }
+      case 'svg': {
+        ctx.save();
+        var image = new window.Image();
+        image.src = p.src;
+        var size = p.size || 15;
+        ctx.translate(p.x + size / 2, p.y + size / 2);
+        if(p.rotate)
+          ctx.rotate(p.rotation);
+        ctx.drawImage(image, -(size/2) * appstate.size, -(size/2) * appstate.size, size * appstate.size, size * appstate.size);
+        ctx.restore();
+        break;
+      }
+    }
+  }
+
+  //////////////
+  // Public itens
+  //////////////
+
+  //////////////
+  // Clean actual state
+  var _clear = function() {
+    appstate.animate = false;
+    clearInterval(appstate.interval);
+
+    requestAnimationFrame(function() {
+    	ctx.clearRect(0, 0, cv.width, cv.height);
+      var w = cv.width;
+      cv.width = 1;
+      cv.width = w;
+    });
+  };
+
+  //////////////
+  // Render confetti on canvas
+  var _render = function() {
+      cv.width = appstate.width;
+      cv.height = appstate.height;
+      particles = [];
+
+      for(var i = 0; i < appstate.max; i ++)
+        particles.push(particleFactory());
+
+      function draw(){
+        ctx.clearRect(0, 0, appstate.width, appstate.height);
+
+        for(var i in particles)
+          particleDraw(particles[i]);
+
+        update();
+
+        if(appstate.animate) requestAnimationFrame(draw);
+      }
+
+      function update() {
+
+        for (var i = 0; i < appstate.max; i++) {
+          var p = particles[i];
+
+          if (p) {
+            if(appstate.animate)
+              p.y += p.speed;
+
+            if (p.rotate)
+              p.rotation += p.speed / 35;
+
+            if ((p.speed >= 0 && p.y > appstate.height) || (p.speed < 0 && p.y < 0)) {
+              if(appstate.respawn) {
+                particles[i] = p;
+                particles[i].x = rand(appstate.width, true);
+                particles[i].y = p.speed >= 0 ? -10 : parseFloat(appstate.height);
+              } else {
+                particles[i] = undefined;
+              }
+            }
+          }
+        }
+
+        if (particles.every(function(p) { return p === undefined; })) {
+          _clear();
+        }
+      }
+
+      return requestAnimationFrame(draw);
+  };
+
+  return {
+    render: _render,
+    clear: _clear
+  }
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ConfettiGenerator);
+
 
 /***/ }),
 

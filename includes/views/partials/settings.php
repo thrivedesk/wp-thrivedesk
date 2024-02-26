@@ -37,7 +37,7 @@ use ThriveDesk\Plugins\WPPostSync;
     $woo_plugin_installed = defined('WC_VERSION');;
 ?>
 
-<div class="hidden tab-settings">
+<div class="tab-settings">
     <form class="space-y-12" id="td_helpdesk_form" action="#" method="POST">
         <!-- connection  -->
         <div class="space-y-1">
