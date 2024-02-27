@@ -9,6 +9,7 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
 ?>
 
 <div class="thrivedesk">
+    <canvas id="confetti-canvas" style="position: absolute; z-index: -1;" class="w-full "></canvas>
     <!-- header  -->
     <div class="flex items-center py-5 px-9">
         <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>"
