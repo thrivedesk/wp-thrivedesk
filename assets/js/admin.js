@@ -97,26 +97,41 @@ jQuery(document).ready(function ($) {
     e.preventDefault();
     var td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
     jQuery.post(thrivedesk.ajax_url, {
-      action: 'thrivedesk_helpdesk_form',
+      action: 'thrivedesk_load_assistants',
       data: {
         td_helpdesk_api_key: td_helpdesk_api_key
       }
     }).success(function (response) {
-      var icon;
-      if (response.status === 'success') {
-        response.status === 'success' ? icon = 'success' : icon = 'error';
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-          icon: icon,
-          title: response.status.charAt(0).toUpperCase() + "".concat(response.status).slice(1),
-          text: response.message
-        }).then(function (result) {
-          localStorage.setItem('shouldTriggerConfetti', 'true');
-          if (result.isConfirmed) {
-            window.location.href = '/wp-admin/admin.php?page=thrivedesk#welcome';
-            window.location.reload();
-          }
-        });
-      }
+      var _data$assistants;
+      var parsedResponse = JSON.parse(response);
+      var data = parsedResponse === null || parsedResponse === void 0 ? void 0 : parsedResponse.data;
+      var payload = {
+        td_helpdesk_api_key: td_helpdesk_api_key,
+        td_helpdesk_assistant: (data === null || data === void 0 || (_data$assistants = data.assistants) === null || _data$assistants === void 0 ? void 0 : _data$assistants.length) == 1 ? data.assistants[0].id : null
+      };
+      jQuery.post(thrivedesk.ajax_url, {
+        action: 'thrivedesk_helpdesk_form',
+        data: {
+          td_helpdesk_api_key: payload.td_helpdesk_api_key,
+          td_helpdesk_assistant: payload.td_helpdesk_assistant
+        }
+      }).success(function (response) {
+        var icon;
+        if (response) {
+          response.status === 'success' ? icon = 'success' : icon = 'error';
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+            icon: icon,
+            title: response.status.charAt(0).toUpperCase() + "".concat(response.status).slice(1),
+            text: response.message,
+            confirmButtonText: 'Complete'
+          }).then(function (result) {
+            localStorage.setItem('shouldTriggerConfetti', 'true');
+            if (result.isConfirmed) {
+              window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+            }
+          });
+        }
+      });
     });
   });
 
@@ -156,8 +171,7 @@ jQuery(document).ready(function ($) {
         }).then(function (result) {
           localStorage.setItem('shouldTriggerConfetti', 'true');
           if (result.isConfirmed) {
-            window.location.href = '/wp-admin/admin.php?page=thrivedesk#welcome';
-            window.location.reload();
+            window.location.href = '/wp-admin/admin.php?page=thrivedesk';
           }
         });
       }
@@ -176,16 +190,16 @@ jQuery(document).ready(function ($) {
             confettiElement = document.getElementById('confetti-canvas');
             confettiSettings = _defineProperty(_defineProperty({
               target: confettiElement,
-              max: 100,
+              max: 500,
               size: 1,
               animate: true,
-              props: ['circle', 'square'],
+              props: ['circle', 'square', 'triangle', 'line'],
               colors: [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [0, 255, 255], [255, 0, 255]],
-              clock: 30,
+              clock: 60,
               rotate: true,
               width: window.innerWidth,
               height: window.innerHeight,
-              start_from_edge: true,
+              start_from_edge: false,
               respawn: true
             }, "width", 960), "height", 767);
             confetti = new confetti_js__WEBPACK_IMPORTED_MODULE_1__["default"](confettiSettings);
@@ -207,7 +221,6 @@ jQuery(document).ready(function ($) {
     var td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
     var token = new URLSearchParams(window.location.search).get('token');
     if (localStorage.getItem('shouldTriggerConfetti') === 'true') {
-      loadAssistants(td_helpdesk_api_key);
       triggerConfetti();
       localStorage.setItem('shouldTriggerConfetti', 'false');
     }
@@ -333,10 +346,10 @@ jQuery(document).ready(function ($) {
                   text: 'Server Error'
                 });
               } else {
-                var _data$assistants;
+                var _data$assistants2;
                 var assistantList = $('#td-assistants');
                 assistantList.html('');
-                if ((data === null || data === void 0 || (_data$assistants = data.assistants) === null || _data$assistants === void 0 ? void 0 : _data$assistants.length) > 0) {
+                if ((data === null || data === void 0 || (_data$assistants2 = data.assistants) === null || _data$assistants2 === void 0 ? void 0 : _data$assistants2.length) > 0) {
                   assistants = data === null || data === void 0 ? void 0 : data.assistants;
                   assistantList.append('<option value="">Select Assistant</option>');
                   data.assistants.forEach(function (item) {
