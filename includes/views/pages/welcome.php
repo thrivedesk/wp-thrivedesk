@@ -14,7 +14,7 @@
         <?php esc_html_e( 'We are excited to have you on board. ThriveDesk is a powerful customer support platform that helps you manage your customer support requests and provide a better customer experience.', 'wp-thrivedesk' ); ?>
     </p>
     <div class="grid grid-flow-col justify-stretch space-x-2">
-        <a href="<?php echo THRIVEDESK_APP_URL . '/register?store=' . get_bloginfo('url') . '/wp-admin/admin.php?page=thrivedesk'?>" target="_blank" class="btn-primary mt-5"><?php esc_html_e( 'Create New Account', 'wp-thrivedesk' ); ?></a>
+        <a href="<?php echo THRIVEDESK_APP_URL . '/register?store=' . get_bloginfo('url') . '/wp-admin/admin.php?page=thrivedesk' ?>" class="btn-primary mt-5"><?php esc_html_e( 'Create New Account', 'wp-thrivedesk' ); ?></a>
         <a href="<?php echo THRIVEDESK_APP_URL . '/handshake?store=' . get_bloginfo('url') . '/wp-admin/admin.php?page=thrivedesk' ?>" class="btn-primary mt-5"><?php esc_html_e( 'Connect Existing Account', 'wp-thrivedesk' ); ?></a>
     </div>
     
