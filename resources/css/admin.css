@@ -26,7 +26,10 @@
 	}
 	
 	.btn-primary{
-		@apply text-white font-medium text-base rounded py-2.5 px-6 bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-500 hover:text-white;
+		@apply flex items-center space-x-2 font-medium text-base rounded py-2.5 px-6 bg-blue-500 hover:bg-blue-600 text-white hover:text-white;
+	}
+	.btn-secondary{
+		@apply flex items-center space-x-2 font-medium text-base rounded py-2.5 px-6 bg-white hover:bg-blue-100;
 	}
 	.alert{
 		@apply p-4 border rounded bg-neutral-100 mb-4 text-sm;
