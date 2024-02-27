@@ -144,7 +144,19 @@ final class ThriveDesk
     function thrivedesk_setting_page_callback() {
         wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
         wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
-        echo thrivedesk_view('setting');
+
+        $td_helpdesk_selected_option = get_td_helpdesk_options();
+        $td_api_key                  = ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+    
+        if($td_api_key){
+            echo thrivedesk_view('setting');
+        }
+        elseif($td_api_key == '' && isset($_GET['token'])){
+            echo thrivedesk_view('pages/submit-apikey');
+        }
+        else{
+            echo thrivedesk_view('pages/welcome');
+        }
     }
 
     /**

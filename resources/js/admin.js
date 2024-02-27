@@ -123,6 +123,36 @@ jQuery(document).ready(($) => {
 		}
 	}
 
+	$('#submit-btn').on('click', function (e) {
+		e.preventDefault();
+
+		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
+
+		jQuery.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_helpdesk_form',
+				data: {
+					td_helpdesk_api_key: td_helpdesk_api_key,
+				},
+			})
+			.success(function (response) {
+				let icon;
+				if (response.status === 'success') {
+					response.status === 'success' ? (icon = 'success') : (icon = 'error');
+					Swal.fire({
+						icon: icon,
+						title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
+						text: response.message,
+					}).then((result) => {
+						localStorage.setItem('shouldTriggerConfetti', 'true');
+						if (result.isConfirmed) {
+							window.location.href = '/wp-admin/admin.php?page=thrivedesk#welcome';
+							window.location.reload();
+						}
+					});
+				}
+			});
+	});
+
 	// helpdesk form
 	$('#td_helpdesk_form').submit(function (e) {
 		e.preventDefault();
