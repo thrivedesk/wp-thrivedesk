@@ -525,6 +525,12 @@ video {
 .mt-6 {
   margin-top: 1.5rem !important;
 }
+.mt-40 {
+  margin-top: 10rem !important;
+}
+.mt-48 {
+  margin-top: 12rem !important;
+}
 .block {
   display: block !important;
 }
@@ -615,6 +621,9 @@ video {
 .w-20 {
   width: 5rem !important;
 }
+.w-2\/4 {
+  width: 50% !important;
+}
 .max-w-full {
   max-width: 100% !important;
 }
@@ -626,6 +635,12 @@ video {
 }
 .max-w-lg {
   max-width: 32rem !important;
+}
+.max-w-xl {
+  max-width: 36rem !important;
+}
+.max-w-2xl {
+  max-width: 42rem !important;
 }
 .flex-1 {
   flex: 1 1 0% !important;
@@ -1543,6 +1558,9 @@ If you want to override with your own style. Use your theme .class #thrivedesk
   }
 }
 @media (min-width: 1536px) {
+  .\32xl\:w-1\/3 {
+    width: 33.333333% !important;
+  }
   .\32xl\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }

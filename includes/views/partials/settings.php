@@ -35,6 +35,8 @@ use ThriveDesk\Plugins\WPPostSync;
     } );
 
     $woo_plugin_installed = defined('WC_VERSION');;
+    // Get current user
+    $current_user = wp_get_current_user();
 ?>
 
 <form class="space-y-6" id="td_helpdesk_form" action="#" method="POST">
@@ -42,7 +44,7 @@ use ThriveDesk\Plugins\WPPostSync;
     <div class="space-y-1">
         <div class="td-card-heading">
             <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="'. THRIVEDESK_APP_URL . '/assistants" target="_blank">here</a>', 'thrivedesk'); ?></p>
+            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="'. THRIVEDESK_APP_URL . '/chat/assistants" target="_blank">here</a>', 'thrivedesk'); ?></p>
         </div>
         <div class="td-card">
             <?php if( count($td_assistants) != 0 ) :?>
@@ -60,7 +62,7 @@ use ThriveDesk\Plugins\WPPostSync;
             <?php else: ?>
                 <p class="text-lg flex flex-col items-center">
                     <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none"><path opacity=".4" d="M2 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 17h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                    <span><?php _e('No Assistant found. Please <a href="https://app.thrivedesk.com/chat/assistants" target="_blank">create a new Assistant</a> and return at a later time.', 'thrivedesk')?></span>
+                    <span><?php _e('No Assistant found. Please <a href="'. THRIVEDESK_APP_URL . '/chat/assistants" target="_blank">create a new Assistant</a> and return at a later time.', 'thrivedesk')?></span>
                 </p>
             <?php endif;?>
         </div>
@@ -90,7 +92,7 @@ use ThriveDesk\Plugins\WPPostSync;
                                 <div class="w-full text-center text-base tab-link">
                                     <?php _e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
                                     <?php $nonce = wp_create_nonce('thrivedesk-plugin-action'); ?>
-                                    <a data-target="tab-integrations" href="#integrations" class="btn-primary py-1 px-3">Connect Now</a>
+                                    <a data-target="tab-integrations" href="#integrations" class="btn btn-primary py-1 px-3">Connect Now</a>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -199,7 +201,7 @@ use ThriveDesk\Plugins\WPPostSync;
                 <div class="api-key-editable hidden">
                     <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr( $td_api_key ); ?>" class="block p-2.5 w-full text-sm" />
 
-                    <button type="button" class="btn-primary py-1.5 mt-3" id="td-api-verification-btn">
+                    <button type="button" class="btn btn-primary py-1.5 mt-3" id="td-api-verification-btn">
                         <?php _e('Verify', 'thrivedesk');?>
                     </button>
                 </div>
@@ -207,7 +209,21 @@ use ThriveDesk\Plugins\WPPostSync;
         </div>
     </div>
 
-    <button type="submit" id="td_setting_btn_submit" class="btn-primary">
+    <button type="submit" id="td_setting_btn_submit" class="btn btn-primary">
         <?php _e( 'Save', 'thrivedesk' ); ?>
     </button>
 </form>
+
+<script>
+!function(t,e,n){function s(){
+    var t=e.getElementsByTagName("script")[0],n=e.createElement("script");
+    n.type="text/javascript",n.async=!0,n.src="https://assistant.thrivedesk.com/bootloader.js?"+Date.now(),
+    t.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},
+    n.readyQueue=[],"complete"===e.readyState)return s();
+    t.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}
+    (window,document,window.Assistant||function(){}),window.Assistant("init","966fdf96-802e-4bf7-8692-78e01b503819");
+    Assistant('identify', {
+        name: '<?php echo $current_user->user_login; ?>',
+        email: '<?php echo $current_user->user_email; ?>',
+    })
+</script>

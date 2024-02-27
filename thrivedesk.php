@@ -152,7 +152,7 @@ final class ThriveDesk
             echo thrivedesk_view('setting');
         }
         elseif($td_api_key == '' && isset($_GET['token'])){
-            echo thrivedesk_view('pages/submit-apikey');
+            echo thrivedesk_view('pages/api-verification');
         }
         else{
             echo thrivedesk_view('pages/welcome');
