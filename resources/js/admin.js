@@ -53,7 +53,6 @@ jQuery(document).ready(($) => {
 		}
 	});
 
-<<<<<<< HEAD
 	/**
 	 * admin tab
 	 */
@@ -125,8 +124,6 @@ jQuery(document).ready(($) => {
 			});
 	});
 
-=======
->>>>>>> origin/feat/wp-thrivedest-2.0
 	// helpdesk form
 	$('#td_helpdesk_form').submit(function (e) {
 		e.preventDefault();
