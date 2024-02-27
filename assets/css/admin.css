@@ -649,6 +649,9 @@ video {
 .m-0 {
   margin: 0px !important;
 }
+.m-10 {
+  margin: 2.5rem !important;
+}
 .my-10 {
   margin-top: 2.5rem !important;
   margin-bottom: 2.5rem !important;
@@ -702,6 +705,12 @@ video {
 }
 .mt-6 {
   margin-top: 1.5rem !important;
+}
+.mr-5 {
+  margin-right: 1.25rem !important;
+}
+.mt-5 {
+  margin-top: 1.25rem !important;
 }
 .block {
   display: block !important;
@@ -778,6 +787,9 @@ video {
 .w-screen {
   width: 100vw !important;
 }
+.w-6\/12 {
+  width: 50% !important;
+}
 .max-w-full {
   max-width: 100% !important;
 }
@@ -802,6 +814,9 @@ video {
 .cursor-pointer {
   cursor: pointer !important;
 }
+.grid-flow-col {
+  grid-auto-flow: column !important;
+}
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 }
@@ -822,6 +837,9 @@ video {
 }
 .justify-evenly {
   justify-content: space-evenly !important;
+}
+.justify-stretch {
+  justify-content: stretch !important;
 }
 .gap-12 {
   gap: 3rem !important;
@@ -1196,6 +1214,11 @@ video {
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color) !important;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
+.transition-shadow {
+  transition-property: box-shadow !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
 
 /* Reset wp  */
 #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html {
@@ -1240,6 +1263,11 @@ video {
 }
 .hover\:opacity-100:hover {
   opacity: 1 !important;
+}
+.hover\:shadow-md:hover {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color) !important;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
 @media (min-width: 640px) {
 

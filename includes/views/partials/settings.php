@@ -113,7 +113,7 @@ use ThriveDesk\Plugins\WPPostSync;
             </div>
 
             <div class="alert alert-danger text-center <?php echo ($show_portal_warning) ?>" id="portal_feature_alert">
-                <?php _e('Portal feature is available for Plus and above plan. For plans details click', 'thrivedesk'); ?>
+                <?php _e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
                 <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
             </div>
 
