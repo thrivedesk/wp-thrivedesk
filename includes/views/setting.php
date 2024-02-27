@@ -13,16 +13,16 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     <div class="flex items-center py-5 px-9">
         <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>"
                 alt="ThriveDesk Logo">
-        <div class="flex space-x-4 ml-2">
-            <span class="py-0.5 px-2 bg-slate-200 text-slate-700 text-[11px] rounded-full">
+        <div class="flex items-center space-x-4 ml-2">
+            <span class="py-0.5 px-2 bg-slate-200 text-slate-700 text-[12px] rounded-full">
                 <?php _e( 'Version', 'thrivedesk' ) ?> <?php echo THRIVEDESK_VERSION;?>
             </span>
-            <button id="thrivedesk_clear_cache_btn" class="hover:text-blue-600">
+            <button id="thrivedesk_clear_cache_btn" class="bg-white py-1 px-3 rounded shadow text-sm hover:bg-green-50 hover:text-green-600">
                 <?php _e( 'Clear Cache', 'thrivedesk' ) ?>
             </button>
         </div>
-        <div class="ml-auto flex space-x-2 text-sm top-nav">
-            <a class="rounded bg-gradient-to-b from-white to-neutral-100 shadow hover:from-blue-500 hover:to-blue-600 hover:text-white"
+        <div class="ml-auto flex items-center space-x-2 text-sm top-nav">
+            <a class="rounded flex items-center space-x-1 px-3 py-1.5 border border-gray-500"
                 href="https://www.thrivedesk.com/" target="_blank">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
                         viewBox="0 0 16 16">
@@ -47,9 +47,10 @@ $nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
     </div>
 
     <!-- body  -->
-    <div class="p-10 grid grid-cols-4 gap-12">        
+    <div class="p-10 grid grid-cols-1 md:grid-cols-4 gap-12">        
         <div class="col-span-3 space-y-6">
             <?php thrivedesk_view( 'partials/integrations' ); ?>
+
             <!-- include the settings page -->
             <?php thrivedesk_view( 'partials/settings' ); ?>
         </div>

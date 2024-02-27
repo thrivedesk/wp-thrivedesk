@@ -256,7 +256,7 @@ final class Admin
 	 * @return void
 	 */
 	public function menu_icon_style() {
-		echo '<style>#toplevel_page_thrivedesk img{ max-width:22px;padding-top:6px!important;opacity:.9!important;} #toplevel_page_thrivedesk li.wp-first-item{ display:none }</style>';
+		echo '<style>#toplevel_page_thrivedesk img{ max-width:20px;opacity:.9!important;} #toplevel_page_thrivedesk li.wp-first-item{ display:none }</style>';
 	}
 
 }
