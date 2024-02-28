@@ -88,7 +88,6 @@ final class ThriveDesk
         // Define constants.
         $this->define_constants();
 
-        add_action( 'admin_menu', array( $this, 'thrivedesk_admin_menu' ) );
     }
 
     /**
@@ -127,40 +126,6 @@ final class ThriveDesk
         }
 
         return self::$instance;
-    }
-
-    public function thrivedesk_admin_menu() {
-        add_menu_page(
-            'ThriveDesk',
-            'ThriveDesk',
-            'manage_options',
-            'thrivedesk',
-            array( $this, 'thrivedesk_setting_page_callback' ),
-            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg',
-            100
-        );
-    }
-
-    function thrivedesk_setting_page_callback() {
-        wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
-        wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
-        
-        if (current_user_can( 'manage_options' )) {
-            echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
-        }
-
-        $td_helpdesk_selected_option = get_td_helpdesk_options();
-        $td_api_key                  = ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
-        
-        if($td_api_key){
-            echo thrivedesk_view('setting');
-        }
-        elseif($td_api_key == '' && isset($_GET['token'])){
-            echo thrivedesk_view('pages/api-verification');
-        }
-        else{
-            echo thrivedesk_view('pages/welcome');
-        }
     }
 
     /**

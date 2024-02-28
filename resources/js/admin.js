@@ -126,7 +126,7 @@ jQuery(document).ready(($) => {
 						icon: icon,
 						title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
 						text: response.message,
-						confirmButtonText: 'Complete',
+						confirmButtonText: 'Continue to settings',
 					}).then((result) => {
 						localStorage.setItem('shouldTriggerConfetti', 'true');
 						if (result.isConfirmed) {

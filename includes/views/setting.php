@@ -16,9 +16,6 @@ $assistant_settings = Assistant::get_assistant_settings();
             <span class="py-0.5 px-2 bg-slate-200 text-slate-700 text-[12px] rounded-full">
                 <?php _e( 'Version', 'thrivedesk' ) ?> <?php echo THRIVEDESK_VERSION;?>
             </span>
-            <button id="thrivedesk_clear_cache_btn" class="bg-white py-1 px-3 rounded shadow text-sm hover:bg-green-50 hover:text-green-600">
-                <?php _e( 'Clear Cache', 'thrivedesk' ) ?>
-            </button>
         </div>
         <div class="ml-auto flex items-center space-x-2 text-sm top-nav">
             <a class="rounded flex items-center space-x-1 px-3 py-1.5 border border-gray-300" href="https://www.thrivedesk.com/wordpress/" target="_blank">

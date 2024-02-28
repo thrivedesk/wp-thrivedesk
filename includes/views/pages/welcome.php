@@ -26,6 +26,7 @@
           <span><?php esc_html_e( 'Connect Existing Account', 'wp-thrivedesk' ); ?></span>
         </a>
       </div>
+      <div class="text-gray-500 text-[12px]">Already have API key? <a href="/wp-admin/admin.php?page=td-api" class="underline">Add here</a></div>
       <div class="text-gray-400 text-[12px]">By continuing, you agree to the <a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">Terms of Service</a> and <a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">Privacy Policy</a>.</div>
     </div>
 

@@ -997,6 +997,9 @@ video {
   padding-top: 1.5rem !important;
   padding-bottom: 1.5rem !important;
 }
+.pr-4 {
+  padding-right: 1rem !important;
+}
 .text-center {
   text-align: center !important;
 }
@@ -1134,6 +1137,15 @@ video {
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color) !important;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important;
 }
+.outline {
+  outline-style: solid !important;
+}
+.outline-2 {
+  outline-width: 2px !important;
+}
+.outline-green-200 {
+  outline-color: #bbf7d0 !important;
+}
 
 /* Reset wp  */
 #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html {
@@ -1160,6 +1172,10 @@ video {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(248 250 252 / var(--tw-bg-opacity)) !important;
 }
+.hover\:bg-rose-50:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(255 241 242 / var(--tw-bg-opacity)) !important;
+}
 .hover\:text-green-600:hover {
   --tw-text-opacity: 1 !important;
   color: rgb(22 163 74 / var(--tw-text-opacity)) !important;
@@ -1167,6 +1183,10 @@ video {
 .hover\:text-white:hover {
   --tw-text-opacity: 1 !important;
   color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
+}
+.hover\:text-rose-500:hover {
+  --tw-text-opacity: 1 !important;
+  color: rgb(244 63 94 / var(--tw-text-opacity)) !important;
 }
 .hover\:opacity-100:hover {
   opacity: 1 !important;

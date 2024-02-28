@@ -23,12 +23,6 @@ $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]),
 
 $woo_plugin_installed = defined('WC_VERSION');
 
-$knowledge_base_wp_post_types = array_filter( get_post_types( array(
-    'public'       => true
-) ), function ( $type ) {
-    return $type !== 'attachment';
-} );
-
 // Get current user
 $current_user = wp_get_current_user();
 ?>
@@ -103,23 +97,32 @@ $current_user = wp_get_current_user();
 
     <!-- portal  -->
     <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php _e('Portal', 'thrivedesk'); ?></div>
-            <p><?php _e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
+        <div class="td-card-heading flex items-center">
+            <div class="flex-1 pr-4">
+                <div class="text-base font-bold"><?php _e('Portal', 'thrivedesk'); ?></div>
+                <p><?php _e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
+            </div>
+            <?php if($has_portal_access):?>
+            <button id="thrivedesk_clear_cache_btn" class="flex items-center space-x-2 bg-white border py-2 px-4 rounded shadow-sm text-sm hover:bg-rose-50 hover:text-rose-500 ml-auto">
+                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#000" fill="none"><path d="M19.518 11.302c.654-.667 1.197-1.221 1.57-1.72.392-.525.662-1.073.662-1.732s-.27-1.207-.662-1.732c-.372-.499-.915-1.053-1.568-1.72l-.816-.835c-.662-.676-1.21-1.238-1.705-1.623-.52-.406-1.07-.69-1.736-.69-.666 0-1.215.284-1.736.689-.494.385-1.044.946-1.705 1.622L9.325 6.11c-.194.198-.29.297-.29.42 0 .122.096.22.29.42l6.795 6.945c.202.206.303.309.429.309s.227-.103.429-.31l2.54-2.593Z" fill="currentColor"/><path opacity=".4" d="M14.739 15.345c.193.198.29.297.29.42 0 .122-.097.22-.29.419l-1.794 1.833c-.556.569-.937.959-1.402 1.226-.27.154-.557.276-.856.361-.516.147-1.16.147-1.95.147-.788 0-1.432 0-1.948-.147a3.837 3.837 0 0 1-.856-.361c-.465-.267-.846-.657-1.402-1.226-.558-.57-1.274-1.302-1.603-1.726-.345-.445-.6-.907-.66-1.465a2.885 2.885 0 0 1 0-.626c.06-.558.315-1.02.66-1.465.33-.424.793-.899 1.352-1.47L7.086 8.4c.202-.206.302-.31.429-.31.126 0 .227.104.428.31l6.796 6.946Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.75 21.75a1 1 0 0 1 1-1h11a1 1 0 1 1 0 2h-11a1 1 0 0 1-1-1Z" fill="currentColor"/></svg></span>
+                <span><?php _e( 'Clear portal cache', 'thrivedesk' ) ?></span>
+            </button>
+            <?php endif;?>
         </div>
         <div class="td-card">
             <div class="text-center text-base <?php echo $show_api_key_alert ?>" id="api_key_alert">
-                <?php _e('Please insert or verify your ThriveDesk API key ☝️ to use the Portal feature inside your site.', 'thrivedesk'); ?>
+                <?php _e('Please insert or verify your ThriveDesk API key to use the Portal feature.', 'thrivedesk'); ?>
             </div>
 
             <div class="alert alert-danger text-center <?php echo $show_portal_warning ?>" id="portal_feature_alert">
                 <?php _e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
-                <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
+                <a class="text-blue-500" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
             </div>
 
             <div class="<?php echo $show_portal ?>" id="td_portal">
                 <div class="md:flex md:space-x-4">
                     <div class="space-y-4 flex-1">
+                        <!-- ticket form page selection  -->
                         <div class="bg-gray-50 border p-4 rounded">
                             <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php _e('Ticket Form Page', 'thrivedesk'); ?></label>
                             <div class="text-sm"><?php _e('Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk') ?></div>
@@ -132,6 +135,7 @@ $current_user = wp_get_current_user();
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <!-- search provider -->
                         <div class="bg-gray-50 border p-4 rounded">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-base"><?php _e('Search Provider', 'thrivedesk'); ?></label>
                             <div class="text-sm"><?php _e('Select the post types that are likely to contain answers to most customer inquiries. When this feature is enabled, customers will be prompted to search before opening a ticket, which can help reduce the number of tickets.', 'thrivedesk'); ?></div>
@@ -146,7 +150,7 @@ $current_user = wp_get_current_user();
                                 <?php endforeach; ?>
                             </div>
                         </div>
-
+                        <!-- add support tab to woo/edd page  -->
                         <?php if(!empty($td_user_account_pages)): ?>
                         <div class="bg-gray-50 border p-4 rounded">
                             <label for="td_user_account_pages" class="font-medium text-black text-base"><?php _e('Add Support Tab', 'thrivedesk'); ?></label>

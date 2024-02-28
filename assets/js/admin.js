@@ -123,7 +123,7 @@ jQuery(document).ready(function ($) {
             icon: icon,
             title: response.status.charAt(0).toUpperCase() + "".concat(response.status).slice(1),
             text: response.message,
-            confirmButtonText: 'Complete'
+            confirmButtonText: 'Continue to settings'
           }).then(function (result) {
             localStorage.setItem('shouldTriggerConfetti', 'true');
             if (result.isConfirmed) {
