@@ -201,7 +201,7 @@ $current_user = wp_get_current_user();
                 <div class="api-key-editable hidden">
                     <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_api_key); ?>" class="block p-2.5 w-full text-sm" />
 
-                    <button type="button" class="btn btn-primary py-1.5 mt-3" id="td-api-verification-btn">
+                    <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
                         <?php _e('Verify', 'thrivedesk'); ?>
                     </button>
                 </div>

@@ -749,6 +749,14 @@ video {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
 }
+.bg-gray-900 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity)) !important;
+}
+.bg-green-500 {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity)) !important;
+}
 .p-1 {
   padding: 0.25rem !important;
 }
@@ -1411,6 +1419,10 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 .hover\:bg-rose-50:hover {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(255 241 242 / var(--tw-bg-opacity)) !important;
+}
+.hover\:bg-green-600:hover {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity)) !important;
 }
 .hover\:text-green-600:hover {
   --tw-text-opacity: 1 !important;
