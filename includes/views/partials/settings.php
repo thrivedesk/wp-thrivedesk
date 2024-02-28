@@ -21,16 +21,16 @@ $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]),
 });
 
 $woo_plugin_installed = defined('WC_VERSION');
+var_dump($woo_plugin_installed);
 
-    $knowledge_base_wp_post_types = array_filter( get_post_types( array(
-        'public'       => true
-    ) ), function ( $type ) {
-        return $type !== 'attachment';
-    } );
+$knowledge_base_wp_post_types = array_filter( get_post_types( array(
+    'public'       => true
+) ), function ( $type ) {
+    return $type !== 'attachment';
+} );
 
-    $woo_plugin_installed = defined('WC_VERSION');;
-    // Get current user
-    $current_user = wp_get_current_user();
+// Get current user
+$current_user = wp_get_current_user();
 ?>
 
 <form class="space-y-6" id="td_helpdesk_form" action="#" method="POST">
@@ -44,11 +44,11 @@ $woo_plugin_installed = defined('WC_VERSION');
             <?php if (!empty($td_assistants)) : ?>
                 <div class="space-y-2">
                     <label class="font-medium text-black text-sm"><?php _e('Select your Live Chat Assistant', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?= empty($td_api_key) ? 'disabled' : ''; ?>>
+                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php _e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
-                            <option value="<?= $assistant['id']; ?>" <?= ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
-                                <?= $assistant['name']; ?>
+                            <option value="<?php echo $assistant['id']; ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
+                                <?php echo $assistant['name']; ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -77,8 +77,8 @@ $woo_plugin_installed = defined('WC_VERSION');
                             <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
                                 <?php foreach ($wp_post_sync_types as $post_sync) : ?>
                                     <div>
-                                        <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?= esc_attr($post_sync); ?>" <?= in_array($post_sync, $td_selected_post_sync) ? 'checked' : ''; ?>>
-                                        <label for="<?= esc_attr($post_sync); ?>"> <?= esc_html(ucfirst($post_sync)); ?> </label>
+                                        <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array($post_sync, $td_selected_post_sync) ? 'checked' : ''; ?>>
+                                        <label for="<?php echo esc_attr($post_sync); ?>"> <?php echo esc_html(ucfirst($post_sync)); ?> </label>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else : ?>
@@ -103,16 +103,16 @@ $woo_plugin_installed = defined('WC_VERSION');
             <p><?php _e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
         </div>
         <div class="td-card">
-            <div class="text-center text-base <?= $show_api_key_alert ?>" id="api_key_alert">
+            <div class="text-center text-base <?php echo $show_api_key_alert ?>" id="api_key_alert">
                 <?php _e('Please insert or verify your ThriveDesk API key ☝️ to use the Portal feature inside your site.', 'thrivedesk'); ?>
             </div>
 
-            <div class="alert alert-danger text-center <?= $show_portal_warning ?>" id="portal_feature_alert">
+            <div class="alert alert-danger text-center <?php echo $show_portal_warning ?>" id="portal_feature_alert">
                 <?php _e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
                 <a class="text-blue-500" href="https://app.thrivedesk.com/billing/plans" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
             </div>
 
-            <div class="md:flex md:space-x-4 <?= $show_portal ?>" id="td_portal">
+            <div class="md:flex md:space-x-4 <?php echo $show_portal ?>" id="td_portal">
                 <div class="space-y-4 flex-1">
                     <div class="bg-gray-50 border p-4 rounded">
                         <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php _e('Ticket Form Page', 'thrivedesk'); ?></label>
@@ -120,8 +120,8 @@ $woo_plugin_installed = defined('WC_VERSION');
                         <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
                             <option value=""> <?php _e('Select a page', 'thrivedesk'); ?> </option>
                             <?php foreach (get_pages() as $key => $page) : ?>
-                                <option value="<?= $page->ID; ?>" <?= (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
-                                    <?= $page->post_title; ?>
+                                <option value="<?php echo $page->ID; ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
+                                    <?php echo $page->post_title; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -132,28 +132,29 @@ $woo_plugin_installed = defined('WC_VERSION');
                         <div class="flex flex-col flex-wrap mt-3">
                             <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
                                 <div>
-                                    <label for="<?= esc_attr($post_type); ?>">
-                                        <input class="td_helpdesk_post_types" type="checkbox" id="<?= esc_attr($post_type); ?>" name="td_helpdesk_post_types[]" value="<?= esc_attr($post_type); ?>" <?= in_array($post_type, $td_selected_post_types) ? 'checked' : ''; ?>>
-                                        <?= esc_html(ucfirst($post_type)); ?>
+                                    <label for="<?php echo esc_attr($post_type); ?>">
+                                        <input class="td_helpdesk_post_types" type="checkbox" id="<?php echo esc_attr($post_type); ?>" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" <?php echo in_array($post_type, $td_selected_post_types) ? 'checked' : ''; ?>>
+                                        <?php echo esc_html(ucfirst($post_type)); ?>
                                     </label>
                                 </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
 
-
+                    <?php if($woo_plugin_installed):?>
                     <div class="bg-gray-50 border p-4 rounded">
                         <label for="td_user_account_pages" class="font-medium text-black text-base"><?php _e('Add Support Tab', 'thrivedesk'); ?></label>
                         <div class="text-sm"><?php _e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
                         <div class="mt-3">
                             <?php foreach ($td_user_account_pages as $key => $page) : ?>
-                                <div class="mb-1" <?= !$woo_plugin_installed ? 'title="You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
-                                    <input class="td_user_account_pages" type="checkbox" name="td_user_account_pages[]" value="<?= esc_attr($key); ?>" <?= in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?= !$woo_plugin_installed ? 'disabled' : ''; ?>>
-                                    <label for="<?= esc_attr($page); ?>"> <?= esc_html($page); ?> </label>
+                                <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
+                                    <input class="td_user_account_pages" type="checkbox" name="td_user_account_pages[]" value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?php echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
+                                    <label for="<?php echo esc_attr($page); ?>"> <?php echo esc_html($page); ?> </label>
                                 </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
                 <div class="md:w-64 mt-4 md:mt-0">
                     <div class="p-4 bg-green-50 border border-green-300 rounded space-y-2">
@@ -178,12 +179,12 @@ $woo_plugin_installed = defined('WC_VERSION');
                 <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e('API Key', 'thrivedesk'); ?></label>
                 <span>
                     <?php _e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
-                    <a class="text-blue-500" href="<?= THRIVEDESK_APP_URL . '/settings/company/api-key'; ?>" target="_blank">
+                    <a class="text-blue-500" href="<?php echo THRIVEDESK_APP_URL . '/settings/company/api-key'; ?>" target="_blank">
                         <?php _e('here', 'thrivedesk'); ?>
                     </a>
                 </span>
                 <div class="flex items-center api-key-preview">
-                    <input class="truncate w-2/3 bg-gray-50" type="password" disabled value="<?= esc_attr($td_api_key); ?>" />
+                    <input class="truncate w-2/3 bg-gray-50" type="password" disabled value="<?php echo esc_attr($td_api_key); ?>" />
                     <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger">Update</span>
                 </div>
                 <div class="api-key-editable hidden">

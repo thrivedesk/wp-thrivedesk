@@ -4,8 +4,6 @@ use ThriveDesk\Assistants\Assistant;
 
 $assistant_settings = Assistant::get_assistant_settings();
 
-
-$nonce = wp_create_nonce( 'thrivedesk-plugin-action' );
 ?>
 
 <div class="thrivedesk">
