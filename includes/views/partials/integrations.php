@@ -78,13 +78,13 @@ $plugins = [
                     <?php if ( $plugin['connected'] ) : ?>
                         <button data-plugin="<?php echo esc_attr( $plugin['namespace'] ); ?>"
                                 data-connected="1" data-nonce="<?php echo esc_attr( $nonce ); ?>"
-                                class="connect text-sm py-2 px-4 text-center rounded bg-red-50 text-red-500 hover:bg-red-500 hover:text-white">
+                                class="connect btn bg-red-50 text-red-500 hover:bg-red-500 hover:text-white">
                                 <span><?php _e( 'Disconnect', 'thrivedesk' ) ?></span>
                         </button>
                     <?php else : ?>
                         <button data-plugin="<?php echo esc_attr( $plugin['namespace'] ); ?>"
                                 data-connected="0" data-nonce="<?php echo esc_attr( $nonce ); ?>"
-                                class="connect text-sm py-2 px-4 text-center rounded bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white <?php echo ! $plugin['installed'] ? 'opacity-50 cursor-not-allowed' : '' ?>" <?php echo ! $plugin['installed'] ? 'disabled' : '' ?>>
+                                class="connect btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white <?php echo ! $plugin['installed'] ? 'opacity-50 cursor-not-allowed' : '' ?>" <?php echo ! $plugin['installed'] ? 'disabled' : '' ?>>
                             <span><?php _e( 'Connect', 'thrivedesk' ) ?></span>
                         </button>
                         <?php if ( ! $plugin['installed'] ) : ?>
@@ -109,5 +109,35 @@ $plugins = [
                 <?php endif; ?>
             </div>
         <?php endforeach; ?>
+        <!-- Surecart : because surecart integration works differently  -->
+        <div class="td-card relative flex items-center">
+            <!-- title  -->
+            <div class="flex space-x-4">
+                <img class="w-12 h-12 rounded" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/surecart.png'; ?>" alt="Surecart logo"/>
+                <div>
+                    <div class="font-medium text-base">SureCart</div>
+                    <span class="uppercase text-xs text-gray-400">ecommerce</span>
+                </div>
+            </div>
+            <!-- CTA  -->
+            <div class="ml-auto">
+                <a href="https://app.thrivedesk.com/apps/surecart" target="_blank" class="btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">Connect</a>
+            </div>
+        </div>
+        <!-- Freemius : because Freemius integration works differently  -->
+        <div class="td-card relative flex items-center">
+            <!-- title  -->
+            <div class="flex space-x-4">
+                <img class="w-12 h-12 rounded" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/freemius.png'; ?>" alt="Freemius logo"/>
+                <div>
+                    <div class="font-medium text-base">Freemius</div>
+                    <span class="uppercase text-xs text-gray-400">ecommerce</span>
+                </div>
+            </div>
+            <!-- CTA  -->
+            <div class="ml-auto">
+                <a href="https://app.thrivedesk.com/apps/freemius" target="_blank" class="btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">Connect</a>
+            </div>
+        </div>
     </div>
 </div>
