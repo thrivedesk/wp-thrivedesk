@@ -19,7 +19,7 @@ $show_api_key_alert  = (empty($td_assistants)) ? '' : 'hidden';
 $show_portal         = (!$has_portal_access || empty($td_api_key)) ? 'hidden' : '';
 $show_portal_warning = (empty($td_api_key) || (!$has_portal_access && empty($td_assistants)) || ($has_portal_access && !empty($td_assistants))) ? 'hidden' : '';
 
-$td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
+// $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
 });
@@ -40,7 +40,7 @@ $current_user = wp_get_current_user();
         <div class="td-card">
             <?php if (!empty($td_assistants)) : ?>
                 <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php _e('Select your Live Chat Assistant', 'thrivedesk'); ?></label>
+                    <label class="font-medium text-black text-sm"><?php _e('Select Assistant', 'thrivedesk'); ?></label>
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php _e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
@@ -141,8 +141,23 @@ $current_user = wp_get_current_user();
                         <!-- search provider -->
                         <div class="bg-gray-50 border p-4 rounded">
                             <label for="td_helpdesk_post_types" class="font-medium text-black text-base"><?php _e('Search Provider', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php _e('Select the post types that are likely to contain answers to most customer inquiries. When this feature is enabled, customers will be prompted to search before opening a ticket, which can help reduce the number of tickets.', 'thrivedesk'); ?></div>
-                            <div class="flex flex-col flex-wrap mt-3">
+                            <div class="text-sm"><?php _e('When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both.', 'thrivedesk'); ?></div>
+                            <div class="text-sm mt-1"><?php _e('Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive.', 'thrivedesk'); ?></div>
+                            <hr class="mt-3">
+                            <div class="flex flex-col mt-3 space-y-3">
+                                <label for="td_knowledgebase_slug" class="font-medium text-black text-sm"><?php _e('Knowledge Base ', 'thrivedesk'); ?></label>
+                                <select id="td_knowledgebase_slug" class="bg-white border rounded px-2 py-1 w-2/3">
+                                    <option value=""> <?php _e('Select knowledgebase', 'thrivedesk'); ?> </option>
+                                    <?php foreach ($td_knowledgebase as $value) : ?>
+                                        <option value="<?= $value['slug']; ?>" <?= (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
+                                            <?= $value['name']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="flex flex-col mt-3 space-y-3">
+                                <label class="font-medium text-black text-sm"><?php _e('WordPress Post Types ', 'thrivedesk'); ?></label>
                                 <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
                                     <div>
                                         <label for="<?php echo esc_attr($post_type); ?>">
@@ -151,21 +166,6 @@ $current_user = wp_get_current_user();
                                         </label>
                                     </div>
                                 <?php endforeach; ?>
-                            </div>
-
-                            <div class="flex flex-col mt-4">
-
-                                <label for="td_knowledgebase_slug" class="font-medium text-black text-base"><?php _e('Search from knowledgebase ', 'thrivedesk'); ?></label>
-                                <select id="td_knowledgebase_slug" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
-                                    <option value=""> <?php _e('Select knowledgebase', 'thrivedesk'); ?> </option>
-                                    <?php foreach ($td_knowledgebase as $value) : ?>
-                                        <option value="<?= $value['slug']; ?>" <?= (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
-                                            <?= $value['name']; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-
-
                             </div>
                         </div>
                         <!-- add support tab to woo/edd page  -->
