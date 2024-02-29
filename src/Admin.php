@@ -145,6 +145,7 @@ final class Admin
             array(
 				'ajax_url' => admin_url('admin-ajax.php'),
 	            'wp_json_url' => site_url('wp-json'),
+                'kb_url' => parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . get_td_helpdesk_options()['td_knowledgebase_slug']. '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'],
             )
         );
 

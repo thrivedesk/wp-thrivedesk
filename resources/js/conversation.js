@@ -61,21 +61,64 @@ jQuery(document).ready(($) => {
     function search_query(){
         let search_query = $('#td-search-input').val();
         let tdSearchSpinner = $('#td-search-spinner');
+        let list = $('#td-search-results');
+        let kbRequest;
+        let wpRequest;
+
         if (!search_query) return;
         tdSearchSpinner.show();
-        $.ajax({
-            type: "POST",
-            url: td_objects.wp_json_url + "/td-search-query/docs",
-            data: {
-                query_string: search_query,
-            },
-            success: function(data){
-                tdSearchSpinner.hide();
-                const list = $('#td-search-results');
-                let search_results = '';
-                if (data.data.length > 0) {
-                    data.data.forEach(function(item, i){
-                        search_results += `<li class="td-search-item" id="td-search-item-${i}">
+        
+        if(td_objects.kb_url){
+            kbRequest = $.ajax({
+                type: "GET",
+                url: td_objects.kb_url + "/api/articles",
+                data: {
+                    q: search_query
+                }
+            });
+        }
+
+        if(td_objects.wp_json_url){
+            wpRequest = $.ajax({
+                type: "POST",
+                url: td_objects.wp_json_url + "/td-search-query/docs",
+                data: {
+                    query_string: search_query,
+                }
+            });
+        }
+        
+        Promise.all([kbRequest, wpRequest])
+            .then(function(results) {
+                var kbData = results[0].data;
+                var wpData = results[1].data;
+        
+                // Process KB search results
+                var kbResultsHtml = '';
+                if (kbData.length > 0) {
+                    kbData.forEach(function(item, i) {
+                        kbResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
+                            <a target="_blank" href="${item.links.self}">
+                                <div class="td-search-content">
+                                    <span class="td-search-tag">${item.categories.join(', ')}</span>
+                                    <span class="td-search-title">${item.title}</span>
+                                    <span class="td-search-excerpt">${item.excerpt}</span>
+                                </div>
+                            </a>
+                        </li>`;
+                    });
+                } else {
+                    let new_ticket_url = $('#td-new-ticket-url').attr('href');
+                    kbResultsHtml += `<li class="h-36 flex items-center justify-center text-slate-500">
+                        <div>No article found on our knowledge base. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
+                    </li>`;
+                }
+        
+                // Process WP search results
+                var wpResultsHtml = '';
+                if (typeof wpData == 'object' && wpData.data.length > 0) {
+                    wpData.data.forEach(function(item, i) {
+                        wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
                                     <span class="td-search-tag">${item.categories}</span>
@@ -86,15 +129,30 @@ jQuery(document).ready(($) => {
                         </li>`;
                     });
                 } else {
-                    tdSearchSpinner.hide();
                     let new_ticket_url = $('#td-new-ticket-url').attr('href');
-                    search_results += `<li class="h-36 flex items-center justify-center text-slate-500">
-                            <div>No article found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
-                        </li>`
+                    wpResultsHtml += `<li class="h-36 flex items-center justify-center text-slate-500">
+                        <div>No article found. <a href="${new_ticket_url}" target="_blank" class="text-blue-600">Click here </a>to open a new ticket</div>
+                    </li>`;
                 }
-                list.html(search_results);
-            }
-        });
+        
+                var combinedResults = `
+                    <div class="px-4">
+                        <p class="px-2 font-bold">Search results from Knowledge Base</p>
+                    </div>
+                    <ul>${kbResultsHtml}</ul>
+                    <div class="px-4">
+                        <p class="px-2 font-bold">Search results from WordPress</p>
+                    </div>
+                    <ul>${wpResultsHtml}</ul>
+                `;
+        
+                tdSearchSpinner.hide();
+                list.html(combinedResults);
+            })
+            .catch(function(error) {
+                console.error(error);
+            });
+
     }
 
     $('#td-search-input').keyup(debounce(search_query, 1000));

@@ -1,6 +1,7 @@
 <?php
 
 use ThriveDesk\Assistants\Assistant;
+use ThriveDesk\KnowledgeBase\KnowledgeBase;
 use ThriveDesk\Services\PortalService;
 use ThriveDesk\Plugins\WPPostSync;
 
@@ -8,6 +9,7 @@ $td_helpdesk_selected_option = get_td_helpdesk_options();
 $td_selected_post_types      = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
 $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
 $td_assistants               = Assistant::assistants();
+$td_knowledgebase            = KnowledgeBase::knowledgebase();
 $td_api_key                  = isset($_GET['token']) ? $_GET['token'] : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
 $has_portal_access           = (new PortalService())->has_portal_access();
@@ -17,6 +19,7 @@ $show_api_key_alert  = (empty($td_assistants)) ? '' : 'hidden';
 $show_portal         = (!$has_portal_access || empty($td_api_key)) ? 'hidden' : '';
 $show_portal_warning = (empty($td_api_key) || (!$has_portal_access && empty($td_assistants)) || ($has_portal_access && !empty($td_assistants))) ? 'hidden' : '';
 
+$td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
 });
@@ -148,6 +151,21 @@ $current_user = wp_get_current_user();
                                         </label>
                                     </div>
                                 <?php endforeach; ?>
+                            </div>
+
+                            <div class="flex flex-col mt-4">
+
+                                <label for="td_knowledgebase_slug" class="font-medium text-black text-base"><?php _e('Search from knowledgebase ', 'thrivedesk'); ?></label>
+                                <select id="td_knowledgebase_slug" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
+                                    <option value=""> <?php _e('Select knowledgebase', 'thrivedesk'); ?> </option>
+                                    <?php foreach ($td_knowledgebase as $value) : ?>
+                                        <option value="<?= $value['slug']; ?>" <?= (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
+                                            <?= $value['name']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+
+
                             </div>
                         </div>
                         <!-- add support tab to woo/edd page  -->

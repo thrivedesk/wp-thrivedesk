@@ -21,7 +21,7 @@
                         <span class="sr-only">Loading...</span>
                     </div>
                 </div>
-				<div>
+				<div class="overflow-y-scroll h-[40rem]">
 					<ul id="td-search-results" class="space-y-2">
 						<li class="h-36 flex items-center justify-center text-slate-500">
 							<span> <?php _e('Please search before creating a new ticket', 'thrivedesk'); ?></span>

@@ -144,6 +144,7 @@ jQuery(document).ready(($) => {
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 		let td_helpdesk_assistant = $('#td-assistants').val();
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
+		let td_knowledgebase_slug = $('#td_knowledgebase_slug').val();
 		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
 			.map((i, item) => item.value)
 			.get();
@@ -163,6 +164,7 @@ jQuery(document).ready(($) => {
 					td_helpdesk_api_key: td_helpdesk_api_key,
 					td_helpdesk_assistant: td_helpdesk_assistant,
 					td_helpdesk_page_id: td_helpdesk_page_id,
+					td_knowledgebase_slug: td_knowledgebase_slug,
 					td_helpdesk_post_types: td_helpdesk_post_types,
 					td_helpdesk_post_sync: td_helpdesk_post_sync,
 					td_user_account_pages: td_user_account_pages,
@@ -198,8 +200,6 @@ jQuery(document).ready(($) => {
 			colors: [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [0, 255, 255], [255, 0, 255]],
 			clock: 60,
 			rotate: true,
-			width: window.innerWidth,
-			height: window.innerHeight,
 			start_from_edge: false,
 			respawn: true,
 			width: 960,
@@ -219,8 +219,6 @@ jQuery(document).ready(($) => {
 	// Confetti for API Key validation 
 	var $key = $('#td_helpdesk_api_key').val().trim();
 	if ($key) {
-		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
-		const token = new URLSearchParams(window.location.search).get('token');
 		if (localStorage.getItem('shouldTriggerConfetti') === 'true') {
 			triggerConfetti();
 			localStorage.setItem('shouldTriggerConfetti', 'false');
