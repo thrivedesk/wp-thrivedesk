@@ -19,7 +19,9 @@ $show_api_key_alert  = (empty($td_assistants)) ? '' : 'hidden';
 $show_portal         = (!$has_portal_access || empty($td_api_key)) ? 'hidden' : '';
 $show_portal_warning = (empty($td_api_key) || (!$has_portal_access && empty($td_assistants)) || ($has_portal_access && !empty($td_assistants))) ? 'hidden' : '';
 
-// $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
+$td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
+update_option('td_helpdesk_settings', $td_helpdesk_selected_option);
+
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
 });
