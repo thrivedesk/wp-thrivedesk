@@ -23,6 +23,7 @@ class PortalService {
 		'plus_july_2023',
         'starter_july_23',
         'starter_annual_july_23',
+		'business_ltd',
 	];
 
 	public function __construct(  ) {
