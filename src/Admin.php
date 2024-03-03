@@ -152,7 +152,7 @@ final class Admin
 
     public function create_portal_page()
     {
-        $title = "ThriveDesk Portal";
+        $title = "Tickets";
         $my_post = array(
             'post_type'     => 'page',
             'post_title'    => $title,

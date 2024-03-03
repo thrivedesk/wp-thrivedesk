@@ -190,6 +190,7 @@ jQuery(document).ready(($) => {
 	// Confetti 
 	async function triggerConfetti() {
 		var confettiElement = document.getElementById('confetti-canvas');
+		confettiElement.style.display = 'block';
 
 		var confettiSettings = {
 			target: confettiElement,
@@ -212,8 +213,8 @@ jQuery(document).ready(($) => {
 		
 		setTimeout(() => {
 			confetti.clear();
-			document.getElementById('confetti-canvas').style.display = 'none';
-		}, 4000);
+			confettiElement.style.display = 'none';
+		}, 2500);
 
 	}
 	// Confetti for API Key validation 
