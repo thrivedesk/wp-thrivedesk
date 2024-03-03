@@ -15,9 +15,8 @@ $td_user_account_pages       = $td_helpdesk_selected_option['td_user_account_pag
 $has_portal_access           = (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();
 
-$show_api_key_alert  = (empty($td_assistants)) ? '' : 'hidden';
-$show_portal         = (!$has_portal_access || empty($td_api_key)) ? 'hidden' : '';
-$show_portal_warning = (empty($td_api_key) || (!$has_portal_access && empty($td_assistants)) || ($has_portal_access && !empty($td_assistants))) ? 'hidden' : '';
+$show_api_key_alert  = empty($td_api_key) ? '' : 'hidden';
+$show_portal         = empty($has_portal_access) ? 'hidden' : '';
 
 $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
 update_option('td_helpdesk_settings', $td_helpdesk_selected_option);
@@ -119,7 +118,7 @@ $current_user = wp_get_current_user();
                 <?php _e('Please insert or verify your ThriveDesk API key to use the Portal feature.', 'thrivedesk'); ?>
             </div>
 
-            <div class="alert alert-danger text-center <?php echo $show_portal_warning ?>" id="portal_feature_alert">
+            <div class="alert alert-danger text-center <?php echo ($show_portal == "hidden") ? '' : 'hidden' ?>" id="portal_feature_alert">
                 <?php _e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
                 <a class="text-blue-500" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
             </div>
