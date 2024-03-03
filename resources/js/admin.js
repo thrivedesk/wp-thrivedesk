@@ -210,10 +210,10 @@ jQuery(document).ready(($) => {
 		var confetti = new ConfettiGenerator(confettiSettings);
 		confetti.render();
 		
-		// setTimeout(() => {
-		// 	confetti.clear();
-		// 	document.getElementById('confetti-canvas').style.display = 'none';
-		// }, 4000);
+		setTimeout(() => {
+			confetti.clear();
+			document.getElementById('confetti-canvas').style.display = 'none';
+		}, 4000);
 
 	}
 	// Confetti for API Key validation 
