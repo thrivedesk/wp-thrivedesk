@@ -1,6 +1,7 @@
 <?php
 
 namespace ThriveDesk;
+use WP_Query;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -28,6 +29,8 @@ final class Admin
         add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
 
         add_action('admin_menu', [$this, 'admin_menu'], 10);
+
+        add_action('activated_plugin', [$this, 'create_portal_page'], 10);
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
@@ -123,6 +126,44 @@ final class Admin
             'td-api',
             array( $this, 'verification_page'),
         );
+    }
+
+    public function get_page_by_title( $page_title, $output = OBJECT, $post_type = 'page' ) {
+        $args  = array(
+            'title'                  => $page_title,
+            'post_type'              => $post_type,
+            'post_status'            => get_post_status(),
+            'posts_per_page'         => 1,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'no_found_rows'          => true,
+            'orderby'                => 'post_date ID',
+            'order'                  => 'ASC',
+        );
+        $query = new WP_Query( $args );
+        $pages = $query->posts;
+    
+        if ( empty( $pages ) ) {
+            return null;
+        }
+    
+        return get_post( $pages[0], $output );
+    }
+
+    public function create_portal_page()
+    {
+        $title = "ThriveDesk Portal";
+        $my_post = array(
+            'post_type'     => 'page',
+            'post_title'    => $title,
+            'post_content'  => '[thrivedesk_portal]',
+            'post_status'   => 'publish',
+            'post_author'   => 1
+        );
+
+        if($this->get_page_by_title($title) == null){
+            wp_insert_post( $my_post );
+        }
     }
 
     /**

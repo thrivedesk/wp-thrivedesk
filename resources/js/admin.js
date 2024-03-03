@@ -193,11 +193,11 @@ jQuery(document).ready(($) => {
 
 		var confettiSettings = {
 			target: confettiElement,
-			max: 500,
-			size: 0.7,
+			max: 600,
+			size: 0.5,
 			animate: true,
-			props: ['circle', 'square', 'triangle', 'line'],
-			colors: [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [0, 255, 255], [255, 0, 255]],
+			props: ['circle', 'square', 'triangle'],
+			colors: [[255, 0, 64], [0, 255, 64], [0, 64, 255]],
 			clock: 60,
 			rotate: true,
 			start_from_edge: false,
@@ -210,10 +210,10 @@ jQuery(document).ready(($) => {
 		var confetti = new ConfettiGenerator(confettiSettings);
 		confetti.render();
 		
-		setTimeout(() => {
-			confetti.clear();
-			document.getElementById('confetti-canvas').style.display = 'none';
-		}, 4000);
+		// setTimeout(() => {
+		// 	confetti.clear();
+		// 	document.getElementById('confetti-canvas').style.display = 'none';
+		// }, 4000);
 
 	}
 	// Confetti for API Key validation 
