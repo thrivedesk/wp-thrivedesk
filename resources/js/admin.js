@@ -194,7 +194,7 @@ jQuery(document).ready(($) => {
 		var confettiSettings = {
 			target: confettiElement,
 			max: 500,
-			size: 1,
+			size: 0.7,
 			animate: true,
 			props: ['circle', 'square', 'triangle', 'line'],
 			colors: [[255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [0, 255, 255], [255, 0, 255]],
@@ -213,7 +213,7 @@ jQuery(document).ready(($) => {
 		setTimeout(() => {
 			confetti.clear();
 			document.getElementById('confetti-canvas').style.display = 'none';
-		}, 3000);
+		}, 4000);
 
 	}
 	// Confetti for API Key validation 
