@@ -233,9 +233,10 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 2.0 =
-- Feat: Implemented optimized connection process to streamline setup for connecting WordPress site with Thrivedesk.
-- Feat: Introduced feature for selecting a knowledge base portal to enhance search functionality.
-- Update: Improved user experience;
+- Feat: Connection process optimized for connecting WordPress site with Thrivedesk.
+- Feat: Added knowledge base to enhance search functionality on portal page.
+- Feat: Added dedicated portal page.
+- Update: Reorganized dashboard with settings for better user experience.
 
 == Changelog ==
 = 1.2.4 =
