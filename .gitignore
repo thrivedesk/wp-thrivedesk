@@ -63,3 +63,4 @@ assets/bower_components/*
 library/vendors/composer
 assets/img/.DS_Store
 *.lock
+releases
