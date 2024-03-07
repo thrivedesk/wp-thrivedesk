@@ -152,7 +152,7 @@ final class Admin
 
     public function create_portal_page()
     {
-        $title = "Tickets";
+        $title = "Thrivedesk Support Portal";
         $my_post = array(
             'post_type'     => 'page',
             'post_title'    => $title,
