@@ -11,15 +11,20 @@ $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sy
 $td_assistants               = Assistant::assistants();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();
 $td_api_key                  = isset($_GET['token']) ? $_GET['token'] : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
-$td_user_account_pages       = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
+$td_user_account_pages       = get_option( 'td_user_account_pages' );
 $has_portal_access           = (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();
 
 $show_api_key_alert  = empty($td_api_key) ? '' : 'hidden';
 $show_portal         = empty($has_portal_access) ? 'hidden' : '';
 
+$td_selected_user_account_pages = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
 $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
 update_option('td_helpdesk_settings', $td_helpdesk_selected_option);
+
+$td_user_account_pages = array(
+    'woocommerce' => 'Add support to WooCommerce my account page'
+);
 
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
