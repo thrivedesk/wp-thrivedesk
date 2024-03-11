@@ -107,12 +107,14 @@ class Conversation
     {
         header('Content-Type: application/json');
         $data = $_POST['data'];
+
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
             $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'],
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
+                'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
 	            'td_user_account_pages'                 => $data['td_user_account_pages'],
@@ -140,6 +142,19 @@ class Conversation
         add_shortcode('thrivedesk_portal', [$this, 'conversation_page']);
     }
 
+    public function getKnowledgeBaseUrl(){
+        $options = get_td_helpdesk_options();
+        $knowledgebaseSlug = $options['td_knowledgebase_slug'] ?? null;
+        $url = null;
+
+        if ($knowledgebaseSlug != '') {
+            $kbApiEndpoint = parse_url(THRIVEDESK_KB_API_ENDPOINT);
+            $url = $kbApiEndpoint['scheme'] . '://' . $knowledgebaseSlug . '.' . $kbApiEndpoint['host'];
+        }
+
+        return $url;
+    }
+
     /**
      * load the necessary scripts
      * style and script
@@ -151,16 +166,19 @@ class Conversation
         wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', THRIVEDESK_VERSION);
 
         wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery'], THRIVEDESK_VERSION);
-
+ 
 
         wp_localize_script('thrivedesk-conversations',
             'td_objects', [
                 'wp_json_url' => site_url('wp-json'),
                 'ajax_url'    => admin_url('admin-ajax.php'),
+                'kb_url'      => $this->getKnowledgeBaseUrl(),
             ]
         );
         wp_enqueue_script('thrivedesk-conversations');
     }
+
+    
 
 	/**
 	 * redirect to the conversation page

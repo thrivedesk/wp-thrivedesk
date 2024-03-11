@@ -13,8 +13,9 @@ $is_portal_available = (new PortalService())->has_portal_access();
     <div class="td-container">
         <!-- if portal feature not available  -->
         <?php if (!$is_portal_available): ?>
-        <div class="p-10 text-center my-10 bg-rose-50 border-2 border-dashed border-rose-200 text-rose-500 rounded font-medium">
+        <div class="p-10 text-center my-10 bg-rose-50 border-2 border-dashed border-rose-200 text-rose-500 rounded font-medium space-y-4">
             <span><?php _e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
+            <img src="https://media.thrivedesk.com/wp-content/uploads/2023/05/portal-mini.avif">
         </div>
 
         <?php else: ?>
