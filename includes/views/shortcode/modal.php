@@ -13,7 +13,7 @@
 		</div> <!-- /Modal header  -->
 		
 		<!-- Modal body  -->
-		<div class="td-modal-body">
+		<div class="td-modal-body" style="max-height: 40rem">
 			<div class="py-6 td-search-items">
                 <div class="text-center my-5" style="display: none;" id="td-search-spinner">
                     <div role="status">
@@ -21,9 +21,9 @@
                         <span class="sr-only">Loading...</span>
                     </div>
                 </div>
-				<div class="overflow-y-scroll h-[40rem]">
-					<ul id="td-search-results" class="space-y-2">
-						<li class="h-36 flex items-center justify-center text-slate-500">
+				<div class="overflow-y-scroll">
+					<ul id="td-search-results">
+						<li class="flex items-center justify-center text-slate-500">
 							<span> <?php _e('Please search before creating a new ticket', 'thrivedesk'); ?></span>
 						</li>
 					</ul>

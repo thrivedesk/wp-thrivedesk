@@ -38,14 +38,11 @@ class KnowledgeBase
 
         $knowledgebase = ( new KnowledgeBase )->get_knowledgebase($api_key);
 
-        if ($knowledgebase['data']) {
+        if (!empty($knowledgebase) && isset($knowledgebase['data'])) {
             set_transient('thrivedesk_knowledgebase', $knowledgebase['data'], 60 * 30);
-
             return $knowledgebase['data'];
         } else {
             return [];
         }
     }
-
-
 }

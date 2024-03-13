@@ -33,6 +33,7 @@ use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\KnowledgeBase\KnowledgeBase;
 use ThriveDesk\Services\PortalService;
 use ThriveDeskDBMigrations\Scripts\MigrationScript;
 
@@ -123,6 +124,7 @@ final class ThriveDesk
             Assistant::instance();
 			PortalService::instance();
 			UserAccountPages::instance();
+            KnowledgeBase::instance();
         }
 
         return self::$instance;

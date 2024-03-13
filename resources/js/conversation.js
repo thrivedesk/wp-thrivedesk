@@ -58,7 +58,7 @@ jQuery(document).ready(($) => {
         }
     });
 
-    function search_query(){
+    function search_query() {
         let search_query = $('#td-search-input').val();
         let tdSearchSpinner = $('#td-search-spinner');
         let list = $('#td-search-results');
@@ -74,33 +74,44 @@ jQuery(document).ready(($) => {
                 url: td_objects.kb_url + "/api/articles",
                 data: {
                     q: search_query
+                },
+                timeout: 10000, 
+                error: function(xhr, status, error) {
+                    console.error('KB Request Error:', error);
+                    tdSearchSpinner.hide();
                 }
             });
         }
-
-        if(td_objects.wp_json_url){
+    
+        if (td_objects.wp_json_url) {
             wpRequest = $.ajax({
                 type: "POST",
                 url: td_objects.wp_json_url + "/td-search-query/docs",
                 data: {
                     query_string: search_query,
+                    action: 'td_search_query_docs',
+                },
+                timeout: 10000, 
+                error: function(xhr, status, error) {
+                    console.error('WP Request Error:', error);
+                    tdSearchSpinner.hide();
                 }
             });
         }
         
         Promise.all([kbRequest, wpRequest])
             .then(function(results) {
-                var kbData = results[0].data;
-                var wpData = results[1].data;
-        
-                // Process KB search results
+                var kbData = results[0] ? results[0].data : [];
+                var wpData = results[1] ? results[1].data : [];
+                
+                // Process KB data
                 var kbResultsHtml = '';
                 if (kbData.length > 0) {
                     kbData.forEach(function(item, i) {
                         kbResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
-                            <a target="_blank" href="${item.links.self}">
+                            <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
-                                    <span class="td-search-tag">${item.categories.join(', ')}</span>
+                                    <span class="td-search-tag">${item.categories}</span>
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -114,10 +125,10 @@ jQuery(document).ready(($) => {
                     </li>`;
                 }
         
-                // Process WP search results
+                // Process WP data
                 var wpResultsHtml = '';
-                if (typeof wpData == 'object' && wpData.data.length > 0) {
-                    wpData.data.forEach(function(item, i) {
+                if (typeof wpData == 'object' && wpData.length > 0) {
+                    wpData.forEach(function(item, i) {
                         wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
@@ -135,24 +146,30 @@ jQuery(document).ready(($) => {
                     </li>`;
                 }
         
-                var combinedResults = `
-                    <div class="px-4">
+                var combinedResults = '';
+                
+                if (td_objects.kb_url) {
+                    combinedResults +=`
+                    <div>
                         <p class="px-2 font-bold">Search results from Knowledge Base</p>
                     </div>
-                    <ul>${kbResultsHtml}</ul>
-                    <div class="px-4">
-                        <p class="px-2 font-bold">Search results from WordPress</p>
-                    </div>
-                    <ul>${wpResultsHtml}</ul>
-                `;
+                    <ul>${kbResultsHtml}</ul>`;
+                };
+
+                if (td_objects.wp_json_url) {
+                    combinedResults +=`<div>
+                    <p class="px-2 font-bold">Search results from WordPress</p>
+                </div>
+                <ul>${wpResultsHtml}</ul>`;
+                }
         
-                tdSearchSpinner.hide();
                 list.html(combinedResults);
+                tdSearchSpinner.hide();
             })
             .catch(function(error) {
-                console.error(error);
+                console.error('Promise.all Error:', error);
+                tdSearchSpinner.hide();
             });
-
     }
 
     $('#td-search-input').keyup(debounce(search_query, 1000));
