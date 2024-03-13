@@ -11,7 +11,7 @@ $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sy
 $td_assistants               = Assistant::assistants();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();
 $td_api_key                  = isset($_GET['token']) ? $_GET['token'] : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
-$td_user_account_pages       = get_option( 'td_user_account_pages' );
+$td_user_account_pages       = get_option('td_user_account_pages');
 $has_portal_access           = (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();
 
@@ -22,15 +22,21 @@ $td_selected_user_account_pages = $td_helpdesk_selected_option['td_user_account_
 $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
 update_option('td_helpdesk_settings', $td_helpdesk_selected_option);
 
-$td_user_account_pages = array(
-    'woocommerce' => 'Add support to WooCommerce my account page'
-);
+$wp_post_sync_types = array_filter(get_post_types(array(
+    'public'       => true,
+    'show_in_rest' => true
+)), function ($type) {
+    return $type !== 'attachment';
+});
 
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
 });
-
 $woo_plugin_installed = defined('WC_VERSION');
+$td_user_account_pages = array(
+    'woocommerce' => 'Add to WooCommerce'
+);
+
 
 // Get current user
 $current_user = wp_get_current_user();
@@ -112,10 +118,14 @@ $current_user = wp_get_current_user();
                 <p><?php _e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
             </div>
             <?php if($has_portal_access):?>
-            <button id="thrivedesk_clear_cache_btn" class="flex items-center space-x-2 bg-white border py-2 px-4 rounded shadow-sm text-sm hover:bg-rose-50 hover:text-rose-500 ml-auto">
-                <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#000" fill="none"><path d="M19.518 11.302c.654-.667 1.197-1.221 1.57-1.72.392-.525.662-1.073.662-1.732s-.27-1.207-.662-1.732c-.372-.499-.915-1.053-1.568-1.72l-.816-.835c-.662-.676-1.21-1.238-1.705-1.623-.52-.406-1.07-.69-1.736-.69-.666 0-1.215.284-1.736.689-.494.385-1.044.946-1.705 1.622L9.325 6.11c-.194.198-.29.297-.29.42 0 .122.096.22.29.42l6.795 6.945c.202.206.303.309.429.309s.227-.103.429-.31l2.54-2.593Z" fill="currentColor"/><path opacity=".4" d="M14.739 15.345c.193.198.29.297.29.42 0 .122-.097.22-.29.419l-1.794 1.833c-.556.569-.937.959-1.402 1.226-.27.154-.557.276-.856.361-.516.147-1.16.147-1.95.147-.788 0-1.432 0-1.948-.147a3.837 3.837 0 0 1-.856-.361c-.465-.267-.846-.657-1.402-1.226-.558-.57-1.274-1.302-1.603-1.726-.345-.445-.6-.907-.66-1.465a2.885 2.885 0 0 1 0-.626c.06-.558.315-1.02.66-1.465.33-.424.793-.899 1.352-1.47L7.086 8.4c.202-.206.302-.31.429-.31.126 0 .227.104.428.31l6.796 6.946Z" fill="currentColor"/><path fill-rule="evenodd" clip-rule="evenodd" d="M8.75 21.75a1 1 0 0 1 1-1h11a1 1 0 1 1 0 2h-11a1 1 0 0 1-1-1Z" fill="currentColor"/></svg></span>
-                <span><?php _e( 'Clear portal cache', 'thrivedesk' ) ?></span>
-            </button>
+                <button id="thrivedesk_clear_cache_btn" class="flex items-center space-x-2 bg-white border py-2 px-4 rounded shadow-sm text-sm hover:bg-rose-50 hover:text-rose-500 ml-auto">
+                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#000" fill="none">
+                            <path d="M19.518 11.302c.654-.667 1.197-1.221 1.57-1.72.392-.525.662-1.073.662-1.732s-.27-1.207-.662-1.732c-.372-.499-.915-1.053-1.568-1.72l-.816-.835c-.662-.676-1.21-1.238-1.705-1.623-.52-.406-1.07-.69-1.736-.69-.666 0-1.215.284-1.736.689-.494.385-1.044.946-1.705 1.622L9.325 6.11c-.194.198-.29.297-.29.42 0 .122.096.22.29.42l6.795 6.945c.202.206.303.309.429.309s.227-.103.429-.31l2.54-2.593Z" fill="currentColor" />
+                            <path opacity=".4" d="M14.739 15.345c.193.198.29.297.29.42 0 .122-.097.22-.29.419l-1.794 1.833c-.556.569-.937.959-1.402 1.226-.27.154-.557.276-.856.361-.516.147-1.16.147-1.95.147-.788 0-1.432 0-1.948-.147a3.837 3.837 0 0 1-.856-.361c-.465-.267-.846-.657-1.402-1.226-.558-.57-1.274-1.302-1.603-1.726-.345-.445-.6-.907-.66-1.465a2.885 2.885 0 0 1 0-.626c.06-.558.315-1.02.66-1.465.33-.424.793-.899 1.352-1.47L7.086 8.4c.202-.206.302-.31.429-.31.126 0 .227.104.428.31l6.796 6.946Z" fill="currentColor" />
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.75 21.75a1 1 0 0 1 1-1h11a1 1 0 1 1 0 2h-11a1 1 0 0 1-1-1Z" fill="currentColor" />
+                        </svg></span>
+                    <span><?php _e('Clear portal cache', 'thrivedesk') ?></span>
+                </button>
             <?php endif;?>
         </div>
         <div class="td-card">
@@ -175,19 +185,19 @@ $current_user = wp_get_current_user();
                             </div>
                         </div>
                         <!-- add support tab to woo/edd page  -->
-                        <?php if(!empty($td_user_account_pages)): ?>
-                        <div class="bg-gray-50 border p-4 rounded">
-                            <label for="td_user_account_pages" class="font-medium text-black text-base"><?php _e('Add Support Tab', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php _e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
-                            <div class="mt-3">
-                                <?php foreach ($td_user_account_pages as $key => $page) : ?>
-                                    <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
-                                        <input class="td_user_account_pages" type="checkbox" name="td_user_account_pages[]" value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?php echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
-                                        <label for="<?php echo esc_attr($page); ?>"> <?php echo esc_html($page); ?> </label>
-                                    </div>
-                                <?php endforeach; ?>
+                        <?php if (!empty($td_user_account_pages)) : ?>
+                            <div class="bg-gray-50 border p-4 rounded">
+                                <label for="td_user_account_pages" class="font-medium text-black text-base"><?php _e('Add Support Tab', 'thrivedesk'); ?></label>
+                                <div class="text-sm"><?php _e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
+                                <div class="mt-3">
+                                    <?php foreach ($td_user_account_pages as $key => $page) : ?>
+                                        <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
+                                            <input class="td_user_account_pages" type="checkbox" name="td_user_account_pages[]" value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?php echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
+                                            <label for="<?php echo esc_attr($page); ?>"> <?php echo esc_html($page); ?> </label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                        </div>
                         <?php endif; ?>
                     </div>
                     <div class="md:w-64 mt-4 md:mt-0">

@@ -179,14 +179,17 @@ final class Admin
             wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
         }
 
+        $options = get_td_helpdesk_options();
+        $knowledgebase_slug = isset($options['td_knowledgebase_slug']) ? $options['td_knowledgebase_slug'] : 'help';
+        $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
 
         wp_localize_script(
             'thrivedesk-js',
             'thrivedesk',
             array(
-				'ajax_url' => admin_url('admin-ajax.php'),
-	            'wp_json_url' => site_url('wp-json'),
-                'kb_url' => parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . get_td_helpdesk_options()['td_knowledgebase_slug']. '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'],
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'wp_json_url' => site_url('wp-json'),
+                'kb_url' => $knowledgebase_url,
             )
         );
 
