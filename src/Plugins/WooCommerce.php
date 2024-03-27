@@ -343,7 +343,7 @@ final class WooCommerce extends Plugin {
 
 		foreach ( $items as $item ) {
 			
-			$product_id = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();
+			$product_id = $item->get_variation_id() ?? $item->get_product_id();  
 			$product = wc_get_product($product_id);
 
 			if ( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) ) {
