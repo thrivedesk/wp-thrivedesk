@@ -194,6 +194,8 @@ final class WooCommerce extends Plugin {
 					'date'            => date( 'd M Y', strtotime( $order->get_date_created() ) ),
 					'order_status'    => ucfirst( $order->get_status() ),
 					'shipping'        => $this->shipping_param ? $this->get_shipping_details( $order ) : [],
+					'payment_method'  => $order->get_payment_method_title() ?? '',
+					'shipping_method' => $order->get_shipping_method() ?? '',
 					'downloads'       => $this->get_order_items( $order ),
 					'order_url'       => method_exists( $order,
 						'get_edit_order_url' ) ? $order->get_edit_order_url() : '#',
@@ -340,11 +342,11 @@ final class WooCommerce extends Plugin {
 		}
 
 		foreach ( $items as $item ) {
-
-			$product = wc_get_product( $item["product_id"] );
+			
+			$product_id = $item->get_variation_id() ?? $item->get_product_id();  
+			$product = wc_get_product($product_id);
 
 			if ( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) ) {
-
 				$subscription_info = [
 					"is_subscription"       => true,
 					"period"                => WC_Subscriptions_Product::get_period( $product ),
@@ -357,12 +359,12 @@ final class WooCommerce extends Plugin {
 			}
 
 			$productInfo = array(
-				"product_id"        => $item["product_id"],
+				"product_id"        => $product_id,
 				"title"             => $product->get_name(),
-				"product_permalink" => get_permalink( $item["product_id"] ),
+				"product_permalink" => get_permalink($product_id),
 				"quantity"          => $item["quantity"],
 				"total_tax"         => $this->get_formated_amount( (float) $item["total_tax"] ),
-				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id( $item["product_id"] ) )[0],
+				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id($product_id) )[0],
 				"type"              => $product->get_type(),
 				"status"            => $product->get_status(),
 				"sku"               => $product->get_sku(),
