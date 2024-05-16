@@ -234,6 +234,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 == Changelog ==
 = 2.0.3 =
 - Fix: WooCommerce product data missing issue   
+- Fix : FunnelKit namespace issue
 
 = 2.0.2 =
 - Update: Enhanced WooCommerce integration  
