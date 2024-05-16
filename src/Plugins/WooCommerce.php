@@ -342,8 +342,8 @@ final class WooCommerce extends Plugin {
 		}
 
 		foreach ( $items as $item ) {
-			
-			$product_id = $item->get_variation_id() ?? $item->get_product_id();  
+			$productInfo = [];			
+			$product_id = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();  
 			$product = wc_get_product($product_id);
 
 			if ( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) ) {
@@ -357,33 +357,34 @@ final class WooCommerce extends Plugin {
 					"expiration_date"       => WC_Subscriptions_Product::get_expiration_date( $product ),
 				];
 			}
+			
+			if($product){
+				$productInfo = array(
+					"product_id"        => $product_id,
+					"title"             => $product->get_name(),
+					"product_permalink" => get_permalink($product_id),
+					"quantity"          => $item["quantity"],
+					"total_tax"         => $this->get_formated_amount( (float) $item["total_tax"] ),
+					"image"             => wp_get_attachment_image_src( get_post_thumbnail_id($product_id) )[0],
+					"type"              => $product->get_type(),
+					"status"            => $product->get_status(),
+					"sku"               => $product->get_sku(),
+					"price"             => $this->get_formated_amount( (float) $item["subtotal"] ),
+					"regular_price"     => $this->get_formated_amount( (float) $product->get_regular_price() ),
+					"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
+					"tax_status"        => $product->get_tax_status(),
+					"stock"             => $product->get_stock_quantity(),
+					"stock_status"      => $product->get_stock_status(),
+					"weight"            => $product->get_weight(),
+					"discount"          => $this->get_formated_amount( (float) $item->get_total() ),
+					"subscription"      => $subscription_info,
+				);
 
-			$productInfo = array(
-				"product_id"        => $product_id,
-				"title"             => $product->get_name(),
-				"product_permalink" => get_permalink($product_id),
-				"quantity"          => $item["quantity"],
-				"total_tax"         => $this->get_formated_amount( (float) $item["total_tax"] ),
-				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id($product_id) )[0],
-				"type"              => $product->get_type(),
-				"status"            => $product->get_status(),
-				"sku"               => $product->get_sku(),
-				"price"             => $this->get_formated_amount( (float) $item["subtotal"] ),
-				"regular_price"     => $this->get_formated_amount( (float) $product->get_regular_price() ),
-				"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
-				"tax_status"        => $product->get_tax_status(),
-				"stock"             => $product->get_stock_quantity(),
-				"stock_status"      => $product->get_stock_status(),
-				"weight"            => $product->get_weight(),
-				"discount"          => $this->get_formated_amount( (float) $item->get_total() ),
-				"subscription"      => $subscription_info,
+				$subscription_info = [];
 
-			);
-
-			$subscription_info = [];
-
-			if ( array_key_exists( $item->get_id(), $license_info ) ) {
-				$productInfo['license'] = $license_info[ $item->get_id() ];
+				if ( array_key_exists( $item->get_id(), $license_info ) ) {
+					$productInfo['license'] = $license_info[ $item->get_id() ];
+				}
 			}
 
 			array_push( $download_item, $productInfo );
