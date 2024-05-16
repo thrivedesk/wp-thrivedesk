@@ -41,7 +41,7 @@ $plugins = [
 		'connected'   => $wppostsync->get_plugin_data( 'connected' ),
 	],
 	[
-		'namespace'   => 'wp-marketing-automations',
+		'namespace'   => 'autonami',
 		'name'        => __( 'FunnelKit', 'thrivedesk' ),
 		'image'       => 'autonami.png',
 		'category'    => 'CRM',
