@@ -20,7 +20,7 @@ $systemInfo = get_option('td_helpdesk_system_info');
                     </span>
                 </div>
             </div>
-            <div class="py-0.5 px-2 font-semibold text-slate-700 text-[12px] rounded-full">
+            <div class="py-0.5 font-semibold text-slate-700 text-[12px] rounded-full">
                 <?php _e( 'Organization : ', 'thrivedesk' ) ?> <?php echo $systemInfo['company'] ?? '';?>
             </div>
         </div>
