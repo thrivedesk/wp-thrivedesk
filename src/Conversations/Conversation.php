@@ -118,9 +118,9 @@ class Conversation
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
 	            'td_user_account_pages'                 => $data['td_user_account_pages'],
-                'td_assistant_route_list'               => $data['td_assistant_route_list'],
+                'td_assistant_route_list'               => is_array($data['td_assistant_route_list']) ? $data['td_assistant_route_list'] : [],
             ];
-
+            
             if (get_option('td_helpdesk_settings')) {
                 update_option('td_helpdesk_settings', $td_helpdesk_settings);
             } else {

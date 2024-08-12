@@ -96,17 +96,25 @@ $current_user = wp_get_current_user();
         <div class="td-card">
             <div class="space-y-2">
                 <label class="font-medium text-black text-sm"><?php _e('Exclude Routes', 'thrivedesk'); ?></label>
-                <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
-                    <?php foreach ($routes as $page_id => $route) : ?>
-                        <option value="<?php echo $route; ?>" <?php echo ($td_helpdesk_selected_option['td_assistant_route_list'] == $route) ? 'selected' : ''; ?>>
-                            <?php echo $route; ?>
+                <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
+                    <?php
+                    $selected_routes = $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
+                    if (!is_array($selected_routes)) {
+                        $selected_routes = [];
+                    }
+                    foreach ($routes as $route) : ?>
+                        <option class="hover:text-blue-700" value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
+                            <?php echo esc_html($route); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
             </div>
+            <!-- Guidance for selecting multiple options -->
+            <small class="text-gray-600 block mt-1">
+                <?php _e('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk'); ?>
+            </small>
         </div>
     </div>
-
     <!-- end assistant settings -->
 
     <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
