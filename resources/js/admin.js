@@ -143,6 +143,7 @@ jQuery(document).ready(($) => {
 		e.preventDefault();
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 		let td_helpdesk_assistant = $('#td-assistants').val();
+		let td_assistant_route_list = $('#td-excluded-routes').val();
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
 		let td_knowledgebase_slug = $('#td_knowledgebase_slug').val();
 		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
@@ -168,6 +169,7 @@ jQuery(document).ready(($) => {
 					td_helpdesk_post_types: td_helpdesk_post_types,
 					td_helpdesk_post_sync: td_helpdesk_post_sync,
 					td_user_account_pages: td_user_account_pages,
+					td_assistant_route_list: td_assistant_route_list
 				},
 			})
 			.success(function (response) {

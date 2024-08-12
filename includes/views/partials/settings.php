@@ -37,6 +37,17 @@ $td_user_account_pages = array(
     'woocommerce' => 'Add to WooCommerce'
 );
 
+// Fetch all published pages
+$pages = get_pages(array(
+    'post_status' => 'publish',
+));
+
+// Collect routes into an array
+$routes = array();
+
+foreach ($pages as $page) {
+    $routes[$page->ID] = get_permalink($page->ID);
+}
 
 // Get current user
 $current_user = wp_get_current_user();
@@ -75,6 +86,28 @@ $current_user = wp_get_current_user();
             <?php endif; ?>
         </div>
     </div>
+
+    <!-- assistant settings -->
+    <div class="space-y-1">
+        <div class="td-card-heading">
+            <div class="text-base font-bold"><?php _e('Select Routes', 'thrivedesk'); ?></div>
+            <p><?php _e('Choose the routes where the assistant should not be visible.', 'thrivedesk'); ?></p>
+        </div>
+        <div class="td-card">
+            <div class="space-y-2">
+                <label class="font-medium text-black text-sm"><?php _e('Exclude Routes', 'thrivedesk'); ?></label>
+                <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full">
+                    <?php foreach ($routes as $page_id => $route) : ?>
+                        <option value="<?php echo $route; ?>" <?php echo ($td_helpdesk_selected_option['td_assistant_route_list'] == $route) ? 'selected' : ''; ?>>
+                            <?php echo $route; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- end assistant settings -->
 
     <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
         <!-- WP Post Sync  -->
