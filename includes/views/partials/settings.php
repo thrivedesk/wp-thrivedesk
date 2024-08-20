@@ -58,9 +58,9 @@ $current_user = wp_get_current_user();
     <div class="space-y-1">
         <div class="td-card-heading">
             <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="' . THRIVEDESK_APP_URL . '/chat/assistants" target="_blank">here</a>', 'thrivedesk'); ?></p>
+            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="' . THRIVEDESK_APP_URL . '/chat/assistants" target="_blank">here</a>. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'); ?></p>
         </div>
-        <div class="td-card">
+        <div class="td-card space-y-2">
             <?php if (!empty($td_assistants)) : ?>
                 <div class="space-y-2">
                     <label class="font-medium text-black text-sm"><?php _e('Select Assistant', 'thrivedesk'); ?></label>
@@ -73,6 +73,28 @@ $current_user = wp_get_current_user();
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <div class="space-y-2">
+                        <label class="font-medium text-black text-sm"><?php _e('Exclude Routes', 'thrivedesk'); ?></label>
+                        <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
+                            <?php
+                            $selected_routes = $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
+                            if (!is_array($selected_routes)) {
+                                $selected_routes = [];
+                            }
+                            foreach ($routes as $route) : ?>
+                                <option class="hover:text-blue-700" value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($route); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- Guidance for selecting multiple options -->
+                    <small class="text-gray-600 block mt-1">
+                        <?php _e('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk'); ?>
+                    </small>
+                
             <?php else : ?>
                 <p class="text-lg flex flex-col items-center">
                     <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
@@ -86,36 +108,6 @@ $current_user = wp_get_current_user();
             <?php endif; ?>
         </div>
     </div>
-
-    <!-- assistant settings -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php _e('Select Routes', 'thrivedesk'); ?></div>
-            <p><?php _e('Choose the routes where the assistant should not be visible.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card">
-            <div class="space-y-2">
-                <label class="font-medium text-black text-sm"><?php _e('Exclude Routes', 'thrivedesk'); ?></label>
-                <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
-                    <?php
-                    $selected_routes = $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
-                    if (!is_array($selected_routes)) {
-                        $selected_routes = [];
-                    }
-                    foreach ($routes as $route) : ?>
-                        <option class="hover:text-blue-700" value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
-                            <?php echo esc_html($route); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <!-- Guidance for selecting multiple options -->
-            <small class="text-gray-600 block mt-1">
-                <?php _e('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk'); ?>
-            </small>
-        </div>
-    </div>
-    <!-- end assistant settings -->
 
     <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
         <!-- WP Post Sync  -->
