@@ -55,11 +55,18 @@ class Assistant {
 
     public function load_assistant_script()
     {
-        $assistant_id = get_td_helpdesk_options()['td_helpdesk_assistant_id'] ?? '';
+		$assistant_id = get_td_helpdesk_options()['td_helpdesk_assistant_id'] ?? '';
+		$td_assistant_route_list = get_td_helpdesk_options()['td_assistant_route_list'] ?? [];
+		
+		if (empty($assistant_id)) {
+			return;
+		}
 
-        if (empty($assistant_id)) {
-            return;
-        }
+		// Get the current URL
+		$current_url = $this->get_current_url();
+		if (in_array($current_url, $td_assistant_route_list)) {
+			return;
+		}
 
 	$current_user = wp_get_current_user();
         $assistant_script = '
@@ -80,6 +87,12 @@ class Assistant {
 
         echo $assistant_script;
     }
+
+	public function get_current_url()
+	{
+		global $wp;
+		return home_url(add_query_arg(null, null));
+	}
 
 	public function get_assistants(  $apiKey = '' ) {
 		$apiService = new TDApiService();
