@@ -1,6 +1,7 @@
 <?php
 
 namespace ThriveDesk;
+use WP_Query;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -29,6 +30,8 @@ final class Admin
 
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
+        add_action('activated_plugin', [$this, 'create_portal_page'], 10);
+
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
 		add_action('admin_init', [$this, 'redirect_to_getting_started_page']);
@@ -41,6 +44,8 @@ final class Admin
 
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
+        // menu icon style 
+        add_action( 'admin_enqueue_scripts', [ $this, 'menu_icon_style' ] );
     }
 
 	public function remove_wp_footer_text() {
@@ -66,7 +71,7 @@ final class Admin
 		if (get_option('wp_thrivedesk_activation_redirect', false)) {
 			delete_option('wp_thrivedesk_activation_redirect');
 
-			exit( wp_redirect("options-general.php?page=thrivedesk-setting#welcome") );
+			exit( wp_redirect("admin.php?page=thrivedesk") );
 		}
 	}
 
@@ -104,16 +109,61 @@ final class Admin
      */
     public function admin_menu(): void
     {
-        add_submenu_page(
-            'options-general.php',
-            'ThriveDesk - Settings',
+        add_menu_page( 
+            __( 'ThriveDesk', 'thrivedesk' ),
             'ThriveDesk',
             'manage_options',
-            'thrivedesk-setting',
-            function () {
-                return thrivedesk_view('setting');
-            }
+            'thrivedesk',
+            array( $this, 'load_pages' ),
+            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg',
+            100
+        ); 
+        add_submenu_page(
+            'thrivedesk', 
+            'API Verify', 
+            'API Verify',
+            'manage_options',
+            'td-api',
+            array( $this, 'verification_page'),
         );
+    }
+
+    public function get_page_by_title( $page_title, $output = OBJECT, $post_type = 'page' ) {
+        $args  = array(
+            'title'                  => $page_title,
+            'post_type'              => $post_type,
+            'post_status'            => get_post_status(),
+            'posts_per_page'         => 1,
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'no_found_rows'          => true,
+            'orderby'                => 'post_date ID',
+            'order'                  => 'ASC',
+        );
+        $query = new WP_Query( $args );
+        $pages = $query->posts;
+    
+        if ( empty( $pages ) ) {
+            return null;
+        }
+    
+        return get_post( $pages[0], $output );
+    }
+
+    public function create_portal_page()
+    {
+        $title = "Thrivedesk Support Portal";
+        $my_post = array(
+            'post_type'     => 'page',
+            'post_title'    => $title,
+            'post_content'  => '[thrivedesk_portal]',
+            'post_status'   => 'publish',
+            'post_author'   => 1
+        );
+
+        if($this->get_page_by_title($title) == null){
+            wp_insert_post( $my_post );
+        }
     }
 
     /**
@@ -124,18 +174,22 @@ final class Admin
      */
     public function admin_scripts($hook): void
     {
-        if ('settings_page_thrivedesk-setting' == $hook) {
-            wp_enqueue_style('thrivedesk-admin-style', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
+        if ('toplevel_page_thrivedesk' == $hook OR 'thrivedesk_page_td-api' == $hook) {
+            wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
+            wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
         }
 
-        wp_enqueue_script('thrivedesk-admin-script', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+        $options = get_td_helpdesk_options();
+        $knowledgebase_slug = isset($options['td_knowledgebase_slug']) ? $options['td_knowledgebase_slug'] : 'help';
+        $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
 
         wp_localize_script(
-            'thrivedesk-admin-script',
+            'thrivedesk-js',
             'thrivedesk',
             array(
-				'ajax_url' => admin_url('admin-ajax.php'),
-	            'wp_json_url' => site_url('wp-json'),
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'wp_json_url' => site_url('wp-json'),
+                'kb_url' => $knowledgebase_url,
             )
         );
 
@@ -144,6 +198,33 @@ final class Admin
 
             wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-autonami-tab.js', $asset_file['dependencies'], $asset_file['version'] ?? THRIVEDESK_VERSION);
         }
+
+        if (current_user_can( 'manage_options' )) {
+            echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
+        }
+    }
+
+    public function load_pages(){
+        if (current_user_can( 'manage_options' )) {
+            echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
+        }
+
+        $td_helpdesk_selected_option = get_td_helpdesk_options();
+        $td_api_key                  = ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+        
+        if($td_api_key){
+            echo thrivedesk_view('setting');
+        }
+        elseif($td_api_key == '' && isset($_GET['token'])){
+            echo thrivedesk_view('pages/api-verify');
+        }
+        else{
+            echo thrivedesk_view('pages/welcome');
+        }
+    }
+
+    public function verification_page(){
+        echo thrivedesk_view('pages/api-verify');
     }
 
     /**
@@ -173,8 +254,8 @@ final class Admin
         $hash = base64_encode(json_encode([
             'store_url'   => get_bloginfo('url'),
             'api_token'   => $api_token,
-            'cancel_url'  => admin_url('options-general.php?page=thrivedesk-setting&plugin=' . $plugin . '&td-activated=false'),
-            'success_url' => admin_url('options-general.php?page=thrivedesk-setting&plugin=' . $plugin . '&td-activated=true')
+            'cancel_url'  => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=false'),
+            'success_url' => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=true')
         ]));
 
         echo THRIVEDESK_APP_URL . '/apps/' . esc_attr($plugin) . '?connect=' . esc_attr($hash);
@@ -232,4 +313,18 @@ final class Admin
         // migrate action for thrivedesk database
         do_action('thrivedesk_db_migrate');
     }
+  
+    /**
+	 * Add menu icon style.
+	 *
+	 * @return void
+	 */
+	public function menu_icon_style() {
+		echo '<style>
+            #toplevel_page_thrivedesk img{ max-width:20px;opacity:.9!important;} 
+            #toplevel_page_thrivedesk li.wp-first-item{ display:none }
+            #toplevel_page_thrivedesk .wp-submenu{display:none}
+            </style>';
+	}
+
 }

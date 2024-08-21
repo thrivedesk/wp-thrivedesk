@@ -227,12 +227,18 @@ final class Api {
 
 		foreach ( $products as $product_id ) {
 			$product = wc_get_product( $product_id );
+			$thumbnail_id = get_post_thumbnail_id( $product_id );
+			$image_src_array = [];
+
+			if( $thumbnail_id){
+				$image_src_array = wp_get_attachment_image_src( $thumbnail_id );
+			}
 
 			$productInfo = array(
 				"product_id"        => $product_id,
 				"title"             => $product->get_name(),
 				"product_permalink" => get_permalink( $product_id ),
-				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id( $product_id ) )[0],
+				"image"             =>  is_array( $image_src_array ) && ! empty( $image_src_array ) ? $image_src_array[0] : '',
 				"sale_price"        => get_woocommerce_currency_symbol() . $product->get_regular_price(),
 				"stock"             => ( 'instock' === $product->get_stock_status() ) ? 'In Stock' : 'Out of Stock',
 			);
@@ -270,6 +276,12 @@ final class Api {
 		$item->set_product_id( $product->id );
 		$item->set_subtotal( $product->price ?? 0 );
 		$item->set_total( $product->price * $this->quantity ?? 0 );
+		
+		// if(is_plugin_active('wt-woocommerce-sequential-order-numbers-pro/wt-advanced-order-number-pro.php')) 
+		// {
+		// 	if customer use this type of plugin, wc doesn't have the same order number as the plugin.
+		// }
+
 		$order = wc_get_order( $order_id );
 		$order->add_item( $item );
 		$order->calculate_totals();
@@ -425,7 +437,7 @@ final class Api {
 	public function plugin_data_action_handler() {
 
 		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
-		$enableShipping = $_REQUEST['shipping_param'] == 1 ? true : false;
+		$enableShipping = isset($_REQUEST['shipping_param']) == 1 ? true : false;
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 			$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );

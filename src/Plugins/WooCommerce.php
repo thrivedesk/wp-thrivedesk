@@ -2,6 +2,7 @@
 
 namespace ThriveDesk\Plugins;
 
+use AfterShip_Actions;
 use ThriveDesk\Plugin;
 use WC_Order_Query;
 use WC_Subscriptions_Product;
@@ -21,6 +22,11 @@ final class WooCommerce extends Plugin {
 	 * To store customers order details.
 	 */
 	public $orders = [];
+
+	/**
+	 * To store tracking details.
+	 */
+	public $tracking = [];
 
 	/**
 	 * To track the get_orders method is already called or not.
@@ -153,6 +159,20 @@ final class WooCommerce extends Plugin {
 		return get_woocommerce_currency_symbol() . $amount;
 	}
 
+    public function get_tracking_info($order_id){
+        if ( in_array( 'aftership-woocommerce-tracking/aftership-woocommerce-tracking.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) {
+            $afterShip = new AfterShip_Actions();
+            $data = $afterShip->get_tracking_items($order_id);
+            $aftership_tracking_link = $afterShip->generate_tracking_page_link($data[0]) ? $afterShip->generate_tracking_page_link($data[0]) : '#' ;
+
+            if($data){
+                $this->tracking = array_merge($this->tracking, array('aftership' => ['data' => $data, 'url' => $aftership_tracking_link]));
+            }
+        }
+
+        return $this->tracking;
+    }
+
 	/**
 	 * Get the customer orders
 	 *
@@ -168,18 +188,21 @@ final class WooCommerce extends Plugin {
 
 			foreach ( $customer_orders as $order ) {
 				array_push( $this->orders, [
-					'order_id'        => $order->get_id(),
-					'amount'          => $this->get_formated_amount( (float) $order->get_total() ),
+					'order_id'        => $order->get_order_number(),
+					'amount'          => (float) $order->get_total(),
 					'amount_formated' => $this->get_formated_amount( $order->get_total() ),
 					'date'            => date( 'd M Y', strtotime( $order->get_date_created() ) ),
 					'order_status'    => ucfirst( $order->get_status() ),
 					'shipping'        => $this->shipping_param ? $this->get_shipping_details( $order ) : [],
+					'payment_method'  => $order->get_payment_method_title() ?? '',
+					'shipping_method' => $order->get_shipping_method() ?? '',
 					'downloads'       => $this->get_order_items( $order ),
 					'order_url'       => method_exists( $order,
 						'get_edit_order_url' ) ? $order->get_edit_order_url() : '#',
 					'coupon'          => $order->get_coupon_codes() ?? null,
-
+					'tracking_info'   => $this->get_tracking_info( $order->get_id() ),
 				] );
+                $this->tracking = [];
 			}
 		}
 
@@ -208,7 +231,7 @@ final class WooCommerce extends Plugin {
 		}
 
 		return [
-			'order_id'         => $order->get_id(),
+			'order_id'         => $order->get_order_number(),
 			'amount'           => $order->get_total(),
 			'amount_formatted' => $this->get_formated_amount( $order->get_total() ),
 			'date'             => date( 'd M Y', strtotime( $order->get_date_created() ) ),
@@ -319,11 +342,11 @@ final class WooCommerce extends Plugin {
 		}
 
 		foreach ( $items as $item ) {
-
-			$product = wc_get_product( $item["product_id"] );
+			$productInfo = [];			
+			$product_id = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();  
+			$product = wc_get_product($product_id);
 
 			if ( class_exists( 'WC_Subscriptions_Product' ) && WC_Subscriptions_Product::is_subscription( $product ) ) {
-
 				$subscription_info = [
 					"is_subscription"       => true,
 					"period"                => WC_Subscriptions_Product::get_period( $product ),
@@ -334,33 +357,34 @@ final class WooCommerce extends Plugin {
 					"expiration_date"       => WC_Subscriptions_Product::get_expiration_date( $product ),
 				];
 			}
+			
+			if($product){
+				$productInfo = array(
+					"product_id"        => $product_id,
+					"title"             => $product->get_name(),
+					"product_permalink" => get_permalink($product_id),
+					"quantity"          => $item["quantity"],
+					"total_tax"         => $this->get_formated_amount( (float) $item["total_tax"] ),
+					"image"             => wp_get_attachment_image_src( get_post_thumbnail_id($product_id) )[0],
+					"type"              => $product->get_type(),
+					"status"            => $product->get_status(),
+					"sku"               => $product->get_sku(),
+					"price"             => $this->get_formated_amount( (float) $item["subtotal"] ),
+					"regular_price"     => $this->get_formated_amount( (float) $product->get_regular_price() ),
+					"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
+					"tax_status"        => $product->get_tax_status(),
+					"stock"             => $product->get_stock_quantity(),
+					"stock_status"      => $product->get_stock_status(),
+					"weight"            => $product->get_weight(),
+					"discount"          => $this->get_formated_amount( (float) $item->get_total() ),
+					"subscription"      => $subscription_info,
+				);
 
-			$productInfo = array(
-				"product_id"        => $item["product_id"],
-				"title"             => $product->get_name(),
-				"product_permalink" => get_permalink( $item["product_id"] ),
-				"quantity"          => $item["quantity"],
-				"total_tax"         => $this->get_formated_amount( (float) $item["total_tax"] ),
-				"image"             => wp_get_attachment_image_src( get_post_thumbnail_id( $item["product_id"] ) )[0],
-				"type"              => $product->get_type(),
-				"status"            => $product->get_status(),
-				"sku"               => $product->get_sku(),
-				"price"             => $this->get_formated_amount( (float) $item["subtotal"] ),
-				"regular_price"     => $this->get_formated_amount( (float) $product->get_regular_price() ),
-				"sale_price"        => $this->get_formated_amount( (float) $product->get_sale_price() ),
-				"tax_status"        => $product->get_tax_status(),
-				"stock"             => $product->get_stock_quantity(),
-				"stock_status"      => $product->get_stock_status(),
-				"weight"            => $product->get_weight(),
-				"discount"          => $this->get_formated_amount( (float) $item->get_total() ),
-				"subscription"      => $subscription_info,
+				$subscription_info = [];
 
-			);
-
-			$subscription_info = [];
-
-			if ( array_key_exists( $item->get_id(), $license_info ) ) {
-				$productInfo['license'] = $license_info[ $item->get_id() ];
+				if ( array_key_exists( $item->get_id(), $license_info ) ) {
+					$productInfo['license'] = $license_info[ $item->get_id() ];
+				}
 			}
 
 			array_push( $download_item, $productInfo );

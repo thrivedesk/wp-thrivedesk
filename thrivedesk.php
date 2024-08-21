@@ -5,7 +5,7 @@
  * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
- * Version:             1.1.0
+ * Version:             2.0.3
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -13,7 +13,7 @@
  *
  * Requires PHP:        5.5
  * Requires at least:   4.9
- * Tested up to:        6.3.1
+ * Tested up to:        6.4
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,10 @@ use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\FluentCrmHooks;
+use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\KnowledgeBase\KnowledgeBase;
 use ThriveDesk\Services\PortalService;
 use ThriveDeskDBMigrations\Scripts\MigrationScript;
 
@@ -49,7 +51,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '1.1.0';
+    public $version = '2.0.3';
 
     /**
      * The single instance of this class
@@ -86,6 +88,7 @@ final class ThriveDesk
     {
         // Define constants.
         $this->define_constants();
+
     }
 
     /**
@@ -120,6 +123,8 @@ final class ThriveDesk
             Conversation::instance();
             Assistant::instance();
 			PortalService::instance();
+			UserAccountPages::instance();
+            KnowledgeBase::instance();
         }
 
         return self::$instance;
@@ -143,6 +148,7 @@ final class ThriveDesk
         // Url with no ending /
         $this->define('THRIVEDESK_APP_URL', 'https://app.thrivedesk.com');
         $this->define('THRIVEDESK_API_URL', 'https://api.thrivedesk.com');
+        $this->define('THRIVEDESK_KB_API_ENDPOINT', 'https://thrivedeskdocs.com');
         $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
         $this->define('THRIVEDESK_DB_VERSION', 1.2);
         $this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');
@@ -163,6 +169,7 @@ final class ThriveDesk
             define($name, $value);
         }
     }
+    
 }
 
 // Initialize ThriveDesk.

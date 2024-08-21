@@ -1,21 +1,22 @@
-=== ThriveDesk - Live Chat, Help Desk & Knowledge Base for WordPress ===
+=== WordPress Helpdesk & Live Chat Plugin Powered by AI - ThriveDesk ===
 Contributors: thrivedesk
-Tags: livechat, chat, help desk, chat plugin, free live chat, community, helpdesk, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk, zendesk, mailchimp
+Tags: helpdesk, support ticket, livechat, support plugin, ticket system chat, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk
 Requires at least: 4.9
-Tested up to: 6.3.1
-Stable Tag: 1.1.0
+Tested up to: 6.4
+Stable Tag: 2.0.3
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
 Elevate your WordPress support game with ThriveDesk Live Chat. Lightning-fast responses, engaging visitor interactions, and a full knowledge base in less than a minute.
 
 == Description ==
+Your search for [WordPress helpdesk plugin](https://www.thrivedesk.com/wordpress) ends here. ThriveDesk is complete support ticketing, live chat and knowledge base solution for WordPress powered website.
 
-### Live Chat Plugin For WordPress ###
+### Help Desk Plugin For WordPress ###
 
-[ThriveDesk](https://www.thrivedesk.com) is the ultimate live chat software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing customer support.
+[ThriveDesk](https://www.thrivedesk.com) is the ultimate helpdesk and ticketing software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing customer support.
 
-We designed ThriveDesk Live Chat to protect users’ privacy and align with the GDPR rules.
+We designed ThriveDesk helpdesk to protect users’ privacy and align with the GDPR rules.
 
 https://youtu.be/8aN5UWMOdjg
 
@@ -28,6 +29,12 @@ Avoid slow page loading times and lag in message delivery and reception.
 Check customer information, page browsing history, previous purchase history right from the agent dashboard. Manage refunds and serve customers on the go.
 
 Now, ThriveDesk allows customers to communicate with support staff in their native language, making it an ideal **multilingual customer service solution**.
+
+### HelpDesk for WooCommerce ###
+
+Your customers will love you for using ThriveDesk live chat with WooCommerce. Engage customers at the right time, prevent cart abandonment & manage WooCommerce store right inside ThriveDesk — No more switching between multiple tabs.
+
+https://www.youtube.com/watch?v=lmajbvfY_GQ
 
 ### Introducing ChatGPT Integration within Helpdesk System ###
 
@@ -66,7 +73,9 @@ Available on:
 
 ### Helpdesk & Support Ticket Plugin for WordPress ###
 
-Manage all customer conversations through Thrivedesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+Manage all customer conversations through ThriveDesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+
+https://www.youtube.com/watch?v=n2rUreB_aso&t=6s
 
 ThriveDesk makes it easy for your team to manage emails through a single shared inbox.
 
@@ -119,7 +128,7 @@ Knowledge Base is a self-service system that works perfectly with the Live Chat 
 
 ### WooCommerce Integration ###
 
-If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a Thrivedesk.
+If you sell your products through WooCommerce, there is no better way to handle all your customer tickets seamlessly than with a ThriveDesk.
 
 You can check the total number of orders, order details, shipping information right inside the ThriveDesk conversation page.
 
@@ -215,7 +224,7 @@ Yes. You can also transfer conversations between operators. It means that operat
 Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned with GDRP.
 
 == Screenshots ==
-
+ 
 - WordPress Helpdesk plugin: Check all your tickets in one place
 - Reply ticket faster with real-time customer insights
 - Advance reporting: Complete overview of customer support and happiness score
@@ -223,6 +232,62 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+= 2.0.3 =
+- Fix: WooCommerce product data missing issue   
+- Fix : FunnelKit namespace issue
+
+= 2.0.2 =
+- Update: Enhanced WooCommerce integration  
+
+= 2.0.1 =
+- Update: Modal UI
+- Fix : Search infinite loading
+- Fix : knowledge warnings
+
+= 2.0 =
+- Feat: Connection process optimized for connecting WordPress site with Thrivedesk.
+- Feat: Added knowledge base to enhance search functionality on portal page.
+- Feat: Added dedicated portal page.
+- Update: Reorganized dashboard with settings for better user experience.
+
+== Changelog ==
+= 1.2.4 =
+- Feat: Plugin is relocated to the main menu.
+
+= 1.2.3 =
+- Feat: Woocommerce custom order status support added.
+
+= 1.2.2 =
+- Assets Update
+
+= 1.2.1 =
+- Feat: Woocommerce custom order ID support added.
+- Feat: Woocommerce AfterShip plugin support added.
+
+= 1.2 =
+- Fix: User data conflict issue fixed. 
+- Fix: Portal page caching issue fixed.
+- Fix: API key verification state issue fixed(Stable).
+- Update: Portal page UI improve with all major themes(10+).
+
+= 1.1.4 =
+- Fix: EDD order overview issue resolved.
+- Update: WooCommerce shipping details checkbox warning handled.
+
+= 1.1.3 =
+- Fix: Portal access issue resolved.
+- Update: New plans are added for WPPortal support.  
+
+= 1.1.2 =
+- Fix: Token authentication 2.0
+- Update: Warning messages
+- Update: Error handling
+
+= 1.1.1 =
+- Add: Support tab to WooCommerce my account page
+- Fix: Token verification issues
+- Update: Routing update
+
 = 1.1.0
 - Update: Woocommerce Integration V2
 
