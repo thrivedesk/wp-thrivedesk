@@ -34,7 +34,7 @@ final class Autonami extends Plugin {
 	 */
 	public static function is_plugin_active(): bool {
 		include_once(ABSPATH . 'wp-admin/includes/plugin.php');
-		if (is_plugin_active('wp-marketing-automations/wp-marketing-automations.php')) {
+		if (class_exists( 'WooFunnel_Loader' )) {
 			return true;
 		}
 
