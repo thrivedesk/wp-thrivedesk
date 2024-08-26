@@ -1,9 +1,18 @@
 <?php
 
 use ThriveDesk\Assistants\Assistant;
+use ThriveDesk\Conversations\Conversation;
 
 $assistant_settings = Assistant::get_assistant_settings();
+$api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
 $systemInfo = get_option('td_helpdesk_system_info');
+
+
+if(isset($systemInfo)) {
+    Conversation::get_system_info($api_key);
+    $systemInfo = get_option('td_helpdesk_system_info');
+}
+
 ?>
 
 <div class="thrivedesk">
@@ -20,9 +29,11 @@ $systemInfo = get_option('td_helpdesk_system_info');
                     </span>
                 </div>
             </div>
-            <div class="py-0.5 font-semibold text-slate-700 text-[12px] rounded-full">
-                <?php _e( 'Organization : ', 'thrivedesk' ) ?> <?php echo $systemInfo['company'] ?? '';?>
-            </div>
+            <?php if ( isset($systemInfo["company"]) ) : ?>
+                <div class="py-0.5 font-semibold text-slate-700 text-[12px] rounded-full">
+                    <?php _e( 'Organization : ', 'thrivedesk' ) ?> <?php echo $systemInfo['company'] ?? '';?>
+                </div>
+            <?php endif; ?>
         </div>
         
         <div class="ml-auto flex items-center space-x-2 text-sm top-nav">
