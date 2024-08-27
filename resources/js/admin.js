@@ -100,57 +100,42 @@ jQuery(document).ready(($) => {
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 
 		jQuery.post(thrivedesk.ajax_url, {
-			action: 'thrivedesk_system_info',
+			action: 'thrivedesk_load_assistants',
 			data: {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 			},
-		}).done(() => {
+		}).success(function (response) {
+			let parsedResponse = JSON.parse(response);
+			let data = parsedResponse?.data;
+			let payload = {
+				td_helpdesk_api_key: td_helpdesk_api_key,
+				td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
+			}
+
 			jQuery.post(thrivedesk.ajax_url, {
-				action: 'thrivedesk_load_assistants',
+				action: 'thrivedesk_helpdesk_form',
 				data: {
-					td_helpdesk_api_key: td_helpdesk_api_key,
+					td_helpdesk_api_key: payload.td_helpdesk_api_key,
+					td_helpdesk_assistant: payload.td_helpdesk_assistant,
 				},
 			}).success(function (response) {
-				let parsedResponse = JSON.parse(response);
-				let data = parsedResponse?.data;
-				let payload = {
-					td_helpdesk_api_key: td_helpdesk_api_key,
-					td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
+				let icon;
+				if (response) {
+					response.status === 'success' ? (icon = 'success') : (icon = 'error');
+					Swal.fire({
+						icon: icon,
+						title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
+						text: response.message,
+						confirmButtonText: 'Continue to settings',
+					}).then((result) => {
+						localStorage.setItem('shouldTriggerConfetti', 'true');
+						if (result.isConfirmed) {
+							window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+						}
+					});
 				}
-	
-				jQuery.post(thrivedesk.ajax_url, {
-					action: 'thrivedesk_helpdesk_form',
-					data: {
-						td_helpdesk_api_key: payload.td_helpdesk_api_key,
-						td_helpdesk_assistant: payload.td_helpdesk_assistant,
-					},
-				}).success(function (response) {
-					let icon;
-					if (response) {
-						response.status === 'success' ? (icon = 'success') : (icon = 'error');
-						Swal.fire({
-							icon: icon,
-							title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
-							text: response.message,
-							confirmButtonText: 'Continue to settings',
-						}).then((result) => {
-							localStorage.setItem('shouldTriggerConfetti', 'true');
-							if (result.isConfirmed) {
-								window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-							}
-						});
-					}
-				});
-			});
-		}).fail(function (error) {
-			Swal.fire({
-				icon: 'error',
-				title: 'Error',
-				text: 'Something went wrong',
 			});
 		});
-
-		
 	});
 
 	// helpdesk form

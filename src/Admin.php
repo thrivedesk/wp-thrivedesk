@@ -254,7 +254,6 @@ final class Admin
         $hash = base64_encode(json_encode([
             'store_url'   => get_bloginfo('url'),
             'api_token'   => $api_token,
-            'org_id'    => get_option('td_helpdesk_system_info')['id'] ?? '',
             'cancel_url'  => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=false'),
             'success_url' => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=true')
         ]));
