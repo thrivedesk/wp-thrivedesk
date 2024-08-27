@@ -75,7 +75,7 @@ $current_user = wp_get_current_user();
                 </div>
 
                 <div class="space-y-2">
-                        <label class="font-medium text-black text-sm"><?php _e('Exclude Routes', 'thrivedesk'); ?></label>
+                        <label class="font-medium text-black text-sm"><?php _e('Exclude Pages', 'thrivedesk'); ?></label>
                         <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
                             <?php
                             $selected_routes = $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
