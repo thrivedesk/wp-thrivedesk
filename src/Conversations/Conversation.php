@@ -60,58 +60,7 @@ class Conversation
 
 		// ajax call for saving the helpdesk setting
 		add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
-
-        add_action('wp_ajax_thrivedesk_system_info', [$this, 'thrivedesk_system_info']);
 	}
-
-
-    public function thrivedesk_system_info(): void
-    {
-        $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
-
-        if (empty($apiKey)) {
-            echo json_encode(['status' => 'false', 'data' => []]);
-            die();
-        }
-
-        $systemInfo = $this->getSystemInfo($apiKey);
-
-        if ($systemInfo) {
-            echo json_encode(['status' => 'true', 'data' => $systemInfo]);
-        } else {
-            echo json_encode(['status' => 'false', 'data' => []]);
-        }
-        die();
-    }
-
-    public function getSystemInfo($apiKey): array
-    {
-        $apiService = new TDApiService();
-
-        if ( empty( $apiKey ) ) {
-			echo json_encode( [
-				'code' => 422,
-				'status' => 'error',
-				'data' => [
-					'message' => 'API Key is required'
-				]
-			] );
-			die();
-		}
-
-		$apiService->setApiKey( $apiKey );
-
-        $url = THRIVEDESK_API_URL . '/v1/me';
-    
-        $response = $apiService->getRequest($url);
-
-        if (isset($response['company'])) {
-            $company = $response['company'];
-            update_option('td_helpdesk_system_info', $company);
-            return $response;
-        }
-    }
-
 
 	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
