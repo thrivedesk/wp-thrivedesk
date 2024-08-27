@@ -3,7 +3,7 @@ Contributors: thrivedesk
 Tags: helpdesk, support ticket, livechat, support plugin, ticket system chat, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk
 Requires at least: 4.9
 Tested up to: 6.4
-Stable Tag: 2.0.3
+Stable Tag: 2.0.4
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -230,6 +230,13 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Advance reporting: Complete overview of customer support and happiness score
 - WordPress Integration: WooCommerce, EDD, Slack, and more integrations
 - Easy setup: Setup your Shared Inbox in less than a minute.
+
+== Changelog ==
+= 2.0.4 =
+- Fix: FunnelKit plugin identifier
+- Feat: Assistant visibility control
+- Feat: Organization info added to dashboard
+- Feat: Organization validation added
 
 == Changelog ==
 = 2.0.3 =
