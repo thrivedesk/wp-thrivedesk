@@ -74,7 +74,7 @@ class Conversation
             die();
         }
 
-        $systemInfo = $this->getSystemInfo($apiKey);
+        $systemInfo = $this->get_system_info($apiKey);
 
         if ($systemInfo) {
             echo json_encode(['status' => 'true', 'data' => $systemInfo]);
@@ -84,7 +84,7 @@ class Conversation
         die();
     }
 
-    public function getSystemInfo($apiKey): array
+    public static function get_system_info($apiKey): array
     {
         $apiService = new TDApiService();
 
@@ -110,6 +110,8 @@ class Conversation
             update_option('td_helpdesk_system_info', $company);
             return $response;
         }
+
+        return [];
     }
 
 
