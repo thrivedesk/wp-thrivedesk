@@ -36,7 +36,7 @@ if (isset($query_params['td_conversation_id'])) {
     <!-- conversations  -->
     <div class="space-y-4">
         <?php foreach ($conversation['events'] as $event): ?>
-	        <?php if ($event['event']): ?>
+	        <?php if ($event['event'] && $event['action'] !== 'note'): ?>
                 <?php $actor_name = $event['actor']['name'] ?? ''; ?>
                 <div class="td-conversation <?php echo $event['actor_type'] == ACTOR_TYPE ? 'actor-contact' : 'actor-agent';?>">
                     <div class="td-conversation-header">

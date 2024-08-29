@@ -239,32 +239,37 @@ class Conversation
 	 * if conversation id then redirect to the conversation details page
 	 *
 	 */
-	public function conversation_page($atts, $content = null)
-	{
-		$this->load_scripts();
-
-        $url_parts = add_query_arg( NULL, NULL );
-        $parts = (parse_url($url_parts, PHP_URL_QUERY));
-        parse_str($parts, $query_params);
-
-		if (is_user_logged_in()) {
-			ob_start();
-			if (isset($query_params['td_conversation_id'])) {
-				thrivedesk_view('shortcode/conversation-details');
-			} else {
-				thrivedesk_view('shortcode/conversations');
-			}
-
+    public function conversation_page($atts, $content = null)
+    {
+        $this->load_scripts();
+    
+        $url_parts = add_query_arg(NULL, NULL);
+        $parts = parse_url($url_parts, PHP_URL_QUERY);
+    
+        // Initialize query_params as an empty array
+        $query_params = [];
+        
+        if ($parts !== null) {
+            parse_str($parts, $query_params);
+        }
+    
+        if (is_user_logged_in()) {
+            ob_start();
+            if (isset($query_params['td_conversation_id'])) {
+                thrivedesk_view('shortcode/conversation-details');
+            } else {
+                thrivedesk_view('shortcode/conversations');
+            }
+    
             return ob_get_clean();
         }
         global $wp;
         $redirect = home_url($wp->request);
-
-        return '<p>' . __('You must be logged in to view the ticket or conversation',
-                'thrivedesk') . '. Click <a class="text-blue-600" href="' . esc_url(wp_login_url
-            ($redirect)) . '"> here</a> to login.
-			</p>';
+    
+        return '<p>' . __('You must be logged in to view the ticket or conversation', 'thrivedesk') . 
+            '. Click <a class="text-blue-600" href="' . esc_url(wp_login_url($redirect)) . '">here</a> to login.</p>';
     }
+    
 
 
     /**
