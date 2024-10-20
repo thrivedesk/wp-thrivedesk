@@ -51,7 +51,15 @@ class TDApiService {
         return $body ?? [];
     }
 
+    public function clearAllTransients()
+    {
+        delete_transient('thrivedesk_assistants');
+        delete_transient('thrivedesk_conversations_total_pages');
+        delete_transient('thrivedesk_portal_access');
+    }
+
 	public function setApiKey( $apiKey ): void {
+        $this->clearAllTransients();
 		$this->api_token = $apiKey;
 	}
 }
