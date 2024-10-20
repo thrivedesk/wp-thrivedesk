@@ -2,8 +2,8 @@
 Contributors: thrivedesk
 Tags: helpdesk, support ticket, livechat, support plugin, ticket system chat, chatbot, knowledge base, support, help center, customer care,  woocommerce, surecart, freemius, thrivedesk
 Requires at least: 4.9
-Tested up to: 6.4
-Stable Tag: 2.0.6
+Tested up to: 6.6
+Stable Tag: 2.0.7
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -232,6 +232,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+= 2.0.7 =
+- Fix: The critical security issue (XSS attack) for tokens is fixed.
+
 = 2.0.6 =
 - Fix: Event exposed(Note) issue fixed
 
