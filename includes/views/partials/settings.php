@@ -10,7 +10,7 @@ $td_selected_post_types      = $td_helpdesk_selected_option['td_helpdesk_post_ty
 $td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
 $td_assistants               = Assistant::assistants();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();
-$td_api_key                  = isset($_GET['token']) ? $_GET['token'] : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+$td_api_key                  = isset($_GET['token']) ? sanitize_text_field($_GET['token']) : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = get_option('td_user_account_pages');
 $has_portal_access           = (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();
@@ -286,7 +286,7 @@ $current_user = wp_get_current_user();
         function s() {
             var t = e.getElementsByTagName("script")[0],
                 n = e.createElement("script");
-            n.type = "text/javascript", n.async = !0, n.src = "https://assistant.thrivedesk.com/bootloader.js?" + Date.now(),
+            n.type = "text/javascript", n.async = !0, n.src = "https://assistant.thrivedesk.xyz/bootloader.js?" + Date.now(),
                 t.parentNode.insertBefore(n, t)
         }
         if (t.Assistant = n = function(e, n, s) {
