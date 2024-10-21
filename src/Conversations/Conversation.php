@@ -64,6 +64,12 @@ class Conversation
 
 	public function td_verify_helpdesk_api_key(  ): void {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+        $old_api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+
+        if ($apiKey === $old_api_key) {
+            die();
+        }
+
         
 		if ( empty( $apiKey ) ) {
 			echo json_encode( [
