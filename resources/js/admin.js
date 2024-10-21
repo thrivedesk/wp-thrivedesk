@@ -294,7 +294,8 @@ jQuery(document).ready(($) => {
 					});
 				} else {
 					loadAssistants(apiKey);
-					isAllowedPortal()
+					isAllowedPortal();
+					$('#td_setting_btn_submit').click();
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
