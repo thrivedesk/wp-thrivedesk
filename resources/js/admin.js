@@ -297,6 +297,27 @@ jQuery(document).ready(($) => {
 					isAllowedPortal();
 					$('#td_setting_btn_submit').click();
 
+					const buttons = document.querySelectorAll('.disConnectBtn');
+					buttons.forEach(target => {
+						console.log('data target',target.dataset.connected)
+						if (1 == target.dataset.connected) {
+							jQuery.post(
+								thrivedesk.ajax_url,
+								{
+									action: 'thrivedesk_disconnect_plugin',
+									data: {
+										plugin: target.dataset.plugin,
+										nonce: target.dataset.nonce,
+									},
+								},
+								(response) => {
+									
+								}
+							);
+						}
+					})
+
+
 					$target.text('Verified');
 					$target.prop('disabled', true);
 
