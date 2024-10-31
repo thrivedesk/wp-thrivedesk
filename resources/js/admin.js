@@ -298,22 +298,6 @@ jQuery(document).ready(($) => {
 				} else {
 					loadAssistants(apiKey);
 					isAllowedPortal();
-					jQuery
-						.post(thrivedesk.ajax_url, {
-							action: 'thrivedesk_system_info',
-							data: {
-								td_helpdesk_api_key: apiKey,
-							},
-						})
-						.success(function (response) {
-							console.log('data system info updted')
-						}).error(function (error) {
-							Swal.fire({
-								icon: 'error',
-								title: 'Error',
-								text: 'Something went wrong',
-							});
-						});
 
 					$target.text('Verified');
 					$target.prop('disabled', true);
@@ -327,25 +311,40 @@ jQuery(document).ready(($) => {
 						icon: 'success',
 						title: 'Success',
 						text: 'API Key Verified',
+					}).then((result)=>{
+						if (result.isConfirmed) {
+							jQuery
+							.post(thrivedesk.ajax_url, {
+								action: 'thrivedesk_system_info',
+								data: {
+									td_helpdesk_api_key: apiKey,
+								},
+							})
+							.success(function (response) {
+								console.log('data system info updted')
+							}).error(function (error) {
+								Swal.fire({
+									icon: 'error',
+									title: 'Error',
+									text: 'Something went wrong',
+								});
+							});
+
+							handleThriveDeskMainForm().success((response) => {
+								localStorage.setItem('shouldTriggerConfetti', 'true');
+								window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+							}).error(() => {
+								Swal.fire({
+									icon: 'error',
+									title: 'Error',
+									text: 'Somthing went wrong',
+								});
+							})
+						}
 					});
 					// disable api editable
 					$('.api-key-preview').removeClass('hidden');
 					$('.api-key-editable').addClass('hidden');
-
-					
-					handleThriveDeskMainForm().success((response) => {
-						console.log('From data has been submited');
-						localStorage.setItem('shouldTriggerConfetti', 'true');
-						if (result.isConfirmed) {
-							window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-						}
-					}).error(() => {
-						Swal.fire({
-							icon: 'error',
-							title: 'Error',
-							text: 'Somthing went wrong',
-						});
-					})
 				}
 			})
 			.error(function (error) {
