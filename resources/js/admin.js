@@ -321,7 +321,7 @@ jQuery(document).ready(($) => {
 								},
 							})
 							.success(function (response) {
-								console.log('data system info updted')
+								
 							}).error(function (error) {
 								Swal.fire({
 									icon: 'error',
