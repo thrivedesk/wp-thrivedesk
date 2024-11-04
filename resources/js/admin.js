@@ -337,7 +337,9 @@ jQuery(document).ready(($) => {
 							handleThriveDeskMainForm().then((response) => {
 								if (response.status === 'success') {
 									localStorage.setItem('shouldTriggerConfetti', 'true');
-									window.location.href = '/wp-admin/admin.php?page=thrivedesk';									
+									setTimeout(() => {
+										window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+									}, 1000);									
 								}
 							}).catch(() => {
 								Swal.fire({
