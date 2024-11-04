@@ -108,6 +108,10 @@ class Conversation
         if (isset($response['company'])) {
             $company = $response['company'];
             update_option('td_helpdesk_system_info', $company);
+
+            // call reset settings to update the api key
+            (new Conversation())->reset_td_settings($apiKey);
+
             return $response;
         }
 
@@ -155,6 +159,16 @@ class Conversation
 			die();
 		}
 
+        $this->reset_td_settings($apiKey);
+	}
+
+    /**
+     * Update the helpdesk settings
+     *
+     * @return void
+     */
+    public function reset_td_settings($apiKey): void
+    {
         if (get_option('td_helpdesk_settings')) {
             // update option to database with new api key
             $td_helpdesk_settings = get_option('td_helpdesk_settings');
@@ -168,7 +182,7 @@ class Conversation
                 'td_helpdesk_api_key' => $apiKey
             ]);
         }
-	}
+    }
 
     public function td_save_helpdesk_form()
     {
