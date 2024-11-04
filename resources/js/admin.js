@@ -153,7 +153,7 @@ jQuery(document).ready(($) => {
 		
 	});
 
-	function handleThriveDeskMainForm() {
+	async function handleThriveDeskMainForm() {
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 		let td_helpdesk_assistant = $('#td-assistants').val();
 		// Get the selected routes as an array
@@ -163,35 +163,33 @@ jQuery(document).ready(($) => {
 		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
 			.map((i, item) => item.value)
 			.get();
-
 		let td_helpdesk_post_sync = $('.td_helpdesk_post_sync:checked')
 			.map((i, item) => item.value)
 			.get();
-
 		let td_user_account_pages = $('.td_user_account_pages:checked')
 			.map((i, item) => item.value)
 			.get();
-
-		return jQuery
-			.post(thrivedesk.ajax_url, {
-				action: 'thrivedesk_helpdesk_form',
-				data: {
-					td_helpdesk_api_key: td_helpdesk_api_key,
-					td_helpdesk_assistant: td_helpdesk_assistant,
-					td_helpdesk_page_id: td_helpdesk_page_id,
-					td_knowledgebase_slug: td_knowledgebase_slug,
-					td_helpdesk_post_types: td_helpdesk_post_types,
-					td_helpdesk_post_sync: td_helpdesk_post_sync,
-					td_user_account_pages: td_user_account_pages,
-					td_assistant_route_list: td_assistant_route_list // This will be an array of selected routes
-				},
-			});
-	}
+	
+		// Returning the AJAX call as a Promise
+		return await jQuery.post(thrivedesk.ajax_url, {
+			action: 'thrivedesk_helpdesk_form',
+			data: {
+				td_helpdesk_api_key: td_helpdesk_api_key,
+				td_helpdesk_assistant: td_helpdesk_assistant,
+				td_helpdesk_page_id: td_helpdesk_page_id,
+				td_knowledgebase_slug: td_knowledgebase_slug,
+				td_helpdesk_post_types: td_helpdesk_post_types,
+				td_helpdesk_post_sync: td_helpdesk_post_sync,
+				td_user_account_pages: td_user_account_pages,
+				td_assistant_route_list: td_assistant_route_list
+			}
+		});
+	}	
 
 	// helpdesk form
-	$('#td_helpdesk_form').submit(function (e) {
+	$('#td_helpdesk_form').submit(async function (e) {
 		e.preventDefault();
-		handleThriveDeskMainForm().success(function (response) {
+		handleThriveDeskMainForm().then(function (response) {
 			let icon;
 			if (response.status === 'success') {
 				response.status === 'success' ? (icon = 'success') : (icon = 'error');
@@ -206,8 +204,15 @@ jQuery(document).ready(($) => {
 					}
 				});
 			}
+		}).catch(()=>{
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Form submition failed',
+			});
 		});
 	});
+
 	// Confetti 
 	async function triggerConfetti() {
 		var confettiElement = document.getElementById('confetti-canvas');
@@ -311,7 +316,7 @@ jQuery(document).ready(($) => {
 						icon: 'success',
 						title: 'Success',
 						text: 'API Key Verified',
-					}).then((result)=>{
+					}).then(async (result)=>{
 						if (result.isConfirmed) {
 							jQuery
 							.post(thrivedesk.ajax_url, {
@@ -329,15 +334,16 @@ jQuery(document).ready(($) => {
 									text: 'Something went wrong',
 								});
 							});
-
-							handleThriveDeskMainForm().success((response) => {
-								localStorage.setItem('shouldTriggerConfetti', 'true');
-								window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-							}).error(() => {
+							handleThriveDeskMainForm().then((response) => {
+								if (response.status === 'success') {
+									localStorage.setItem('shouldTriggerConfetti', 'true');
+									window.location.href = '/wp-admin/admin.php?page=thrivedesk';									
+								}
+							}).catch(() => {
 								Swal.fire({
 									icon: 'error',
 									title: 'Error',
-									text: 'Somthing went wrong',
+									text: 'Form submition failed',
 								});
 							})
 						}
