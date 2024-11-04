@@ -154,6 +154,20 @@ class Conversation
 			] );
 			die();
 		}
+
+        if (get_option('td_helpdesk_settings')) {
+            // update option to database with new api key
+            $td_helpdesk_settings = get_option('td_helpdesk_settings');
+            $td_helpdesk_settings['td_helpdesk_api_key'] = $apiKey;
+            $td_helpdesk_settings['td_helpdesk_assistant_id'] = '';
+            $td_helpdesk_settings['td_knowledgebase_slug'] = '';
+
+            update_option('td_helpdesk_settings', $td_helpdesk_settings);
+        } else {
+            add_option('td_helpdesk_settings', [
+                'td_helpdesk_api_key' => $apiKey
+            ]);
+        }
 	}
 
     public function td_save_helpdesk_form()

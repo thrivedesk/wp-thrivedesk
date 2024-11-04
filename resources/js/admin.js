@@ -169,20 +169,22 @@ jQuery(document).ready(($) => {
 		let td_user_account_pages = $('.td_user_account_pages:checked')
 			.map((i, item) => item.value)
 			.get();
-	
+
+		let data = {
+			td_helpdesk_api_key: td_helpdesk_api_key,
+			td_helpdesk_assistant: td_helpdesk_assistant,
+			td_helpdesk_page_id: td_helpdesk_page_id,
+			td_knowledgebase_slug: td_knowledgebase_slug,
+			td_helpdesk_post_types: td_helpdesk_post_types,
+			td_helpdesk_post_sync: td_helpdesk_post_sync,
+			td_user_account_pages: td_user_account_pages,
+			td_assistant_route_list: td_assistant_route_list
+		};
+
 		// Returning the AJAX call as a Promise
 		return await jQuery.post(thrivedesk.ajax_url, {
 			action: 'thrivedesk_helpdesk_form',
-			data: {
-				td_helpdesk_api_key: td_helpdesk_api_key,
-				td_helpdesk_assistant: td_helpdesk_assistant,
-				td_helpdesk_page_id: td_helpdesk_page_id,
-				td_knowledgebase_slug: td_knowledgebase_slug,
-				td_helpdesk_post_types: td_helpdesk_post_types,
-				td_helpdesk_post_sync: td_helpdesk_post_sync,
-				td_user_account_pages: td_user_account_pages,
-				td_assistant_route_list: td_assistant_route_list
-			}
+			data: data,
 		});
 	}	
 
