@@ -159,7 +159,7 @@ class Conversation
 			die();
 		}
 
-        $this->reset_td_settings($apiKey);
+		$this->reset_td_settings($apiKey);
 	}
 
     /**

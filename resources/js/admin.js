@@ -320,15 +320,27 @@ jQuery(document).ready(($) => {
 						text: 'API Key Verified',
 					}).then(async (result)=>{
 						if (result.isConfirmed) {
-							jQuery
-							.post(thrivedesk.ajax_url, {
+							jQuery.post(thrivedesk.ajax_url, {
 								action: 'thrivedesk_system_info',
 								data: {
 									td_helpdesk_api_key: apiKey,
 								},
 							})
 							.success(function (response) {
-								
+								handleThriveDeskMainForm().then((response) => {
+									if (response.status === 'success') {
+										localStorage.setItem('shouldTriggerConfetti', 'true');
+										setTimeout(() => {
+											window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+										}, 1000);
+									}
+								}).catch(() => {
+									Swal.fire({
+										icon: 'error',
+										title: 'Error',
+										text: 'Form submition failed',
+									});
+								});
 							}).error(function (error) {
 								Swal.fire({
 									icon: 'error',
@@ -336,20 +348,6 @@ jQuery(document).ready(($) => {
 									text: 'Something went wrong',
 								});
 							});
-							handleThriveDeskMainForm().then((response) => {
-								if (response.status === 'success') {
-									localStorage.setItem('shouldTriggerConfetti', 'true');
-									setTimeout(() => {
-										window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-									}, 1000);									
-								}
-							}).catch(() => {
-								Swal.fire({
-									icon: 'error',
-									title: 'Error',
-									text: 'Form submition failed',
-								});
-							})
 						}
 					});
 					// disable api editable
