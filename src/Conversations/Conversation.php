@@ -109,9 +109,6 @@ class Conversation
             $company = $response['company'];
             update_option('td_helpdesk_system_info', $company);
 
-            // call reset settings to update the api key
-            (new Conversation())->reset_td_settings($apiKey);
-
             return $response;
         }
 

@@ -89,31 +89,6 @@ final class ThriveDesk
         // Define constants.
         $this->define_constants();
 
-        // define the hook when this plugin is inactivated
-        register_deactivation_hook(__FILE__, [$this, 'deactivate']);
-
-    }
-
-    /**
-     * Deactivate the plugin
-     */
-    public function deactivate()
-    {
-        // remove op_options meta names td_db_version, td_helpdesk_system_info, td_helpdesk_settings
-        delete_option('td_db_version');
-        delete_option('thrivedesk_options');
-        delete_option('td_helpdesk_system_info');
-        delete_option('td_helpdesk_settings');
-        delete_option('thrivedesk_installed');
-        delete_option('thrivedesk_version');
-
-        // remove all transient data
-        global $wpdb;
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%thrivedesk%'");
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_%thrivedesk%'");
-
-        // flush cache
-        wp_cache_flush();
     }
 
     /**
