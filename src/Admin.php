@@ -26,6 +26,9 @@ final class Admin
 	    // allow to redirect to the getting started page
 	    register_activation_hook(THRIVEDESK_FILE, [$this, 'add_option_for_welcome_page_redirection']);
 
+        // define the hook when this plugin is inactivated
+        register_deactivation_hook(THRIVEDESK_FILE, [$this, 'deactivate']);
+
         add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
 
         add_action('admin_menu', [$this, 'admin_menu'], 10);
@@ -46,6 +49,32 @@ final class Admin
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
         // menu icon style 
         add_action( 'admin_enqueue_scripts', [ $this, 'menu_icon_style' ] );
+    }
+
+    /**
+     * Plugin deactivate.
+     *
+     * @return void
+     * @since  0.0.1
+     * @access public
+     */
+    public function deactivate()
+    {
+        // Clear any plugin-related options
+        delete_option('td_db_version');
+        delete_option('thrivedesk_options');
+        delete_option('td_helpdesk_system_info');
+        delete_option('td_helpdesk_settings');
+        delete_option('thrivedesk_installed');
+        delete_option('thrivedesk_version');
+    
+        // Remove all transient data
+        global $wpdb;
+        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%thrivedesk%'");
+        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_%thrivedesk%'");
+    
+        // Flush the server cache
+        wp_cache_flush();
     }
 
 	public function remove_wp_footer_text() {
