@@ -233,7 +233,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 = 2.0.8 =
-- Fix: Unable to install the app (integration problem is fixed), Also made the system info updation fully functional (not event based)
+- Fix: Unable to install the app (integration problem is fixed which was being caused for going to the wrong organization)
+- Fix: Made the system info updation fully functional (not event based)
+- Feat: Ability to change the organization during connection.
 
 = 2.0.7 =
 - Fix: The critical security issue (XSS attack) for tokens is fixed.
