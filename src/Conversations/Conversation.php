@@ -117,16 +117,40 @@ class Conversation
 
 
 	public function td_verify_helpdesk_api_key(  ): void {
+        // verify the nonce
+        if ( ! isset( $_POST['data']['nonce'] ) || ! wp_verify_nonce( $_POST['data']['nonce'], 'td-verify-helpdesk-api-key' ) ) {
+            // add debug here
+            error_log('ThriveDesk: Invalid nonce');
+
+            // return json response
+            echo json_encode( [
+                'code' => 401,
+                'status' => 'error',
+                'data' => [
+                    'message' => 'Invalid nonce'
+                ]
+            ] );
+            die();
+        }
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
         $old_api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
 
         if ($apiKey === $old_api_key) {
+            echo json_encode( [
+                'code' => 202,
+                'status' => 'success',
+                'data' => [
+                    'message' => 'API Key is already verified'
+                ]
+            ] );
             die();
         }
 
         
 		if ( empty( $apiKey ) ) {
-			echo json_encode( [
+            error_log('ThriveDesk: API Key is required for verification');
+
+            echo json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
@@ -141,18 +165,24 @@ class Conversation
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
         if(!isset($data['company'])){
+
+            error_log('ThriveDesk: Something went wrong while verifying the API Key. ' . $data['message']);
+
             echo json_encode( [
 				'code' => 401,
 				'status' => 'error',
 				'data' => [
-					'message' =>  $data['message']
+					'message' =>  'Something went wrong: ' . $data['message']
 				]
 			] );
 			die();
         }
 
 		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
-			echo json_encode( [
+
+            error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
+
+            echo json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
