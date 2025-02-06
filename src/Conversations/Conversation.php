@@ -4,6 +4,7 @@ namespace ThriveDesk\Conversations;
 
 // Exit if accessed directly.
 use DOMDocument;
+use ThriveDesk\Admin;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -70,6 +71,8 @@ class Conversation
         $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
         if (empty($apiKey)) {
+            error_log('ThriveDesk: API Key is required for verification');
+
             echo json_encode(['status' => 'false', 'data' => []]);
             die();
         }
@@ -108,6 +111,8 @@ class Conversation
         if (isset($response['company'])) {
             $company = $response['company'];
             update_option('td_helpdesk_system_info', $company);
+            // update api key status
+            Admin::set_api_verification_status(true);
 
             return $response;
         }
@@ -170,6 +175,8 @@ class Conversation
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
         if(!isset($data['company'])){
 
+            Admin::set_api_verification_status();
+
             error_log('ThriveDesk: Something went wrong while verifying the API Key. ' . $data['message']);
 
             echo json_encode( [
@@ -184,6 +191,8 @@ class Conversation
 
 		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 
+            Admin::set_api_verification_status();
+
             error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
 
             echo json_encode( [
@@ -196,6 +205,17 @@ class Conversation
 			die();
 		}
 
+        Admin::set_api_verification_status(true);
+
+        echo json_encode( [
+            'code' => 200,
+            'status' => 'success',
+            'data' => [
+                'message' => 'API Key verified successfully'
+            ]
+        ] );
+
+        die();
 	}
 
     /**
