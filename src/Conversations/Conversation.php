@@ -133,18 +133,19 @@ class Conversation
             die();
         }
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
-        $old_api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
 
-        if ($apiKey === $old_api_key) {
-            echo json_encode( [
-                'code' => 200,
-                'status' => 'success',
-                'data' => [
-                    'message' => 'API Key is already verified'
-                ]
-            ] );
-            die();
-        }
+        // Why do we need this?
+//        $old_api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+//        if ($apiKey === $old_api_key) {
+//            echo json_encode( [
+//                'code' => 200,
+//                'status' => 'success',
+//                'data' => [
+//                    'message' => 'API Key is already verified'
+//                ]
+//            ] );
+//            die();
+//        }
 
         
 		if ( empty( $apiKey ) ) {
@@ -159,6 +160,9 @@ class Conversation
 			] );
 			die();
 		}
+
+        // save the api key to the database
+        $this->reset_td_settings($apiKey);
 
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
@@ -192,7 +196,6 @@ class Conversation
 			die();
 		}
 
-		$this->reset_td_settings($apiKey);
 	}
 
     /**
@@ -210,6 +213,7 @@ class Conversation
             $td_helpdesk_settings['td_knowledgebase_slug'] = '';
 
             update_option('td_helpdesk_settings', $td_helpdesk_settings);
+            update_option('td_helpdesk_system_info', []);
         } else {
             add_option('td_helpdesk_settings', [
                 'td_helpdesk_api_key' => $apiKey

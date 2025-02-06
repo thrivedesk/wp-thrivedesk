@@ -279,102 +279,117 @@ jQuery(document).ready(($) => {
 			})
 			.success(function (response) {
 				let parsedResponse = JSON.parse(response);
+				let status = parsedResponse.status;
 				let data = parsedResponse?.data;
-				if (parsedResponse?.code === 422) {
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: data?.message,
-					});
 
-					return;
+				if (status === 'false' || status === 'error') {
+					if (parsedResponse?.code === 422) {
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: data?.message,
+						});
+
+						return;
+					}
+					if(data?.message==='Unauthenticated.'){
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'Invalid API Key',
+						});
+
+						return;
+					}
+					else if (data?.message==='Server Error'){
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'Server Error',
+						});
+						return;
+					}
+					else {
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: data?.message || parsedResponse?.message || 'Something went wrong',
+						});
+
+						return;
+					}
 				}
 
-				if(data?.message==='Unauthenticated.'){
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: 'Invalid API Key',
-					});
-				}
-				else if (data?.message==='Server Error'){
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: 'Server Error',
-					});
-				} else {
-					loadAssistants(apiKey);
-					isAllowedPortal();
+				loadAssistants(apiKey);
+				isAllowedPortal();
 
-					const buttons = document.querySelectorAll('.disConnectBtn');
-					buttons.forEach(target => {
-						if (1 == target.dataset.connected) {
-							jQuery.post(
-								thrivedesk.ajax_url,
-								{
-									action: 'thrivedesk_disconnect_plugin',
-									data: {
-										plugin: target.dataset.plugin,
-										nonce: target.dataset.nonce,
-									},
-								},
-								(response) => {
-									
-								}
-							);
-						}
-					})
-
-
-					$target.text('Verified');
-					$target.prop('disabled', true);
-
-					// remove the disabled attribute from the id td-assistants
-					$('#td-assistants').prop('disabled', false);
-					// add hidden class to the id td-api-verification-btn
-					$('#api_key_alert').addClass('hidden');
-
-					Swal.fire({
-						icon: 'success',
-						title: 'Success',
-						text: data?.message,
-					}).then(async (result)=>{
-						if (result.isConfirmed) {
-							jQuery.post(thrivedesk.ajax_url, {
-								action: 'thrivedesk_system_info',
+				const buttons = document.querySelectorAll('.disConnectBtn');
+				buttons.forEach(target => {
+					if (1 == target.dataset.connected) {
+						jQuery.post(
+							thrivedesk.ajax_url,
+							{
+								action: 'thrivedesk_disconnect_plugin',
 								data: {
-									td_helpdesk_api_key: apiKey,
+									plugin: target.dataset.plugin,
+									nonce: target.dataset.nonce,
 								},
-							})
-							.success(function (response) {
-								handleThriveDeskMainForm().then((response) => {
-									if (response.status === 'success') {
-										localStorage.setItem('shouldTriggerConfetti', 'true');
-										setTimeout(() => {
-											window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-										}, 1000);
-									}
-								}).catch(() => {
-									Swal.fire({
-										icon: 'error',
-										title: 'Error',
-										text: 'Form submition failed',
-									});
-								});
-							}).error(function (error) {
+							},
+							(response) => {
+
+							}
+						);
+					}
+				})
+
+				$target.text('Verified');
+				$target.prop('disabled', true);
+
+				// remove the disabled attribute from the id td-assistants
+				$('#td-assistants').prop('disabled', false);
+				// add hidden class to the id td-api-verification-btn
+				$('#api_key_alert').addClass('hidden');
+
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: data?.message,
+				}).then(async (result)=>{
+					if (result.isConfirmed) {
+						jQuery.post(thrivedesk.ajax_url, {
+							action: 'thrivedesk_system_info',
+							data: {
+								td_helpdesk_api_key: apiKey,
+							},
+						})
+						.success(function (response) {
+							handleThriveDeskMainForm().then((response) => {
+								if (response.status === 'success') {
+									localStorage.setItem('shouldTriggerConfetti', 'true');
+									setTimeout(() => {
+										window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+									}, 1000);
+								}
+							}).catch(() => {
 								Swal.fire({
 									icon: 'error',
 									title: 'Error',
-									text: 'Something went wrong',
+									text: 'Form submition failed',
 								});
 							});
-						}
-					});
-					// disable api editable
-					$('.api-key-preview').removeClass('hidden');
-					$('.api-key-editable').addClass('hidden');
-				}
+						}).error(function (error) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'Something went wrong',
+							});
+						});
+					}
+				});
+				// disable api editable
+				$('.api-key-preview').removeClass('hidden');
+				$('.api-key-editable').addClass('hidden');
+
 			})
 			.error(function (error) {
 				Swal.fire({

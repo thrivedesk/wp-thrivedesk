@@ -7,12 +7,10 @@ $assistant_settings = Assistant::get_assistant_settings();
 $api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
 $systemInfo = get_option('td_helpdesk_system_info');
 
-
-if(isset($systemInfo)) {
+if($api_key && !$systemInfo) {
     Conversation::get_system_info($api_key);
     $systemInfo = get_option('td_helpdesk_system_info');
 }
-
 ?>
 
 <div class="thrivedesk">
