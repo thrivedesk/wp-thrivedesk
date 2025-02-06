@@ -272,6 +272,7 @@ jQuery(document).ready(($) => {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_api_key_verify',
+				nonce: thrivedesk.nonce,
 				data: {
 					td_helpdesk_api_key: apiKey,
 				},
@@ -337,7 +338,7 @@ jQuery(document).ready(($) => {
 					Swal.fire({
 						icon: 'success',
 						title: 'Success',
-						text: 'API Key Verified',
+						text: data?.message,
 					}).then(async (result)=>{
 						if (result.isConfirmed) {
 							jQuery.post(thrivedesk.ajax_url, {

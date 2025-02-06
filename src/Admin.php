@@ -217,6 +217,7 @@ final class Admin
             'thrivedesk',
             array(
                 'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('thrivedesk-nonce'),
                 'wp_json_url' => site_url('wp-json'),
                 'kb_url' => $knowledgebase_url,
             )

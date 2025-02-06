@@ -118,7 +118,7 @@ class Conversation
 
 	public function td_verify_helpdesk_api_key(  ): void {
         // verify the nonce
-        if ( ! isset( $_POST['data']['nonce'] ) || ! wp_verify_nonce( $_POST['data']['nonce'], 'td-verify-helpdesk-api-key' ) ) {
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'thrivedesk-nonce' ) ) {
             // add debug here
             error_log('ThriveDesk: Invalid nonce');
 
@@ -137,7 +137,7 @@ class Conversation
 
         if ($apiKey === $old_api_key) {
             echo json_encode( [
-                'code' => 202,
+                'code' => 200,
                 'status' => 'success',
                 'data' => [
                     'message' => 'API Key is already verified'
