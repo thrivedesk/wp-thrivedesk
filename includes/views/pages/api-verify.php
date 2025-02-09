@@ -22,6 +22,12 @@
         </button>
         
         <div class="text-gray-400 text-[12px]">By continuing, you agree to the <a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">Terms of Service</a> and <a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">Privacy Policy</a>.</div>
+          <div class="alert alert-info">
+              <p class="mb-2">To ensure seamless integration with ThriveDesk, whitelist the following IP addresses in your server's firewall or security plugin:
+                <code>20.68.187.32</code> <code>20.68.186.235</code> and <code>20.117.184.59</code>.
+              </p>
+          </div>
+
       </div>
 
         <div class="flex items-center space-x-2">

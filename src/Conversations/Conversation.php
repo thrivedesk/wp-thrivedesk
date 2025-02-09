@@ -159,6 +159,23 @@ class Conversation
 		$apiService->setApiKey( $apiKey );
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+
+        if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
+
+            Admin::set_api_verification_status();
+
+            error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
+
+            echo json_encode( [
+                'code' => 422,
+                'status' => 'error',
+                'data' => [
+                    'message' => $data['message']
+                ]
+            ] );
+            die();
+        }
+
         if(!isset($data['company'])){
 
             Admin::set_api_verification_status();
@@ -175,22 +192,6 @@ class Conversation
 
 			die();
         }
-
-		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
-
-            Admin::set_api_verification_status();
-
-            error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
-
-            echo json_encode( [
-				'code' => 422,
-				'status' => 'error',
-				'data' => [
-					'message' => $data['message']
-				]
-			] );
-			die();
-		}
 
         Admin::set_api_verification_status(true);
 
