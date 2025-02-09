@@ -138,20 +138,6 @@ class Conversation
             die();
         }
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
-
-        // Why do we need this?
-//        $old_api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
-//        if ($apiKey === $old_api_key) {
-//            echo json_encode( [
-//                'code' => 200,
-//                'status' => 'success',
-//                'data' => [
-//                    'message' => 'API Key is already verified'
-//                ]
-//            ] );
-//            die();
-//        }
-
         
 		if ( empty( $apiKey ) ) {
             error_log('ThriveDesk: API Key is required for verification');
@@ -186,6 +172,7 @@ class Conversation
 					'message' =>  'Something went wrong: ' . $data['message']
 				]
 			] );
+
 			die();
         }
 
@@ -250,13 +237,13 @@ class Conversation
             // add option to database
             $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
-                'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'],
-                'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
-                'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'],
-                'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
-                'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
-	            'td_user_account_pages'                 => $data['td_user_account_pages'],
-                'td_assistant_route_list'               => is_array($data['td_assistant_route_list']) ? $data['td_assistant_route_list'] : [],
+                'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
+                'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
+                'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? [],
+                'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],
+                'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? '',
+	            'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
+                'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             
             if (get_option('td_helpdesk_settings')) {
@@ -267,6 +254,7 @@ class Conversation
             echo json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
             die();
         }
+
         echo json_encode(['status' => 'error', 'message' => 'Something went wrong']);
         die();
     }

@@ -248,6 +248,11 @@ final class Admin
             echo thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
+            // if token is passed, log it
+            if(isset($_GET['token'])){
+                error_log('ThriveDesk: Token received from request: ' . $_GET['token']);
+            }
+
             echo thrivedesk_view('pages/api-verify');
         }
         else{
@@ -262,7 +267,7 @@ final class Admin
     public static function set_api_verification_status($status = false): void
     {
         // set the api key to the database
-        add_option('td_helpdesk_verified', $status);
+        update_option('td_helpdesk_verified', $status);
     }
 
     public static function get_api_verification_status(): bool
