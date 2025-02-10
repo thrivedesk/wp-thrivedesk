@@ -35,7 +35,7 @@ class Assistant {
 
 		$assistants = $this->get_assistants( $apiKey );
 
-		if ( $assistants['assistants'] ) {
+		if ( isset($assistants) and $assistants['assistants'] ) {
 			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
 			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 		} else {

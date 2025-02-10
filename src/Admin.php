@@ -217,6 +217,7 @@ final class Admin
             'thrivedesk',
             array(
                 'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('thrivedesk-nonce'),
                 'wp_json_url' => site_url('wp-json'),
                 'kb_url' => $knowledgebase_url,
             )
@@ -240,11 +241,18 @@ final class Admin
 
         $td_helpdesk_selected_option = get_td_helpdesk_options();
         $td_api_key                  = ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
-        
-        if($td_api_key){
+
+        $api_status = self::get_api_verification_status();
+
+        if($td_api_key && $api_status){
             echo thrivedesk_view('setting');
         }
-        elseif($td_api_key == '' && isset($_GET['token'])){
+        elseif($td_api_key == '' || isset($_GET['token'])){
+            // if token is passed, log it
+            if(isset($_GET['token'])){
+                error_log('ThriveDesk: Token received from request: ' . $_GET['token']);
+            }
+
             echo thrivedesk_view('pages/api-verify');
         }
         else{
@@ -254,6 +262,18 @@ final class Admin
 
     public function verification_page(){
         echo thrivedesk_view('pages/api-verify');
+    }
+
+    public static function set_api_verification_status($status = false): void
+    {
+        // set the api key to the database
+        update_option('td_helpdesk_verified', $status);
+    }
+
+    public static function get_api_verification_status(): bool
+    {
+        // set the api key to the database
+        return get_option('td_helpdesk_verified', false);
     }
 
     /**

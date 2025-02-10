@@ -4,6 +4,7 @@ namespace ThriveDesk\Conversations;
 
 // Exit if accessed directly.
 use DOMDocument;
+use ThriveDesk\Admin;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -70,6 +71,8 @@ class Conversation
         $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
         if (empty($apiKey)) {
+            error_log('ThriveDesk: API Key is required for verification');
+
             echo json_encode(['status' => 'false', 'data' => []]);
             die();
         }
@@ -108,6 +111,8 @@ class Conversation
         if (isset($response['company'])) {
             $company = $response['company'];
             update_option('td_helpdesk_system_info', $company);
+            // update api key status
+            Admin::set_api_verification_status(true);
 
             return $response;
         }
@@ -117,16 +122,27 @@ class Conversation
 
 
 	public function td_verify_helpdesk_api_key(  ): void {
-		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
-        $old_api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+        // verify the nonce
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'thrivedesk-nonce' ) ) {
+            // add debug here
+            error_log('ThriveDesk: Invalid nonce');
 
-        if ($apiKey === $old_api_key) {
+            // return json response
+            echo json_encode( [
+                'code' => 401,
+                'status' => 'error',
+                'data' => [
+                    'message' => 'Invalid nonce'
+                ]
+            ] );
             die();
         }
-
+		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
         
 		if ( empty( $apiKey ) ) {
-			echo json_encode( [
+            error_log('ThriveDesk: API Key is required for verification');
+
+            echo json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
@@ -136,33 +152,60 @@ class Conversation
 			die();
 		}
 
+        error_log('ThriveDesk: verify API key, API key: ' . $apiKey);
+
+        // save the api key to the database
+        $this->reset_td_settings($apiKey);
+
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
+
+        if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
+
+            Admin::set_api_verification_status();
+
+            error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
+
+            echo json_encode( [
+                'code' => 422,
+                'status' => 'error',
+                'data' => [
+                    'message' => $data['message']
+                ]
+            ] );
+            die();
+        }
+
         if(!isset($data['company'])){
+
+            Admin::set_api_verification_status();
+
+            error_log('ThriveDesk: Something went wrong while verifying the API Key. ' . $data['message']);
+
             echo json_encode( [
 				'code' => 401,
 				'status' => 'error',
 				'data' => [
-					'message' =>  $data['message']
+					'message' =>  'Something went wrong: ' . $data['message']
 				]
 			] );
+
 			die();
         }
 
-		if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
-			echo json_encode( [
-				'code' => 422,
-				'status' => 'error',
-				'data' => [
-					'message' => $data['message']
-				]
-			] );
-			die();
-		}
+        Admin::set_api_verification_status(true);
 
-		$this->reset_td_settings($apiKey);
+        echo json_encode( [
+            'code' => 200,
+            'status' => 'success',
+            'data' => [
+                'message' => 'API Key verified successfully'
+            ]
+        ] );
+
+        die();
 	}
 
     /**
@@ -180,6 +223,7 @@ class Conversation
             $td_helpdesk_settings['td_knowledgebase_slug'] = '';
 
             update_option('td_helpdesk_settings', $td_helpdesk_settings);
+            update_option('td_helpdesk_system_info', []);
         } else {
             add_option('td_helpdesk_settings', [
                 'td_helpdesk_api_key' => $apiKey
@@ -196,13 +240,13 @@ class Conversation
             // add option to database
             $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
-                'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'],
-                'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'],
-                'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'],
-                'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'],
-                'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'],
-	            'td_user_account_pages'                 => $data['td_user_account_pages'],
-                'td_assistant_route_list'               => is_array($data['td_assistant_route_list']) ? $data['td_assistant_route_list'] : [],
+                'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
+                'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
+                'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? [],
+                'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],
+                'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? '',
+	            'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
+                'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             
             if (get_option('td_helpdesk_settings')) {
@@ -213,6 +257,7 @@ class Conversation
             echo json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
             die();
         }
+
         echo json_encode(['status' => 'error', 'message' => 'Something went wrong']);
         die();
     }

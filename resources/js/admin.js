@@ -94,17 +94,32 @@ jQuery(document).ready(($) => {
 		}
 	}
 
+	// on click complete setup button to verify API key
 	$('#submit-btn').on('click', function (e) {
 		e.preventDefault();
+
+		// Add loading state
+		let $btn = $(this);
+		$btn.prop('disabled', true)
+		   .html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
 
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 
 		jQuery.post(thrivedesk.ajax_url, {
-			action: 'thrivedesk_system_info',
+			action: 'thrivedesk_api_key_verify',
+			nonce: thrivedesk.nonce,
 			data: {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 			},
-		}).done(() => {
+		}).done((response) => {
+			let parsedResponse = JSON.parse(response);
+			let data = parsedResponse?.data;
+			let status = parsedResponse?.status;
+
+			if(handleFailedResponse(status, parsedResponse) === false){
+				return;
+			}
+
 			jQuery.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_load_assistants',
 				data: {
@@ -113,11 +128,13 @@ jQuery(document).ready(($) => {
 			}).success(function (response) {
 				let parsedResponse = JSON.parse(response);
 				let data = parsedResponse?.data;
+				let status = parsedResponse?.status;
+
 				let payload = {
 					td_helpdesk_api_key: td_helpdesk_api_key,
 					td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
 				}
-	
+
 				jQuery.post(thrivedesk.ajax_url, {
 					action: 'thrivedesk_helpdesk_form',
 					data: {
@@ -148,9 +165,14 @@ jQuery(document).ready(($) => {
 				title: 'Error',
 				text: 'Something went wrong',
 			});
+		}).always(function() {
+			// Remove loading state
+			setTimeout(function() {
+				$btn.prop('disabled', false)
+					.html('Complete Setup');
+			}, 1500);
 		});
 
-		
 	});
 
 	async function handleThriveDeskMainForm() {
@@ -186,10 +208,15 @@ jQuery(document).ready(($) => {
 			action: 'thrivedesk_helpdesk_form',
 			data: data,
 		});
-	}	
+	}
 
 	// helpdesk form
 	$('#td_helpdesk_form').submit(async function (e) {
+		let $btn = $('#td_setting_btn_submit');
+		$btn.prop('disabled', true)
+			.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+
 		e.preventDefault();
 		handleThriveDeskMainForm().then(function (response) {
 			let icon;
@@ -199,12 +226,19 @@ jQuery(document).ready(($) => {
 					icon: icon,
 					title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
 					text: response.message,
-				}).then((result) => {
-					localStorage.setItem('shouldTriggerConfetti', 'true');
-					if (result.isConfirmed) {
-						window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-					}
 				});
+				// .then((result) => {
+				// 	localStorage.setItem('shouldTriggerConfetti', 'true');
+				// 	if (result.isConfirmed) {
+				// 		window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+				// 	}
+				// });
+
+				// Remove loading state
+				setTimeout(function() {
+					$btn.prop('disabled', false)
+						.html('Save');
+				}, 1000);
 			}
 		}).catch(()=>{
 			Swal.fire({
@@ -215,7 +249,7 @@ jQuery(document).ready(($) => {
 		});
 	});
 
-	// Confetti 
+	// Confetti
 	async function triggerConfetti() {
 		var confettiElement = document.getElementById('confetti-canvas');
 		confettiElement.style.display = 'block';
@@ -238,14 +272,14 @@ jQuery(document).ready(($) => {
 
 		var confetti = new ConfettiGenerator(confettiSettings);
 		confetti.render();
-		
+
 		setTimeout(() => {
 			confetti.clear();
 			confettiElement.style.display = 'none';
 		}, 2500);
 
 	}
-	// Confetti for API Key validation 
+	// Confetti for API Key validation
 	var $key = $('#td_helpdesk_api_key').val().trim();
 	if ($key) {
 		if (localStorage.getItem('shouldTriggerConfetti') === 'true') {
@@ -272,80 +306,62 @@ jQuery(document).ready(($) => {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_api_key_verify',
+				nonce: thrivedesk.nonce,
 				data: {
 					td_helpdesk_api_key: apiKey,
 				},
 			})
 			.success(function (response) {
 				let parsedResponse = JSON.parse(response);
+				let status = parsedResponse.status;
 				let data = parsedResponse?.data;
-				if (parsedResponse?.code === 422) {
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: data?.message,
-					});
 
+				if(handleFailedResponse(status, parsedResponse) === false){
 					return;
 				}
 
-				if(data?.message==='Unauthenticated.'){
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: 'Invalid API Key',
-					});
-				}
-				else if (data?.message==='Server Error'){
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: 'Server Error',
-					});
-				} else {
-					loadAssistants(apiKey);
-					isAllowedPortal();
+				loadAssistants(apiKey);
+				isAllowedPortal();
 
-					const buttons = document.querySelectorAll('.disConnectBtn');
-					buttons.forEach(target => {
-						if (1 == target.dataset.connected) {
-							jQuery.post(
-								thrivedesk.ajax_url,
-								{
-									action: 'thrivedesk_disconnect_plugin',
-									data: {
-										plugin: target.dataset.plugin,
-										nonce: target.dataset.nonce,
-									},
-								},
-								(response) => {
-									
-								}
-							);
-						}
-					})
-
-
-					$target.text('Verified');
-					$target.prop('disabled', true);
-
-					// remove the disabled attribute from the id td-assistants
-					$('#td-assistants').prop('disabled', false);
-					// add hidden class to the id td-api-verification-btn
-					$('#api_key_alert').addClass('hidden');
-
-					Swal.fire({
-						icon: 'success',
-						title: 'Success',
-						text: 'API Key Verified',
-					}).then(async (result)=>{
-						if (result.isConfirmed) {
-							jQuery.post(thrivedesk.ajax_url, {
-								action: 'thrivedesk_system_info',
+				const buttons = document.querySelectorAll('.disConnectBtn');
+				buttons.forEach(target => {
+					if (1 == target.dataset.connected) {
+						jQuery.post(
+							thrivedesk.ajax_url,
+							{
+								action: 'thrivedesk_disconnect_plugin',
 								data: {
-									td_helpdesk_api_key: apiKey,
+									plugin: target.dataset.plugin,
+									nonce: target.dataset.nonce,
 								},
-							})
+							},
+							(response) => {
+
+							}
+						);
+					}
+				})
+
+				$target.text('Verified');
+				$target.prop('disabled', true);
+
+				// remove the disabled attribute from the id td-assistants
+				$('#td-assistants').prop('disabled', false);
+				// add hidden class to the id td-api-verification-btn
+				$('#api_key_alert').addClass('hidden');
+
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: data?.message,
+				}).then(async (result)=>{
+					if (result.isConfirmed) {
+						jQuery.post(thrivedesk.ajax_url, {
+							action: 'thrivedesk_system_info',
+							data: {
+								td_helpdesk_api_key: apiKey,
+							},
+						})
 							.success(function (response) {
 								handleThriveDeskMainForm().then((response) => {
 									if (response.status === 'success') {
@@ -362,18 +378,18 @@ jQuery(document).ready(($) => {
 									});
 								});
 							}).error(function (error) {
-								Swal.fire({
-									icon: 'error',
-									title: 'Error',
-									text: 'Something went wrong',
-								});
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'Something went wrong',
 							});
-						}
-					});
-					// disable api editable
-					$('.api-key-preview').removeClass('hidden');
-					$('.api-key-editable').addClass('hidden');
-				}
+						});
+					}
+				});
+				// disable api editable
+				$('.api-key-preview').removeClass('hidden');
+				$('.api-key-editable').addClass('hidden');
+
 			})
 			.error(function (error) {
 				Swal.fire({
@@ -383,6 +399,51 @@ jQuery(document).ready(($) => {
 				});
 			});
 	});
+
+	function handleFailedResponse(status, parsedResponse) {
+		let data = parsedResponse?.data;
+
+		if (status === 'false' || status === 'error') {
+			if (parsedResponse?.code === 422) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: data?.message,
+				});
+
+				return false;
+			}
+			if(data?.message==='Unauthenticated.'){
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Invalid API Key',
+				});
+
+				return false;
+			}
+			else if (data?.message==='Server Error'){
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Server Error',
+				});
+				return false;
+			}
+			else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: data?.message || parsedResponse?.message || 'Something went wrong',
+				});
+
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+
 	// API key reveal box 
 	$('.api-key-preview .trigger').on('click', function(e){
 		$('.api-key-preview').addClass('hidden');
@@ -464,7 +525,7 @@ jQuery(document).ready(($) => {
 					if (data === true) {
 						$('#api_key_alert').addClass('hidden');
 						$('#td_portal').removeClass('hidden');
-						
+
 					}
 				}
 				else{
