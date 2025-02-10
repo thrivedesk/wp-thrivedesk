@@ -98,6 +98,11 @@ jQuery(document).ready(($) => {
 	$('#submit-btn').on('click', function (e) {
 		e.preventDefault();
 
+		// Add loading state
+		let $btn = $(this);
+		$btn.prop('disabled', true)
+		   .html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 
 		jQuery.post(thrivedesk.ajax_url, {
@@ -160,6 +165,12 @@ jQuery(document).ready(($) => {
 				title: 'Error',
 				text: 'Something went wrong',
 			});
+		}).always(function() {
+			// Remove loading state
+			setTimeout(function() {
+				$btn.prop('disabled', false)
+					.html('Complete Setup');
+			}, 1500);
 		});
 
 	});
@@ -201,6 +212,11 @@ jQuery(document).ready(($) => {
 
 	// helpdesk form
 	$('#td_helpdesk_form').submit(async function (e) {
+		let $btn = $('#td_setting_btn_submit');
+		$btn.prop('disabled', true)
+			.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+
 		e.preventDefault();
 		handleThriveDeskMainForm().then(function (response) {
 			let icon;
@@ -217,6 +233,12 @@ jQuery(document).ready(($) => {
 				// 		window.location.href = '/wp-admin/admin.php?page=thrivedesk';
 				// 	}
 				// });
+
+				// Remove loading state
+				setTimeout(function() {
+					$btn.prop('disabled', false)
+						.html('Save');
+				}, 1000);
 			}
 		}).catch(()=>{
 			Swal.fire({

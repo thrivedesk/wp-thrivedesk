@@ -152,6 +152,8 @@ class Conversation
 			die();
 		}
 
+        error_log('ThriveDesk: verify API key, API key: ' . $apiKey);
+
         // save the api key to the database
         $this->reset_td_settings($apiKey);
 

@@ -26,6 +26,10 @@
               <p class="mb-2">To ensure seamless integration with ThriveDesk, whitelist the following IP addresses in your server's firewall or security plugin:
                 <code>20.68.187.32</code> <code>20.68.186.235</code> and <code>20.117.184.59</code>.
               </p>
+              <p class="mb-2">
+                Contact us with your IP address and website url and email at <a href="mailto:support@thrivedesk.com" class="underline">Support</a> if you have any questions or need assistance.
+              </p>
+
           </div>
 
       </div>
