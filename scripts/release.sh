@@ -21,6 +21,7 @@ build() {
   cp -vr ./src ./releases/thrivedesk
   cp -vr ./vendor ./releases/thrivedesk
   cp -vr ./readme.txt ./releases/thrivedesk
+  cp -vr ./changelog.txt ./releases/thrivedesk
   cp -vr ./thrivedesk.php ./releases/thrivedesk
 
   echo "[+] Finished combingFiles"
