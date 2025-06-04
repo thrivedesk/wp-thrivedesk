@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * RestRoute class for handling ThriveDesk REST API endpoints.
  *
@@ -101,7 +101,7 @@ class RestRoute {
 		}
 
 		$contact_obj = \BWF_Contacts::get_instance();
-		$contact = $contact_obj->get_contact_by( 'id', absint( $data['id'] ) );
+		$contact     = $contact_obj->get_contact_by( 'id', absint( $data['id'] ) );
 
 		if ( ! absint( $contact->get_id() ) > 0 ) {
 			return new \WP_REST_Response( array( 'message' => 'Contact does not exists' ), 401 );
@@ -172,8 +172,8 @@ class RestRoute {
 			);
 		}
 
-		$query_string = isset( $_POST['query_string'] ) ? sanitize_text_field( wp_unslash( $_POST['query_string'] ) ) : '';
-		$settings = get_option( 'td_helpdesk_settings' );
+		$query_string      = isset( $_POST['query_string'] ) ? sanitize_text_field( wp_unslash( $_POST['query_string'] ) ) : '';
+		$settings          = get_option( 'td_helpdesk_settings' );
 		$select_post_types = isset( $settings['td_helpdesk_post_types'] ) ? $settings['td_helpdesk_post_types'] : array();
 
 		if ( empty( $select_post_types ) ) {
@@ -193,8 +193,8 @@ class RestRoute {
 		while ( $x_query->have_posts() ) :
 			$x_query->the_post();
 			$post_categories_array = get_the_category( get_the_ID() );
-			$post_title = html_entity_decode( get_the_title(), ENT_NOQUOTES, 'UTF-8' );
-			$search_posts[] = array(
+			$post_title            = html_entity_decode( get_the_title(), ENT_NOQUOTES, 'UTF-8' );
+			$search_posts[]        = array(
 				'id'         => absint( get_the_ID() ),
 				'title'      => sanitize_text_field( $post_title ),
 				'excerpt'    => wp_strip_all_tags( get_the_excerpt() ),

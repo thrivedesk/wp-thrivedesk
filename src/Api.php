@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * API class for handling ThriveDesk API endpoints.
@@ -122,10 +122,10 @@ final class Api {
 		// Use template_redirect instead of init for better performance
 		// This hook runs after WordPress has finished loading but before any headers are sent
 		add_action( 'template_redirect', array( $this, 'api_listener' ) );
-		
+
 		// Alternative: Register REST API endpoints (recommended approach)
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
-		
+
 		$this->api_response = new ApiResponse();
 	}
 
@@ -288,11 +288,11 @@ final class Api {
 	 * @since 0.0.1
 	 */
 	public function autonami_handler(): void {
-		$sync_type = isset( $_REQUEST['sync_type'] ) ? strtolower( sanitize_key( wp_unslash( $_REQUEST['sync_type'] ) ) ) : '';
+		$sync_type                    = isset( $_REQUEST['sync_type'] ) ? strtolower( sanitize_key( wp_unslash( $_REQUEST['sync_type'] ) ) ) : '';
 		$this->plugin->customer_email = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '';
 
 		if ( $sync_type ) {
-			$extra = isset( $_REQUEST['extra'] ) ? wp_unslash( $_REQUEST['extra'] ) : array();
+			$extra = isset( $_REQUEST['extra'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['extra'] ) ) : array();
 			$this->plugin->sync_conversation_with_autonami( $sync_type, $extra );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
@@ -350,7 +350,7 @@ final class Api {
 			)
 		);
 
-		$products = $query->get_products();
+		$products     = $query->get_products();
 		$product_list = array();
 
 		foreach ( $products as $product_id ) {
@@ -359,7 +359,7 @@ final class Api {
 				continue;
 			}
 
-			$thumbnail_id = get_post_thumbnail_id( $product_id );
+			$thumbnail_id    = get_post_thumbnail_id( $product_id );
 			$image_src_array = $thumbnail_id ? wp_get_attachment_image_src( $thumbnail_id ) : array();
 
 			$product_info = array(
@@ -378,30 +378,33 @@ final class Api {
 	}
 
 	/**
+	 * Get WooCommerce order status list.
+	 *
 	 * @return void
+	 * @since 0.9.0
 	 */
-	public function get_woocommerce_status_list() {
-
+	public function get_woocommerce_status_list(): void {
 		$statuses = wc_get_order_statuses();
-
 		$this->api_response->success( 200, $statuses, 'Success' );
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $item
+	 * Add new item to WooCommerce order.
 	 *
+	 * @param string $order_id The order ID.
+	 * @param mixed  $item     The item to add.
 	 * @return void
+	 * @since 0.9.0
 	 */
-	public function wc_order_add_new_item( string $order_id, $item ) {
+	public function wc_order_add_new_item( string $order_id, $item ): void {
 		$product = wc_get_product_object( 'line_item', $item );
 
-		$item = new WC_Order_Item_Product();
-		$item->set_name( $product->name );
-		$item->set_quantity( $this->quantity );
-		$item->set_product_id( $product->id );
-		$item->set_subtotal( $product->price ?? 0 );
-		$item->set_total( $product->price * $this->quantity ?? 0 );
+		$item_object = new WC_Order_Item_Product();
+		$item_object->set_name( $product->name );
+		$item_object->set_quantity( $this->quantity );
+		$item_object->set_product_id( $product->id );
+		$item_object->set_subtotal( $product->price ?? 0 );
+		$item_object->set_total( $product->price * $this->quantity ?? 0 );
 
 		// if(is_plugin_active('wt-woocommerce-sequential-order-numbers-pro/wt-advanced-order-number-pro.php'))
 		// {
@@ -409,23 +412,25 @@ final class Api {
 		// }
 
 		$order = wc_get_order( $order_id );
-		$order->add_item( $item );
+		$order->add_item( $item_object );
 		$order->calculate_totals();
 
 		$this->api_response->success( 200, array(), 'Success' );
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $product_id
+	 * Remove item from WooCommerce order.
 	 *
+	 * @param string $order_id   The order ID.
+	 * @param string $product_id The product ID to remove.
 	 * @return void
+	 * @since 0.9.0
 	 */
-	public function wc_order_remove_item( string $order_id, string $product_id ) {
+	public function wc_order_remove_item( string $order_id, string $product_id ): void {
 		$order = wc_get_order( $order_id );
 
 		foreach ( $order->get_items() as $item_id => $item ) {
-			if ( $item['product_id'] == $product_id ) {
+			if ( $item['product_id'] === $product_id ) {
 				wc_delete_order_item( $item_id );
 			}
 		}
@@ -435,34 +440,35 @@ final class Api {
 		$this->api_response->success( 200, array(), 'Success' );
 	}
 
-
 	/**
-	 * @param $order_id
-	 * @param $orderStatus
+	 * Update WooCommerce order status.
 	 *
+	 * @param string $order_id     The order ID.
+	 * @param string $order_status The new order status.
 	 * @return void
+	 * @since 0.9.0
 	 */
-	public function woocommerce_order_status_update( string $order_id, string $orderStatus ) {
+	public function woocommerce_order_status_update( string $order_id, string $order_status ): void {
 		$order = new WC_Order( $order_id );
-		$order->update_status( $orderStatus, '' );
+		$order->update_status( $order_status, '' );
 
 		$this->api_response->success( 200, array(), 'Success' );
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $product_id
-	 * @param $quantity
+	 * Update WooCommerce order item quantity.
 	 *
+	 * @param string $order_id   The order ID.
+	 * @param string $product_id The product ID.
+	 * @param string $quantity   The new quantity.
 	 * @return void
+	 * @since 0.9.0
 	 */
-	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
-
+	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ): void {
 		$order = wc_get_order( $order_id );
 		if ( $quantity > 0 ) {
 			foreach ( $order->get_items() as $item_id => $item ) {
-
-				if ( $item['product_id'] == (string) $product_id ) {
+				if ( $item['product_id'] === (string) $product_id ) {
 					wc_update_order_item_meta( $item_id, '_qty', $quantity );
 					$order->calculate_totals();
 				}
@@ -472,12 +478,14 @@ final class Api {
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $coupon
+	 * Apply coupon to WooCommerce order.
 	 *
+	 * @param string $order_id The order ID.
+	 * @param string $coupon   The coupon code.
 	 * @return void
+	 * @since 0.9.0
 	 */
-	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ) {
+	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ): void {
 		$order = wc_get_order( $order_id );
 
 		if ( $coupon ) {
@@ -491,17 +499,18 @@ final class Api {
 	}
 
 	/**
-	 * data handler for FluentCRM
+	 * Data handler for FluentCRM.
 	 *
 	 * @return void
 	 * @since 0.7.0
 	 */
 	public function fluentcrm_handler(): void {
-		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
-		$this->plugin->customer_email = sanitize_email( $_REQUEST['email'] ?? '' );
+		$sync_type                    = strtolower( sanitize_key( wp_unslash( $_REQUEST['sync_type'] ?? '' ) ) );
+		$this->plugin->customer_email = sanitize_email( wp_unslash( $_REQUEST['email'] ?? '' ) );
 
-		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $_REQUEST['extra'] ?? array() );
+		if ( $sync_type ) {
+			$extra = isset( $_REQUEST['extra'] ) ? wp_unslash( $_REQUEST['extra'] ) : array();
+			$this->plugin->sync_conversation_with_fluentcrm( $sync_type, $extra );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_fluentcrm_data' ) ) {
 				$this->api_response->error( 500, "Method 'prepare_fluentcrm_data' not exist in plugin" );
@@ -517,13 +526,13 @@ final class Api {
 	}
 
 	/**
-	 * data handler for wp-post-sync
+	 * Data handler for wp-post-sync.
 	 *
-	 * @param $remote_query_string
-	 *
+	 * @param string $remote_query_string The search query string.
+	 * @return void
 	 * @since 0.8.0
 	 */
-	public function wp_postsync_data_handler( $remote_query_string ): void {
+	public function wp_postsync_data_handler( string $remote_query_string ): void {
 		$search_data = $this->plugin->get_post_search_result( $remote_query_string );
 
 		$this->api_response->success( 200, $search_data, 'Success' );
@@ -554,22 +563,21 @@ final class Api {
 	}
 
 	/**
-	 * Handle plugin data request
+	 * Handle plugin data request.
 	 *
 	 * @return void
 	 * @since 0.0.4
 	 */
-	public function plugin_data_action_handler() {
-
-		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
-		$enableShipping = isset( $_REQUEST['shipping_param'] ) == 1 ? true : false;
+	public function plugin_data_action_handler(): void {
+		$email           = sanitize_email( wp_unslash( $_REQUEST['email'] ?? '' ) );
+		$enable_shipping = isset( $_REQUEST['shipping_param'] ) && '1' === $_REQUEST['shipping_param'];
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 			$this->api_response->error( 500, "Method 'prepare_data' not exist in plugin" );
 		}
 
 		$this->plugin->customer_email = $email;
-		$this->plugin->shipping_param = $enableShipping;
+		$this->plugin->shipping_param = $enable_shipping;
 
 		if ( ! $this->plugin->is_customer_exist() ) {
 			$this->api_response->error( 404, 'Customer not found.' );
@@ -581,7 +589,7 @@ final class Api {
 	}
 
 	/**
-	 * Verify api request token
+	 * Verify api request token.
 	 *
 	 * @return boolean
 	 * @since 0.0.4
@@ -608,16 +616,16 @@ final class Api {
 
 		$api_token = $this->plugin->get_plugin_data( 'api_token' );
 
-		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
+		$signature = isset( $_SERVER['HTTP_X_TD_SIGNATURE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_TD_SIGNATURE'] ) ) : '';
 
-		return hash_equals( $signature, hash_hmac( 'SHA1', json_encode( $payload ), $api_token ) );
+		return hash_equals( $signature, hash_hmac( 'SHA1', wp_json_encode( $payload ), $api_token ) );
 	}
 
 	/**
 	 * Register REST API routes (Alternative implementation).
 	 *
 	 * This is a more WordPress-native approach that only executes when specific endpoints are called.
-	 * 
+	 *
 	 * @return void
 	 * @since 0.0.1
 	 */
@@ -648,14 +656,15 @@ final class Api {
 	 *
 	 * @param \WP_REST_Request $request The REST request object.
 	 * @return \WP_REST_Response
+	 * @throws \Exception When plugin data cannot be prepared.
 	 * @since 0.0.1
 	 */
 	public function handle_rest_request( \WP_REST_Request $request ): \WP_REST_Response {
 		try {
 			$action = $request->get_param( 'action' );
 			$plugin = $request->get_param( 'plugin' );
-			
-			// Set instance variables from request parameters
+
+			// Set instance variables from request parameters.
 			$this->order_id     = sanitize_key( $request->get_param( 'order_id' ) ?? '' );
 			$this->order_status = sanitize_key( $request->get_param( 'order_status' ) ?? '' );
 			$this->quantity     = sanitize_key( $request->get_param( 'quantity' ) ?? '' );
@@ -665,7 +674,7 @@ final class Api {
 			$this->amount       = sanitize_key( $request->get_param( 'amount' ) ?? '' );
 			$this->reason       = sanitize_key( $request->get_param( 'reason' ) ?? '' );
 
-			// Plugin validation
+			// Plugin validation.
 			if ( ! in_array( $plugin, array_keys( $this->get_available_plugins() ), true ) ) {
 				return new \WP_REST_Response(
 					array( 'error' => 'Plugin is invalid or not available now.' ),
@@ -699,9 +708,9 @@ final class Api {
 				);
 			}
 
-			// Execute the requested action
+			// Execute the requested action.
 			$result = $this->execute_action( $action, $request );
-			
+
 			return new \WP_REST_Response( $result, 200 );
 
 		} catch ( \Exception $e ) {
@@ -720,16 +729,16 @@ final class Api {
 	 * @since 0.0.1
 	 */
 	public function verify_rest_permissions( \WP_REST_Request $request ): bool {
-		// Verify API token through headers
+		// Verify API token through headers.
 		$signature = $request->get_header( 'X-TD-Signature' );
 		if ( empty( $signature ) ) {
 			return false;
 		}
 
-		// Get all parameters for signature verification
+		// Get all parameters for signature verification.
 		$payload = $request->get_params();
-		
-		// Convert string boolean values
+
+		// Convert string boolean values.
 		foreach ( $payload as $key => $value ) {
 			if ( ! is_string( $value ) ) {
 				continue;
@@ -744,17 +753,17 @@ final class Api {
 			}
 		}
 
-		// For REST API, we'll need to get the plugin instance to verify token
-		$plugin = $request->get_param( 'plugin' ) ?? 'edd';
-		$plugin_name = $this->get_available_plugins()[ $plugin ] ?? 'EDD';
+		// For REST API, we'll need to get the plugin instance to verify token.
+		$plugin            = $request->get_param( 'plugin' ) ?? 'edd';
+		$plugin_name       = $this->get_available_plugins()[ $plugin ] ?? 'EDD';
 		$plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
-		
+
 		if ( ! class_exists( $plugin_class_name ) ) {
 			return false;
 		}
 
 		$plugin_instance = $plugin_class_name::instance();
-		$api_token = $plugin_instance->get_plugin_data( 'api_token' );
+		$api_token       = $plugin_instance->get_plugin_data( 'api_token' );
 
 		return hash_equals( $signature, hash_hmac( 'SHA1', wp_json_encode( $payload ), $api_token ) );
 	}
@@ -765,6 +774,7 @@ final class Api {
 	 * @param string           $action  The action to execute.
 	 * @param \WP_REST_Request $request The REST request object.
 	 * @return array
+	 * @throws \Exception When action execution fails.
 	 * @since 0.0.1
 	 */
 	private function execute_action( string $action, \WP_REST_Request $request ): array {
@@ -778,8 +788,8 @@ final class Api {
 				return array( 'message' => 'Site has been disconnected' );
 
 			case 'get_fluentcrm_data':
-				// Set required properties for FluentCRM
-				$sync_type = strtolower( sanitize_key( $request->get_param( 'sync_type' ) ?? '' ) );
+				// Set required properties for FluentCRM.
+				$sync_type                    = strtolower( sanitize_key( $request->get_param( 'sync_type' ) ?? '' ) );
 				$this->plugin->customer_email = sanitize_email( $request->get_param( 'email' ) ?? '' );
 
 				if ( $sync_type ) {
@@ -797,8 +807,8 @@ final class Api {
 				}
 
 			case 'handle_autonami':
-				// Set required properties for Autonami
-				$sync_type = strtolower( sanitize_key( $request->get_param( 'sync_type' ) ?? '' ) );
+				// Set required properties for Autonami.
+				$sync_type                    = strtolower( sanitize_key( $request->get_param( 'sync_type' ) ?? '' ) );
 				$this->plugin->customer_email = sanitize_email( $request->get_param( 'email' ) ?? '' );
 
 				if ( $sync_type ) {
@@ -820,7 +830,7 @@ final class Api {
 				return $this->plugin->get_post_search_result( strtolower( $query ) );
 
 			case 'get_woocommerce_product_list':
-				// Use existing method logic
+				// Use existing method logic.
 				$query = new WC_Product_Query(
 					array(
 						'status' => 'publish',
@@ -828,7 +838,7 @@ final class Api {
 					)
 				);
 
-				$products = $query->get_products();
+				$products     = $query->get_products();
 				$product_list = array();
 
 				foreach ( $products as $product_id ) {
@@ -837,7 +847,7 @@ final class Api {
 						continue;
 					}
 
-					$thumbnail_id = get_post_thumbnail_id( $product_id );
+					$thumbnail_id    = get_post_thumbnail_id( $product_id );
 					$image_src_array = $thumbnail_id ? wp_get_attachment_image_src( $thumbnail_id ) : array();
 
 					$product_info = array(
@@ -855,8 +865,8 @@ final class Api {
 				return $product_list;
 
 			case 'get_woocommerce_order_status':
-				// Set required properties
-				$email = sanitize_email( $request->get_param( 'email' ) ?? '' );
+				// Set required properties.
+				$email    = sanitize_email( $request->get_param( 'email' ) ?? '' );
 				$order_id = sanitize_key( $request->get_param( 'order_id' ) ?? '' );
 
 				if ( ! method_exists( $this->plugin, 'order_status' ) ) {
@@ -883,7 +893,7 @@ final class Api {
 				$order = wc_get_order( $this->order_id );
 				if ( $this->quantity > 0 ) {
 					foreach ( $order->get_items() as $item_id => $item ) {
-						if ( $item['product_id'] == (string) $this->item_id ) {
+						if ( $item['product_id'] === (string) $this->item_id ) {
 							wc_update_order_item_meta( $item_id, '_qty', $this->quantity );
 							$order->calculate_totals();
 						}
@@ -902,23 +912,23 @@ final class Api {
 				return array( 'message' => 'Success' );
 
 			case 'add_item_on_woocommerce_order':
-				$product = wc_get_product_object( 'line_item', $this->item );
-				$item = new WC_Order_Item_Product();
-				$item->set_name( $product->name );
-				$item->set_quantity( $this->quantity );
-				$item->set_product_id( $product->id );
-				$item->set_subtotal( $product->price ?? 0 );
-				$item->set_total( $product->price * $this->quantity ?? 0 );
+				$product     = wc_get_product_object( 'line_item', $this->item );
+				$item_object = new WC_Order_Item_Product();
+				$item_object->set_name( $product->name );
+				$item_object->set_quantity( $this->quantity );
+				$item_object->set_product_id( $product->id );
+				$item_object->set_subtotal( $product->price ?? 0 );
+				$item_object->set_total( $product->price * $this->quantity ?? 0 );
 
 				$order = wc_get_order( $this->order_id );
-				$order->add_item( $item );
+				$order->add_item( $item_object );
 				$order->calculate_totals();
 				return array( 'message' => 'Success' );
 
 			case 'remove_item_from_woocommerce_order':
 				$order = wc_get_order( $this->order_id );
 				foreach ( $order->get_items() as $item_id => $item ) {
-					if ( $item['product_id'] == $this->item ) {
+					if ( $item['product_id'] === $this->item ) {
 						wc_delete_order_item( $item_id );
 					}
 				}
@@ -935,10 +945,11 @@ final class Api {
 	 *
 	 * @param \WP_REST_Request $request The REST request object.
 	 * @return array
+	 * @throws \Exception When plugin data cannot be prepared.
 	 * @since 0.0.1
 	 */
 	private function get_plugin_data( \WP_REST_Request $request ): array {
-		$email = sanitize_email( $request->get_param( 'email' ) ?? '' );
+		$email           = sanitize_email( $request->get_param( 'email' ) ?? '' );
 		$enable_shipping = $request->get_param( 'shipping_param' ) === '1';
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {

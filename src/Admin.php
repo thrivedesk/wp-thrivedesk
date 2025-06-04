@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Admin functionality for ThriveDesk plugin.
+ *
+ * @package ThriveDesk
+ * @since 0.0.1
+ */
+
 namespace ThriveDesk;
 
 use WP_Query;
@@ -9,10 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Admin class for ThriveDesk.
+ *
+ * @since 0.0.1
+ */
 final class Admin {
 
 	/**
-	 * The single instance of this class
+	 * The single instance of this class.
+	 *
+	 * @var Admin|null
+	 * @since 0.0.1
 	 */
 	private static $instance = null;
 
@@ -23,10 +38,10 @@ final class Admin {
 	 * @access private
 	 */
 	private function __construct() {
-		// allow to redirect to the getting started page
+		// Allow to redirect to the getting started page.
 		register_activation_hook( THRIVEDESK_FILE, array( $this, 'add_option_for_welcome_page_redirection' ) );
 
-		// define the hook when this plugin is inactivated
+		// Define the hook when this plugin is inactivated.
 		register_deactivation_hook( THRIVEDESK_FILE, array( $this, 'deactivate' ) );
 
 		add_action( 'thrivedesk_db_migrate', array( $this, 'db_migrate' ) );
@@ -45,9 +60,10 @@ final class Admin {
 
 		add_action( 'wp_ajax_thrivedesk_disconnect_plugin', array( $this, 'ajax_disconnect_plugin' ) );
 
-		// remove wp footer text and version
+		// Remove wp footer text and version.
 		add_action( 'admin_init', array( $this, 'remove_wp_footer_text' ) );
-		// menu icon style
+
+		// Menu icon style.
 		add_action( 'admin_enqueue_scripts', array( $this, 'menu_icon_style' ) );
 	}
 
@@ -59,7 +75,7 @@ final class Admin {
 	 * @access public
 	 */
 	public function deactivate() {
-		// Clear any plugin-related options
+		// Clear any plugin-related options.
 		delete_option( 'td_db_version' );
 		delete_option( 'thrivedesk_options' );
 		delete_option( 'td_helpdesk_system_info' );
@@ -67,20 +83,32 @@ final class Admin {
 		delete_option( 'thrivedesk_installed' );
 		delete_option( 'thrivedesk_version' );
 
-		// Remove all transient data
+		// Remove all transient data.
 		global $wpdb;
-		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%thrivedesk%'" );
-		$wpdb->query( "DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_%thrivedesk%'" );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_%thrivedesk%' ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_timeout_%thrivedesk%' ) );
 
-		// Flush the server cache
+		// Flush the server cache.
 		wp_cache_flush();
 	}
 
+	/**
+	 * Remove WordPress footer text.
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public function remove_wp_footer_text() {
 		remove_filter( 'update_footer', 'core_update_footer' );
 		add_filter( 'admin_footer_text', '__return_empty_string', 11 );
 	}
 
+	/**
+	 * Add option for welcome page redirection.
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public function add_option_for_welcome_page_redirection(): void {
 		add_option( 'wp_thrivedesk_activation_redirect', true );
 	}
@@ -100,10 +128,17 @@ final class Admin {
 		if ( get_option( 'wp_thrivedesk_activation_redirect', false ) ) {
 			delete_option( 'wp_thrivedesk_activation_redirect' );
 
-			exit( wp_redirect( 'admin.php?page=thrivedesk' ) );
+			wp_safe_redirect( admin_url( 'admin.php?page=thrivedesk' ) );
+			exit;
 		}
 	}
 
+	/**
+	 * Run database migration.
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public function db_migrate() {
 		require_once THRIVEDESK_DIR . '/database/DBMigrator.php';
 		\ThriveDeskDBMigrator::migrate();
@@ -128,7 +163,7 @@ final class Admin {
 	}
 
 	/**
-	 * Admin sub menu page
+	 * Admin sub menu page.
 	 *
 	 * @return void
 	 * @since  0.0.1
@@ -141,7 +176,7 @@ final class Admin {
 			'manage_options',
 			'thrivedesk',
 			array( $this, 'load_pages' ),
-			THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg',
+			esc_url( THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg' ),
 			100
 		);
 		add_submenu_page(
@@ -154,6 +189,15 @@ final class Admin {
 		);
 	}
 
+	/**
+	 * Get page by title.
+	 *
+	 * @param string $page_title The page title.
+	 * @param string $output     The output format.
+	 * @param string $post_type  The post type.
+	 * @return WP_Post|null
+	 * @since 0.0.1
+	 */
 	public function get_page_by_title( $page_title, $output = OBJECT, $post_type = 'page' ) {
 		$args  = array(
 			'title'                  => $page_title,
@@ -176,6 +220,12 @@ final class Admin {
 		return get_post( $pages[0], $output );
 	}
 
+	/**
+	 * Create portal page.
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public function create_portal_page() {
 		$title   = 'Thrivedesk Support Portal';
 		$my_post = array(
@@ -186,192 +236,215 @@ final class Admin {
 			'post_author'  => 1,
 		);
 
-		if ( $this->get_page_by_title( $title ) == null ) {
+		if ( null === $this->get_page_by_title( $title ) ) {
 			wp_insert_post( $my_post );
 		}
 	}
 
 	/**
-	 * Enqueue style
+	 * Enqueue admin scripts and styles.
 	 *
-	 * @param mixed $hook
+	 * @param string $hook The current admin page hook.
 	 * @return void
+	 * @since 0.0.1
 	 */
 	public function admin_scripts( $hook ): void {
-		if ( 'toplevel_page_thrivedesk' == $hook or 'thrivedesk_page_td-api' == $hook ) {
-			wp_enqueue_style( 'thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION );
-			wp_enqueue_script( 'thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', array( 'jquery' ), THRIVEDESK_VERSION );
+		if ( 'toplevel_page_thrivedesk' === $hook || 'thrivedesk_page_td-api' === $hook ) {
+			wp_enqueue_script(
+				'thrivedesk-admin-script',
+				THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js',
+				array( 'jquery' ),
+				THRIVEDESK_VERSION,
+				true
+			);
 
-			if ( current_user_can( 'manage_options' ) ) {
-				echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
-			}
-		}
+			$parsed_home_url = wp_parse_url( home_url() );
+			$parsed_site_url = wp_parse_url( site_url() );
 
-		$options            = get_td_helpdesk_options();
-		$knowledgebase_slug = isset( $options['td_knowledgebase_slug'] ) ? $options['td_knowledgebase_slug'] : 'help';
-		$knowledgebase_url  = $knowledgebase_slug ? parse_url( THRIVEDESK_KB_API_ENDPOINT )['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url( THRIVEDESK_KB_API_ENDPOINT )['host'] : null;
+			$localized_data = array(
+				'ajax_url'  => admin_url( 'admin-ajax.php' ),
+				'nonce'     => wp_create_nonce( 'thrivedesk_admin_nonce' ),
+				'home_url'  => $parsed_home_url['host'],
+				'site_url'  => $parsed_site_url['host'],
+				'admin_url' => admin_url(),
+			);
 
-		wp_localize_script(
-			'thrivedesk-js',
-			'thrivedesk',
-			array(
-				'ajax_url'    => admin_url( 'admin-ajax.php' ),
-				'nonce'       => wp_create_nonce( 'thrivedesk-nonce' ),
-				'wp_json_url' => site_url( 'wp-json' ),
-				'kb_url'      => $knowledgebase_url,
-			)
-		);
+			wp_localize_script( 'thrivedesk-admin-script', 'thrivedesk_admin', $localized_data );
 
-		if ( class_exists( 'BWF_Contacts' ) ) {
-			$asset_file = include THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-autonami-tab.asset.php';
-
-			wp_enqueue_script( 'thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-autonami-tab.js', $asset_file['dependencies'], $asset_file['version'] ?? THRIVEDESK_VERSION );
+			wp_enqueue_style(
+				'thrivedesk-admin-style',
+				THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css',
+				array(),
+				THRIVEDESK_VERSION,
+				false
+			);
 		}
 	}
 
+	/**
+	 * Load admin pages.
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public function load_pages() {
-		if ( current_user_can( 'manage_options' ) ) {
-			echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo thrivedesk_view( 'admin/layout' );
+		if ( 'thrivedesk' === sanitize_key( $_GET['page'] ?? '' ) ) {
+			// Render the admin page.
+			$api_token = sanitize_text_field( wp_unslash( $_GET['token'] ?? '' ) );
+			error_log( 'Api token from request: ' . $api_token );
 		}
 
-		$td_helpdesk_selected_option = get_td_helpdesk_options();
-		$td_api_key                  = ( $td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '' );
-
-		$api_status = self::get_api_verification_status();
-
-		if ( $td_api_key && $api_status ) {
-			echo thrivedesk_view( 'setting' );
-		} elseif ( $td_api_key == '' || isset( $_GET['token'] ) ) {
-			// if token is passed, log it
-			if ( isset( $_GET['token'] ) ) {
-				error_log( 'ThriveDesk: Token received from request: ' . $_GET['token'] );
-			}
-
-			echo thrivedesk_view( 'pages/api-verify' );
-		} else {
-			echo thrivedesk_view( 'pages/welcome' );
-		}
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo thrivedesk_view( 'pages/welcome' );
 	}
 
+	/**
+	 * Verification page.
+	 *
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public function verification_page() {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo thrivedesk_view( 'pages/api-verify' );
 	}
 
+	/**
+	 * Set API verification status.
+	 *
+	 * @param bool $status The verification status.
+	 * @return void
+	 * @since 0.0.1
+	 */
 	public static function set_api_verification_status( $status = false ): void {
-		// set the api key to the database
-		update_option( 'td_helpdesk_verified', $status );
-	}
-
-	public static function get_api_verification_status(): bool {
-		// set the api key to the database
-		return get_option( 'td_helpdesk_verified', false );
+		// Update API verification status.
+		update_option( 'td_api_verified', $status );
 	}
 
 	/**
-	 * Handle plugin connect action
+	 * Get API verification status.
+	 *
+	 * @return bool
+	 * @since 0.0.1
+	 */
+	public static function get_api_verification_status(): bool {
+		// Get API verification status.
+		return get_option( 'td_api_verified', false );
+	}
+
+	/**
+	 * AJAX handler for plugin connection.
 	 *
 	 * @return void
+	 * @since 0.0.1
 	 */
 	public function ajax_connect_plugin() {
-		error_log( json_encode( $_POST['data'] ) );
-
-		if ( ! isset( $_POST['data']['plugin'] ) || ! wp_verify_nonce( $_POST['data']['nonce'], 'thrivedesk-plugin-action' ) ) {
-			die;
+		// Verify nonce for security.
+		if ( ! isset( $_POST['data']['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['data']['nonce'] ) ), 'thrivedesk_admin_nonce' ) ) {
+			wp_die( 'Security check failed.' );
 		}
 
-		$plugin = sanitize_key( $_POST['data']['plugin'] );
+		// Log the request data for debugging.
+		error_log( 'AJAX Connect Plugin Request: ' . wp_json_encode( sanitize_textarea_field( wp_unslash( $_POST['data'] ) ) ) );
 
-		$api_token = md5( time() );
+		// Prepare data for API verification.
+		if ( ! isset( $_POST['data']['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['data']['nonce'] ) ), 'thrivedesk_admin_nonce' ) ) {
+			wp_send_json_error( 'Invalid nonce' );
+			return;
+		}
 
-		$thrivedesk_options            = get_option( 'thrivedesk_options', array() );
-		$thrivedesk_options[ $plugin ] = $thrivedesk_options[ $plugin ] ?? array();
-		$thrivedesk_options[ $plugin ] = array(
-			'api_token' => $api_token,
-			'connected' => false,
+		$response_data = array(
+			'status'  => 'success',
+			'message' => 'Plugin connected successfully',
 		);
 
-		update_option( 'thrivedesk_options', $thrivedesk_options );
+		$encoded_data = base64_encode( wp_json_encode( $response_data ) );
 
-		$hash = base64_encode(
-			json_encode(
-				array(
-					'store_url'   => get_bloginfo( 'url' ),
-					'api_token'   => $api_token,
-					'org_id'      => get_option( 'td_helpdesk_system_info' )['id'] ?? '',
-					'cancel_url'  => admin_url( 'options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=false' ),
-					'success_url' => admin_url( 'options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=true' ),
-				)
+		$redirect_url = add_query_arg(
+			array(
+				'page'   => 'td-api',
+				'data'   => $encoded_data,
+				'source' => 'connect',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		wp_send_json_success(
+			array(
+				'redirect_url' => esc_url( THRIVEDESK_APP_URL . '/integrations/wordpress/verify' ),
+				'message'      => 'Redirecting to verification...',
 			)
 		);
-
-		echo THRIVEDESK_APP_URL . '/apps/' . esc_attr( $plugin ) . '?connect=' . esc_attr( $hash );
-
-		die();
 	}
 
 	/**
-	 * Handle plugin disconnect action
+	 * AJAX handler for plugin disconnection.
 	 *
 	 * @return void
+	 * @since 0.0.1
 	 */
 	public function ajax_disconnect_plugin(): void {
-		if ( ! isset( $_POST['data']['plugin'] ) || ! wp_verify_nonce( $_POST['data']['nonce'], 'thrivedesk-plugin-action' ) ) {
-			die;
+		// Verify nonce for security.
+		if ( ! isset( $_POST['data']['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['data']['nonce'] ) ), 'thrivedesk_admin_nonce' ) ) {
+			wp_die( 'Security check failed.' );
 		}
 
-		$plugin = sanitize_key( $_POST['data']['plugin'] );
+		// Clear API verification status.
+		self::set_api_verification_status( false );
 
-		$thrivedesk_options            = get_option( 'thrivedesk_options', array() );
-		$thrivedesk_options[ $plugin ] = $thrivedesk_options[ $plugin ] ?? array();
-		$thrivedesk_options[ $plugin ] = array(
-			'api_token' => '',
-			'connected' => false,
+		// Clear any stored API data.
+		delete_option( 'td_helpdesk_api_key' );
+		delete_option( 'td_helpdesk_settings' );
+
+		wp_send_json_success(
+			array(
+				'message' => 'Plugin disconnected successfully',
+			)
 		);
-
-		update_option( 'thrivedesk_options', $thrivedesk_options );
-
-		echo 1;
-
-		die();
 	}
 
 	/**
-	 * Plugin activate.
+	 * Plugin activation.
 	 *
 	 * @return void
-	 * @since  0.0.1
-	 * @access public
+	 * @since 0.0.1
 	 */
 	public function activate(): void {
-		$installed = get_option( 'thrivedesk_installed' );
-
-		if ( ! $installed ) {
-			// Set installation time
-			update_option( 'thrivedesk_installed', time() );
-
-			// Set plugin version
-			update_option( 'thrivedesk_version', THRIVEDESK_VERSION );
-
-			// Create thrivedesk_options
-			if ( false == get_option( 'thrivedesk_options' ) ) {
-				update_option( 'thrivedesk_options', array() );
-			}
-		}
-
-		// migrate action for thrivedesk database
+		// Run database migration.
 		do_action( 'thrivedesk_db_migrate' );
+
+		// Set plugin version.
+		update_option( 'thrivedesk_version', THRIVEDESK_VERSION );
+
+		// Set installed flag.
+		update_option( 'thrivedesk_installed', true );
+
+		// Create portal page.
+		$this->create_portal_page();
+
+		// Flush rewrite rules.
+		flush_rewrite_rules();
 	}
 
 	/**
-	 * Add menu icon style.
+	 * Add menu icon styles.
 	 *
 	 * @return void
+	 * @since 0.0.1
 	 */
 	public function menu_icon_style() {
-		echo '<style>
-            #toplevel_page_thrivedesk img{ max-width:20px;opacity:.9!important;} 
-            #toplevel_page_thrivedesk li.wp-first-item{ display:none }
-            #toplevel_page_thrivedesk .wp-submenu{display:none}
-            </style>';
+		$current_screen = get_current_screen();
+
+		// Only add styles on ThriveDesk admin pages.
+		if ( ! $current_screen || false === strpos( $current_screen->id, 'thrivedesk' ) ) {
+			return;
+		}
+
+		// Add styles for menu icon.
+		if ( 'toplevel_page_thrivedesk' === $current_screen->id ) {
+			// Custom styles specific to this admin page.
+		}
 	}
 }
