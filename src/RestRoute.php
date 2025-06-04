@@ -1,3 +1,4 @@
+<?php 
 /**
  * RestRoute class for handling ThriveDesk REST API endpoints.
  *

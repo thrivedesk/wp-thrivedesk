@@ -1,3 +1,5 @@
+<?php 
+
 /**
  * API class for handling ThriveDesk API endpoints.
  *
