@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Plugin Coding Standards">
+	<description>A custom set of code standard rules for WordPress plugins.</description>
+
+	<!-- What to scan -->
+	<file>.</file>
+
+	<!-- Exclude vendor directory -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/assets/*</exclude-pattern>
+	<exclude-pattern>/resources/*</exclude-pattern>
+	<exclude-pattern>/scripts/*</exclude-pattern>
+
+	<!-- How to scan -->
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+
+	<!-- Rules: WordPress Coding Standards -->
+	<rule ref="WordPress">
+		<!-- Exclude some rules -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedInterfaceFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedTraitFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedNamespaceFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedInterfaceFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedTraitFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedNamespaceFound"/>
+	</rule>
+
+	<!-- Set minimum PHP version -->
+	<config name="testVersion" value="7.4-"/>
+
+	<!-- Set text domain -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="thrivedesk"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Allow short array syntax -->
+	<rule ref="Generic.Arrays.DisallowShortArraySyntax">
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax.Found"/>
+	</rule>
+
+	<!-- Set minimum WordPress version -->
+	<config name="minimum_supported_wp_version" value="5.0"/>
+</ruleset>
