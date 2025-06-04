@@ -25,7 +25,7 @@ if ( ! function_exists( 'thrivedesk_view' ) ) {
 				require_once $file_path;
 			}
 		} else {
-			wp_die( 'View not found' );
+			wp_die( 'View not found - ' . $file_path );
 		}
 	}
 }

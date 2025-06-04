@@ -88,6 +88,9 @@ final class ThriveDesk {
 	private function __construct() {
 		// Define constants.
 		$this->define_constants();
+
+		// Load helper functions after constants are defined
+		require_once THRIVEDESK_INC_DIR . '/helper.php';
 	}
 
 	/**
@@ -101,6 +104,10 @@ final class ThriveDesk {
 	 * @since  0.0.1
 	 */
 	public static function instance(): object {
+
+		// construct ThriveDesk class.
+		$thrivedesk = new self();
+
 		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ThriveDesk ) ) {
 
 			self::$instance = new self();
@@ -115,6 +122,7 @@ final class ThriveDesk {
 				self::$instance->admin = Admin::instance();
 			}
 
+			// include migration script
 			require_once THRIVEDESK_DIR . '/database/Scripts/MigrationScript.php';
 
 			MigrationScript::instance();
@@ -149,9 +157,6 @@ final class ThriveDesk {
 		$this->define( 'THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations' );
 		$this->define( 'THRIVEDESK_DB_VERSION', 1.2 );
 		$this->define( 'OPTION_THRIVEDESK_DB_VERSION', 'td_db_version' );
-
-		// Load helper functions after constants are defined
-		require_once THRIVEDESK_INC_DIR . '/helper.php';
 	}
 
 	/**
