@@ -18,7 +18,7 @@
 				<div class="text-center my-5" style="display: none;" id="td-search-spinner">
 					<div role="status">
 						<?php thrivedesk_view( '/icons/spinner.svg' ); ?>
-						<span class="sr-only">Loading...</span>
+						<span class="sr-only"><?php esc_html_e( 'Loading...', 'thrivedesk' ); ?></span>
 					</div>
 				</div>
 				<div class="overflow-y-scroll">
