@@ -6,7 +6,7 @@ use ThriveDesk\Plugin;
 use SmartPay\Customers\SmartPay_Customer;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -23,7 +23,6 @@ final class SmartPay extends Plugin {
 	 * @access private
 	 */
 	private function __construct() {
-		//
 	}
 
 	/**
@@ -37,7 +36,7 @@ final class SmartPay extends Plugin {
 	 * @since 0.0.1
 	 */
 	public static function instance() {
-		if (!isset(self::$instance) && !(self::$instance instanceof SmartPay)) {
+		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof SmartPay ) ) {
 			self::$instance = new self();
 		}
 
@@ -50,7 +49,7 @@ final class SmartPay extends Plugin {
 	 * @return boolean
 	 */
 	public static function is_plugin_active(): bool {
-		if (!function_exists('SmartPay') || !class_exists('SmartPay', false)) {
+		if ( ! function_exists( 'SmartPay' ) || ! class_exists( 'SmartPay', false ) ) {
 			return false;
 		}
 
@@ -63,15 +62,15 @@ final class SmartPay extends Plugin {
 	 * @return boolean
 	 */
 	public function is_customer_exist(): bool {
-		if (!$this->customer_email) {
+		if ( ! $this->customer_email ) {
 			return false;
 		}
 
-		if (!$this->customer) {
-			$this->customer = new SmartPay_Customer($this->customer_email);
+		if ( ! $this->customer ) {
+			$this->customer = new SmartPay_Customer( $this->customer_email );
 		}
 
-		if (!$this->customer->ID) {
+		if ( ! $this->customer->ID ) {
 			return false;
 		}
 
@@ -84,7 +83,7 @@ final class SmartPay extends Plugin {
 	 * @return array
 	 */
 	public function accepted_statuses(): array {
-		return ['Complete'];
+		return array( 'Complete' );
 	}
 
 	/**
@@ -93,33 +92,33 @@ final class SmartPay extends Plugin {
 	 * @return array
 	 */
 	public function get_customer(): array {
-		if (!$this->customer_email) {
-			return [];
+		if ( ! $this->customer_email ) {
+			return array();
 		}
 
-		if (!$this->customer) {
-			$this->customer = new SmartPay_Customer($this->customer_email);
+		if ( ! $this->customer ) {
+			$this->customer = new SmartPay_Customer( $this->customer_email );
 		}
 
-		if (!$this->customer->ID) {
-			return [];
+		if ( ! $this->customer->ID ) {
+			return array();
 		}
 
-		return [
+		return array(
 			'name'          => $this->customer->name ?? '',
-			'registered_at' => date('d F Y', strtotime($this->customer->created_at)) ?? '',
-		];
+			'registered_at' => date( 'd F Y', strtotime( $this->customer->created_at ) ) ?? '',
+		);
 	}
 
 	/**
 	 * Get the formated amount
 	 *
-	 * @param  float  $amount
+	 * @param  float $amount
 	 *
 	 * @return string
 	 */
-	public function get_formated_amount(float $amount): string {
-		return smartpay_amount_format($amount);
+	public function get_formated_amount( float $amount ): string {
+		return smartpay_amount_format( $amount );
 	}
 
 	/**
@@ -128,60 +127,63 @@ final class SmartPay extends Plugin {
 	 * @return array
 	 */
 	public function get_orders(): array {
-		$orders = [];
+		$orders = array();
 
-		if (!$this->is_customer_exist()) {
+		if ( ! $this->is_customer_exist() ) {
 			return $orders;
 		}
 
-		foreach ($this->customer->all_payments() as $order) {
+		foreach ( $this->customer->all_payments() as $order ) {
 
-			if ('live' != $order->mode) {
+			if ( 'live' != $order->mode ) {
 				continue;
 			}
 
-			array_push($orders, [
-				'order_id'        => $order->ID,
-				'amount'          => (float) $order->amount,
-				'amount_formated' => $this->get_formated_amount((float) $order->amount),
-				'date'            => date('d F Y', strtotime($order->date)),
-				'order_status'    => $order->status_nicename,
-			]);
+			array_push(
+				$orders,
+				array(
+					'order_id'        => $order->ID,
+					'amount'          => (float) $order->amount,
+					'amount_formated' => $this->get_formated_amount( (float) $order->amount ),
+					'date'            => date( 'd F Y', strtotime( $order->date ) ),
+					'order_status'    => $order->status_nicename,
+				)
+			);
 		}
 
 		return $orders;
 	}
 
-	public function plugin_data(string $key = '') {
+	public function plugin_data( string $key = '' ) {
 		$thrivedesk_options = thrivedesk_options();
 
-		$options = $thrivedesk_options['smartpay'] ?? [];
+		$options = $thrivedesk_options['smartpay'] ?? array();
 
-		return $key ? ($options[$key] ?? '') : $options;
+		return $key ? ( $options[ $key ] ?? '' ) : $options;
 	}
 
 	public function connect() {
-		$thrivedesk_options             = get_option('thrivedesk_options', []);
-		$thrivedesk_options['smartpay'] = $thrivedesk_options['smartpay'] ?? [];
+		$thrivedesk_options             = get_option( 'thrivedesk_options', array() );
+		$thrivedesk_options['smartpay'] = $thrivedesk_options['smartpay'] ?? array();
 
 		$thrivedesk_options['smartpay']['connected'] = true;
 
-		update_option('thrivedesk_options', $thrivedesk_options);
+		update_option( 'thrivedesk_options', $thrivedesk_options );
 	}
 
 	public function disconnect() {
-		$thrivedesk_options             = get_option('thrivedesk_options', []);
-		$thrivedesk_options['smartpay'] = $thrivedesk_options['smartpay'] ?? [];
+		$thrivedesk_options             = get_option( 'thrivedesk_options', array() );
+		$thrivedesk_options['smartpay'] = $thrivedesk_options['smartpay'] ?? array();
 
-		$thrivedesk_options['smartpay'] = [
+		$thrivedesk_options['smartpay'] = array(
 			'api_token' => '',
 			'connected' => false,
-		];
+		);
 
-		update_option('thrivedesk_options', $thrivedesk_options);
+		update_option( 'thrivedesk_options', $thrivedesk_options );
 	}
 
-	public function get_plugin_data(string $key = '') {
+	public function get_plugin_data( string $key = '' ) {
 		// /
 	}
 }
