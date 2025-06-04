@@ -41,7 +41,7 @@ class PortalService {
 	}
 
 	public function check_portal_access(  ) {
-		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+		$apiKey = isset($_POST['data']['td_helpdesk_api_key']) ? sanitize_text_field($_POST['data']['td_helpdesk_api_key']) : '';
 		if (empty( $apiKey ) ) {
 			echo json_encode( [
 				'code' => 422,

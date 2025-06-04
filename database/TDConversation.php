@@ -17,8 +17,11 @@ class TDConversation
         $charset_collate = $wpdb->get_charset_collate();
         $table_name      = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-            $sql = "CREATE TABLE $table_name (
+        // Use prepared statement for checking if table exists
+        $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name));
+        
+        if ($table_exists != $table_name) {
+            $sql = $wpdb->prepare("CREATE TABLE %i (
                 `id` varchar(50) NOT NULL UNIQUE,
                 `title` varchar(192) NOT NULL,
                 `ticket_id` bigint unsigned NOT NULL,
@@ -29,7 +32,7 @@ class TDConversation
                 `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 `deleted_at` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY  (id)
-            ) $charset_collate;";
+            ) %s", $table_name, $charset_collate);
 
             dbDelta($sql);
             add_option((string)OPTION_THRIVEDESK_DB_VERSION, THRIVEDESK_DB_VERSION);
