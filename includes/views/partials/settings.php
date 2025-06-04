@@ -68,7 +68,19 @@ $current_user = wp_get_current_user();
 	<div class="space-y-1">
 		<div class="td-card-heading">
 			<div class="text-base font-bold"><?php esc_html_e( 'Live Chat Assistant', 'thrivedesk' ); ?></div>
-			<p><?php echo wp_kses( __( 'Add live chat assistant to your website. To create your assistant click <a href="' . esc_url( THRIVEDESK_APP_URL . '/chat/assistants' ) . '" target="_blank">here</a>. And you can choose the routes where the assistant should not be visible.', 'thrivedesk' ), array( 'a' => array( 'href' => array(), 'target' => array() ) ) ); ?></p>
+			<p>
+			<?php
+			echo wp_kses(
+				__( 'Add live chat assistant to your website. To create your assistant click <a href="' . esc_url( THRIVEDESK_APP_URL . '/chat/assistants' ) . '" target="_blank">here</a>. And you can choose the routes where the assistant should not be visible.', 'thrivedesk' ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => array(),
+					),
+				)
+			);
+			?>
+			</p>
 		</div>
 		<div class="td-card space-y-2">
 			<?php if ( ! empty( $td_assistants ) ) : ?>
@@ -114,7 +126,19 @@ $current_user = wp_get_current_user();
 							<path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
 							<path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
 						</svg></span>
-					<span><?php echo wp_kses( __( 'No Assistant found. Please <a href="' . esc_url( THRIVEDESK_APP_URL . '/chat/assistants' ) . '" target="_blank">create a new Assistant</a> and return at a later time.', 'thrivedesk' ), array( 'a' => array( 'href' => array(), 'target' => array() ) ) ); ?></span>
+					<span>
+					<?php
+					echo wp_kses(
+						__( 'No Assistant found. Please <a href="' . esc_url( THRIVEDESK_APP_URL . '/chat/assistants' ) . '" target="_blank">create a new Assistant</a> and return at a later time.', 'thrivedesk' ),
+						array(
+							'a' => array(
+								'href'   => array(),
+								'target' => array(),
+							),
+						)
+					);
+					?>
+							</span>
 				</p>
 			<?php endif; ?>
 		</div>
@@ -188,7 +212,19 @@ $current_user = wp_get_current_user();
 						<!-- ticket form page selection  -->
 						<div class="bg-gray-50 border p-4 rounded">
 							<label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e( 'Ticket Form Page', 'thrivedesk' ); ?></label>
-							<div class="text-sm"><?php echo wp_kses( __( 'Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk' ), array( 'a' => array( 'href' => array(), 'target' => array() ) ) ); ?></div>
+							<div class="text-sm">
+							<?php
+							echo wp_kses(
+								__( 'Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk' ),
+								array(
+									'a' => array(
+										'href'   => array(),
+										'target' => array(),
+									),
+								)
+							);
+							?>
+							</div>
 							<select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
 								<option value=""> <?php esc_html_e( 'Select a page', 'thrivedesk' ); ?> </option>
 								<?php foreach ( get_pages() as $key => $page ) : ?>
