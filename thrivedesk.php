@@ -152,6 +152,9 @@ final class ThriveDesk
         $this->define('THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations');
         $this->define('THRIVEDESK_DB_VERSION', 1.2);
         $this->define('OPTION_THRIVEDESK_DB_VERSION', 'td_db_version');
+
+        // Load helper functions after constants are defined
+        require_once THRIVEDESK_INC_DIR . '/helper.php';
     }
 
     /**

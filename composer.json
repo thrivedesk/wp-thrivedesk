@@ -13,11 +13,16 @@
 			"email": "pronobmozumder.info@gmail.com"
 		}
 	],
-	"require": {},
 	"require-dev": {
-		"squizlabs/php_codesniffer": "^3.7",
-		"wp-coding-standards/wpcs": "^3.0",
-		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+		"squizlabs/php_codesniffer": "^3.13",
+		"wp-coding-standards/wpcs": "^3.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"phpcompatibility/php-compatibility": "^9.3",
+		"php-stubs/wordpress-stubs": "^6.8",
+		"php-stubs/woocommerce-stubs": "^9.8",
+		"php-parallel-lint/php-parallel-lint": "^1.4",
+		"php-parallel-lint/php-console-highlighter": "^1.0",
+		"phpstan/phpstan": "^2.1"
 	},
 	"autoload": {
 		"psr-4": {
@@ -26,10 +31,16 @@
 				"src/Abstracts",
 				"Hooks/"
 			]
-		},
-		"files": [
-			"includes/helper.php"
-		]
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"ThriveDesk\\": [
+				"src/",
+				"src/Abstracts",
+				"Hooks/"
+			]
+		}
 	},
 	"scripts": {
 		"phpcs": "phpcs --standard=phpcs.xml",

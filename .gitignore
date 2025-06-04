@@ -70,3 +70,7 @@ vendor/dealerdirect
 vendor/squizlabs
 vendor/wp-coding-standards
 vendor/phpcsstandards/
+vendor/php-parallel-lint/
+vendor/php-stubs/
+vendor/phpcompatibility/
+vendor/phpstan/
