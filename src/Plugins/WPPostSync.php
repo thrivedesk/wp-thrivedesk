@@ -5,7 +5,7 @@ namespace ThriveDesk\Plugins;
 use ThriveDesk\Plugin;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -42,7 +42,7 @@ final class WPPostSync extends Plugin {
 	 * @return array
 	 */
 	public function accepted_statuses(): array {
-		return [];
+		return array();
 	}
 
 	/**
@@ -51,7 +51,7 @@ final class WPPostSync extends Plugin {
 	 * @return array
 	 */
 	public function get_customer(): array {
-		return [];
+		return array();
 	}
 
 	/**
@@ -60,19 +60,18 @@ final class WPPostSync extends Plugin {
 	 * @return array
 	 */
 	public function get_orders(): array {
-		return [];
+		return array();
 	}
 
 	/**
 	 * Main WPPostSync Instance.
-	 *
 	 *
 	 * @return WPPostSync|null
 	 * @access public
 	 * @since 0.8.0
 	 */
 	public static function instance(): ?WPPostSync {
-		if (!isset(self::$instance) && !(self::$instance instanceof WPPostSync)) {
+		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPPostSync ) ) {
 			self::$instance = new self();
 		}
 
@@ -80,90 +79,97 @@ final class WPPostSync extends Plugin {
 	}
 
 	public function connect() {
-		$thrivedesk_options               = get_option('thrivedesk_options', []);
-		$thrivedesk_options['wppostsync'] = $thrivedesk_options['wppostsync'] ?? [];
+		$thrivedesk_options               = get_option( 'thrivedesk_options', array() );
+		$thrivedesk_options['wppostsync'] = $thrivedesk_options['wppostsync'] ?? array();
 
 		$thrivedesk_options['wppostsync']['connected'] = true;
 
-		update_option('thrivedesk_options', $thrivedesk_options);
+		update_option( 'thrivedesk_options', $thrivedesk_options );
 	}
 
 	public function disconnect() {
-		$thrivedesk_options               = get_option('thrivedesk_options', []);
-		$thrivedesk_options['wppostsync'] = $thrivedesk_options['wppostsync'] ?? [];
+		$thrivedesk_options               = get_option( 'thrivedesk_options', array() );
+		$thrivedesk_options['wppostsync'] = $thrivedesk_options['wppostsync'] ?? array();
 
-		$thrivedesk_options['wppostsync'] = [
+		$thrivedesk_options['wppostsync'] = array(
 			'api_token' => '',
 			'connected' => false,
-		];
+		);
 
-		update_option('thrivedesk_options', $thrivedesk_options);
+		update_option( 'thrivedesk_options', $thrivedesk_options );
 	}
 
 	/**
-	 * @param  string  $key
+	 * @param  string $key
 	 *
 	 * @return array|mixed|string
 	 * @since 0.8.0
 	 */
-	public function get_plugin_data(string $key = '') {
+	public function get_plugin_data( string $key = '' ) {
 		$thrivedesk_options = thrivedesk_options();
 
-		$options = $thrivedesk_options['wppostsync'] ?? [];
+		$options = $thrivedesk_options['wppostsync'] ?? array();
 
-		return $key ? ($options[$key] ?? '') : $options;
+		return $key ? ( $options[ $key ] ?? '' ) : $options;
 	}
 
 	/**
-	 * @param  string  $query_string for search among all post type
+	 * @param  string $query_string for search among all post type
 	 *
 	 * @access public
 	 * @since 0.8.0
 	 */
-	public function get_post_search_result(string $query_string = ''): array {
+	public function get_post_search_result( string $query_string = '' ): array {
 		$td_helpdesk_settings = get_td_helpdesk_options();
-		$post_sync_types = $td_helpdesk_settings['td_helpdesk_post_sync'] ?? false;
+		$post_sync_types      = $td_helpdesk_settings['td_helpdesk_post_sync'] ?? false;
 
-		if ( !$post_sync_types ) {
-			return [
-				'data' => []
-			];
+		if ( ! $post_sync_types ) {
+			return array(
+				'data' => array(),
+			);
 		}
 
-		$x_query      = new \WP_Query(
-			[
+		$x_query = new \WP_Query(
+			array(
 				's'         => $query_string,
 				'post_type' => $post_sync_types,
-			]
+			)
 		);
 
-		$search_posts = [];
-		while ($x_query->have_posts()) :
+		$search_posts = array();
+		while ( $x_query->have_posts() ) :
 			$x_query->the_post();
-			$post_categories_array      = get_the_category(get_the_ID());
-			$post_title                 = $this->get_truncated_post_title(html_entity_decode(get_the_title(),
-				ENT_NOQUOTES, 'UTF-8'));
-			$search_posts[get_the_ID()] = [
+			$post_categories_array        = get_the_category( get_the_ID() );
+			$post_title                   = $this->get_truncated_post_title(
+				html_entity_decode(
+					get_the_title(),
+					ENT_NOQUOTES,
+					'UTF-8'
+				)
+			);
+			$search_posts[ get_the_ID() ] = array(
 				'id'         => get_the_ID(),
 				'title'      => $post_title,
-				'categories' => count($post_categories_array) ? implode(', ',
-					wp_list_pluck($post_categories_array, 'name')) : 'Category not available',
+				'categories' => count( $post_categories_array ) ? implode(
+					', ',
+					wp_list_pluck( $post_categories_array, 'name' )
+				) : 'Category not available',
 				'link'       => get_the_permalink(),
-			];
+			);
 
 		endwhile;
 
 		wp_reset_query();
 
-		if (empty($search_posts)) {
-			return [
-				'data' => [],
-			];
+		if ( empty( $search_posts ) ) {
+			return array(
+				'data' => array(),
+			);
 		} else {
-			return [
-				'count' => count($search_posts) . ' result found',
+			return array(
+				'count' => count( $search_posts ) . ' result found',
 				'data'  => $search_posts,
-			];
+			);
 		}
 	}
 
@@ -175,9 +181,9 @@ final class WPPostSync extends Plugin {
 	 * @return string
 	 * @since 0.8.0
 	 */
-	public function get_truncated_post_title($title): string {
-		if (mb_strwidth($title, 'UTF-8') > self::POST_TITLE_LIMIT) {
-			return rtrim(mb_strimwidth($title, 0, self::POST_TITLE_LIMIT, '', 'UTF-8')) . '...';
+	public function get_truncated_post_title( $title ): string {
+		if ( mb_strwidth( $title, 'UTF-8' ) > self::POST_TITLE_LIMIT ) {
+			return rtrim( mb_strimwidth( $title, 0, self::POST_TITLE_LIMIT, '', 'UTF-8' ) ) . '...';
 		}
 
 		return $title;

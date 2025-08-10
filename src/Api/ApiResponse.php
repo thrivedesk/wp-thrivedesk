@@ -3,7 +3,7 @@
 namespace ThriveDesk\Api;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -34,7 +34,7 @@ class ApiResponse {
 	 *
 	 * @var Array|Object
 	 */
-	public $data = [];
+	public $data = array();
 
 	/**
 	 * Construct Response class.
@@ -45,41 +45,41 @@ class ApiResponse {
 	public function __construct() {
 	}
 
-	public function status_code(int $status_code): object {
+	public function status_code( int $status_code ): object {
 		$this->status_code = $status_code;
 
 		return $this;
 	}
 
-	public function message(string $message): object {
+	public function message( string $message ): object {
 		$this->message = $message;
 
 		return $this;
 	}
 
-	public function data(array $data): object {
+	public function data( array $data ): object {
 		$this->data = $data;
 
 		return $this;
 	}
 
-	public function error(int $status_code, string $message = '') {
-		return $this->status_code($status_code)->message($message)->send();
+	public function error( int $status_code, string $message = '' ) {
+		return $this->status_code( $status_code )->message( $message )->send();
 	}
 
-	public function success(int $status_code = 200, array $data = [], string $message = '') {
-		return $this->status_code($status_code)->data($data)->message($message)->send();
+	public function success( int $status_code = 200, array $data = array(), string $message = '' ) {
+		return $this->status_code( $status_code )->data( $data )->message( $message )->send();
 	}
 
 	public function send(): void {
-		$response = [
+		$response = array(
 			'message' => $this->message,
-		];
+		);
 
-		if (true === $this->status && $this->data) {
+		if ( true === $this->status && $this->data ) {
 			$response['data'] = $this->data;
 		}
 
-		wp_send_json($response, $this->status_code);
+		wp_send_json( $response, $this->status_code );
 	}
 }
