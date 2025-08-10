@@ -1,16 +1,22 @@
-=== WordPress Helpdesk & Live Chat Plugin Powered by AI - ThriveDesk ===
+=== ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base ===
 Contributors: thrivedesk
-Tags: helpdesk, support ticket, livechat, chatbot, knowledge base, help center, customer care,  woocommerce, surecart, freemius
+
+Tags: chat, chatbot, livechat, helpdesk, help center, live chat,  woocommerce, surecart, freemius
 Requires at least: 4.9
 Tested up to: 6.8
 Stable Tag: 2.0.11
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
-Level up WordPress support with ThriveDesk Live Chat — instant replies, smart engagement, and full knowledge base in under a minute.
+Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers’ questions, engage website visitors, generate leads, and increase sales.
 
 == Description ==
-Your search for [WordPress helpdesk plugin](https://www.thrivedesk.com/wordpress) ends here. ThriveDesk is complete support ticketing, live chat and knowledge base solution for WordPress powered website.
+
+🛟 ThriveDesk - Live Chat and Helpdesk for WordPress with AI Chatbot, Ticketing, Knowledge Base, Customers Support & Sales Tools.
+
+Your search for [AI chatbot for WordPress](https://www.thrivedesk.com/wordpress) ends here. 
+
+ThriveDesk is complete support ticketing, live chat, chatbot and knowledge base solution for WordPress powered website.
 
 ### Help Desk Plugin For WordPress ###
 
