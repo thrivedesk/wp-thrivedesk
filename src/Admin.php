@@ -206,6 +206,10 @@ final class Admin
         if ('toplevel_page_thrivedesk' == $hook OR 'thrivedesk_page_td-api' == $hook) {
             wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', THRIVEDESK_VERSION);
             wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], THRIVEDESK_VERSION);
+
+            if (current_user_can( 'manage_options' )) {
+                echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
+            }
         }
 
         $options = get_td_helpdesk_options();
@@ -227,10 +231,6 @@ final class Admin
             $asset_file = include(THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-autonami-tab.asset.php');
 
             wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-autonami-tab.js', $asset_file['dependencies'], $asset_file['version'] ?? THRIVEDESK_VERSION);
-        }
-
-        if (current_user_can( 'manage_options' )) {
-            echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
         }
     }
 

@@ -1,0 +1,287 @@
+*** WooCommerce Extension Changelog ***
+
+2025-02-13 - version 2.0.10
+
+* Fixed - Updated admin styles for WP notifications
+
+2025-02-10 - version 2.0.9
+
+* Updated - Application connection with organization
+* Fixed - App connection with organization
+
+2024-11-12 - version 2.0.8
+
+* Fixed - Unable to install app due to incorrect organization mapping
+* Fixed - Made system info update fully functional (non-event based)
+* Added - Ability to change organization during connection
+
+2024-10-20 - version 2.0.7
+
+* Fixed - Critical security issue (XSS token vulnerability)
+
+2024-09-29 - version 2.0.6
+
+* Fixed - Event exposure issue (Note)
+
+2024-09-28 - version 2.0.5
+
+* Fixed - System info mismatch
+
+2024-05-16 - version 2.0.4
+
+* Fixed - FunnelKit plugin identifier
+* Added - Assistant visibility control
+* Added - Organization info on dashboard
+* Added - Organization validation
+
+2024-04-01 - version 2.0.3
+
+* Fixed - WooCommerce product data missing issue
+* Fixed - FunnelKit namespace issue
+
+2024-03-13 - version 2.0.2
+
+* Updated - Enhanced WooCommerce integration
+
+2024-03-11 - version 2.0.1
+
+* Updated - Modal UI
+* Fixed - Infinite search loading
+* Fixed - Knowledge warnings
+
+2024-03-01 - version 2.0.0
+
+* Added - Optimized connection process with ThriveDesk
+* Added - Knowledge base integration on portal page
+* Added - Dedicated portal page
+* Updated - Reorganized dashboard UI and settings
+
+2023-12-18 - version 1.2.4
+
+* Added - Plugin moved to main menu
+
+2023-12-01 - version 1.2.3
+
+* Added - WooCommerce custom order status support
+
+2023-11-15 - version 1.2.2
+
+* Updated - Assets
+
+2023-11-01 - version 1.2.1
+
+* Added - WooCommerce custom order ID support
+* Added - WooCommerce AfterShip plugin support
+
+2023-10-10 - version 1.2.0
+
+* Fixed - User data conflict
+* Fixed - Portal page caching
+* Fixed - API key verification state
+* Updated - Portal page UI for theme compatibility
+
+2023-08-18 - version 1.1.4
+
+* Fixed - EDD order overview issue
+* Updated - WooCommerce shipping details warning
+
+2023-07-10 - version 1.1.3
+
+* Fixed - Portal access issue
+* Updated - New plans for WPPortal
+
+2023-06-18 - version 1.1.2
+
+* Fixed - Token authentication 2.0
+* Updated - Warning messages
+* Updated - Error handling
+
+2023-06-01 - version 1.1.1
+
+* Added - Support tab on WooCommerce my account page
+* Fixed - Token verification issue
+* Updated - Routing
+
+2023-05-10 - version 1.1.0
+
+* Updated - WooCommerce Integration V2
+
+2023-04-12 - version 1.0.18
+
+* Fixed - Revert pro plan
+
+2023-04-01 - version 1.0.17
+
+* Updated - Starter plan support
+
+2023-03-25 - version 1.0.16
+
+* Updated - New plan added
+
+2023-03-10 - version 1.0.15
+
+* Updated - ThriveDesk plan list for Portal
+
+2023-02-14 - version 1.0.14
+
+* Added - Permission check for migration script
+
+2023-01-28 - version 1.0.13
+
+* Updated - Migration script
+
+2023-01-10 - version 1.0.12
+
+* Fixed - Legacy post type support for WPPostSync
+
+2022-12-20 - version 1.0.11
+
+* Updated - ThriveDesk plan list
+
+2022-12-05 - version 1.0.10
+
+* Fixed - Portal feature availability issue
+
+2022-11-18 - version 1.0.9
+
+* Updated - Admin layout
+* Added - Gravatar support for conversations
+* Fixed - Knowledge base filtering
+* Fixed - Style issues and minor bugs
+
+2022-11-01 - version 1.0.8
+
+* Added - Translation file
+* Added - RTL support
+
+2022-10-20 - version 1.0.7
+
+* Added - Footer credit on conversation page
+* Fixed - WP footer overlap on portal settings
+* Fixed - UTF-8 email parsing issue
+
+2022-10-05 - version 1.0.6
+
+* Fixed - Unable to deselect assistant
+* Fixed - Conversations not fetched from API
+* Updated - No ticket message
+
+2022-09-22 - version 1.0.5
+
+* Added - WP Post Sync option in settings
+
+2022-09-08 - version 1.0.4
+
+* Added - Caching for performance
+* Fixed - Blank portal area after verification
+* Fixed - Search provider bug
+* Fixed - Style/script loading issue
+
+2022-08-25 - version 1.0.3
+
+* Fixed - Undefined variable error
+* Improved - API error handling
+
+2022-08-10 - version 1.0.2
+
+* Fixed - Conversation details display issue
+
+2022-07-28 - version 1.0.1
+
+* Updated - Deployment image
+
+2022-07-15 - version 1.0.0
+
+* New - WordPress portal with real-time KB search
+* New - Improved UI and features
+
+2022-06-01 - version 0.10.1
+
+* Updated - Readme workflow
+
+2022-05-15 - version 0.10.0
+
+* New - Guest order sync
+* Improved - Customer, product, and shipping details
+
+2022-04-10 - version 0.9.8
+
+* Stable release
+
+2022-03-25 - version 0.9.7
+
+* Updated - ThriveDesk app URL
+
+2022-03-10 - version 0.9.6
+
+* Improved - Security and performance
+
+2022-02-20 - version 0.9.5
+
+* Tested - Compatibility with WP 5.9
+
+2022-02-05 - version 0.9.4
+
+* Fixed - Autonami lists/tags info
+
+2022-01-18 - version 0.9.3
+
+* Added - EDD customer info
+* Fixed - Code formatting
+
+2022-01-01 - version 0.9.2
+
+* Fixed - REST route warning
+* Improved - REST route call
+
+2021-12-10 - version 0.9.1
+
+* Fixed - Database migration bug
+
+2021-11-25 - version 0.9.0
+
+* New - Autonami integration
+* New - WooCommerce order status check
+* Improved - FluentCRM integration
+
+2021-10-20 - version 0.8.3
+
+* Fixed - WP Post Sync UI issues
+
+2021-09-30 - version 0.8.0
+
+* New - WP Post Sync integration
+* Improved - API request security
+
+2021-08-15 - version 0.7.0
+
+* New - FluentCRM integration
+* Fixed - Minor typos
+
+2021-07-10 - version 0.6.2
+
+* Fixed - ThriveDesk connection error
+* Fixed - Link color override
+
+2021-06-20 - version 0.6.0
+
+* New - Plugin design and WooCommerce integration
+* New - WooCommerce Software License support
+* Fixed - EDD issues
+
+2021-05-05 - version 0.0.5
+
+* Added - EDD Software License support
+
+2021-04-10 - version 0.0.4
+
+* Added - Connect/disconnect status, integrations page
+* Updated - API validation
+
+2021-03-20 - version 0.0.3
+
+* Improved - API request/response security
+
+2021-02-15 - version 0.0.1
+
+* Initial release (Sep 9, 2020)
