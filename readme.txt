@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: chat, chatbot, livechat, helpdesk, help center, live chat,  woocommerce, surecart, freemius
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.0.11
+Stable Tag: 2.0.12
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
@@ -238,7 +238,12 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
-= 2.0.10 =
+
+= 2.0.12 =
+- Fixed : Plugin name for Copyright issue
+- Improved : Merged code quality fix.
+
+= 2.0.11 =
 - New: Changelog.txt support for WooCommerce store
 
 = 2.0.10 =

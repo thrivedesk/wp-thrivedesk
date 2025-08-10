@@ -1,5 +1,15 @@
 *** WooCommerce Extension Changelog ***
 
+2025-08-10 - version 2.0.12
+
+* Fixed - Plugin name for Copyright issue
+* Improved - Merged code quality fix.
+
+2025-08-10 - version 2.0.11
+
+* WooCommerce store changelog support
+
+
 2025-02-13 - version 2.0.10
 
 * Fixed - Updated admin styles for WP notifications
