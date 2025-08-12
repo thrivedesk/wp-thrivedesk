@@ -179,7 +179,7 @@ $current_user = wp_get_current_user();
                         <!-- ticket form page selection  -->
                         <div class="bg-gray-50 border p-4 rounded">
                             <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e('Ticket Form Page', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php esc_html_e('Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk') ?></div>
+                            <div class="text-sm"><?php echo wp_kses_post('Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk') ?></div>
                             <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
                                 <option value=""> <?php esc_html_e('Select a page', 'thrivedesk'); ?> </option>
                                 <?php foreach (get_pages() as $key => $page) : ?>

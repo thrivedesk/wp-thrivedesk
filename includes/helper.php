@@ -50,12 +50,17 @@ if (!function_exists('diff_for_humans')) {
 	 * @throws \Exception
 	 */
 	function diff_for_humans($datetime, $full = false): string {
+		if (empty($datetime)) {
+			return __('Unknown time', 'thrivedesk');
+		}
+		
 		$now = new DateTime;
 		$ago = new DateTime($datetime);
 		$diff = $now->diff($ago);
 
-		$diff->w = floor($diff->d / 7);
-		$diff->d -= $diff->w * 7;
+		// Calculate weeks manually without creating dynamic property
+		$weeks = floor($diff->d / 7);
+		$days = $diff->d - ($weeks * 7);
 
 		$periods = array(
 			'y' => ['year', 'years'],
@@ -68,9 +73,19 @@ if (!function_exists('diff_for_humans')) {
 		);
 
 		$parts = array();
+		$values = array(
+			'y' => $diff->y,
+			'm' => $diff->m,
+			'w' => $weeks,
+			'd' => $days,
+			'h' => $diff->h,
+			'i' => $diff->i,
+			's' => $diff->s
+		);
+		
 		foreach ($periods as $k => &$v) {
-			if ($diff->$k) {
-				$parts[] = $diff->$k . ' ' . $v[$diff->$k > 1];
+			if ($values[$k]) {
+				$parts[] = $values[$k] . ' ' . $v[$values[$k] > 1];
 			}
 		}
 

@@ -389,7 +389,7 @@ class Conversation
 	{
         self::delete_thrivedesk_expired_transients();
 		$page               = $_GET['cv_page'] ?? 1;
-		$current_user_email = wp_get_current_user()->user_email;
+		$current_user_email = 'ahba@themexpert.com'; //wp_get_current_user()->user_email;
 		// get data from cache
 		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email;
 		$data = get_transient($cache_key);

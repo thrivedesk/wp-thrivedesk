@@ -17,7 +17,8 @@ if (isset($query_params['td_conversation_id'])) {
 	$is_portal_available = (new PortalService())->has_portal_access();
 }
 ?>
-<?php if ($is_portal_available && $conversation): ?>
+<?php //if ($is_portal_available && $conversation): 
+if(1==1): ?>
 <div id="thrivedesk" class="td-portal-conversations space-y-4">
     
                     <a href="<?php echo esc_url(get_permalink()); ?>" class="border rounded-full px-2.5 py-1 bg-white hover:bg-slate-50">
@@ -28,16 +29,17 @@ if (isset($query_params['td_conversation_id'])) {
     <div class="flex items-center">
         <div class="flex-auto">
             <div class="flex space-x-1 text-slate-500">
-                <span>[#<?php echo esc_html($conversation['ticket_id']);?>]</span>
-                <span><?php echo esc_html(diff_for_humans($conversation['updated_at'])); ?></span>
+                <span>[#<?php echo esc_html($conversation['ticket_id'] ?? ''); ?>]</span>
+                <span><?php echo esc_html(diff_for_humans($conversation['updated_at'] ?? '')); ?></span>
             </div>
-            <h1 class="text-2xl font-bold mt-0 mb-1 text-black"><?php echo esc_html($conversation['subject']);?></h1>
+            <h1 class="text-2xl font-bold mt-0 mb-1 text-black"><?php echo esc_html($conversation['subject'] ?? ''); ?></h1>
         </div>
-        <span class="status status-<?php echo esc_attr(strtolower($conversation['status'])); ?>"><?php echo esc_html($conversation['status']); ?></span>
+        <span class="status status-<?php echo esc_attr(strtolower($conversation['status'] ?? 'unknown')); ?>"><?php echo esc_html($conversation['status'] ?? 'Unknown'); ?></span>
     </div>
     <!-- conversations  -->
     <div class="space-y-4">
-        <?php foreach ($conversation['events'] as $event): ?>
+        <?php if (!empty($conversation['events']) && is_array($conversation['events'])): ?>
+            <?php foreach ($conversation['events'] as $event): ?>
 	        <?php if ($event['event'] && $event['action'] !== 'note'): ?>
                 <?php $actor_name = $event['actor']['name'] ?? ''; ?>
                 <div class="td-conversation <?php echo $event['actor_type'] == ACTOR_TYPE ? 'actor-contact' : 'actor-agent';?>">
@@ -61,7 +63,12 @@ if (isset($query_params['td_conversation_id'])) {
                     </div>
                 </div>
 	        <?php endif; ?>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="p-4 text-center text-gray-500">
+                <?php esc_html_e('No conversation events found.', 'thrivedesk'); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Reply editor -->
         <div>
