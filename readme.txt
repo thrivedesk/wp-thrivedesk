@@ -194,30 +194,56 @@ The easiest way to install ThriveDesk is to search for it via your site's Dashbo
 
 This plugin connects to ThriveDesk's external services to provide live chat, helpdesk, and knowledge base functionality. Here are the details of the external services used:
 
-**ThriveDesk API and APP Service:**
-- **Service:** ThriveDesk API (api.thrivedesk.com and app.thrivedesk.com)
+**ThriveDesk API Service:**
+- **Service:** ThriveDesk API (https://api.thrivedesk.com)
+- **Vendor:** ThriveDesk Inc.
 - **Purpose:** Used for managing conversations, tickets, knowledge base content, and live chat functionality
-- **Data sent:** Customer conversation data, user information, support ticket details, and plugin settings
+- **Required/Optional:** Required for core plugin functionality
+- **Data sent:** 
+  - PII: Customer names, email addresses, conversation content, support ticket details
+  - Telemetry: Plugin settings, API usage statistics, response times
 - **When:** Data is sent when users interact with the live chat widget, create support tickets, or when administrators manage helpdesk settings
 - **Terms of Service:** https://www.thrivedesk.com/terms/
 - **Privacy Policy:** https://www.thrivedesk.com/privacy/
 
-
-**ThriveDesk Documentation Service:**
-- **Service:** ThriveDesk Knowledge Base (thrivedeskdocs.com)
-- **Purpose:** Used to fetch and display knowledge base articles and documentation
-- **Data sent:** Search queries and article requests
-- **When:** Data is sent when users search for help articles or access the knowledge base
+**ThriveDesk Application Service:**
+- **Service:** ThriveDesk App (https://app.thrivedesk.com)
+- **Vendor:** ThriveDesk Inc.
+- **Purpose:** Used for plugin configuration, assistant management, and accessing the main ThriveDesk dashboard
+- **Required/Optional:** Required for plugin setup and configuration
+- **Data sent:**
+  - PII: Administrator email addresses, organization details
+  - Telemetry: Plugin authentication tokens, configuration settings, usage analytics
+- **When:** Data is sent during plugin setup and when accessing ThriveDesk dashboard features
 - **Terms of Service:** https://www.thrivedesk.com/terms/
 - **Privacy Policy:** https://www.thrivedesk.com/privacy/
 
-**MediaDelivery Video Service:**
-- **Service:** MediaDelivery (iframe.mediadelivery.net)
+**ThriveDesk Documentation Service:**
+- **Service:** ThriveDesk Knowledge Base (https://thrivedeskdocs.com)
+- **Vendor:** ThriveDesk Inc.
+- **Purpose:** Used to fetch and display knowledge base articles and documentation
+- **Required/Optional:** Optional - used only when knowledge base features are enabled
+- **Data sent:**
+  - PII: None
+  - Telemetry: Search queries, article requests, page views
+- **When:** Data is sent when users search for help articles or access the knowledge base
+- **Disable:** Can be disabled by turning off knowledge base integration in plugin settings
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**Bunny Stream Video Service:**
+- **Service:** Bunny Stream (https://iframe.mediadelivery.net)
+- **Vendor:** BunnyWay d.o.o.
 - **Purpose:** Used to embed promotional and tutorial videos in the plugin interface
-- **Data sent:** Basic request headers and viewing analytics
+- **Required/Optional:** Optional - used only for displaying help videos in admin interface
+- **Data sent:**
+  - PII: None
+  - Telemetry: IP address, User-Agent, Referrer URL, Video viewing timestamps, Playback analytics
 - **When:** Data is sent when the plugin admin interface loads embedded videos
-- **Terms of Service:** Please check MediaDelivery's terms of service
-- **Privacy Policy:** Please check MediaDelivery's privacy policy
+- **Disable:** Videos can be disabled by administrators and do not affect core functionality
+- **Terms of Service:** https://bunny.net/tos/
+- **Privacy Policy:** https://bunny.net/privacy/
+- **Verified:** January 2025
 
 == Frequently Asked Questions ==
 
