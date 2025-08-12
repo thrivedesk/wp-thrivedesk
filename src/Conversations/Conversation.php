@@ -450,9 +450,12 @@ class Conversation
 		}
 		
 		// Handle different response structures
-		if (isset($response['data'])) {
+		if (isset($response['wp_error'])) {
+			// Return error response for proper error handling
+			return $response;
+		} elseif (isset($response['data'])) {
 			return $response['data'];
-		} elseif (is_array($response) && !isset($response['wp_error'])) {
+		} elseif (is_array($response)) {
 			return $response;
 		}
 		

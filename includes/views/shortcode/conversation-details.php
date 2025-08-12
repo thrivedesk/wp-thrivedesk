@@ -16,15 +16,18 @@ if (isset($query_params['td_conversation_id'])) {
 	$conversation =  Conversation::get_conversation($query_params['td_conversation_id']);
 	$is_portal_available = (new PortalService())->has_portal_access();
 	
+	// Check if conversation exists and is valid
+	$conversation_exists = !empty($conversation) && !isset($conversation['wp_error']);
+	
 	// Debug: Log conversation data structure
 	if (WP_DEBUG) {
 		error_log('ThriveDesk Debug - Conversation ID: ' . $query_params['td_conversation_id']);
 		error_log('ThriveDesk Debug - Conversation Data: ' . print_r($conversation, true));
+		error_log('ThriveDesk Debug - Conversation Exists: ' . ($conversation_exists ? 'Yes' : 'No'));
 	}
 }
 ?>
-<?php //if ($is_portal_available && $conversation): 
-if(1==1): ?>
+<?php if ($is_portal_available && $conversation_exists): ?>
 <div id="thrivedesk" class="td-portal-conversations space-y-4">
     
                     <a href="<?php echo esc_url(get_permalink()); ?>" class="border rounded-full px-2.5 py-1 bg-white hover:bg-slate-50">
@@ -101,6 +104,21 @@ if(1==1): ?>
 
 <?php else: ?>
     <div class="p-10 text-center my-10 bg-rose-50 border-2 border-dashed border-rose-200 text-rose-500 rounded font-medium">
-                    <span><?php esc_html_e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
+        <?php if (!$is_portal_available): ?>
+            <span><?php esc_html_e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
+        <?php elseif (!$conversation_exists): ?>
+            <div class="space-y-2">
+                <div class="text-lg font-semibold"><?php esc_html_e('Conversation Not Found', 'thrivedesk'); ?></div>
+                <div><?php esc_html_e('The requested conversation does not exist or you do not have permission to view it.', 'thrivedesk'); ?></div>
+                <div class="mt-4">
+                    <a href="<?php echo esc_url(get_permalink()); ?>" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                        <span>←</span>
+                        <span class="ml-2"><?php esc_html_e('Back to Conversations', 'thrivedesk'); ?></span>
+                    </a>
+                </div>
+            </div>
+        <?php else: ?>
+            <span><?php esc_html_e('Unable to load conversation. Please try again later.', 'thrivedesk'); ?></span>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
