@@ -59,15 +59,15 @@ $current_user = wp_get_current_user();
     <!-- assistant  -->
     <div class="space-y-1">
         <div class="td-card-heading">
-            <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
+            <div class="text-base font-bold"><?php esc_htmlesc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
             <p><?php printf(esc_html__('Add live chat assistant to your website. To create your assistant click %shere%s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
         </div>
         <div class="td-card space-y-2">
             <?php if (!empty($td_assistants)) : ?>
                 <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php _e('Select Assistant', 'thrivedesk'); ?></label>
+                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Assistant', 'thrivedesk'); ?></label>
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
-                        <option value=""><?php _e('Select an assistant', 'thrivedesk'); ?></option>
+                        <option value=""><?php esc_html_e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
                             <option value="<?php echo $assistant['id']; ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
                                 <?php echo $assistant['name']; ?>
@@ -77,7 +77,7 @@ $current_user = wp_get_current_user();
                 </div>
 
                 <div class="space-y-2">
-                        <label class="font-medium text-black text-sm"><?php _e('Exclude Pages', 'thrivedesk'); ?></label>
+                        <label class="font-medium text-black text-sm"><?php esc_html_e('Exclude Pages', 'thrivedesk'); ?></label>
                         <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
                             <?php
                             $selected_routes = $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
@@ -94,7 +94,7 @@ $current_user = wp_get_current_user();
 
                     <!-- Guidance for selecting multiple options -->
                     <small class="text-gray-600 block mt-1">
-                        <?php _e('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk'); ?>
+                        <?php echo wp_kses_post(__('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk')); ?>
                     </small>
                 
             <?php else : ?>
@@ -115,8 +115,8 @@ $current_user = wp_get_current_user();
         <!-- WP Post Sync  -->
         <div class="space-y-1">
             <div class="td-card-heading">
-                <div class="text-base font-bold"><?php _e('WP Post Sync', 'thrivedesk'); ?></div>
-                <p><?php _e('Sync your WordPress posts with ThriveDesk for faster support', 'thrivedesk'); ?></p>
+                <div class="text-base font-bold"><?php esc_html_e('WP Post Sync', 'thrivedesk'); ?></div>
+                <p><?php esc_html_e('Sync your WordPress posts with ThriveDesk for faster support', 'thrivedesk'); ?></p>
             </div>
             <div class="td-card">
                 <div class="flex space-x-4" id="td_post_sync">
@@ -132,7 +132,7 @@ $current_user = wp_get_current_user();
                                     <?php endforeach; ?>
                                 <?php else : ?>
                                     <div class="w-full text-center text-base tab-link">
-                                        <?php _e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
+                                        <?php esc_html_e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
                                         <?php $nonce = wp_create_nonce('thrivedesk-plugin-action'); ?>
                                         <a data-target="tab-integrations" href="#integrations" class="btn-primary py-1 px-3">Connect Now</a>
                                     </div>
@@ -149,8 +149,8 @@ $current_user = wp_get_current_user();
     <div class="space-y-1">
         <div class="td-card-heading flex items-center">
             <div class="flex-1 pr-4">
-                <div class="text-base font-bold"><?php _e('Portal', 'thrivedesk'); ?></div>
-                <p><?php _e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
+                <div class="text-base font-bold"><?php esc_html_e('Portal', 'thrivedesk'); ?></div>
+                <p><?php esc_html_e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
             </div>
             <?php if($has_portal_access):?>
                 <button id="thrivedesk_clear_cache_btn" class="flex items-center space-x-2 bg-white border py-2 px-4 rounded shadow-sm text-sm hover:bg-rose-50 hover:text-rose-500 ml-auto">
@@ -159,18 +159,18 @@ $current_user = wp_get_current_user();
                             <path opacity=".4" d="M14.739 15.345c.193.198.29.297.29.42 0 .122-.097.22-.29.419l-1.794 1.833c-.556.569-.937.959-1.402 1.226-.27.154-.557.276-.856.361-.516.147-1.16.147-1.95.147-.788 0-1.432 0-1.948-.147a3.837 3.837 0 0 1-.856-.361c-.465-.267-.846-.657-1.402-1.226-.558-.57-1.274-1.302-1.603-1.726-.345-.445-.6-.907-.66-1.465a2.885 2.885 0 0 1 0-.626c.06-.558.315-1.02.66-1.465.33-.424.793-.899 1.352-1.47L7.086 8.4c.202-.206.302-.31.429-.31.126 0 .227.104.428.31l6.796 6.946Z" fill="currentColor" />
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M8.75 21.75a1 1 0 0 1 1-1h11a1 1 0 1 1 0 2h-11a1 1 0 0 1-1-1Z" fill="currentColor" />
                         </svg></span>
-                    <span><?php _e('Clear portal cache', 'thrivedesk') ?></span>
+                    <span><?php esc_html_e('Clear portal cache', 'thrivedesk') ?></span>
                 </button>
             <?php endif;?>
         </div>
         <div class="td-card">
             <div class="text-center text-base <?php echo $show_api_key_alert ?>" id="api_key_alert">
-                <?php _e('Please insert or verify your ThriveDesk API key to use the Portal feature.', 'thrivedesk'); ?>
+                <?php esc_html_e('Please insert or verify your ThriveDesk API key to use the Portal feature.', 'thrivedesk'); ?>
             </div>
 
             <div class="alert alert-danger text-center <?php echo ($show_portal == "hidden") ? '' : 'hidden' ?>" id="portal_feature_alert">
-                <?php _e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
-                <a class="text-blue-500" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php _e('here', 'thrivedesk'); ?></a>.
+                <?php esc_html_e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
+                <a class="text-blue-500" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php esc_html_e('here', 'thrivedesk'); ?></a>.
             </div>
 
             <div class="<?php echo $show_portal ?>" id="td_portal">
@@ -178,10 +178,10 @@ $current_user = wp_get_current_user();
                     <div class="space-y-4 flex-1">
                         <!-- ticket form page selection  -->
                         <div class="bg-gray-50 border p-4 rounded">
-                            <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php _e('Ticket Form Page', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php _e('Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk') ?></div>
+                            <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e('Ticket Form Page', 'thrivedesk'); ?></label>
+                            <div class="text-sm"><?php esc_html_e('Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk') ?></div>
                             <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
-                                <option value=""> <?php _e('Select a page', 'thrivedesk'); ?> </option>
+                                <option value=""> <?php esc_html_e('Select a page', 'thrivedesk'); ?> </option>
                                 <?php foreach (get_pages() as $key => $page) : ?>
                                     <option value="<?php echo $page->ID; ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
                                         <?php echo $page->post_title; ?>
@@ -191,14 +191,14 @@ $current_user = wp_get_current_user();
                         </div>
                         <!-- search provider -->
                         <div class="bg-gray-50 border p-4 rounded">
-                            <label for="td_helpdesk_post_types" class="font-medium text-black text-base"><?php _e('Search Provider', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php _e('When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both.', 'thrivedesk'); ?></div>
-                            <div class="text-sm mt-1"><?php _e('Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive.', 'thrivedesk'); ?></div>
+                            <label for="td_helpdesk_post_types" class="font-medium text-black text-base"><?php esc_html_e('Search Provider', 'thrivedesk'); ?></label>
+                            <div class="text-sm"><?php esc_html_e('When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both.', 'thrivedesk'); ?></div>
+                            <div class="text-sm mt-1"><?php esc_html_e('Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive.', 'thrivedesk'); ?></div>
                             <hr class="mt-3">
                             <div class="flex flex-col mt-3 space-y-3">
-                                <label for="td_knowledgebase_slug" class="font-medium text-black text-sm"><?php _e('Knowledge Base ', 'thrivedesk'); ?></label>
+                                <label for="td_knowledgebase_slug" class="font-medium text-black text-sm"><?php esc_html_e('Knowledge Base ', 'thrivedesk'); ?></label>
                                 <select id="td_knowledgebase_slug" class="bg-white border rounded px-2 py-1 w-2/3">
-                                    <option value=""> <?php _e('Select knowledgebase', 'thrivedesk'); ?> </option>
+                                    <option value=""> <?php esc_html_e('Select knowledgebase', 'thrivedesk'); ?> </option>
                                     <?php foreach ($td_knowledgebase as $value) : ?>
                                         <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
                                             <?php echo esc_html($value['name']); ?>
@@ -208,7 +208,7 @@ $current_user = wp_get_current_user();
                             </div>
 
                             <div class="flex flex-col mt-3 space-y-3">
-                                <label class="font-medium text-black text-sm"><?php _e('WordPress Post Types ', 'thrivedesk'); ?></label>
+                                <label class="font-medium text-black text-sm"><?php esc_html_e('WordPress Post Types ', 'thrivedesk'); ?></label>
                                 <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
                                     <div>
                                         <label for="<?php echo esc_attr($post_type); ?>">
@@ -222,8 +222,8 @@ $current_user = wp_get_current_user();
                         <!-- add support tab to woo/edd page  -->
                         <?php if (!empty($td_user_account_pages)) : ?>
                             <div class="bg-gray-50 border p-4 rounded">
-                                <label for="td_user_account_pages" class="font-medium text-black text-base"><?php _e('Add Support Tab', 'thrivedesk'); ?></label>
-                                <div class="text-sm"><?php _e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
+                                <label for="td_user_account_pages" class="font-medium text-black text-base"><?php esc_html_e('Add Support Tab', 'thrivedesk'); ?></label>
+                                <div class="text-sm"><?php esc_html_e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
                                 <div class="mt-3">
                                     <?php foreach ($td_user_account_pages as $key => $page) : ?>
                                         <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
@@ -237,10 +237,10 @@ $current_user = wp_get_current_user();
                     </div>
                     <div class="md:w-64 mt-4 md:mt-0">
                         <div class="p-4 bg-green-50 border border-green-300 rounded space-y-2">
-                            <div class="text-base font-semibold"><?php _e('Portal Shortcode', 'thrivedesk'); ?></div>
+                            <div class="text-base font-semibold"><?php esc_html_e('Portal Shortcode', 'thrivedesk'); ?></div>
                             <code class="inline-block bg-green-200 rounded">[thrivedesk_portal]</code>
-                            <p><?php _e('Utilize this shortcode on any page to transform it into a help center.', 'thrivedesk'); ?>.</p>
-                            <p><?php _e('The portal is accessible only to logged-in users.', 'thrivedesk'); ?>.</p>
+                            <p><?php esc_html_e('Utilize this shortcode on any page to transform it into a help center.', 'thrivedesk'); ?>.</p>
+                            <p><?php esc_html_e('The portal is accessible only to logged-in users.', 'thrivedesk'); ?>.</p>
                         </div>
                     </div>
                 </div>
@@ -251,16 +251,16 @@ $current_user = wp_get_current_user();
     <!-- connection  -->
     <div class="space-y-1">
         <div class="td-card-heading">
-            <div class="text-base font-bold"><?php _e('Connection Details', 'thrivedesk'); ?></div>
-            <p><?php _e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
+            <div class="text-base font-bold"><?php esc_html_e('Connection Details', 'thrivedesk'); ?></div>
+            <p><?php esc_html_e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
         </div>
         <div class="td-card">
             <div class="space-y-2">
-                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php _e('API Key', 'thrivedesk'); ?></label>
+                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
                 <span>
-                    <?php _e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
+                    <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
                     <a class="text-blue-500" href="<?php echo THRIVEDESK_APP_URL . '/settings/company/api-key'; ?>" target="_blank">
-                        <?php _e('here', 'thrivedesk'); ?>
+                        <?php esc_html_e('here', 'thrivedesk'); ?>
                     </a>
                 </span>
                 <div class="flex items-center api-key-preview">
@@ -271,7 +271,7 @@ $current_user = wp_get_current_user();
                     <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_api_key); ?>" class="block p-2.5 w-full text-sm" />
 
                     <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
-                        <?php _e('Verify', 'thrivedesk'); ?>
+                        <?php esc_html_e('Verify', 'thrivedesk'); ?>
                     </button>
                 </div>
             </div>
@@ -279,7 +279,7 @@ $current_user = wp_get_current_user();
     </div>
 
     <button type="submit" id="td_setting_btn_submit" class="btn btn-primary">
-        <?php _e('Save', 'thrivedesk'); ?>
+        <?php esc_html_e('Save', 'thrivedesk'); ?>
     </button>
 </form>
 

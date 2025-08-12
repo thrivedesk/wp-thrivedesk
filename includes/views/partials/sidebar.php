@@ -3,7 +3,7 @@
     <div class="td-card bg-orange-50 border border-orange-400 space-y-2">
         <img class="w-36 ml-auto" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"; ?>">
         <h3 class="text-lg font-medium">Using Cloudflare?</h3>
-        <p><?php _e('To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly.', 'thrivedesk');?></p>
+        <p><?php esc_html_e('To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly.', 'thrivedesk');?></p>
         <a href="https://help.thrivedesk.com/en/troubleshooting-with-cloudflare" target="_blank" class="inline-block">Learn more</a>
     </div>
     <!-- Assistant  -->

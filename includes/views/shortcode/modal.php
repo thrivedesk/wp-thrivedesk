@@ -9,7 +9,7 @@
 				        <input id="td-search-input" class=""  spellcheck="false" placeholder="<?php esc_attr_e('Search documentation', 'thrivedesk'); ?>" maxlength="64" type="search" value="" />
 			</form>
 			<button id="close-modal" class="" data-modal-toggle="tdConversationModal">
-				<span><?php _e('Esc', 'thrivedesk'); ?></span>
+				            <span><?php esc_html_e('Esc', 'thrivedesk'); ?></span>
 			</button>
 		</div> <!-- /Modal header  -->
 		
@@ -25,7 +25,7 @@
 				<div class="overflow-y-scroll">
 					<ul id="td-search-results">
 						<li class="flex items-center justify-center text-slate-500">
-							<span> <?php _e('Please search before creating a new ticket', 'thrivedesk'); ?></span>
+							        <span> <?php esc_html_e('Please search before creating a new ticket', 'thrivedesk'); ?></span>
 						</li>
 					</ul>
 				</div>
@@ -35,7 +35,7 @@
 		<!-- Modal footer  -->
 		<div class="td-modal-footer">
 			<a href="<?php echo get_page_link( get_post(get_td_helpdesk_options('td_helpdesk_settings')['td_helpdesk_page_id']))?>" id="td-new-ticket-url" target="_blank" class="td-btn-primary">
-				<?php _e('Create a new ticket', 'thrivedesk'); ?>
+				            <?php esc_html_e('Create a new ticket', 'thrivedesk'); ?>
 			</a>
 		</div>
 	</div>

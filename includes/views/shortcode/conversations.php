@@ -17,7 +17,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
         <!-- if portal feature not available  -->
         <?php if (!$is_portal_available): ?>
         <div class="p-10 text-center my-10 bg-rose-50 border-2 border-dashed border-rose-200 text-rose-500 rounded font-medium space-y-4">
-            <span><?php _e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
+            <span><?php esc_html_e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
             <img src="https://media.thrivedesk.com/wp-content/uploads/2023/05/portal-mini.avif">
         </div>
 
@@ -25,7 +25,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
             <div class="td-portal-header">
                 <input type="search" class="px-3 py-2 w-64 bg-white border rounded-md shadow-sm" id="td-ticket-search" placeholder="<?php esc_attr_e('Search...', 'thrivedesk'); ?>">
                 <button type="submit" id="openConversationModal" class="td-btn-primary ml-auto" data-modal-toggle="tdConversationModal">
-                    <span><?php _e('Create a new ticket', 'thrivedesk'); ?></span>
+                    <span><?php esc_html_e('Create a new ticket', 'thrivedesk'); ?></span>
                 </button>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white">
@@ -33,13 +33,13 @@ $is_portal_available = (new PortalService())->has_portal_access();
                     <thead>
                         <tr>
                             <th scope="col">
-                                <?php _e('Ticket', 'thrivedesk'); ?>
+                                <?php esc_html_e('Ticket', 'thrivedesk'); ?>
                             </th>
                             <th scope="col" class="w-28 text-center">
-                                <?php _e('Status', 'thrivedesk'); ?>
+                                <?php esc_html_e('Status', 'thrivedesk'); ?>
                             </th>
                             <th scope="col" class="w-32 text-center">
-                                <?php _e('Last update', 'thrivedesk'); ?>
+                                <?php esc_html_e('Last update', 'thrivedesk'); ?>
                             </th>
                             <th scope="col"></th>
                         </tr>
@@ -79,13 +79,13 @@ $is_portal_available = (new PortalService())->has_portal_access();
                                 <?php echo diff_for_humans($conversation['updated_at']) ?>
                             </td>
                             <td class="text-center align-middle w-32">
-                                <a class="td-btn"  href="<?php echo $conv_page_url; ?>"><?php _e('View Ticket', 'thrivedesk'); ?></a>
+                                <a class="td-btn"  href="<?php echo esc_url($conv_page_url); ?>"><?php esc_html_e('View Ticket', 'thrivedesk'); ?></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                     <tr id="no-results" style="display: none;">
                         <td colspan="5" class="text-center">
-                            <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
+                            <span><?php esc_html_e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
                         </td>
                     </tr>
                     </tbody>

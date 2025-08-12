@@ -88,6 +88,6 @@ if (isset($query_params['td_conversation_id'])) {
 
 <?php else: ?>
     <div class="p-10 text-center my-10 bg-rose-50 border-2 border-dashed border-rose-200 text-rose-500 rounded font-medium">
-        <span><?php _e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
+                    <span><?php esc_html_e('Your subscription plan does not support WPPortal feature. Please contact ThriveDesk for more information.', 'thrivedesk'); ?></span>
     </div>
 <?php endif; ?>
