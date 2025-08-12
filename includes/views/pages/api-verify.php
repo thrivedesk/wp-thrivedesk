@@ -5,7 +5,7 @@
     <a href="https://www.thrivedesk.com/" target="_blank">
       <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png' ?>" alt="ThriveDesk logo" class="w-32">
     </a>
-    <a href="#" class="ml-auto text-brand-light inline-block mr-5">Need help?</a>
+    <a href="https://help.thrivedesk.com/en/wpportal" target="_blank" class="ml-auto text-brand-light inline-block mr-5">Need help?</a>
   </div>
 
   

@@ -1,0 +1,57 @@
+# Files and folders to ignore when deploying to WordPress.org SVN
+
+# Development and build files
+/.wordpress-org
+/.git
+/.github
+/node_modules
+/scripts
+
+# Build configuration files
+package.json
+package-lock.json
+webpack.mix.js
+tailwind.config.js
+postcss.config.js
+composer.lock
+
+# Development tools
+.gitignore
+.gitattributes
+.distignore
+
+# IDE and editor files
+.vscode
+.idea
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Testing and CI files
+phpunit.xml
+phpunit.xml.dist
+.phpunit.result.cache
+tests/
+.travis.yml
+.circleci/
+.codeclimate.yml
+
+# Documentation (if not needed in release)
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Source files (if you have compiled versions)
+/resources/sass
+/resources/js
+/resources/css
+/resources/images
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# SVN directory (if present)
+/svn

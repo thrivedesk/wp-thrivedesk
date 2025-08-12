@@ -1,5 +1,25 @@
 *** WooCommerce Extension Changelog ***
 
+2.1.0 - version 2.1.0
+* Added: Comprehensive external services documentation in readme for ThriveDesk API, App, Documentation, and MediaDelivery services
+* Added: ABSPATH checks to all view files to prevent direct file access
+* Improved: Replaced _e with esc_html_e where appropriate for better output escaping
+* Improved: Replaced json_encode with wp_json_encode for WordPress compatibility
+* Improved: Added proper output escaping (esc_url, esc_html, esc_attr, wp_kses_post) throughout templates
+* Security: Enhanced data sanitization and XSS prevention measures
+* Compliance: All WordPress.org plugin review issues addressed according to WordPress coding standards
+* Fixed: GPL-compatible license declaration in plugin header and readme
+* Fixed: Domain Path header to start with forward slash and created languages directory
+* Fixed: Replaced PHP short tags with full tags and proper escaping functions
+* Fixed: Removed non-permitted files (scripts/release.sh)
+* Fixed: Moved remote images to local assets directory to comply with WordPress.org guidelines
+* Fixed: Internationalization issues - corrected text domain from 'wp-thrivedesk' to 'thrivedesk', used string literals instead of variables
+* Fixed: Proper sanitization, validation and escaping throughout codebase using WordPress functions
+* Fixed: Unsafe SQL calls replaced with wpdb prepare statements for better security
+* Fixed: Limited readme tags to 5 maximum and shortened description to meet WordPress.org requirements
+* Fixed: Nonce verification with proper sanitization using sanitize_text_field and wp_unslash
+
+
 2025-08-10 - version 2.0.12
 
 * Fixed - Plugin name for Copyright issue
