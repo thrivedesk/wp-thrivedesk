@@ -27,7 +27,9 @@ class Assistant {
 			die();
 		}
 
-		$assistants = get_transient( 'thrivedesk_assistants' );
+		$key = 'thrivedesk_assistants_' . md5( $apiKey );
+		$assistants = get_transient( $key );
+		
 		if ( $assistants ) {
 			echo wp_json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 			die();
@@ -36,7 +38,7 @@ class Assistant {
 		$assistants = $this->get_assistants( $apiKey );
 
 		if ( isset($assistants) and $assistants['assistants'] ) {
-			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
+			set_transient( $key, $assistants, 60 * 30 );
 			echo wp_json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 		} else {
 			echo wp_json_encode( [ 'status' => 'false', 'data' => [] ] );
@@ -114,8 +116,9 @@ class Assistant {
 		if ( empty( $api_key ) ) {
 			return [];
 		}
-		$assistants = get_transient( 'thrivedesk_assistants' );
 
+		$key = 'thrivedesk_assistants_' . md5( $api_key );
+		$assistants = get_transient( $key );
 
 		if ( $assistants ) {
 			return $assistants['assistants'] ?? [];
@@ -124,7 +127,7 @@ class Assistant {
 		$assistants = ( new Assistant )->get_assistants();
 
 		if ( isset($assistants['assistants'] )) {
-			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
+			set_transient( $key, $assistants, 60 * 30 );
 		}
 
 		return $assistants['assistants'] ?? [];
