@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\Conversations\Conversation;
 

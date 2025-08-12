@@ -70,8 +70,8 @@ final class Admin
     
         // Remove all transient data
         global $wpdb;
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%thrivedesk%'");
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_%thrivedesk%'");
+        $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_%thrivedesk%'));
+        $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_timeout_%thrivedesk%'));
     
         // Flush the server cache
         wp_cache_flush();
@@ -283,7 +283,7 @@ final class Admin
      */
     public function ajax_connect_plugin()
     {
-        error_log(json_encode($_POST['data']));
+        error_log(wp_json_encode(array_map('sanitize_text_field', wp_unslash($_POST['data']))));
 
         if (!isset($_POST['data']['plugin']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'thrivedesk-plugin-action')) die;
 
@@ -300,12 +300,12 @@ final class Admin
 
         update_option('thrivedesk_options', $thrivedesk_options);
 
-        $hash = base64_encode(json_encode([
-            'store_url'   => get_bloginfo('url'),
-            'api_token'   => $api_token,
-            'org_id'    => get_option('td_helpdesk_system_info')['id'] ?? '',
-            'cancel_url'  => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=false'),
-            'success_url' => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=true')
+        $hash = base64_encode(wp_json_encode([
+            'store_url'   => esc_url_raw(get_bloginfo('url')),
+            'api_token'   => sanitize_text_field($api_token),
+            'org_id'    => sanitize_text_field(get_option('td_helpdesk_system_info')['id'] ?? ''),
+            'cancel_url'  => esc_url_raw(admin_url('options-general.php?page=thrivedesk&plugin=' . sanitize_key($plugin) . '&td-activated=false')),
+            'success_url' => esc_url_raw(admin_url('options-general.php?page=thrivedesk&plugin=' . sanitize_key($plugin) . '&td-activated=true'))
         ]));
 
         echo THRIVEDESK_APP_URL . '/apps/' . esc_attr($plugin) . '?connect=' . esc_attr($hash);

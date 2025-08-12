@@ -5,7 +5,7 @@ import { ThriveDeskConversationData } from './ThriveDeskConversationData';
 addFilter('bwfanAddTabOnSingleContact', 'bwfan', (tabList) => {
 	tabList.push({
 		key: 'thrivedesk',
-		name: __('ThriveDesk', 'wp-marketing-automations-crm'),
+		name: __('ThriveDesk', 'thrivedesk'),
 	});
 	return tabList;
 });

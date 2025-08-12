@@ -5,7 +5,7 @@ Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
 Stable Tag: 2.1.0
-Requires PHP: 5.5
+Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
 Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers' questions and provide excellent support.
@@ -321,7 +321,6 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Feat: Organization info added to dashboard
 - Feat: Organization validation added
 
-== Changelog ==
 = 2.0.3 =
 - Fix: WooCommerce product data missing issue   
 - Fix : FunnelKit namespace issue
@@ -340,7 +339,6 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Feat: Added dedicated portal page.
 - Update: Reorganized dashboard with settings for better user experience.
 
-== Changelog ==
 = 1.2.4 =
 - Feat: Plugin is relocated to the main menu.
 
@@ -462,7 +460,6 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Improved Products details
 - Improved and optimized shipping details
 
-== Changelog ==
 = 0.9.8 =
 - Stable release of version 0.9.8
 

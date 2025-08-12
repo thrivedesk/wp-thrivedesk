@@ -485,6 +485,9 @@ final class Api {
 
 		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
 
-		return hash_equals( $signature, hash_hmac( 'SHA1', json_encode( $payload ), $api_token ) );
+		$sanitized_payload = array_map(function($item) {
+			return is_string($item) ? sanitize_text_field($item) : $item;
+		}, $payload);
+		return hash_equals( $signature, hash_hmac( 'SHA1', wp_json_encode( $sanitized_payload ), $api_token ) );
 	}
 }
