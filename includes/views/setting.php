@@ -21,7 +21,7 @@ if($api_key && !$systemInfo) {
     <div class="flex items-center py-5 px-9">
         <div class="flex flex-col">
             <div class="flex flex-row">
-                <img class="w-32" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"; ?>"
+                <img class="w-32" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"); ?>"
                         alt="ThriveDesk Logo">
                 <div class="flex items-center space-x-4 ml-2">
                     <span class="py-0.5 px-2 bg-slate-200 text-slate-700 text-[12px] rounded-full">

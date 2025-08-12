@@ -48,7 +48,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
                     <?php if (empty($conversation_data)): ?>
                         <tr id="no-results">
                             <td colspan="5" class="text-center">
-                                <span><?php _e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
+                                <span><?php esc_html_e('No tickets found. Open new ticket and start the conversation.', 'thrivedesk'); ?></span>
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -62,12 +62,12 @@ $is_portal_available = (new PortalService())->has_portal_access();
                                     'td_conversation_id' => $conversation['id']
                                 ), $url );
                                 ?>
-                                <a href="<?php echo $conv_page_url; ?>">
+                                <a href="<?php echo esc_url($conv_page_url); ?>">
                                     <div class="font-semibold text-base text-slate-800">
-                                        <span>(#<?php echo $conversation['ticket_id']; ?>)</span>
-                                        <span><?php echo $conversation['subject'];?></span>
+                                        <span>(#<?php echo esc_html($conversation['ticket_id']); ?>)</span>
+                                        <span><?php echo esc_html($conversation['subject']);?></span>
                                     </div>
-                                    <span class="text-sm text-slate-500"><?php echo $conversation['excerpt']; ?>.</span>
+                                    <span class="text-sm text-slate-500"><?php echo esc_html($conversation['excerpt']); ?>.</span>
                                 </a>
                             </td>
                             <td scope="row" class="text-center align-middle">
@@ -76,7 +76,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
                                 </span>
                             </td>
                             <td class="text-center align-middle text-sm">
-                                <?php echo diff_for_humans($conversation['updated_at']) ?>
+                                <?php echo esc_html(diff_for_humans($conversation['updated_at'])); ?>
                             </td>
                             <td class="text-center align-middle w-32">
                                 <a class="td-btn"  href="<?php echo esc_url($conv_page_url); ?>"><?php esc_html_e('View Ticket', 'thrivedesk'); ?></a>
@@ -92,9 +92,9 @@ $is_portal_available = (new PortalService())->has_portal_access();
                 </table>
             </div>
             <div class="td-portal-footer">
-                <a class="flex items-center space-x-2 text-xs cursor-pointer text-slate-600 uppercase opacity-75 hover:opacity-100" href="https://www.thrivedesk.com/wordpress?utm_source=wpportal&utm_medium=<?php echo get_site_url(); ?>&utm_campaign=powered-by" target="_blank">
+                <a class="flex items-center space-x-2 text-xs cursor-pointer text-slate-600 uppercase opacity-75 hover:opacity-100" href="<?php echo esc_url('https://www.thrivedesk.com/wordpress?utm_source=wpportal&utm_medium=' . get_site_url() . '&utm_campaign=powered-by'); ?>" target="_blank">
                     <span>Powered by</span>
-                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="ThriveDesk Logo"
+                    <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk Logo"
                          style="height: 15px; width: 84px; margin:0;">
                 </a>
 

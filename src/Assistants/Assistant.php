@@ -87,7 +87,10 @@ class Assistant {
         </script>
         ';
 
-        echo $assistant_script;
+        echo wp_kses($assistant_script, array(
+            'script' => array('src' => array(), 'type' => array()),
+            'div' => array('id' => array(), 'class' => array()),
+        ));
     }
 
 	public function get_current_url()

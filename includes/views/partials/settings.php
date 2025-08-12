@@ -69,8 +69,8 @@ $current_user = wp_get_current_user();
                     <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php esc_html_e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
-                            <option value="<?php echo $assistant['id']; ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
-                                <?php echo $assistant['name']; ?>
+                            <option value="<?php echo esc_attr($assistant['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
+                                <?php echo esc_html($assistant['name']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -164,7 +164,7 @@ $current_user = wp_get_current_user();
             <?php endif;?>
         </div>
         <div class="td-card">
-            <div class="text-center text-base <?php echo $show_api_key_alert ?>" id="api_key_alert">
+            <div class="text-center text-base <?php echo esc_attr($show_api_key_alert); ?>" id="api_key_alert">
                 <?php esc_html_e('Please insert or verify your ThriveDesk API key to use the Portal feature.', 'thrivedesk'); ?>
             </div>
 
@@ -173,7 +173,7 @@ $current_user = wp_get_current_user();
                 <a class="text-blue-500" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php esc_html_e('here', 'thrivedesk'); ?></a>.
             </div>
 
-            <div class="<?php echo $show_portal ?>" id="td_portal">
+            <div class="<?php echo esc_attr($show_portal); ?>" id="td_portal">
                 <div class="md:flex md:space-x-4">
                     <div class="space-y-4 flex-1">
                         <!-- ticket form page selection  -->
@@ -183,8 +183,8 @@ $current_user = wp_get_current_user();
                             <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
                                 <option value=""> <?php esc_html_e('Select a page', 'thrivedesk'); ?> </option>
                                 <?php foreach (get_pages() as $key => $page) : ?>
-                                    <option value="<?php echo $page->ID; ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
-                                        <?php echo $page->post_title; ?>
+                                    <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
+                                        <?php echo esc_html($page->post_title); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -259,7 +259,7 @@ $current_user = wp_get_current_user();
                 <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
                 <span>
                     <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
-                    <a class="text-blue-500" href="<?php echo THRIVEDESK_APP_URL . '/settings/company/api-key'; ?>" target="_blank">
+                    <a class="text-blue-500" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/api-key'); ?>" target="_blank">
                         <?php esc_html_e('here', 'thrivedesk'); ?>
                     </a>
                 </span>
@@ -303,7 +303,7 @@ $current_user = wp_get_current_user();
     }
     (window, document, window.Assistant || function() {}), window.Assistant("init", "966fdf96-802e-4bf7-8692-78e01b503819");
     Assistant('identify', {
-        name: '<?php echo $current_user->user_login; ?>',
-        email: '<?php echo $current_user->user_email; ?>',
+        name: '<?php echo esc_js($current_user->user_login); ?>',
+        email: '<?php echo esc_js($current_user->user_email); ?>',
     })
 </script>

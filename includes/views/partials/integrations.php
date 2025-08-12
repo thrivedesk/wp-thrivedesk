@@ -69,7 +69,7 @@ $plugins = [
                 <!-- title  -->
                 <div class="flex space-x-4">
                     <img class="w-12 h-12 rounded"
-                        src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name( $plugin['image'] ); ?>"
+                        src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name( $plugin['image'] )); ?>"
                         alt="plugin_image"/>
                     <div>
                         <div class="font-medium text-base"><?php echo esc_html( $plugin['name'] ); ?></div>
@@ -116,7 +116,7 @@ $plugins = [
         <div class="td-card relative flex items-center">
             <!-- title  -->
             <div class="flex space-x-4">
-                <img class="w-12 h-12 rounded" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/surecart.png'; ?>" alt="Surecart logo"/>
+                <img class="w-12 h-12 rounded" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/surecart.png'); ?>" alt="Surecart logo"/>
                 <div>
                     <div class="font-medium text-base">SureCart</div>
                     <span class="uppercase text-xs text-gray-400">ecommerce</span>
@@ -131,7 +131,7 @@ $plugins = [
         <div class="td-card relative flex items-center">
             <!-- title  -->
             <div class="flex space-x-4">
-                <img class="w-12 h-12 rounded" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/freemius.png'; ?>" alt="Freemius logo"/>
+                <img class="w-12 h-12 rounded" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/freemius.png'); ?>" alt="Freemius logo"/>
                 <div>
                     <div class="font-medium text-base">Freemius</div>
                     <span class="uppercase text-xs text-gray-400">ecommerce</span>
