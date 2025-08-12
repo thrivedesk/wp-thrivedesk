@@ -483,7 +483,10 @@ final class Api {
 
 		$api_token = $this->plugin->get_plugin_data( 'api_token' );
 
-		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'];
+		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '';
+		if (empty($signature)) {
+			return false;
+		}
 
 		$sanitized_payload = array_map(function($item) {
 			return is_string($item) ? sanitize_text_field($item) : $item;
