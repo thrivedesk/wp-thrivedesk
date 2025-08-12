@@ -430,12 +430,33 @@ class Conversation
 			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
 			$response =( new TDApiService() )->getRequest($url);
 
-			if (isset($response['data']) && count($response['data']) > 0) {
+			// Debug: Log API response
+			if (WP_DEBUG) {
+				error_log('ThriveDesk Debug - API URL: ' . $url);
+				error_log('ThriveDesk Debug - API Response: ' . print_r($response, true));
+			}
+
+			if (isset($response['data'])) {
+				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
+			} elseif (is_array($response) && !isset($response['wp_error'])) {
+				// If API returns data directly (not wrapped in 'data' key)
 				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
 			}
 		}
 
-		return $response['data'] ?? [];
+		// Debug: Check if response has data key or is direct data
+		if (WP_DEBUG) {
+			error_log('ThriveDesk Debug - Response structure check: ' . print_r(array_keys($response ?? []), true));
+		}
+		
+		// Handle different response structures
+		if (isset($response['data'])) {
+			return $response['data'];
+		} elseif (is_array($response) && !isset($response['wp_error'])) {
+			return $response;
+		}
+		
+		return [];
 	}
 
     /**

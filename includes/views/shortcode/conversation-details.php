@@ -15,6 +15,12 @@ parse_str($parts, $query_params);
 if (isset($query_params['td_conversation_id'])) {
 	$conversation =  Conversation::get_conversation($query_params['td_conversation_id']);
 	$is_portal_available = (new PortalService())->has_portal_access();
+	
+	// Debug: Log conversation data structure
+	if (WP_DEBUG) {
+		error_log('ThriveDesk Debug - Conversation ID: ' . $query_params['td_conversation_id']);
+		error_log('ThriveDesk Debug - Conversation Data: ' . print_r($conversation, true));
+	}
 }
 ?>
 <?php //if ($is_portal_available && $conversation): 
