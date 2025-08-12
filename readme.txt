@@ -194,21 +194,14 @@ The easiest way to install ThriveDesk is to search for it via your site's Dashbo
 
 This plugin connects to ThriveDesk's external services to provide live chat, helpdesk, and knowledge base functionality. Here are the details of the external services used:
 
-**ThriveDesk API Service:**
-- **Service:** ThriveDesk API (api.thrivedesk.com)
+**ThriveDesk API and APP Service:**
+- **Service:** ThriveDesk API (api.thrivedesk.com and app.thrivedesk.com)
 - **Purpose:** Used for managing conversations, tickets, knowledge base content, and live chat functionality
 - **Data sent:** Customer conversation data, user information, support ticket details, and plugin settings
 - **When:** Data is sent when users interact with the live chat widget, create support tickets, or when administrators manage helpdesk settings
 - **Terms of Service:** https://www.thrivedesk.com/terms/
 - **Privacy Policy:** https://www.thrivedesk.com/privacy/
 
-**ThriveDesk App Service:**
-- **Service:** ThriveDesk Application (app.thrivedesk.com)
-- **Purpose:** Used for plugin configuration, assistant management, and accessing the main ThriveDesk dashboard
-- **Data sent:** Plugin authentication tokens and configuration settings
-- **When:** Data is sent during plugin setup and when accessing ThriveDesk dashboard features
-- **Terms of Service:** https://www.thrivedesk.com/terms/
-- **Privacy Policy:** https://www.thrivedesk.com/privacy/
 
 **ThriveDesk Documentation Service:**
 - **Service:** ThriveDesk Knowledge Base (thrivedeskdocs.com)
