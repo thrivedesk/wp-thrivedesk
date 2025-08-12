@@ -73,12 +73,21 @@ class FluentCrmHooks
                         return [];
                     }
 
-                    $td_conversations = $wpdb->get_results(
-                        $wpdb->prepare(
-                            "SELECT * FROM $table_name WHERE contact = %s AND deleted_at IS NULL",
-                            $subscriber->email
-                        )
-                    );
+                    // Try to get from cache first
+                    $cache_key = 'td_conversations_' . md5($subscriber->email);
+                    $td_conversations = wp_cache_get($cache_key, 'thrivedesk');
+                    
+                    if (false === $td_conversations) {
+                        $td_conversations = $wpdb->get_results(
+                            $wpdb->prepare(
+                                "SELECT * FROM $table_name WHERE contact = %s AND deleted_at IS NULL",
+                                $subscriber->email
+                            )
+                        );
+                        
+                        // Cache for 5 minutes
+                        wp_cache_set($cache_key, $td_conversations, 'thrivedesk', 300);
+                    }
 
                     $formattedTickets = [];
 

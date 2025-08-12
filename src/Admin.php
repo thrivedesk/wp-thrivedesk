@@ -100,7 +100,8 @@ final class Admin
 		if (get_option('wp_thrivedesk_activation_redirect', false)) {
 			delete_option('wp_thrivedesk_activation_redirect');
 
-			exit( wp_redirect("admin.php?page=thrivedesk") );
+			wp_redirect(esc_url_raw(admin_url("admin.php?page=thrivedesk")));
+			exit;
 		}
 	}
 
@@ -245,7 +246,7 @@ final class Admin
         $api_status = self::get_api_verification_status();
 
         if($td_api_key && $api_status){
-            echo thrivedesk_view('setting');
+            thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
             // if token is passed, log it
@@ -253,15 +254,15 @@ final class Admin
                 error_log('ThriveDesk: Token received from request: ' . $_GET['token']);
             }
 
-            echo thrivedesk_view('pages/api-verify');
+            thrivedesk_view('pages/api-verify');
         }
         else{
-            echo thrivedesk_view('pages/welcome');
+            thrivedesk_view('pages/welcome');
         }
     }
 
     public function verification_page(){
-        echo thrivedesk_view('pages/api-verify');
+                    thrivedesk_view('pages/api-verify');
     }
 
     public static function set_api_verification_status($status = false): void
