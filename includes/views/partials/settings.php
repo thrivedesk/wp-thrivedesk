@@ -59,7 +59,7 @@ $current_user = wp_get_current_user();
     <!-- assistant  -->
     <div class="space-y-1">
         <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_htmlesc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
+            <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
             <p><?php printf(esc_html__('Add live chat assistant to your website. To create your assistant click %shere%s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
         </div>
         <div class="td-card space-y-2">
