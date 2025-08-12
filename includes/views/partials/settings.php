@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\KnowledgeBase\KnowledgeBase;
 use ThriveDesk\Services\PortalService;
@@ -58,7 +60,7 @@ $current_user = wp_get_current_user();
     <div class="space-y-1">
         <div class="td-card-heading">
             <div class="text-base font-bold"><?php _e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php _e('Add live chat assistant to your website. To create your assistant click <a href="' . THRIVEDESK_APP_URL . '/chat/assistants" target="_blank">here</a>. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'); ?></p>
+            <p><?php printf(esc_html__('Add live chat assistant to your website. To create your assistant click %shere%s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
         </div>
         <div class="td-card space-y-2">
             <?php if (!empty($td_assistants)) : ?>
@@ -103,7 +105,7 @@ $current_user = wp_get_current_user();
                             <path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                             <path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg></span>
-                    <span><?php _e('No Assistant found. Please <a href="' . THRIVEDESK_APP_URL . '/chat/assistants" target="_blank">create a new Assistant</a> and return at a later time.', 'thrivedesk') ?></span>
+                    <span><?php printf(esc_html__('No Assistant found. Please %screate a new Assistant%s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></span>
                 </p>
             <?php endif; ?>
         </div>
@@ -198,8 +200,8 @@ $current_user = wp_get_current_user();
                                 <select id="td_knowledgebase_slug" class="bg-white border rounded px-2 py-1 w-2/3">
                                     <option value=""> <?php _e('Select knowledgebase', 'thrivedesk'); ?> </option>
                                     <?php foreach ($td_knowledgebase as $value) : ?>
-                                        <option value="<?= $value['slug']; ?>" <?= (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
-                                            <?= $value['name']; ?>
+                                        <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
+                                            <?php echo esc_html($value['name']); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

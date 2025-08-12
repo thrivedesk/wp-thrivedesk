@@ -23,13 +23,13 @@ class Assistant {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
 		if (empty($apiKey)) {
-			echo json_encode( [ 'status' => 'false', 'data' => [] ] );
+			echo wp_json_encode( [ 'status' => 'false', 'data' => [] ] );
 			die();
 		}
 
 		$assistants = get_transient( 'thrivedesk_assistants' );
 		if ( $assistants ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
+			echo wp_json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 			die();
 		}
 
@@ -37,9 +37,9 @@ class Assistant {
 
 		if ( isset($assistants) and $assistants['assistants'] ) {
 			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
-			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
+			echo wp_json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 		} else {
-			echo json_encode( [ 'status' => 'false', 'data' => [] ] );
+			echo wp_json_encode( [ 'status' => 'false', 'data' => [] ] );
 		}
 		die();
 	}

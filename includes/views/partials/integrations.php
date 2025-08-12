@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 $edd         = ThriveDesk\Plugins\EDD::instance();
 $woocommerce = ThriveDesk\Plugins\WooCommerce::instance();
 $fluentcrm   = ThriveDesk\Plugins\FluentCRM::instance();

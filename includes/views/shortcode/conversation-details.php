@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use ThriveDesk\Conversations\Conversation;
 use ThriveDesk\Services\PortalService;
 
@@ -18,9 +20,9 @@ if (isset($query_params['td_conversation_id'])) {
 <?php if ($is_portal_available && $conversation): ?>
 <div id="thrivedesk" class="td-portal-conversations space-y-4">
     
-    <a href="<?php echo get_permalink(); ?>" class="border rounded-full px-2.5 py-1 bg-white hover:bg-slate-50">
+                    <a href="<?php echo esc_url(get_permalink()); ?>" class="border rounded-full px-2.5 py-1 bg-white hover:bg-slate-50">
         <span>←</span>
-        <span><?php _e('Back to tickets', 'thrivedesk'); ?></span>
+        <span><?php esc_html_e('Back to tickets', 'thrivedesk'); ?></span>
     </a>
     <!-- header  -->
     <div class="flex items-center">
@@ -31,7 +33,7 @@ if (isset($query_params['td_conversation_id'])) {
             </div>
             <h1 class="text-2xl font-bold mt-0 mb-1 text-black"><?php echo $conversation['subject']?></h1>
         </div>
-        <span class="status status-<?php echo strtolower($conversation['status']); ?>"><?php echo $conversation['status']; ?></span>
+        <span class="status status-<?php echo esc_attr(strtolower($conversation['status'])); ?>"><?php echo esc_html($conversation['status']); ?></span>
     </div>
     <!-- conversations  -->
     <div class="space-y-4">
@@ -54,7 +56,7 @@ if (isset($query_params['td_conversation_id'])) {
 				        <?php if ($event['event']['html_body']): ?>
 					        <?php echo Conversation::validate_conversation_body($event['event']['html_body']); ?>
 				        <?php elseif($event['event']['text_body']): ?>
-					        <?php echo $event['event']['text_body']; ?>
+					                                <?php echo wp_kses_post($event['event']['text_body']); ?>
 				        <?php endif; ?>
                     </div>
                 </div>
@@ -74,7 +76,7 @@ if (isset($query_params['td_conversation_id'])) {
 
                 <button type="submit" id="td_conversation_reply_submit" data-nonce="<?php echo esc_attr($td_reply_nonce); ?>"
                         class="td-btn-primary px-8 mt-6">
-		            <?php _e('Reply', 'thrivedesk'); ?>
+		                                <?php esc_html_e('Reply', 'thrivedesk'); ?>
                     <span id="td-reply-spinner" style="display: none;">
                         <?php thrivedesk_view('/icons/spinner'); ?>
                     </span>

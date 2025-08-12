@@ -73,16 +73,16 @@ class Conversation
         if (empty($apiKey)) {
             error_log('ThriveDesk: API Key is required for verification');
 
-            echo json_encode(['status' => 'false', 'data' => []]);
+            echo wp_json_encode(['status' => 'false', 'data' => []]);
             die();
         }
 
         $systemInfo = $this->get_system_info($apiKey);
 
         if ($systemInfo) {
-            echo json_encode(['status' => 'true', 'data' => $systemInfo]);
+            echo wp_json_encode(['status' => 'true', 'data' => $systemInfo]);
         } else {
-            echo json_encode(['status' => 'false', 'data' => []]);
+            echo wp_json_encode(['status' => 'false', 'data' => []]);
         }
         die();
     }
@@ -92,7 +92,7 @@ class Conversation
         $apiService = new TDApiService();
 
         if ( empty( $apiKey ) ) {
-			echo json_encode( [
+			echo wp_json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
@@ -123,12 +123,12 @@ class Conversation
 
 	public function td_verify_helpdesk_api_key(  ): void {
         // verify the nonce
-        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'thrivedesk-nonce' ) ) {
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' ) ) {
             // add debug here
             error_log('ThriveDesk: Invalid nonce');
 
             // return json response
-            echo json_encode( [
+            echo wp_json_encode( [
                 'code' => 401,
                 'status' => 'error',
                 'data' => [
@@ -142,7 +142,7 @@ class Conversation
 		if ( empty( $apiKey ) ) {
             error_log('ThriveDesk: API Key is required for verification');
 
-            echo json_encode( [
+            echo wp_json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
@@ -168,7 +168,7 @@ class Conversation
 
             error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
 
-            echo json_encode( [
+            echo wp_json_encode( [
                 'code' => 422,
                 'status' => 'error',
                 'data' => [
@@ -184,7 +184,7 @@ class Conversation
 
             error_log('ThriveDesk: Something went wrong while verifying the API Key. ' . $data['message']);
 
-            echo json_encode( [
+            echo wp_json_encode( [
 				'code' => 401,
 				'status' => 'error',
 				'data' => [
@@ -197,7 +197,7 @@ class Conversation
 
         Admin::set_api_verification_status(true);
 
-        echo json_encode( [
+        echo wp_json_encode( [
             'code' => 200,
             'status' => 'success',
             'data' => [
@@ -234,7 +234,7 @@ class Conversation
     public function td_save_helpdesk_form()
     {
         header('Content-Type: application/json');
-        $data = $_POST['data'];
+        $data = array_map('sanitize_text_field', wp_unslash($_POST['data']));
 
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
@@ -254,11 +254,11 @@ class Conversation
             } else {
                 add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
-            echo json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
+            echo wp_json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
             die();
         }
 
-        echo json_encode(['status' => 'error', 'message' => 'Something went wrong']);
+        echo wp_json_encode(['status' => 'error', 'message' => 'Something went wrong']);
         die();
     }
 
@@ -449,7 +449,7 @@ class Conversation
         if (!isset($_POST['data']['nonce'])
             || !isset($_POST['data']['conversation_id'])
             || !isset($_POST['data']['reply_text'])
-            || !wp_verify_nonce($_POST['data']['nonce'], 'td-reply-conversation-action')) {
+            || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'td-reply-conversation-action')) {
             die;
         }
 
@@ -468,12 +468,12 @@ class Conversation
 
 	        remove_thrivedesk_conversation_cache();
 
-            echo json_encode([
+            echo wp_json_encode([
                 'status'  => 'success',
                 'message' => $response_body['message'],
             ]);
         }catch (\Exception $e) {
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            echo wp_json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
         die;
     }

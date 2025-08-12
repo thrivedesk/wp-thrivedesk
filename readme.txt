@@ -1,14 +1,14 @@
 === ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base ===
 Contributors: thrivedesk
 
-Tags: chat, chatbot, livechat, helpdesk, help center, live chat,  woocommerce, surecart, freemius
+Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
 Stable Tag: 2.0.12
 Requires PHP: 5.5
 License: GNU General Public License v2.0 or later
 
-Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers’ questions, engage website visitors, generate leads, and increase sales.
+Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers' questions and provide excellent support.
 
 == Description ==
 
@@ -189,6 +189,42 @@ The easiest way to install ThriveDesk is to search for it via your site's Dashbo
 - Search For "ThriveDesk".
 - Install it by clicking the "Install Now" link.
 - When the installation finishes, click "Activate Plugin."
+
+== External services ==
+
+This plugin connects to ThriveDesk's external services to provide live chat, helpdesk, and knowledge base functionality. Here are the details of the external services used:
+
+**ThriveDesk API Service:**
+- **Service:** ThriveDesk API (api.thrivedesk.com)
+- **Purpose:** Used for managing conversations, tickets, knowledge base content, and live chat functionality
+- **Data sent:** Customer conversation data, user information, support ticket details, and plugin settings
+- **When:** Data is sent when users interact with the live chat widget, create support tickets, or when administrators manage helpdesk settings
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**ThriveDesk App Service:**
+- **Service:** ThriveDesk Application (app.thrivedesk.com)
+- **Purpose:** Used for plugin configuration, assistant management, and accessing the main ThriveDesk dashboard
+- **Data sent:** Plugin authentication tokens and configuration settings
+- **When:** Data is sent during plugin setup and when accessing ThriveDesk dashboard features
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**ThriveDesk Documentation Service:**
+- **Service:** ThriveDesk Knowledge Base (thrivedeskdocs.com)
+- **Purpose:** Used to fetch and display knowledge base articles and documentation
+- **Data sent:** Search queries and article requests
+- **When:** Data is sent when users search for help articles or access the knowledge base
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**MediaDelivery Video Service:**
+- **Service:** MediaDelivery (iframe.mediadelivery.net)
+- **Purpose:** Used to embed promotional and tutorial videos in the plugin interface
+- **Data sent:** Basic request headers and viewing analytics
+- **When:** Data is sent when the plugin admin interface loads embedded videos
+- **Terms of Service:** Please check MediaDelivery's terms of service
+- **Privacy Policy:** Please check MediaDelivery's privacy policy
 
 == Frequently Asked Questions ==
 

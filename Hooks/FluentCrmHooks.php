@@ -74,7 +74,10 @@ class FluentCrmHooks
                     }
 
                     $td_conversations = $wpdb->get_results(
-                        "SELECT * FROM $table_name WHERE contact = '$subscriber->email' AND deleted_at IS NULL"
+                        $wpdb->prepare(
+                            "SELECT * FROM $table_name WHERE contact = %s AND deleted_at IS NULL",
+                            $subscriber->email
+                        )
                     );
 
                     $formattedTickets = [];

@@ -1,4 +1,7 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 use ThriveDesk\Conversations\Conversation;
 use ThriveDesk\Services\PortalService;
 
@@ -20,7 +23,7 @@ $is_portal_available = (new PortalService())->has_portal_access();
 
         <?php else: ?>
             <div class="td-portal-header">
-                <input type="search" class="px-3 py-2 w-64 bg-white border rounded-md shadow-sm" id="td-ticket-search" placeholder="<?php _e('Search...')?>">
+                <input type="search" class="px-3 py-2 w-64 bg-white border rounded-md shadow-sm" id="td-ticket-search" placeholder="<?php esc_attr_e('Search...', 'thrivedesk'); ?>">
                 <button type="submit" id="openConversationModal" class="td-btn-primary ml-auto" data-modal-toggle="tdConversationModal">
                     <span><?php _e('Create a new ticket', 'thrivedesk'); ?></span>
                 </button>
@@ -68,8 +71,8 @@ $is_portal_available = (new PortalService())->has_portal_access();
                                 </a>
                             </td>
                             <td scope="row" class="text-center align-middle">
-                                <span class="status status-<?php echo strtolower($conversation['status']); ?>">
-                                    <?php echo $conversation['status']; ?>
+                                                        <span class="status status-<?php echo esc_attr(strtolower($conversation['status'])); ?>">
+                            <?php echo esc_html($conversation['status']); ?>
                                 </span>
                             </td>
                             <td class="text-center align-middle text-sm">
@@ -110,9 +113,9 @@ $is_portal_available = (new PortalService())->has_portal_access();
                                 ?>
                                 <li class="<?php echo $link['active'] ? 'pg-active' : ''; ?>">
                                     <?php if($link['url']): ?>
-                                        <a href="<?php echo get_permalink() . '?cv_page=' . $page ?>">
+                                        <a href="<?php echo esc_url(get_permalink() . '?cv_page=' . $page); ?>">
                                     <?php endif; ?>
-                                            <span><?php echo $link['label'] ?></span>
+                                            <span><?php echo esc_html($link['label']); ?></span>
                                     <?php if($link['url']): ?>
                                         </a>
                                     <?php endif; ?>
