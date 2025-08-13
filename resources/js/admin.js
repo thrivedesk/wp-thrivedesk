@@ -519,6 +519,7 @@ jQuery(document).ready(($) => {
                 data: {
                     td_helpdesk_api_key: apiKey,
                 },
+                timeout: 25000 // 25 second timeout to prevent fatal errors
             })
             .success(function (response) {
                 let parsedResponse = JSON.parse(response);
@@ -539,16 +540,23 @@ jQuery(document).ready(($) => {
                     });
                 } else {
                     let inboxList = $('#td-inboxes');
+                    let currentValue = inboxList.val(); // Preserve current selection
                     inboxList.html('');
 
                     if (data?.data?.length > 0) {
                         inboxes = data?.data;
                         inboxList.append('<option value="">All inboxes</option>');
                         data.data.forEach(function (item) {
+                            let selected = (currentValue === item.id) ? ' selected' : '';
                             inboxList.append(
-                                '<option value="' + item.id + '">' + item.name + '</option>'
+                                '<option value="' + item.id + '"' + selected + '>' + item.name + '</option>'
                             );
                         });
+                        
+                        // Restore the selected value
+                        if (currentValue) {
+                            inboxList.val(currentValue);
+                        }
                     }else {
                         inboxList.append(
                             '<option value="">No Inbox Found</option>'
@@ -558,11 +566,18 @@ jQuery(document).ready(($) => {
                     }
                 }
             })
-            .error(function () {
+            .error(function (xhr, status, error) {
+                let errorMessage = 'Something went wrong';
+                if (status === 'timeout') {
+                    errorMessage = 'Request timed out. Please try again.';
+                } else if (error) {
+                    errorMessage = 'Error: ' + error;
+                }
+                
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Something went wrong',
+                    text: errorMessage,
                 });
             });
     }

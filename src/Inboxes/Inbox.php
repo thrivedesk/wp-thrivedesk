@@ -56,20 +56,30 @@ class Inbox {
 
     public function get_inboxes($api_key = null): array
     {
-        $url = THRIVEDESK_API_URL . '/v1/inboxes';
+        try {
+            $url = THRIVEDESK_API_URL . '/v1/inboxes';
 
-        $apiService = new TDApiService();
-        if ($api_key) {
-            $apiService->setApiKey($api_key);
-        }
+            $apiService = new TDApiService();
+            if ($api_key) {
+                $apiService->setApiKey($api_key);
+            }
 
-        $response = $apiService->getRequest($url);
+            $response = $apiService->getRequest($url);
 
-        if (isset($response['wp_error'])) {
+            if (isset($response['wp_error'])) {
+                error_log('ThriveDesk - Inbox API Error: ' . ($response['message'] ?? 'Unknown error'));
+                return [];
+            }
+
+            return $response;
+            
+        } catch (Exception $e) {
+            error_log('ThriveDesk - Inbox API Exception: ' . $e->getMessage());
+            return [];
+        } catch (Error $e) {
+            error_log('ThriveDesk - Inbox API Fatal Error: ' . $e->getMessage());
             return [];
         }
-
-        return $response;
     }
 
     /**
