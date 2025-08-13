@@ -59,7 +59,7 @@ $current_user = wp_get_current_user();
 
 <form class="space-y-6" id="td_helpdesk_form" action="#" method="POST">
     <!-- inbox selection -->
-    <div class="space-y-1">
+    <div class="space-y-1" style="display:none;">
         <div class="td-card-heading">
             <div class="text-base font-bold"><?php esc_html_e('Select your inbox', 'thrivedesk'); ?></div>
             <p><?php esc_html_e('Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox.', 'thrivedesk'); ?></p>
