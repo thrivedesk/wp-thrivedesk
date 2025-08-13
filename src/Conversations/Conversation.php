@@ -220,6 +220,7 @@ class Conversation
             $td_helpdesk_settings = get_option('td_helpdesk_settings');
             $td_helpdesk_settings['td_helpdesk_api_key'] = $apiKey;
             $td_helpdesk_settings['td_helpdesk_assistant_id'] = '';
+            $td_helpdesk_settings['td_helpdesk_inbox_id'] = '';
             $td_helpdesk_settings['td_knowledgebase_slug'] = '';
 
             update_option('td_helpdesk_settings', $td_helpdesk_settings);
@@ -238,14 +239,15 @@ class Conversation
 
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
-            $td_helpdesk_settings = [
+                        $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
+                'td_helpdesk_inbox_id'                  => $data['td_helpdesk_inbox'] ?? '',
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
                 'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? [],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? '',
-	            'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
+                    'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             

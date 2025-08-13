@@ -31,6 +31,7 @@
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\Assistants\Assistant;
+use ThriveDesk\Inboxes\Inbox;
 use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
@@ -123,8 +124,9 @@ final class ThriveDesk
 
 	        MigrationScript::instance();
             Conversation::instance();
-            Assistant::instance();
-			PortalService::instance();
+                        Assistant::instance();
+            Inbox::instance();
+                    PortalService::instance();
 			UserAccountPages::instance();
             KnowledgeBase::instance();
         }
