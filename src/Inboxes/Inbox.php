@@ -56,27 +56,46 @@ class Inbox {
 
     public function get_inboxes($api_key = null): array
     {
-        $url = THRIVEDESK_API_URL . '/v1/inboxes';
+        // Try different possible inbox endpoints
+        $possible_endpoints = [
+            '/v1/inboxes',
+            '/v1/customer/inboxes',
+            '/v1/me/inboxes',
+            '/v1/admin/inboxes'
+        ];
 
+        $apiService = new TDApiService();
         if ($api_key) {
-            $apiService = new TDApiService();
             $apiService->setApiKey($api_key);
+        }
+        
+        foreach ($possible_endpoints as $endpoint) {
+            $url = THRIVEDESK_API_URL . $endpoint;
             $response = $apiService->getRequest($url);
-        } else {
-            $response = (new TDApiService())->getRequest($url);
+
+            // Debug: Log the API response
+            if (WP_DEBUG) {
+                error_log('ThriveDesk Debug - Trying Inbox API URL: ' . $url);
+                error_log('ThriveDesk Debug - Inbox API Response: ' . print_r($response, true));
+            }
+
+            // If we get a successful response (not an error), return it
+            if (!isset($response['wp_error'])) {
+                // Check if response has data that looks like inboxes
+                if (isset($response['data']) || isset($response['inboxes']) || (is_array($response) && !empty($response))) {
+                    if (WP_DEBUG) {
+                        error_log('ThriveDesk Debug - Found working inbox endpoint: ' . $url);
+                    }
+                    return $response;
+                }
+            }
         }
 
-        // Debug: Log the API response
+        // If all endpoints fail, return empty array
         if (WP_DEBUG) {
-            error_log('ThriveDesk Debug - Inbox API URL: ' . $url);
-            error_log('ThriveDesk Debug - Inbox API Response: ' . print_r($response, true));
+            error_log('ThriveDesk Debug - All inbox endpoints failed');
         }
-
-        if (isset($response['wp_error'])) {
-            return [];
-        }
-
-        return $response;
+        return [];
     }
 
     /**
