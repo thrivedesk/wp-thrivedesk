@@ -36,7 +36,7 @@ class Inbox {
 
         $inboxes = $this->get_inboxes($apiKey);
 
-        if (isset($inboxes) and $inboxes['inboxes']) {
+        if (isset($inboxes) and $inboxes['data']) {
             set_transient($key, $inboxes, 60 * 30);
             echo wp_json_encode(['status' => 'true', 'data' => $inboxes]);
         } else {
@@ -56,46 +56,20 @@ class Inbox {
 
     public function get_inboxes($api_key = null): array
     {
-        // Try different possible inbox endpoints
-        $possible_endpoints = [
-            '/v1/inboxes',
-            '/v1/customer/inboxes',
-            '/v1/me/inboxes',
-            '/v1/admin/inboxes'
-        ];
+        $url = THRIVEDESK_API_URL . '/v1/inboxes';
 
         $apiService = new TDApiService();
         if ($api_key) {
             $apiService->setApiKey($api_key);
         }
-        
-        foreach ($possible_endpoints as $endpoint) {
-            $url = THRIVEDESK_API_URL . $endpoint;
-            $response = $apiService->getRequest($url);
 
-            // Debug: Log the API response
-            if (WP_DEBUG) {
-                error_log('ThriveDesk Debug - Trying Inbox API URL: ' . $url);
-                error_log('ThriveDesk Debug - Inbox API Response: ' . print_r($response, true));
-            }
+        $response = $apiService->getRequest($url);
 
-            // If we get a successful response (not an error), return it
-            if (!isset($response['wp_error'])) {
-                // Check if response has data that looks like inboxes
-                if (isset($response['data']) || isset($response['inboxes']) || (is_array($response) && !empty($response))) {
-                    if (WP_DEBUG) {
-                        error_log('ThriveDesk Debug - Found working inbox endpoint: ' . $url);
-                    }
-                    return $response;
-                }
-            }
+        if (isset($response['wp_error'])) {
+            return [];
         }
 
-        // If all endpoints fail, return empty array
-        if (WP_DEBUG) {
-            error_log('ThriveDesk Debug - All inbox endpoints failed');
-        }
-        return [];
+        return $response;
     }
 
     /**
@@ -113,16 +87,16 @@ class Inbox {
         $inboxes = get_transient($key);
 
         if ($inboxes) {
-            return $inboxes['inboxes'] ?? [];
+            return $inboxes['data'] ?? [];
         }
 
         $inboxes = (new Inbox)->get_inboxes();
 
-        if (isset($inboxes['inboxes'])) {
+        if (isset($inboxes['data'])) {
             set_transient($key, $inboxes, 60 * 30);
         }
 
-        return $inboxes['inboxes'] ?? [];
+        return $inboxes['data'] ?? [];
     }
 
     public static function get_inbox_settings()

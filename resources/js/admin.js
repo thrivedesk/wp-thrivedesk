@@ -541,10 +541,10 @@ jQuery(document).ready(($) => {
                     let inboxList = $('#td-inboxes');
                     inboxList.html('');
 
-                    if (data?.inboxes?.length > 0) {
-                        inboxes = data?.inboxes;
+                    if (data?.data?.length > 0) {
+                        inboxes = data?.data;
                         inboxList.append('<option value="">All inboxes</option>');
-                        data.inboxes.forEach(function (item) {
+                        data.data.forEach(function (item) {
                             inboxList.append(
                                 '<option value="' + item.id + '">' + item.name + '</option>'
                             );
