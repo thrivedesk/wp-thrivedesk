@@ -7,10 +7,12 @@ if (!defined('ABSPATH')) {
 }
 class TDApiService {
     private $api_token;
+    private $inbox_id;
 
     public function __construct()
     {
         $this->api_token = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+        $this->inbox_id = get_option('td_helpdesk_settings')['td_helpdesk_inbox_id'] ?? '';
     }
 
     public function postRequest(string $url, array $data = []){

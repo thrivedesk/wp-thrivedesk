@@ -392,13 +392,19 @@ class Conversation
         self::delete_thrivedesk_expired_transients();
 		$page               = $_GET['cv_page'] ?? 1;
 		$current_user_email = wp_get_current_user()->user_email;
-		// get data from cache
-		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email;
+		$inbox_id           = get_option('td_helpdesk_settings')['td_helpdesk_inbox_id'] ?? '';
+		
+		// get data from cache - include inbox_id in cache key for proper filtering
+		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email . '_' . $inbox_id;
 		$data = get_transient($cache_key);
-
 
 		if (!$data) {
 			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
+			
+			// Add inbox filtering if inbox is selected
+			if (!empty($inbox_id)) {
+				$url .= '&inbox_id=' . $inbox_id;
+			}
 
 			$response =( new TDApiService() )->getRequest($url);
 
