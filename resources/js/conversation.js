@@ -177,7 +177,7 @@ jQuery(document).ready(($) => {
     $('#td_conversation_reply').submit(function(e){
         e.preventDefault();
 
-        let td_reply_none = $("#td_reply_none").val();
+        let td_reply_nonce = $("#td_reply_nonce").val();
         let td_conversation_id = $("#td_conversation_id").val();
         let reply_text = $("#td_conversation_editor").val();
         if (reply_text === '') {
@@ -194,7 +194,7 @@ jQuery(document).ready(($) => {
                 {
                     action: 'td_reply_conversation',
                     data: {
-                        nonce: td_reply_none,
+                        nonce: td_reply_nonce,
                         conversation_id: td_conversation_id,
                         reply_text: reply_text,
                     },

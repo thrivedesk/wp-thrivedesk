@@ -100,7 +100,7 @@ final class Admin
 		if (get_option('wp_thrivedesk_activation_redirect', false)) {
 			delete_option('wp_thrivedesk_activation_redirect');
 
-			wp_redirect(esc_url_raw(admin_url("admin.php?page=thrivedesk")));
+            wp_safe_redirect( admin_url( 'admin.php?page=thrivedesk' ) );
 			exit;
 		}
 	}

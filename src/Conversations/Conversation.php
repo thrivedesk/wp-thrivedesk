@@ -79,7 +79,7 @@ class Conversation
 
         $systemInfo = $this->get_system_info($apiKey);
 
-        if ($systemInfo) {
+        if (!empty($systemInfo)) {
             echo wp_json_encode(['status' => 'true', 'data' => $systemInfo]);
         } else {
             echo wp_json_encode(['status' => 'false', 'data' => []]);
@@ -239,7 +239,7 @@ class Conversation
 
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
-                        $td_helpdesk_settings = [
+            $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
                 'td_helpdesk_inbox_id'                  => $data['td_helpdesk_inbox_id'] ?? '',
