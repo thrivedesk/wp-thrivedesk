@@ -85,7 +85,9 @@ $current_user = wp_get_current_user();
                             <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" stroke="currentColor" stroke-width="1.5"/>
                             <path d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg></span>
-                    <span><?php printf(esc_html__('No inboxes found. Please %screate a new inbox%s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
+                    <span><?php
+                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
+                        printf(esc_html__('No inboxes found. Please %1$screate a new inbox%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
                 </p>
             <?php endif; ?>
         </div>
@@ -95,7 +97,9 @@ $current_user = wp_get_current_user();
     <div class="space-y-1">
         <div class="td-card-heading">
             <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php printf(esc_html__('Add live chat assistant to your website. To create your assistant click %shere%s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
+            <p><?php
+                /* translators: %1$s: opening link tag, %2$s: closing link tag */
+                printf(esc_html__('Add live chat assistant to your website. To create your assistant click %1$shere%2$s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
         </div>
         <div class="td-card space-y-2">
             <?php if (!empty($td_assistants)) : ?>
@@ -140,7 +144,9 @@ $current_user = wp_get_current_user();
                             <path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                             <path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg></span>
-                    <span><?php printf(esc_html__('No Assistant found. Please %screate a new Assistant%s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></span>
+                    <span><?php
+                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
+                        printf(esc_html__('No Assistant found. Please %1$screate a new Assistant%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></span>
                 </p>
             <?php endif; ?>
         </div>
