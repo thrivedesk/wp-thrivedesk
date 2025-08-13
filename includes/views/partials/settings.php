@@ -58,6 +58,39 @@ $current_user = wp_get_current_user();
 ?>
 
 <form class="space-y-6" id="td_helpdesk_form" action="#" method="POST">
+    <!-- inbox selection -->
+    <div class="space-y-1">
+        <div class="td-card-heading">
+            <div class="text-base font-bold"><?php esc_html_e('Select your inbox', 'thrivedesk'); ?></div>
+            <p><?php esc_html_e('Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox.', 'thrivedesk'); ?></p>
+        </div>
+        <div class="td-card space-y-2">
+            <?php if (!empty($td_inboxes)) : 
+                //dd($td_inboxes, $td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? 'X');
+                ?>
+                <div class="space-y-2">
+                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Inbox', 'thrivedesk'); ?></label>
+                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
+                        <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
+                        <?php foreach ($td_inboxes as $inbox) : ?>
+                            <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
+                                <?php echo esc_html($inbox['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php else : ?>
+                <p class="text-lg flex flex-col items-center">
+                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
+                            <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg></span>
+                    <span><?php printf(esc_html__('No inboxes found. Please %screate a new inbox%s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
+                </p>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <!-- assistant  -->
     <div class="space-y-1">
         <div class="td-card-heading">
@@ -108,37 +141,6 @@ $current_user = wp_get_current_user();
                             <path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                         </svg></span>
                     <span><?php printf(esc_html__('No Assistant found. Please %screate a new Assistant%s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></span>
-                </p>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- inbox selection -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Select your inbox', 'thrivedesk'); ?></div>
-            <p><?php esc_html_e('Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card space-y-2">
-            <?php if (!empty($td_inboxes)) : ?>
-                <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Inbox', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
-                        <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
-                        <?php foreach ($td_inboxes as $inbox) : ?>
-                            <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
-                                <?php echo esc_html($inbox['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            <?php else : ?>
-                <p class="text-lg flex flex-col items-center">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
-                            <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg></span>
-                    <span><?php printf(esc_html__('No inboxes found. Please %screate a new inbox%s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
                 </p>
             <?php endif; ?>
         </div>

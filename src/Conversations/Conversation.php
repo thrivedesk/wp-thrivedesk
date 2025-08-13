@@ -242,7 +242,7 @@ class Conversation
                         $td_helpdesk_settings = [
                 'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
-                'td_helpdesk_inbox_id'                  => $data['td_helpdesk_inbox'] ?? '',
+                'td_helpdesk_inbox_id'                  => $data['td_helpdesk_inbox_id'] ?? '',
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
                 'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? [],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],

@@ -176,9 +176,9 @@ jQuery(document).ready(($) => {
 	});
 
 	async function handleThriveDeskMainForm() {
-		            let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
-            let td_helpdesk_assistant = $('#td-assistants').val();
-            let td_helpdesk_inbox = $('#td-inboxes').val();
+		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
+		let td_helpdesk_assistant = $('#td-assistants').val();
+		let td_helpdesk_inbox_id = $('#td-inboxes').val();
 		// Get the selected routes as an array
 		let td_assistant_route_list = $('#td-excluded-routes').val() || [];
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
@@ -196,6 +196,7 @@ jQuery(document).ready(($) => {
 		let data = {
 			td_helpdesk_api_key: td_helpdesk_api_key,
 			td_helpdesk_assistant: td_helpdesk_assistant,
+			td_helpdesk_inbox_id: td_helpdesk_inbox_id,
 			td_helpdesk_page_id: td_helpdesk_page_id,
 			td_knowledgebase_slug: td_knowledgebase_slug,
 			td_helpdesk_post_types: td_helpdesk_post_types,
@@ -321,8 +322,8 @@ jQuery(document).ready(($) => {
 					return;
 				}
 
-				                            loadAssistants(apiKey);
-                            loadInboxes(apiKey);
+				loadAssistants(apiKey);
+				loadInboxes(apiKey);
 				isAllowedPortal();
 
 				const buttons = document.querySelectorAll('.disConnectBtn');
@@ -347,9 +348,9 @@ jQuery(document).ready(($) => {
 				$target.text('Verified');
 				$target.prop('disabled', true);
 
-				                            // remove the disabled attribute from the id td-assistants and td-inboxes
-                            $('#td-assistants').prop('disabled', false);
-                            $('#td-inboxes').prop('disabled', false);
+				// remove the disabled attribute from the id td-assistants and td-inboxes
+				$('#td-assistants').prop('disabled', false);
+				$('#td-inboxes').prop('disabled', false);
 				// add hidden class to the id td-api-verification-btn
 				$('#api_key_alert').addClass('hidden');
 
