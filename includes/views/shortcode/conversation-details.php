@@ -18,13 +18,6 @@ if (isset($query_params['td_conversation_id'])) {
 	
 	// Check if conversation exists and is valid
 	$conversation_exists = !empty($conversation) && !isset($conversation['wp_error']);
-	
-	// Debug: Log conversation data structure
-	if (WP_DEBUG) {
-		error_log('ThriveDesk Debug - Conversation ID: ' . $query_params['td_conversation_id']);
-		error_log('ThriveDesk Debug - Conversation Data: ' . print_r($conversation, true));
-		error_log('ThriveDesk Debug - Conversation Exists: ' . ($conversation_exists ? 'Yes' : 'No'));
-	}
 }
 ?>
 <?php if ($is_portal_available && $conversation_exists): ?>

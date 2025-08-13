@@ -389,7 +389,7 @@ class Conversation
 	{
         self::delete_thrivedesk_expired_transients();
 		$page               = $_GET['cv_page'] ?? 1;
-		$current_user_email = 'ahba@themexpert.com'; //wp_get_current_user()->user_email;
+		$current_user_email = wp_get_current_user()->user_email;
 		// get data from cache
 		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email;
 		$data = get_transient($cache_key);
@@ -430,12 +430,6 @@ class Conversation
 			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
 			$response =( new TDApiService() )->getRequest($url);
 
-			// Debug: Log API response
-			if (WP_DEBUG) {
-				error_log('ThriveDesk Debug - API URL: ' . $url);
-				error_log('ThriveDesk Debug - API Response: ' . print_r($response, true));
-			}
-
 			if (isset($response['data'])) {
 				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
 			} elseif (is_array($response) && !isset($response['wp_error'])) {
@@ -444,11 +438,6 @@ class Conversation
 			}
 		}
 
-		// Debug: Check if response has data key or is direct data
-		if (WP_DEBUG) {
-			error_log('ThriveDesk Debug - Response structure check: ' . print_r(array_keys($response ?? []), true));
-		}
-		
 		// Handle different response structures
 		if (isset($response['wp_error'])) {
 			// Return error response for proper error handling
