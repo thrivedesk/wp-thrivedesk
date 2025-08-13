@@ -56,7 +56,7 @@ class Inbox {
 
     public function get_inboxes($api_key = null): array
     {
-        $url = THRIVEDESK_API_URL . '/inboxes';
+        $url = THRIVEDESK_API_URL . '/v1/inboxes';
 
         if ($api_key) {
             $apiService = new TDApiService();
@@ -64,6 +64,12 @@ class Inbox {
             $response = $apiService->getRequest($url);
         } else {
             $response = (new TDApiService())->getRequest($url);
+        }
+
+        // Debug: Log the API response
+        if (WP_DEBUG) {
+            error_log('ThriveDesk Debug - Inbox API URL: ' . $url);
+            error_log('ThriveDesk Debug - Inbox API Response: ' . print_r($response, true));
         }
 
         if (isset($response['wp_error'])) {
