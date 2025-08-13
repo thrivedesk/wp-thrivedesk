@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name:         ThriveDesk
+ * Plugin Name:         ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base
  * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
