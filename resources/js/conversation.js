@@ -111,7 +111,7 @@ jQuery(document).ready(($) => {
                         kbResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
-                                    <span class="td-search-tag">${item.categories}</span>
+                                    <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories[0] : ''}</span>
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -132,7 +132,7 @@ jQuery(document).ready(($) => {
                         wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
-                                    <span class="td-search-tag">${item.categories}</span>
+                                    <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories[0] : ''}</span>
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -177,7 +177,7 @@ jQuery(document).ready(($) => {
     $('#td_conversation_reply').submit(function(e){
         e.preventDefault();
 
-        let td_reply_none = $("#td_reply_none").val();
+        let td_reply_nonce = $("#td_reply_nonce").val();
         let td_conversation_id = $("#td_conversation_id").val();
         let reply_text = $("#td_conversation_editor").val();
         if (reply_text === '') {
@@ -194,7 +194,7 @@ jQuery(document).ready(($) => {
                 {
                     action: 'td_reply_conversation',
                     data: {
-                        nonce: td_reply_none,
+                        nonce: td_reply_nonce,
                         conversation_id: td_conversation_id,
                         reply_text: reply_text,
                     },

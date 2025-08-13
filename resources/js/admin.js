@@ -178,6 +178,7 @@ jQuery(document).ready(($) => {
 	async function handleThriveDeskMainForm() {
 		let td_helpdesk_api_key = $('#td_helpdesk_api_key').val();
 		let td_helpdesk_assistant = $('#td-assistants').val();
+		let td_helpdesk_inbox_id = $('#td-inboxes').val();
 		// Get the selected routes as an array
 		let td_assistant_route_list = $('#td-excluded-routes').val() || [];
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
@@ -195,6 +196,7 @@ jQuery(document).ready(($) => {
 		let data = {
 			td_helpdesk_api_key: td_helpdesk_api_key,
 			td_helpdesk_assistant: td_helpdesk_assistant,
+			td_helpdesk_inbox_id: td_helpdesk_inbox_id,
 			td_helpdesk_page_id: td_helpdesk_page_id,
 			td_knowledgebase_slug: td_knowledgebase_slug,
 			td_helpdesk_post_types: td_helpdesk_post_types,
@@ -321,6 +323,7 @@ jQuery(document).ready(($) => {
 				}
 
 				loadAssistants(apiKey);
+				loadInboxes(apiKey);
 				isAllowedPortal();
 
 				const buttons = document.querySelectorAll('.disConnectBtn');
@@ -345,8 +348,9 @@ jQuery(document).ready(($) => {
 				$target.text('Verified');
 				$target.prop('disabled', true);
 
-				// remove the disabled attribute from the id td-assistants
+				// remove the disabled attribute from the id td-assistants and td-inboxes
 				$('#td-assistants').prop('disabled', false);
+				$('#td-inboxes').prop('disabled', false);
 				// add hidden class to the id td-api-verification-btn
 				$('#api_key_alert').addClass('hidden');
 
@@ -505,10 +509,85 @@ jQuery(document).ready(($) => {
 					title: 'Error',
 					text: 'Something went wrong',
 				});
-			});
-	}
-	// Portal check 
-	async function isAllowedPortal() {
+			                    });
+    }
+    
+    // Load inboxes
+    async function loadInboxes(apiKey) {
+        jQuery
+            .post(thrivedesk.ajax_url, {
+                action: 'thrivedesk_load_inboxes',
+                data: {
+                    td_helpdesk_api_key: apiKey,
+                },
+                timeout: 25000 // 25 second timeout to prevent fatal errors
+            })
+            .success(function (response) {
+                let parsedResponse = JSON.parse(response);
+                let data = parsedResponse?.data;
+
+                if(data?.message==='Unauthenticated.'){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Invalid API Key',
+                    });
+                }
+                else if (data?.message==='Server Error'){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Server Error',
+                    });
+                } else {
+                    let inboxList = $('#td-inboxes');
+                    
+                    // Get the saved inbox ID from the data attribute (set by PHP)
+                    let savedInboxId = inboxList.data('selected') || inboxList.val();
+                    
+                    inboxList.html('');
+
+                    if (data?.data?.length > 0) {
+                        inboxes = data?.data;
+                        inboxList.append('<option value="">All inboxes</option>');
+                        data.data.forEach(function (item) {
+                            let isSelected = (savedInboxId === item.id);
+                            inboxList.append(
+                                '<option value="' + item.id + '"' + (isSelected ? ' selected' : '') + '>' + item.name + '</option>'
+                            );
+                        });
+                        
+                        // Restore the selected value
+                        if (savedInboxId) {
+                            inboxList.val(savedInboxId);
+                        }
+                    }else {
+                        inboxList.append(
+                            '<option value="">No Inbox Found</option>'
+                        );
+
+                        inboxList.prop('disabled', true);
+                    }
+                }
+            })
+            .error(function (xhr, status, error) {
+                let errorMessage = 'Something went wrong';
+                if (status === 'timeout') {
+                    errorMessage = 'Request timed out. Please try again.';
+                } else if (error) {
+                    errorMessage = 'Error: ' + error;
+                }
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage,
+                });
+            });
+    }
+    
+    // Portal check 
+    async function isAllowedPortal() {
 		let apiKey = $('#td_helpdesk_api_key').val().trim();
 		jQuery
 			.post(thrivedesk.ajax_url, {

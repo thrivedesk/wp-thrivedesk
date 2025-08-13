@@ -70,8 +70,8 @@ final class Admin
     
         // Remove all transient data
         global $wpdb;
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_%thrivedesk%'");
-        $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_%thrivedesk%'");
+        $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_%thrivedesk%'));
+        $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_timeout_%thrivedesk%'));
     
         // Flush the server cache
         wp_cache_flush();
@@ -100,7 +100,8 @@ final class Admin
 		if (get_option('wp_thrivedesk_activation_redirect', false)) {
 			delete_option('wp_thrivedesk_activation_redirect');
 
-			exit( wp_redirect("admin.php?page=thrivedesk") );
+            wp_safe_redirect( admin_url( 'admin.php?page=thrivedesk' ) );
+			exit;
 		}
 	}
 
@@ -245,7 +246,7 @@ final class Admin
         $api_status = self::get_api_verification_status();
 
         if($td_api_key && $api_status){
-            echo thrivedesk_view('setting');
+            thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
             // if token is passed, log it
@@ -253,15 +254,15 @@ final class Admin
                 error_log('ThriveDesk: Token received from request: ' . $_GET['token']);
             }
 
-            echo thrivedesk_view('pages/api-verify');
+            thrivedesk_view('pages/api-verify');
         }
         else{
-            echo thrivedesk_view('pages/welcome');
+            thrivedesk_view('pages/welcome');
         }
     }
 
     public function verification_page(){
-        echo thrivedesk_view('pages/api-verify');
+                    thrivedesk_view('pages/api-verify');
     }
 
     public static function set_api_verification_status($status = false): void
@@ -283,9 +284,9 @@ final class Admin
      */
     public function ajax_connect_plugin()
     {
-        error_log(json_encode($_POST['data']));
+        error_log(wp_json_encode(array_map('sanitize_text_field', wp_unslash($_POST['data']))));
 
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-plugin-action')) die;
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'thrivedesk-plugin-action')) die;
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
@@ -300,15 +301,15 @@ final class Admin
 
         update_option('thrivedesk_options', $thrivedesk_options);
 
-        $hash = base64_encode(json_encode([
-            'store_url'   => get_bloginfo('url'),
-            'api_token'   => $api_token,
-            'org_id'    => get_option('td_helpdesk_system_info')['id'] ?? '',
-            'cancel_url'  => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=false'),
-            'success_url' => admin_url('options-general.php?page=thrivedesk&plugin=' . $plugin . '&td-activated=true')
+        $hash = base64_encode(wp_json_encode([
+            'store_url'   => esc_url_raw(get_bloginfo('url')),
+            'api_token'   => sanitize_text_field($api_token),
+            'org_id'    => sanitize_text_field(get_option('td_helpdesk_system_info')['id'] ?? ''),
+            'cancel_url'  => esc_url_raw(admin_url('options-general.php?page=thrivedesk&plugin=' . sanitize_key($plugin) . '&td-activated=false')),
+            'success_url' => esc_url_raw(admin_url('options-general.php?page=thrivedesk&plugin=' . sanitize_key($plugin) . '&td-activated=true'))
         ]));
 
-        echo THRIVEDESK_APP_URL . '/apps/' . esc_attr($plugin) . '?connect=' . esc_attr($hash);
+        echo esc_url(THRIVEDESK_APP_URL . '/apps/' . esc_attr($plugin) . '?connect=' . esc_attr($hash));
 
         die();
     }
@@ -320,7 +321,7 @@ final class Admin
      */
     public function ajax_disconnect_plugin(): void
     {
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce($_POST['data']['nonce'], 'thrivedesk-plugin-action')) die;
+        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'thrivedesk-plugin-action')) die;
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 

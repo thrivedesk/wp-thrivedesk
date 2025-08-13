@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 if (!function_exists('thrivedesk_view')) {
     /**
      * Render a view file
@@ -48,12 +50,17 @@ if (!function_exists('diff_for_humans')) {
 	 * @throws \Exception
 	 */
 	function diff_for_humans($datetime, $full = false): string {
+		if (empty($datetime)) {
+			return __('Unknown time', 'thrivedesk');
+		}
+		
 		$now = new DateTime;
 		$ago = new DateTime($datetime);
 		$diff = $now->diff($ago);
 
-		$diff->w = floor($diff->d / 7);
-		$diff->d -= $diff->w * 7;
+		// Calculate weeks manually without creating dynamic property
+		$weeks = floor($diff->d / 7);
+		$days = $diff->d - ($weeks * 7);
 
 		$periods = array(
 			'y' => ['year', 'years'],
@@ -66,9 +73,19 @@ if (!function_exists('diff_for_humans')) {
 		);
 
 		$parts = array();
+		$values = array(
+			'y' => $diff->y,
+			'm' => $diff->m,
+			'w' => $weeks,
+			'd' => $days,
+			'h' => $diff->h,
+			'i' => $diff->i,
+			's' => $diff->s
+		);
+		
 		foreach ($periods as $k => &$v) {
-			if ($diff->$k) {
-				$parts[] = $diff->$k . ' ' . $v[$diff->$k > 1];
+			if ($values[$k]) {
+				$parts[] = $values[$k] . ' ' . $v[$values[$k] > 1];
 			}
 		}
 
@@ -95,17 +112,18 @@ if (!function_exists('remove_thrivedesk_cache_by_key')) {
 if (!function_exists('remove_thrivedesk_all_cache')) {
 	function remove_thrivedesk_all_cache() {
 		global $wpdb;
-		$wpdb->query(
-			"DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_thrivedesk_%' 
-                          OR option_name LIKE '_transient_timeout_thrivedesk_%'");
+		$wpdb->query($wpdb->prepare(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
+			'_transient_thrivedesk_%', '_transient_timeout_thrivedesk_%'));
 	}
 }
 
 if (!function_exists('remove_thrivedesk_conversation_cache')) {
 	function remove_thrivedesk_conversation_cache() {
 		global $wpdb;
-		$wpdb->query(
-			"DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_thrivedesk_conversation%' ");
+		$wpdb->query($wpdb->prepare(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE %s", 
+			'_transient_thrivedesk_conversation%'));
 	}
 }
 

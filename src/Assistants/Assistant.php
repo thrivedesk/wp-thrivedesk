@@ -23,23 +23,25 @@ class Assistant {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
 		if (empty($apiKey)) {
-			echo json_encode( [ 'status' => 'false', 'data' => [] ] );
+			echo wp_json_encode( [ 'status' => 'false', 'data' => [] ] );
 			die();
 		}
 
-		$assistants = get_transient( 'thrivedesk_assistants' );
+		$key = 'thrivedesk_assistants_' . md5( $apiKey );
+		$assistants = get_transient( $key );
+		
 		if ( $assistants ) {
-			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
+			echo wp_json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 			die();
 		}
 
 		$assistants = $this->get_assistants( $apiKey );
 
 		if ( isset($assistants) and $assistants['assistants'] ) {
-			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
-			echo json_encode( [ 'status' => 'true', 'data' => $assistants ] );
+			set_transient( $key, $assistants, 60 * 30 );
+			echo wp_json_encode( [ 'status' => 'true', 'data' => $assistants ] );
 		} else {
-			echo json_encode( [ 'status' => 'false', 'data' => [] ] );
+			echo wp_json_encode( [ 'status' => 'false', 'data' => [] ] );
 		}
 		die();
 	}
@@ -85,7 +87,10 @@ class Assistant {
         </script>
         ';
 
-        echo $assistant_script;
+        echo wp_kses($assistant_script, array(
+            'script' => array('src' => array(), 'type' => array()),
+            'div' => array('id' => array(), 'class' => array()),
+        ));
     }
 
 	public function get_current_url()
@@ -114,8 +119,9 @@ class Assistant {
 		if ( empty( $api_key ) ) {
 			return [];
 		}
-		$assistants = get_transient( 'thrivedesk_assistants' );
 
+		$key = 'thrivedesk_assistants_' . md5( $api_key );
+		$assistants = get_transient( $key );
 
 		if ( $assistants ) {
 			return $assistants['assistants'] ?? [];
@@ -124,7 +130,7 @@ class Assistant {
 		$assistants = ( new Assistant )->get_assistants();
 
 		if ( isset($assistants['assistants'] )) {
-			set_transient( 'thrivedesk_assistants', $assistants, 60 * 30 );
+			set_transient( $key, $assistants, 60 * 30 );
 		}
 
 		return $assistants['assistants'] ?? [];

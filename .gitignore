@@ -64,3 +64,4 @@ library/vendors/composer
 assets/img/.DS_Store
 *.lock
 releases
+svn
