@@ -540,22 +540,25 @@ jQuery(document).ready(($) => {
                     });
                 } else {
                     let inboxList = $('#td-inboxes');
-                    let currentValue = inboxList.val(); // Preserve current selection
+                    
+                    // Get the saved inbox ID from the data attribute (set by PHP)
+                    let savedInboxId = inboxList.data('selected') || inboxList.val();
+                    
                     inboxList.html('');
 
                     if (data?.data?.length > 0) {
                         inboxes = data?.data;
                         inboxList.append('<option value="">All inboxes</option>');
                         data.data.forEach(function (item) {
-                            let selected = (currentValue === item.id) ? ' selected' : '';
+                            let isSelected = (savedInboxId === item.id);
                             inboxList.append(
-                                '<option value="' + item.id + '"' + selected + '>' + item.name + '</option>'
+                                '<option value="' + item.id + '"' + (isSelected ? ' selected' : '') + '>' + item.name + '</option>'
                             );
                         });
                         
                         // Restore the selected value
-                        if (currentValue) {
-                            inboxList.val(currentValue);
+                        if (savedInboxId) {
+                            inboxList.val(savedInboxId);
                         }
                     }else {
                         inboxList.append(

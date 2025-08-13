@@ -123,7 +123,7 @@ $current_user = wp_get_current_user();
             <?php if (!empty($td_inboxes)) : ?>
                 <div class="space-y-2">
                     <label class="font-medium text-black text-sm"><?php esc_html_e('Select Inbox', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
+                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
                         <?php foreach ($td_inboxes as $inbox) : ?>
                             <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
