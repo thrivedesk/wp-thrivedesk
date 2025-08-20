@@ -1,6 +1,10 @@
 *** WooCommerce Extension Changelog ***
 
-2.1.0 - version 2.1.0
+2025-08-20 - version 2.1.1
+* Fixed: Portal permission fixed.
+* Fixed: Nonce validation error.
+
+2025-08-15 - version 2.1.0
 * Added: Comprehensive external services documentation in readme for ThriveDesk API, App, Documentation, and MediaDelivery services
 * Added: ABSPATH checks to all view files to prevent direct file access
 * Improved: Replaced _e with esc_html_e where appropriate for better output escaping
