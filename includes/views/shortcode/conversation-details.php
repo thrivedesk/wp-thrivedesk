@@ -12,8 +12,12 @@ $url_parts = add_query_arg( NULL, NULL );
 $parts = (parse_url($url_parts, PHP_URL_QUERY));
 parse_str($parts, $query_params);
 
-if (isset($query_params['td_conversation_id'])) {
-	$conversation =  Conversation::get_conversation($query_params['td_conversation_id']);
+$is_portal_available = false;
+$conversation_exists = false;
+$conversation_id = isset( $query_params['td_conversation_id'] ) ? absint( $query_params['td_conversation_id'] ): 0;
+
+if ($conversation_id > 0) {
+	$conversation =  Conversation::get_conversation($conversation_id);
 	$is_portal_available = (new PortalService())->has_portal_access();
 	
 	// Check if conversation exists and is valid
@@ -75,10 +79,10 @@ if (isset($query_params['td_conversation_id'])) {
         <!-- Reply editor -->
         <div>
             <form action="" id="td_conversation_reply" method="POST">
-                <input type="hidden" id="td_reply_none" value="<?php echo esc_attr($td_reply_nonce); ?>">
+                <input type="hidden" id="td_reply_nonce" value="<?php echo esc_attr($td_reply_nonce); ?>">
                 
                 <?php
-                echo '<input type="hidden" id="td_conversation_id" value="'. esc_attr($query_params['td_conversation_id']) .'">'
+                echo '<input type="hidden" id="td_conversation_id" value="'. esc_attr($conversation_id) .'">'
                 ?>
                 
                 <?php wp_editor('', 'td_conversation_editor', ['editor_height' => '120'] ); ?>
