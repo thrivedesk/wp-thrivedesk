@@ -25,6 +25,7 @@ class PortalService {
         'starter_annual_july_23',
 		'business_ltd',
 		'business-ltd',
+		'appsumo_tier_4'
 	];
 
 	public function __construct(  ) {
