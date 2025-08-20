@@ -75,7 +75,7 @@ if (isset($query_params['td_conversation_id'])) {
         <!-- Reply editor -->
         <div>
             <form action="" id="td_conversation_reply" method="POST">
-                <input type="hidden" id="td_reply_none" value="<?php echo esc_attr($td_reply_nonce); ?>">
+                <input type="hidden" id="td_reply_nonce" value="<?php echo esc_attr($td_reply_nonce); ?>">
                 
                 <?php
                 echo '<input type="hidden" id="td_conversation_id" value="'. esc_attr($query_params['td_conversation_id']) .'">'
