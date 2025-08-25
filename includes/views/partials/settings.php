@@ -11,6 +11,8 @@ use ThriveDesk\Plugins\WPPostSync;
 $td_helpdesk_selected_option = get_td_helpdesk_options();
 $td_selected_post_types      = (array) $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
 $td_selected_post_sync       = (array) $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
+
+
 $td_assistants               = Assistant::assistants();
 $td_inboxes                  = Inbox::inboxes();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();

@@ -3,7 +3,7 @@
         'name' => 'thrivedesk/wp-plugin',
         'pretty_version' => 'dev-develop',
         'version' => 'dev-develop',
-        'reference' => '4e81072540de3e254b42c6207dd8f726715124ff',
+        'reference' => '3e3ed20ed3e809e0c48c450a856674ae3a443c5a',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'thrivedesk/wp-plugin' => array(
             'pretty_version' => 'dev-develop',
             'version' => 'dev-develop',
-            'reference' => '4e81072540de3e254b42c6207dd8f726715124ff',
+            'reference' => '3e3ed20ed3e809e0c48c450a856674ae3a443c5a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

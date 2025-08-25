@@ -235,7 +235,20 @@ class Conversation
     public function td_save_helpdesk_form()
     {
         header('Content-Type: application/json');
-        $data = array_map('sanitize_text_field', wp_unslash($_POST['data']));
+        
+        // Process data properly - handle arrays and strings separately
+        $raw_data = wp_unslash($_POST['data']);
+        $data = [];
+        
+        foreach ($raw_data as $key => $value) {
+            if (is_array($value)) {
+                // For arrays (like checkboxes), sanitize each element
+                $data[$key] = array_map('sanitize_text_field', $value);
+            } else {
+                // For single values, sanitize directly
+                $data[$key] = sanitize_text_field($value);
+            }
+        }
 
         if (isset($data['td_helpdesk_api_key'])) {
             // add option to database
@@ -247,7 +260,7 @@ class Conversation
                 'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? [],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? [],
-                    'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
+                'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             
@@ -256,6 +269,15 @@ class Conversation
             } else {
                 add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
+            
+            // Clear all caches to ensure fresh data
+            if (function_exists('remove_thrivedesk_all_cache')) {
+                remove_thrivedesk_all_cache();
+            }
+            
+            // Clear WordPress options cache for this specific option
+            wp_cache_delete('td_helpdesk_settings', 'options');
+            
             echo wp_json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
             die();
         }
