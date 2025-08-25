@@ -246,7 +246,7 @@ class Conversation
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
                 'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? [],
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],
-                'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? '',
+                'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? [],
                     'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];

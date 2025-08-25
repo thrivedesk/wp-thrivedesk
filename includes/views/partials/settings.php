@@ -9,8 +9,8 @@ use ThriveDesk\Services\PortalService;
 use ThriveDesk\Plugins\WPPostSync;
 
 $td_helpdesk_selected_option = get_td_helpdesk_options();
-$td_selected_post_types      = $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
-$td_selected_post_sync       = $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
+$td_selected_post_types      = (array) $td_helpdesk_selected_option['td_helpdesk_post_types'] ?? [];
+$td_selected_post_sync       = (array) $td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? [];
 $td_assistants               = Assistant::assistants();
 $td_inboxes                  = Inbox::inboxes();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();
@@ -22,7 +22,7 @@ $wppostsync                  = WPPostSync::instance();
 $show_api_key_alert  = empty($td_api_key) ? '' : 'hidden';
 $show_portal         = empty($has_portal_access) ? 'hidden' : '';
 
-$td_selected_user_account_pages = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
+$td_selected_user_account_pages = (array) $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
 $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
 update_option('td_helpdesk_settings', $td_helpdesk_selected_option);
 
@@ -119,10 +119,7 @@ $current_user = wp_get_current_user();
                         <label class="font-medium text-black text-sm"><?php esc_html_e('Exclude Pages', 'thrivedesk'); ?></label>
                         <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
                             <?php
-                            $selected_routes = $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
-                            if (!is_array($selected_routes)) {
-                                $selected_routes = [];
-                            }
+                            $selected_routes = (array) $td_helpdesk_selected_option['td_assistant_route_list'] ?? [];
                             foreach ($routes as $route) : ?>
                                 <option class="hover:text-blue-700" value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
                                     <?php echo esc_html($route); ?>
@@ -175,7 +172,9 @@ $current_user = wp_get_current_user();
                                     <div class="w-full text-center text-base tab-link">
                                         <?php esc_html_e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
                                         <?php $nonce = wp_create_nonce('thrivedesk-plugin-action'); ?>
-                                        <a data-target="tab-integrations" href="#integrations" class="btn-primary py-1 px-3">Connect Now</a>
+                                        <a data-target="tab-integrations" href="#integrations" class="inline-block py-1 px-3 btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">
+                                            <?php esc_html_e('Connect Now', 'thrivedesk'); ?>
+                                        </a>
                                     </div>
                                 <?php endif; ?>
                             </div>

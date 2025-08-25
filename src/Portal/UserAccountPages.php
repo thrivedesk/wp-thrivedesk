@@ -11,7 +11,7 @@ class UserAccountPages {
 
 	public function handle_pages() {
 		$td_helpdesk_selected_option    = get_td_helpdesk_options();
-		$td_selected_user_account_pages = $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
+		$td_selected_user_account_pages = (array) $td_helpdesk_selected_option['td_user_account_pages'] ?? [];
 
 		$woo_plugin_installed = defined('WC_VERSION');
 
