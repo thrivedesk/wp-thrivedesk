@@ -193,6 +193,9 @@ jQuery(document).ready(($) => {
 			.map((i, item) => item.value)
 			.get();
 
+		// Get the nonce from the form
+		let nonce = $('#td_nonce').val();
+		
 		let data = {
 			td_helpdesk_api_key: td_helpdesk_api_key,
 			td_helpdesk_assistant: td_helpdesk_assistant,
@@ -208,6 +211,7 @@ jQuery(document).ready(($) => {
 		// Returning the AJAX call as a Promise
 		return await jQuery.post(thrivedesk.ajax_url, {
 			action: 'thrivedesk_helpdesk_form',
+			nonce: nonce,
 			data: data,
 		});
 	}

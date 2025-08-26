@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.1.1
+Stable Tag: 2.1.2
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -293,6 +293,14 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.1.2 =
+- Fix: Post sync checkboxes not saving properly due to data processing issue
+- Fix: Array data corruption during sanitization in form submission
+- Fix: Cache not being cleared after saving settings
+- Added: Proper nonce verification for form security
+- Improved: Data sanitization to handle arrays and strings separately
+- Security: Enhanced form submission with proper nonce validation and user capability checks
 
 = 2.1.1 =
 - Fix: Portal permission fixed
