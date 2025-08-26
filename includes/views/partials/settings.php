@@ -60,6 +60,7 @@ $current_user = wp_get_current_user();
 ?>
 
 <form class="space-y-6" id="td_helpdesk_form" action="#" method="POST">
+    <?php wp_nonce_field('thrivedesk-nonce', 'td_nonce'); ?>
     <!-- inbox selection -->
     <div class="space-y-1" style="display:none;">
         <div class="td-card-heading">
