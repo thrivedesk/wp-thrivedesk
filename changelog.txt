@@ -1,5 +1,13 @@
 *** WooCommerce Extension Changelog ***
 
+2025-08-25 - version 2.1.2
+* Fixed: Post sync checkboxes not saving properly due to data processing issue
+* Fixed: Array data corruption during sanitization in form submission
+* Fixed: Cache not being cleared after saving settings
+* Added: Proper nonce verification for form security
+* Improved: Data sanitization to handle arrays and strings separately
+* Security: Enhanced form submission with proper nonce validation and user capability checks
+
 2025-08-20 - version 2.1.1
 * Fixed: Portal permission fixed.
 * Fixed: Nonce validation error.
