@@ -386,6 +386,7 @@ class Conversation
                 'wp_json_url' => site_url('wp-json'),
                 'ajax_url'    => admin_url('admin-ajax.php'),
                 'kb_url'      => $this->getKnowledgeBaseUrl(),
+                'nonce'       => wp_create_nonce('thrivedesk-nonce'),
             ]
         );
         wp_enqueue_script('thrivedesk-conversations');
