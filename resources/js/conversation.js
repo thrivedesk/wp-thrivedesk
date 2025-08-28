@@ -9,6 +9,65 @@ jQuery(document).ready(($) => {
         $('.td-modal-container').addClass('hidden').fadeOut(200);
     });
 
+    // Reload tickets functionality
+    $('#reloadTickets').click(function (e) {
+        e.preventDefault();
+        
+        const $button = $(this);
+        const originalText = $button.find('span').text();
+        
+        // Disable button and show loading state
+        $button.prop('disabled', true);
+        $button.find('span').text('Reloading...');
+        
+        // Make AJAX request to reload tickets
+        $.ajax({
+            type: 'POST',
+            url: td_objects.ajax_url,
+            data: {
+                action: 'td_reload_tickets',
+                nonce: td_objects.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: response.data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    
+                    // Reload the page to show fresh data
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: response.data.message || 'Failed to reload tickets'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Reload tickets error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Failed to reload tickets. Please try again.'
+                });
+            },
+            complete: function() {
+                // Re-enable button and restore original text
+                $button.prop('disabled', false);
+                $button.find('span').text(originalText);
+            }
+        });
+    });
+
     $(document).keydown(function(event){
         if (event.key === 'Escape') {
             $('.td-modal-container').addClass('hidden').fadeOut(200);

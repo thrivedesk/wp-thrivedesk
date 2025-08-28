@@ -63,6 +63,10 @@ class Conversation
 		add_action('wp_ajax_thrivedesk_helpdesk_form', [$this, 'td_save_helpdesk_form']);
 
         add_action('wp_ajax_thrivedesk_system_info', [$this, 'thrivedesk_system_info']);
+
+        // ajax call for reloading tickets
+        add_action('wp_ajax_td_reload_tickets', [$this, 'td_reload_tickets']);
+        add_action('wp_ajax_nopriv_td_reload_tickets', [$this, 'td_reload_tickets']);
 	}
 
 
@@ -84,6 +88,47 @@ class Conversation
         } else {
             echo wp_json_encode(['status' => 'false', 'data' => []]);
         }
+        die();
+    }
+
+    /**
+     * Handle reload tickets AJAX request
+     *
+     * @return void
+     */
+    public function td_reload_tickets(): void
+    {
+        // Verify nonce for security
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'thrivedesk-nonce')) {
+            wp_send_json_error(['message' => __('Security check failed', 'thrivedesk')]);
+            die();
+        }
+
+        try {
+            // Clear all ThriveDesk transients
+            self::clear_all_thrivedesk_transients();
+            
+            // Get fresh conversations data
+            $conversations = self::get_conversations();
+            
+            if (!empty($conversations)) {
+                wp_send_json_success([
+                    'message' => __('Tickets reloaded successfully', 'thrivedesk'),
+                    'data' => $conversations
+                ]);
+            } else {
+                wp_send_json_success([
+                    'message' => __('Tickets reloaded successfully', 'thrivedesk'),
+                    'data' => []
+                ]);
+            }
+        } catch (Exception $e) {
+            wp_send_json_error([
+                'message' => __('Failed to reload tickets', 'thrivedesk'),
+                'error' => $e->getMessage()
+            ]);
+        }
+        
         die();
     }
 
@@ -319,17 +364,21 @@ class Conversation
         return $url;
     }
 
+
+
     /**
-     * load the necessary scripts
-     * style and script
+     * Load scripts and styles for the conversation shortcode
      *
      * @return void
      */
     public function load_scripts(): void
     {
-        wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', THRIVEDESK_VERSION);
+        $css_version = thrivedesk_get_asset_version('/css/thrivedesk.css');
+        $js_version = thrivedesk_get_asset_version('/js/conversation.js');
+        
+        wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', $css_version);
 
-        wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery'], THRIVEDESK_VERSION);
+        wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery'], $js_version);
  
 
         wp_localize_script('thrivedesk-conversations',
@@ -410,6 +459,26 @@ class Conversation
                 $wpdb->esc_like( '_transient_thrivedesk_' ) . '%',
                 $wpdb->esc_like( '_transient_timeout_' ) . '%',
                 time()
+            )
+        );
+    }
+
+    /**
+     * Clear all ThriveDesk transients to force reload
+     *
+     * @return void
+     */
+    public static function clear_all_thrivedesk_transients()
+    {
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
+                WHERE a.option_name LIKE %s
+                AND a.option_name NOT LIKE %s
+                AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )",
+                $wpdb->esc_like( '_transient_thrivedesk_' ) . '%',
+                $wpdb->esc_like( '_transient_timeout_' ) . '%'
             )
         );
     }
