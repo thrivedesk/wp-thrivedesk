@@ -18,12 +18,14 @@ jQuery(document).ready(($) => {
         
         // Disable button and show loading state
         $button.prop('disabled', true);
-        $button.find('span').text('Reloading...');
+        $button.attr('aria-busy', 'true');
+        $button.find('span').text(td_objects.i18n_reloading);
         
         // Make AJAX request to reload tickets
         $.ajax({
             type: 'POST',
             url: td_objects.ajax_url,
+            dataType: 'json',
             data: {
                 action: 'td_reload_tickets',
                 nonce: td_objects.nonce
@@ -33,22 +35,20 @@ jQuery(document).ready(($) => {
                     // Show success message
                     Swal.fire({
                         icon: 'success',
-                        title: 'Success!',
+                        title: td_objects.i18n_success,
                         text: response.data.message,
                         timer: 2000,
                         showConfirmButton: false
-                    });
-                    
-                    // Reload the page to show fresh data
-                    setTimeout(() => {
+                    }).then(() => {
+                        // Reload the page to show fresh data after toast finishes
                         location.reload();
-                    }, 1000);
+                    });
                 } else {
                     // Show error message
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error!',
-                        text: response.data.message || 'Failed to reload tickets'
+                        title: td_objects.i18n_error,
+                        text: response.data.message || td_objects.i18n_failed_reload
                     });
                 }
             },
@@ -56,13 +56,14 @@ jQuery(document).ready(($) => {
                 console.error('Reload tickets error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error!',
-                    text: 'Failed to reload tickets. Please try again.'
+                    title: td_objects.i18n_error,
+                    text: td_objects.i18n_failed_reload_try_again
                 });
             },
             complete: function() {
                 // Re-enable button and restore original text
                 $button.prop('disabled', false);
+                $button.removeAttr('aria-busy');
                 $button.find('span').text(originalText);
             }
         });
