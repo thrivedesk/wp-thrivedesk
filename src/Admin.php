@@ -208,7 +208,7 @@ final class Admin
             $css_version = thrivedesk_get_asset_version('/css/admin.css');
             $js_version = thrivedesk_get_asset_version('/js/admin.js');
             
-            wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', '', $css_version);
+            wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', [], $css_version);
             wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], $js_version);
 
             if (current_user_can( 'manage_options' )) {

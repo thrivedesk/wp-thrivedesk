@@ -66,7 +66,6 @@ class Conversation
 
         // ajax call for reloading tickets
         add_action('wp_ajax_td_reload_tickets', [$this, 'td_reload_tickets']);
-        add_action('wp_ajax_nopriv_td_reload_tickets', [$this, 'td_reload_tickets']);
 	}
 
 
@@ -98,6 +97,11 @@ class Conversation
      */
     public function td_reload_tickets(): void
     {
+        // Require authenticated user
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 401);
+        }
+
         // Verify nonce for security
         if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'thrivedesk-nonce')) {
             wp_send_json_error(['message' => __('Security check failed', 'thrivedesk')]);
@@ -387,6 +391,11 @@ class Conversation
                 'ajax_url'    => admin_url('admin-ajax.php'),
                 'kb_url'      => $this->getKnowledgeBaseUrl(),
                 'nonce'       => wp_create_nonce('thrivedesk-nonce'),
+                'i18n_success' => __('Success!', 'thrivedesk'),
+                'i18n_error' => __('Error!', 'thrivedesk'),
+                'i18n_reloading' => __('Reloading...', 'thrivedesk'),
+                'i18n_failed_reload' => __('Failed to reload tickets', 'thrivedesk'),
+                'i18n_failed_reload_try_again' => __('Failed to reload tickets. Please try again.', 'thrivedesk'),
             ]
         );
         wp_enqueue_script('thrivedesk-conversations');
