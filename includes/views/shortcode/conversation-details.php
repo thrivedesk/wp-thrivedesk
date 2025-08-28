@@ -14,10 +14,11 @@ parse_str($parts, $query_params);
 
 $is_portal_available = false;
 $conversation_exists = false;
-$conversation_id = isset( $query_params['td_conversation_id'] ) ? absint( $query_params['td_conversation_id'] ): 0;
+$conversation_id = isset( $query_params['td_conversation_id'] ) ? $query_params['td_conversation_id'] : 0;
 
-if ($conversation_id > 0) {
+if ($conversation_id && $conversation_id !== '0') {
 	$conversation =  Conversation::get_conversation($conversation_id);
+	
 	$is_portal_available = (new PortalService())->has_portal_access();
 	
 	// Check if conversation exists and is valid
