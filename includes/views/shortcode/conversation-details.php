@@ -14,18 +14,22 @@ parse_str($parts, $query_params);
 
 $is_portal_available = false;
 $conversation_exists = false;
-$conversation_id = isset( $query_params['td_conversation_id'] ) ? $query_params['td_conversation_id'] : 0;
 
-if ($conversation_id && $conversation_id !== '0') {
-	$conversation =  Conversation::get_conversation($conversation_id);
-	
-	$is_portal_available = (new PortalService())->has_portal_access();
+$conversation_id = isset( $query_params['td_conversation_id'] ) ? $query_params['td_conversation_id'] : 0;
+$raw_conversation_id = isset($query_params['td_conversation_id']) ? (string) $query_params['td_conversation_id'] : '';
+// Allow only UUID-like tokens: alphanumerics and dashes, bounded length to protect option_name and URL
+$conversation_id = preg_match('/^[A-Za-z0-9-]{1,64}$/', $raw_conversation_id) ? $raw_conversation_id : '';
+
+$is_portal_available = (new PortalService())->has_portal_access();
+
+if ($is_portal_available && $conversation_id !== '') {
+	$conversation = Conversation::get_conversation($conversation_id);
 	
 	// Check if conversation exists and is valid
 	$conversation_exists = !empty($conversation) && !isset($conversation['wp_error']);
 }
 ?>
-<?php if ($is_portal_available && $conversation_exists): ?>
+<?php if ($conversation_exists): ?>
 <div id="thrivedesk" class="td-portal-conversations space-y-4">
     
                     <a href="<?php echo esc_url(get_permalink()); ?>" class="border rounded-full px-2.5 py-1 bg-white hover:bg-slate-50">
