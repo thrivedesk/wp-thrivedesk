@@ -21,6 +21,15 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 	.td-btn-primary {
 		@apply border-none px-5 py-3 font-medium !text-white bg-gradient-to-b from-blue-500 bg-blue-600 rounded-md hover:bg-blue-500 hover:text-white shadow-sm;
 	}
+	.td-btn-secondary {
+		@apply text-sm border border-solid border-slate-300 text-slate-700 bg-white rounded-md py-2 px-4 shadow-sm hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200;
+	}
+	.td-btn-secondary {
+		@apply text-sm border border-solid border-slate-300 text-slate-700 bg-white rounded-md py-2 px-4 shadow-sm hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200;
+	}
+	.td-btn-secondary {
+		@apply text-sm border border-solid border-slate-300 text-slate-700 bg-white rounded-md py-2 px-4 shadow-sm hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200;
+	}
 
 	/* Status Tag  */
 	.status{
