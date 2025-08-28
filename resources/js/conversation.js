@@ -9,6 +9,66 @@ jQuery(document).ready(($) => {
         $('.td-modal-container').addClass('hidden').fadeOut(200);
     });
 
+    // Reload tickets functionality
+    $('#reloadTickets').click(function (e) {
+        e.preventDefault();
+        
+        const $button = $(this);
+        const originalText = $button.find('span').text();
+        
+        // Disable button and show loading state
+        $button.prop('disabled', true);
+        $button.attr('aria-busy', 'true');
+        $button.find('span').text(td_objects.i18n_reloading);
+        
+        // Make AJAX request to reload tickets
+        $.ajax({
+            type: 'POST',
+            url: td_objects.ajax_url,
+            dataType: 'json',
+            data: {
+                action: 'td_reload_tickets',
+                nonce: td_objects.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: td_objects.i18n_success,
+                        text: response.data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Reload the page to show fresh data after toast finishes
+                        location.reload();
+                    });
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: td_objects.i18n_error,
+                        text: response.data.message || td_objects.i18n_failed_reload
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Reload tickets error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: td_objects.i18n_error,
+                    text: td_objects.i18n_failed_reload_try_again
+                });
+            },
+            complete: function() {
+                // Re-enable button and restore original text
+                $button.prop('disabled', false);
+                $button.removeAttr('aria-busy');
+                $button.find('span').text(originalText);
+            }
+        });
+    });
+
     $(document).keydown(function(event){
         if (event.key === 'Escape') {
             $('.td-modal-container').addClass('hidden').fadeOut(200);

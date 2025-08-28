@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.1.2
+Stable Tag: 2.1.3
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -293,6 +293,15 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.1.3 =
+- Added: Reload Tickets button for refreshing conversation data and clearing cache
+- Added: Dynamic asset versioning from mix-manifest.json for proper cache busting
+- Fixed: Conversation loading issues with proper UUID handling
+- Improved: Asset loading with automatic version hash detection
+- Security: Enhanced nonce verification for AJAX requests
+- Performance: Optimized cache management and API request handling
+
 
 = 2.1.2 =
 - Fix: Post sync checkboxes not saving properly due to data processing issue

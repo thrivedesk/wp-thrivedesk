@@ -44,10 +44,8 @@ class TDApiService {
         $response_code      = wp_remote_retrieve_response_code( $response );
         $instruction_ip_whitelist = 'Please try to white list these IP addresses: 20.68.187.32, 20.68.186.235, 20.117.184.59';
 
-
 		if ( is_wp_error( $response ) ) {
             $error_message = $response->get_error_message();
-
             error_log( 'ThriveDesk - API call error: ' . $error_message ); // Log the error
             return ['wp_error' => true, 'message' => 'ThriveDesk - API call error:' . $error_message];
 		} else {
