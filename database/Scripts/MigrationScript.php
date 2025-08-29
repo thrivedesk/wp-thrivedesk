@@ -37,7 +37,7 @@ class MigrationScript {
 			return;
 		}
 
-		$td_helpdesk_settings = get_td_helpdesk_options();
+		$td_helpdesk_settings = get_td_helpdesk_settings();
 
 		if ( ! array_key_exists( 'td_helpdesk_post_sync', $td_helpdesk_settings ) ||
 		     ! $td_helpdesk_settings['td_helpdesk_post_sync'] ) {

@@ -216,8 +216,8 @@ final class Admin
             }
             
             // Localize script only when it's actually loaded
-            $options = get_td_helpdesk_options();
-            $knowledgebase_slug = isset($options['td_knowledgebase_slug']) ? $options['td_knowledgebase_slug'] : 'help';
+            $td_helpdesk_settings = get_td_helpdesk_settings();
+            $knowledgebase_slug = isset($td_helpdesk_settings['td_knowledgebase_slug']) ? $td_helpdesk_settings['td_knowledgebase_slug'] : 'help';
             $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
 
             wp_localize_script(
@@ -244,15 +244,30 @@ final class Admin
             echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
         }
 
-        $td_helpdesk_selected_option = get_td_helpdesk_options();
-        $td_api_key                  = ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+        // Get the correct settings option where the API key is actually stored
+        $td_helpdesk_settings = get_td_helpdesk_settings();
+        $td_api_key = $td_helpdesk_settings['td_helpdesk_api_key'] ?? '';
+        
+        // Debug logging
+        error_log('ThriveDesk: load_pages called');
+        error_log('ThriveDesk: td_helpdesk_settings: ' . wp_json_encode($td_helpdesk_settings));
+        error_log('ThriveDesk: td_api_key: ' . ($td_api_key ? 'SET' : 'NOT_SET'));
+        error_log('ThriveDesk: api_status: ' . (self::get_api_verification_status() ? 'TRUE' : 'FALSE'));
+        
+        // Use the debug function to show current state
+        debug_td_options();
 
         $api_status = self::get_api_verification_status();
 
         if($td_api_key && $api_status){
+            error_log('ThriveDesk: Showing settings page');
+            // Clear any cached options to ensure fresh data
+            wp_cache_delete('td_helpdesk_settings', 'options');
+            wp_cache_delete('td_helpdesk_verified', 'options');
             thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
+            error_log('ThriveDesk: Showing API verification page');
             // if token is passed, log it
             if(isset($_GET['token'])){
                 error_log('ThriveDesk: Token received from request: ' . $_GET['token']);
@@ -261,6 +276,7 @@ final class Admin
             thrivedesk_view('pages/api-verify');
         }
         else{
+            error_log('ThriveDesk: Showing welcome page');
             thrivedesk_view('pages/welcome');
         }
     }
@@ -272,13 +288,17 @@ final class Admin
     public static function set_api_verification_status($status = false): void
     {
         // set the api key to the database
+        error_log('ThriveDesk: set_api_verification_status called with status: ' . ($status ? 'TRUE' : 'FALSE'));
         update_option('td_helpdesk_verified', $status);
+        error_log('ThriveDesk: td_helpdesk_verified option updated to: ' . get_option('td_helpdesk_verified', 'NOT_SET'));
     }
 
     public static function get_api_verification_status(): bool
     {
-        // set the api key to the database
-        return get_option('td_helpdesk_verified', false);
+        // get the api verification status from the database
+        $status = get_option('td_helpdesk_verified', false);
+        error_log('ThriveDesk: get_api_verification_status returned: ' . ($status ? 'TRUE' : 'FALSE'));
+        return $status;
     }
 
     /**

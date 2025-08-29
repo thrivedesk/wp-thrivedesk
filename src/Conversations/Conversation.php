@@ -372,7 +372,7 @@ class Conversation
     }
 
     public function getKnowledgeBaseUrl(){
-        $options = get_td_helpdesk_options();
+        $options = get_td_helpdesk_settings();
         $knowledgebaseSlug = $options['td_knowledgebase_slug'] ?? null;
         $url = null;
 

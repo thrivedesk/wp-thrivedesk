@@ -34,7 +34,7 @@
 		
 		<!-- Modal footer  -->
 		<div class="td-modal-footer">
-			<a href="<?php echo esc_url(get_page_link( get_post(get_td_helpdesk_options('td_helpdesk_settings')['td_helpdesk_page_id'])));?>" id="td-new-ticket-url" target="_blank" class="td-btn-primary">
+			<a href="<?php echo esc_url(get_page_link( get_post(get_td_helpdesk_settings()['td_helpdesk_page_id'] ?? 0)));?>" id="td-new-ticket-url" target="_blank" class="td-btn-primary">
 				            <?php esc_html_e('Create a new ticket', 'thrivedesk'); ?>
 			</a>
 		</div>
