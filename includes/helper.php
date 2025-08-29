@@ -119,24 +119,7 @@ if (!function_exists('get_td_helpdesk_settings')) {
     }
 }
 
-/**
- * Debug function to show the current state of both options
- */
-if (!function_exists('debug_td_options')) {
-    function debug_td_options()
-    {
-        $old_options = get_option('td_helpdesk_options', []);
-        $new_settings = get_option('td_helpdesk_settings', []);
-        
-        error_log('ThriveDesk Debug - td_helpdesk_options: ' . wp_json_encode($old_options));
-        error_log('ThriveDesk Debug - td_helpdesk_settings: ' . wp_json_encode($new_settings));
-        
-        return [
-            'old_options' => $old_options,
-            'new_settings' => $new_settings
-        ];
-    }
-}
+
 
 /**
  * Migrate all required data from old options to new settings format
@@ -155,8 +138,6 @@ if (!function_exists('migrate_td_options_to_settings')) {
         
         // If old options exist, migrate them to new format
         if (!empty($old_options)) {
-            error_log('ThriveDesk: Migrating old options to new settings format');
-            
             // Merge old options with new settings, prioritizing new settings
             $merged_settings = array_merge($old_options, $new_settings);
             
@@ -182,7 +163,6 @@ if (!function_exists('migrate_td_options_to_settings')) {
             // Update the new settings option
             update_option('td_helpdesk_settings', $merged_settings);
             
-            error_log('ThriveDesk: Migration completed successfully');
             return $merged_settings;
         }
         

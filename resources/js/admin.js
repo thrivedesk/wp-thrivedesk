@@ -98,10 +98,9 @@ jQuery(document).ready(($) => {
 	$('#submit-btn').on('click', function (e) {
 		e.preventDefault();
 		
-		// Debug: Check if thrivedesk object exists
-		console.log('thrivedesk object:', thrivedesk);
+		// Check if thrivedesk object exists
 		if (typeof thrivedesk === 'undefined') {
-			console.error('thrivedesk object is not defined!');
+			console.error('ThriveDesk: Configuration not loaded');
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',
@@ -124,15 +123,11 @@ jQuery(document).ready(($) => {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 			},
 		}).done((response) => {
-			console.log('Raw response received:', response);
-			console.log('Response type:', typeof response);
-			
 			let parsedResponse;
 			try {
 				parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
-				console.log('Parsed response:', parsedResponse);
 			} catch (e) {
-				console.error('Failed to parse response:', e, response);
+				console.error('ThriveDesk: Failed to parse response:', e);
 				Swal.fire({
 					icon: 'error',
 					title: 'Error',
@@ -143,9 +138,6 @@ jQuery(document).ready(($) => {
 			
 			let data = parsedResponse?.data;
 			let status = parsedResponse?.status;
-			
-			console.log('Extracted data:', data);
-			console.log('Extracted status:', status);
 
 			if(handleFailedResponse(status, parsedResponse) === false){
 				return;
@@ -177,15 +169,11 @@ jQuery(document).ready(($) => {
 						td_helpdesk_assistant: payload.td_helpdesk_assistant,
 					},
 				}).success(function (response) {
-					console.log('thrivedesk_helpdesk_form response:', response);
-					console.log('Response type:', typeof response);
-					
 					let parsedResponse;
 					try {
 						parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
-						console.log('Parsed helpdesk form response:', parsedResponse);
 					} catch (e) {
-						console.error('Failed to parse helpdesk form response:', e, response);
+						console.error('ThriveDesk: Failed to parse helpdesk form response:', e);
 						Swal.fire({
 							icon: 'error',
 							title: 'Error',
@@ -210,7 +198,7 @@ jQuery(document).ready(($) => {
 						});
 					}
 				}).fail(function(xhr, status, error) {
-					console.error('thrivedesk_helpdesk_form failed:', {xhr, status, error});
+					console.error('ThriveDesk: Helpdesk form submission failed:', error);
 					Swal.fire({
 						icon: 'error',
 						title: 'Error',
@@ -469,8 +457,6 @@ jQuery(document).ready(($) => {
 
 	function handleFailedResponse(status, parsedResponse) {
 		let data = parsedResponse?.data;
-		
-		console.log('handleFailedResponse called with:', { status, parsedResponse });
 
 		if (status === 'false' || status === 'error') {
 			if (parsedResponse?.code === 422) {
@@ -509,10 +495,8 @@ jQuery(document).ready(($) => {
 				return false;
 			}
 		} else if (status === 'success') {
-			console.log('Success response detected, proceeding...');
 			return true;
 		} else {
-			console.log('Unknown status:', status, 'treating as success');
 			return true;
 		}
 	}

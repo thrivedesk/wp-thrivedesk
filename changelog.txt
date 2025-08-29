@@ -1,6 +1,13 @@
 *** WooCommerce Extension Changelog ***
 
 
+2025-08-29 - version 2.1.4
+* Fixed: License activation "Unauthorized" error by adding missing nonce parameter
+* Fixed: Admin page routing to properly show settings after API verification
+* Enhanced: Updated all components to use unified settings system
+* Enhanced: Improved backward compatibility for existing installations
+* Enhanced: Improved error handling and security logging
+
 2025-08-28 - version 2.1.3
 * Added: Reload Tickets button for refreshing conversation data and clearing cache
 * Added: Dynamic asset versioning from mix-manifest.json for proper cache busting

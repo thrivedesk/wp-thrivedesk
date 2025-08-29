@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.1.3
+Stable Tag: 2.1.4
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
