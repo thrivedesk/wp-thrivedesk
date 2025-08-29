@@ -159,8 +159,6 @@ jQuery(document).ready(($) => {
 					td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
 				}
 
-				debugger;
-
 				jQuery.post(thrivedesk.ajax_url, {
 					action: 'thrivedesk_helpdesk_form',
 					nonce: thrivedesk.nonce,
