@@ -97,6 +97,18 @@ jQuery(document).ready(($) => {
 	// on click complete setup button to verify API key
 	$('#submit-btn').on('click', function (e) {
 		e.preventDefault();
+		
+		// Debug: Check if thrivedesk object exists
+		console.log('thrivedesk object:', thrivedesk);
+		if (typeof thrivedesk === 'undefined') {
+			console.error('thrivedesk object is not defined!');
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'ThriveDesk configuration not loaded. Please refresh the page.',
+			});
+			return;
+		}
 
 		// Add loading state
 		let $btn = $(this);
@@ -112,9 +124,28 @@ jQuery(document).ready(($) => {
 				td_helpdesk_api_key: td_helpdesk_api_key,
 			},
 		}).done((response) => {
-			let parsedResponse = JSON.parse(response);
+			console.log('Raw response received:', response);
+			console.log('Response type:', typeof response);
+			
+			let parsedResponse;
+			try {
+				parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
+				console.log('Parsed response:', parsedResponse);
+			} catch (e) {
+				console.error('Failed to parse response:', e, response);
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'Invalid response from server',
+				});
+				return;
+			}
+			
 			let data = parsedResponse?.data;
 			let status = parsedResponse?.status;
+			
+			console.log('Extracted data:', data);
+			console.log('Extracted status:', status);
 
 			if(handleFailedResponse(status, parsedResponse) === false){
 				return;
@@ -122,6 +153,7 @@ jQuery(document).ready(($) => {
 
 			jQuery.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_load_assistants',
+				nonce: thrivedesk.nonce,
 				data: {
 					td_helpdesk_api_key: td_helpdesk_api_key,
 				},
@@ -135,20 +167,40 @@ jQuery(document).ready(($) => {
 					td_helpdesk_assistant: (data?.assistants?.length == 1) ? data.assistants[0].id : null,
 				}
 
+				debugger;
+
 				jQuery.post(thrivedesk.ajax_url, {
 					action: 'thrivedesk_helpdesk_form',
+					nonce: thrivedesk.nonce,
 					data: {
 						td_helpdesk_api_key: payload.td_helpdesk_api_key,
 						td_helpdesk_assistant: payload.td_helpdesk_assistant,
 					},
 				}).success(function (response) {
+					console.log('thrivedesk_helpdesk_form response:', response);
+					console.log('Response type:', typeof response);
+					
+					let parsedResponse;
+					try {
+						parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
+						console.log('Parsed helpdesk form response:', parsedResponse);
+					} catch (e) {
+						console.error('Failed to parse helpdesk form response:', e, response);
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'Invalid response from helpdesk form submission',
+						});
+						return;
+					}
+					
 					let icon;
-					if (response) {
-						response.status === 'success' ? (icon = 'success') : (icon = 'error');
+					if (parsedResponse) {
+						parsedResponse.status === 'success' ? (icon = 'success') : (icon = 'error');
 						Swal.fire({
 							icon: icon,
-							title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
-							text: response.message,
+							title: parsedResponse.status.charAt(0).toUpperCase() + `${parsedResponse.status}`.slice(1),
+							text: parsedResponse.message,
 							confirmButtonText: 'Continue to settings',
 						}).then((result) => {
 							localStorage.setItem('shouldTriggerConfetti', 'true');
@@ -157,6 +209,13 @@ jQuery(document).ready(($) => {
 							}
 						});
 					}
+				}).fail(function(xhr, status, error) {
+					console.error('thrivedesk_helpdesk_form failed:', {xhr, status, error});
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Failed to save helpdesk form: ' + error,
+					});
 				});
 			});
 		}).fail(function (error) {
@@ -194,7 +253,7 @@ jQuery(document).ready(($) => {
 			.get();
 
 		// Get the nonce from the form
-		let nonce = $('#td_nonce').val();
+		let nonce = thrivedesk.nonce;
 		
 		let data = {
 			td_helpdesk_api_key: td_helpdesk_api_key,
@@ -410,6 +469,8 @@ jQuery(document).ready(($) => {
 
 	function handleFailedResponse(status, parsedResponse) {
 		let data = parsedResponse?.data;
+		
+		console.log('handleFailedResponse called with:', { status, parsedResponse });
 
 		if (status === 'false' || status === 'error') {
 			if (parsedResponse?.code === 422) {
@@ -447,7 +508,11 @@ jQuery(document).ready(($) => {
 
 				return false;
 			}
+		} else if (status === 'success') {
+			console.log('Success response detected, proceeding...');
+			return true;
 		} else {
+			console.log('Unknown status:', status, 'treating as success');
 			return true;
 		}
 	}
@@ -463,6 +528,7 @@ jQuery(document).ready(($) => {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_load_assistants',
+				nonce: thrivedesk.nonce,
 				data: {
 					td_helpdesk_api_key: apiKey,
 				},

@@ -171,10 +171,16 @@ class Conversation
 
 
 	public function td_verify_helpdesk_api_key(  ): void {
+        error_log('ThriveDesk: td_verify_helpdesk_api_key method called');
+        
+        // Debug: Log all POST data
+        error_log('ThriveDesk: POST data received: ' . wp_json_encode($_POST));
+        
         // verify the nonce
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' ) ) {
             // add debug here
-            error_log('ThriveDesk: Invalid nonce');
+            error_log('ThriveDesk: Invalid nonce. Received nonce: ' . ($_POST['nonce'] ?? 'NOT_SET'));
+            error_log('ThriveDesk: Expected nonce action: thrivedesk-nonce');
 
             // return json response
             echo wp_json_encode( [
@@ -284,12 +290,21 @@ class Conversation
     public function td_save_helpdesk_form()
     {
         header('Content-Type: application/json');
+        
+        // Debug: Log all POST data
+        error_log('ThriveDesk: td_save_helpdesk_form called');
+        error_log('ThriveDesk: POST data received: ' . wp_json_encode($_POST));
+        error_log('ThriveDesk: Current user can manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
 
         if (
             ! isset($_POST['nonce'])
             || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
             || ! current_user_can('manage_options')
         ) {
+            error_log('ThriveDesk: Authorization failed. Nonce set: ' . (isset($_POST['nonce']) ? 'YES' : 'NO'));
+            if (isset($_POST['nonce'])) {
+                error_log('ThriveDesk: Nonce verification result: ' . (wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' ) ? 'PASS' : 'FAIL'));
+            }
             echo wp_json_encode(['status' => 'error', 'message' => 'Unauthorized']);
             die();
         }
@@ -337,6 +352,7 @@ class Conversation
             // Clear WordPress options cache for this specific option
             wp_cache_delete('td_helpdesk_settings', 'options');
             
+            error_log('ThriveDesk: Settings saved successfully');
             echo wp_json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
             die();
         }

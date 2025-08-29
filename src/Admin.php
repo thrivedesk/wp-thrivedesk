@@ -214,22 +214,23 @@ final class Admin
             if (current_user_can( 'manage_options' )) {
                 echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
             }
+            
+            // Localize script only when it's actually loaded
+            $options = get_td_helpdesk_options();
+            $knowledgebase_slug = isset($options['td_knowledgebase_slug']) ? $options['td_knowledgebase_slug'] : 'help';
+            $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
+
+            wp_localize_script(
+                'thrivedesk-js',
+                'thrivedesk',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('thrivedesk-nonce'),
+                    'wp_json_url' => site_url('wp-json'),
+                    'kb_url' => $knowledgebase_url,
+                )
+            );
         }
-
-        $options = get_td_helpdesk_options();
-        $knowledgebase_slug = isset($options['td_knowledgebase_slug']) ? $options['td_knowledgebase_slug'] : 'help';
-        $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
-
-        wp_localize_script(
-            'thrivedesk-js',
-            'thrivedesk',
-            array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('thrivedesk-nonce'),
-                'wp_json_url' => site_url('wp-json'),
-                'kb_url' => $knowledgebase_url,
-            )
-        );
 
         if (class_exists('BWF_Contacts')) {
             $asset_file = include(THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-autonami-tab.asset.php');
