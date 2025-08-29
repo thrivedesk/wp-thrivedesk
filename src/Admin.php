@@ -214,22 +214,23 @@ final class Admin
             if (current_user_can( 'manage_options' )) {
                 echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
             }
+            
+            // Localize script only when it's actually loaded
+            $td_helpdesk_settings = get_td_helpdesk_settings();
+            $knowledgebase_slug = isset($td_helpdesk_settings['td_knowledgebase_slug']) ? $td_helpdesk_settings['td_knowledgebase_slug'] : 'help';
+            $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
+
+            wp_localize_script(
+                'thrivedesk-js',
+                'thrivedesk',
+                array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('thrivedesk-nonce'),
+                    'wp_json_url' => site_url('wp-json'),
+                    'kb_url' => $knowledgebase_url,
+                )
+            );
         }
-
-        $options = get_td_helpdesk_options();
-        $knowledgebase_slug = isset($options['td_knowledgebase_slug']) ? $options['td_knowledgebase_slug'] : 'help';
-        $knowledgebase_url = $knowledgebase_slug ? parse_url(THRIVEDESK_KB_API_ENDPOINT)['scheme'] . '://' . $knowledgebase_slug . '.' . parse_url(THRIVEDESK_KB_API_ENDPOINT)['host'] : null;
-
-        wp_localize_script(
-            'thrivedesk-js',
-            'thrivedesk',
-            array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('thrivedesk-nonce'),
-                'wp_json_url' => site_url('wp-json'),
-                'kb_url' => $knowledgebase_url,
-            )
-        );
 
         if (class_exists('BWF_Contacts')) {
             $asset_file = include(THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-autonami-tab.asset.php');
@@ -243,12 +244,21 @@ final class Admin
             echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
         }
 
-        $td_helpdesk_selected_option = get_td_helpdesk_options();
-        $td_api_key                  = ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+        // Get the correct settings option where the API key is actually stored
+        $td_helpdesk_settings = get_td_helpdesk_settings();
+        $td_api_key = $td_helpdesk_settings['td_helpdesk_api_key'] ?? '';
+        
+        // Essential logging only
+        if (empty($td_api_key)) {
+            error_log('ThriveDesk: No API key found in settings');
+        }
 
         $api_status = self::get_api_verification_status();
 
         if($td_api_key && $api_status){
+            // Clear any cached options to ensure fresh data
+            wp_cache_delete('td_helpdesk_settings', 'options');
+            wp_cache_delete('td_helpdesk_verified', 'options');
             thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
@@ -276,7 +286,7 @@ final class Admin
 
     public static function get_api_verification_status(): bool
     {
-        // set the api key to the database
+        // get the api verification status from the database
         return get_option('td_helpdesk_verified', false);
     }
 

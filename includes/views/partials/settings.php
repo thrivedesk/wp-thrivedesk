@@ -8,7 +8,7 @@ use ThriveDesk\KnowledgeBase\KnowledgeBase;
 use ThriveDesk\Services\PortalService;
 use ThriveDesk\Plugins\WPPostSync;
 
-$td_helpdesk_selected_option = get_td_helpdesk_options();
+$td_helpdesk_selected_option = get_td_helpdesk_settings();
 $td_selected_post_types      = (array) ($td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []);
 $td_selected_post_sync       = (array) ($td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? []);
 

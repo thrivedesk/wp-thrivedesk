@@ -101,8 +101,72 @@ if (!function_exists('get_td_helpdesk_options')) {
     function get_td_helpdesk_options()
     {
         $options = get_option('td_helpdesk_options', []);
-
+        
         return is_array($options) ? $options : [];
+    }
+}
+
+/**
+ * Get the main helpdesk settings (new format)
+ * This function returns the consolidated settings from td_helpdesk_settings
+ * Automatically migrates old options if needed
+ */
+if (!function_exists('get_td_helpdesk_settings')) {
+    function get_td_helpdesk_settings()
+    {
+        // Automatically migrate old options to new format if needed
+        return migrate_td_options_to_settings();
+    }
+}
+
+
+
+/**
+ * Migrate all required data from old options to new settings format
+ * This ensures all components have access to the data they need
+ */
+if (!function_exists('migrate_td_options_to_settings')) {
+    function migrate_td_options_to_settings()
+    {
+        $old_options = get_option('td_helpdesk_options', []);
+        $new_settings = get_option('td_helpdesk_settings', []);
+        
+        // If new settings already exist and have data, no migration needed
+        if (!empty($new_settings) && isset($new_settings['td_helpdesk_api_key'])) {
+            return $new_settings;
+        }
+        
+        // If old options exist, migrate them to new format
+        if (!empty($old_options)) {
+            // Merge old options with new settings, prioritizing new settings
+            $merged_settings = array_merge($old_options, $new_settings);
+            
+            // Ensure all required fields are present
+            $required_fields = [
+                'td_helpdesk_api_key',
+                'td_helpdesk_assistant_id',
+                'td_helpdesk_inbox_id',
+                'td_helpdesk_page_id',
+                'td_knowledgebase_slug',
+                'td_helpdesk_post_types',
+                'td_helpdesk_post_sync',
+                'td_user_account_pages',
+                'td_assistant_route_list'
+            ];
+            
+            foreach ($required_fields as $field) {
+                if (!isset($merged_settings[$field])) {
+                    $merged_settings[$field] = $old_options[$field] ?? '';
+                }
+            }
+            
+            // Update the new settings option
+            update_option('td_helpdesk_settings', $merged_settings);
+            
+            return $merged_settings;
+        }
+        
+        return $new_settings;
     }
 }
 

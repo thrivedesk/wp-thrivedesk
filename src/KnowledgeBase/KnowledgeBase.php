@@ -31,7 +31,7 @@ class KnowledgeBase
 
 
     public static function knowledgebase(){
-        $api_key = get_td_helpdesk_options()['td_helpdesk_api_key'] ?? '';
+        $api_key = get_td_helpdesk_settings()['td_helpdesk_api_key'] ?? '';
         if (empty($api_key)) {
             return [];
         }

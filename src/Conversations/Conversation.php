@@ -173,8 +173,8 @@ class Conversation
 	public function td_verify_helpdesk_api_key(  ): void {
         // verify the nonce
         if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' ) ) {
-            // add debug here
-            error_log('ThriveDesk: Invalid nonce');
+            // Log security issue
+            error_log('ThriveDesk: Invalid nonce verification attempt');
 
             // return json response
             echo wp_json_encode( [
@@ -201,8 +201,6 @@ class Conversation
 			die();
 		}
 
-        error_log('ThriveDesk: verify API key, API key: ' . $apiKey);
-
         // save the api key to the database
         $this->reset_td_settings($apiKey);
 
@@ -215,7 +213,7 @@ class Conversation
 
             Admin::set_api_verification_status();
 
-            error_log('ThriveDesk: API v1/me response error. ' . $data['message']);
+            error_log('ThriveDesk: API verification failed - ' . $data['message']);
 
             echo wp_json_encode( [
                 'code' => 422,
@@ -231,7 +229,7 @@ class Conversation
 
             Admin::set_api_verification_status();
 
-            error_log('ThriveDesk: Something went wrong while verifying the API Key. ' . $data['message']);
+            error_log('ThriveDesk: API verification failed - company data not found');
 
             echo wp_json_encode( [
 				'code' => 401,
@@ -284,12 +282,13 @@ class Conversation
     public function td_save_helpdesk_form()
     {
         header('Content-Type: application/json');
-
+        
         if (
             ! isset($_POST['nonce'])
             || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
             || ! current_user_can('manage_options')
         ) {
+            error_log('ThriveDesk: Unauthorized access attempt to helpdesk form');
             echo wp_json_encode(['status' => 'error', 'message' => 'Unauthorized']);
             die();
         }
@@ -356,7 +355,7 @@ class Conversation
     }
 
     public function getKnowledgeBaseUrl(){
-        $options = get_td_helpdesk_options();
+        $options = get_td_helpdesk_settings();
         $knowledgebaseSlug = $options['td_knowledgebase_slug'] ?? null;
         $url = null;
 
