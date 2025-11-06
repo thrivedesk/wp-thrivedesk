@@ -112,9 +112,21 @@ class RestRoute
 			return [];
 		}
 
-		$td_conversations = $wpdb->get_results(
-			"SELECT * FROM $table_name WHERE contact='$contact_email' AND deleted_at IS NULL"
-		);
+		// Try to get from cache first
+		$cache_key = 'td_conversations_' . md5($contact_email);
+		$td_conversations = wp_cache_get($cache_key, 'thrivedesk');
+		
+		if (false === $td_conversations) {
+			$td_conversations = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM $table_name WHERE contact = %s AND deleted_at IS NULL",
+					$contact_email
+				)
+			);
+			
+			// Cache for 5 minutes
+			wp_cache_set($cache_key, $td_conversations, 'thrivedesk', 300);
+		}
 
 		$formattedTickets = [];
 

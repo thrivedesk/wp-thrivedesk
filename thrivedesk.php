@@ -1,17 +1,19 @@
 <?php
 
 /**
- * Plugin Name:         ThriveDesk
+ * Plugin Name:         ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base
  * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
- * Version:             2.0.12
+ * Version:             2.1.4
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
- * Domain Path:         languages
+ * Domain Path:         /languages
+ * License:             GPLv2 or later
+ * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
  *
- * Requires PHP:        5.5
+ * Requires PHP:        7.4
  * Requires at least:   4.9
  * Tested up to:        6.8
  *
@@ -29,6 +31,7 @@
 use ThriveDesk\Admin;
 use ThriveDesk\Api;
 use ThriveDesk\Assistants\Assistant;
+use ThriveDesk\Inboxes\Inbox;
 use ThriveDesk\FluentCrmHooks;
 use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
@@ -51,7 +54,7 @@ final class ThriveDesk
      *
      * @var string
      */
-    public $version = '2.0.11';
+    public $version = '2.1.4';
 
     /**
      * The single instance of this class
@@ -121,8 +124,9 @@ final class ThriveDesk
 
 	        MigrationScript::instance();
             Conversation::instance();
-            Assistant::instance();
-			PortalService::instance();
+                        Assistant::instance();
+            Inbox::instance();
+                    PortalService::instance();
 			UserAccountPages::instance();
             KnowledgeBase::instance();
         }

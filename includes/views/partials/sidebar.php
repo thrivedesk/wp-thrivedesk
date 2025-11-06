@@ -1,14 +1,14 @@
 <div class="sidebar space-y-6">
     <!-- cloudflare  -->
     <div class="td-card bg-orange-50 border border-orange-400 space-y-2">
-        <img class="w-36 ml-auto" src="<?php echo THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"; ?>">
+        <img class="w-36 ml-auto" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"); ?>">
         <h3 class="text-lg font-medium">Using Cloudflare?</h3>
-        <p><?php _e('To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly.', 'thrivedesk');?></p>
+        <p><?php esc_html_e('To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly.', 'thrivedesk');?></p>
         <a href="https://help.thrivedesk.com/en/troubleshooting-with-cloudflare" target="_blank" class="inline-block">Learn more</a>
     </div>
     <!-- Assistant  -->
     <div class="td-card">
-        <img src="https://www.thrivedesk.com/wp-content/uploads/2023/11/livechat-hero.jpg" alt="Assistant">
+        <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/livechat-hero.jpg'); ?>" alt="<?php esc_attr_e('Assistant', 'thrivedesk'); ?>">
         <h3 class="text-lg font-medium my-4">What is Assistant?</h3>
         <p>Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant.</p>
         <a href="https://www.thrivedesk.com/live-chat/" target="_blank" class="mt-2 inline-block">Learn more</a>
