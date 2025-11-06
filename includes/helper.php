@@ -52,23 +52,24 @@ if (!function_exists('diff_for_humans')) {
 		$ago = new DateTime($datetime);
 		$diff = $now->diff($ago);
 
-		$diff->w = floor($diff->d / 7);
-		$diff->d -= $diff->w * 7;
+		$weeks = floor($diff->d / 7);
+		$days = $diff->d - ($weeks * 7);
 
 		$periods = array(
-			'y' => ['year', 'years'],
-			'm' => ['month', 'months'],
-			'w' => ['week', 'weeks'],
-			'd' => ['day', 'days'],
-			'h' => ['hour', 'hours'],
-			'i' => ['minute', 'minutes'],
-			's' => ['second', 'seconds']
+			'y' => ['year', 'years', $diff->y],
+			'm' => ['month', 'months', $diff->m],
+			'w' => ['week', 'weeks', $weeks],
+			'd' => ['day', 'days', $days],
+			'h' => ['hour', 'hours', $diff->h],
+			'i' => ['minute', 'minutes', $diff->i],
+			's' => ['second', 'seconds', $diff->s]
 		);
 
 		$parts = array();
-		foreach ($periods as $k => &$v) {
-			if ($diff->$k) {
-				$parts[] = $diff->$k . ' ' . $v[$diff->$k > 1];
+		foreach ($periods as $k => $v) {
+			$value = $v[2];
+			if ($value) {
+				$parts[] = $value . ' ' . $v[$value > 1 ? 1 : 0];
 			}
 		}
 
