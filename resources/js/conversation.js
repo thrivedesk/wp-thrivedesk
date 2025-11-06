@@ -109,9 +109,9 @@ jQuery(document).ready(($) => {
                 if (kbData.length > 0) {
                     kbData.forEach(function(item, i) {
                         kbResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
-                            <a target="_blank" href="${item.link}">
+                            <a target="_blank" href="${item.links.getLink}">
                                 <div class="td-search-content">
-                                    <span class="td-search-tag">${item.categories}</span>
+                                    <span class="td-search-tag">${item.categories.map(cat => cat.name).join(', ')}</span>
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -127,12 +127,14 @@ jQuery(document).ready(($) => {
         
                 // Process WP data
                 var wpResultsHtml = '';
+                var noData = true;
                 if (typeof wpData == 'object' && wpData.length > 0) {
+                    var noData = false;
                     wpData.forEach(function(item, i) {
                         wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
-                                    <span class="td-search-tag">${item.categories}</span>
+                                    <span class="td-search-tag">${item.categories.map(cat => cat.name).join(', ')}</span>
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -151,16 +153,16 @@ jQuery(document).ready(($) => {
                 if (td_objects.kb_url) {
                     combinedResults +=`
                     <div>
-                        <p class="px-2 font-bold">Search results from Knowledge Base</p>
+                        <p class="px-4 font-bold">Search results from Knowledge Base</p>
                     </div>
                     <ul>${kbResultsHtml}</ul>`;
                 };
 
-                if (td_objects.wp_json_url) {
+                if (td_objects.wp_json_url && noData === false) {
                     combinedResults +=`<div>
-                    <p class="px-2 font-bold">Search results from WordPress</p>
-                </div>
-                <ul>${wpResultsHtml}</ul>`;
+                    <p class="px-4 font-bold">Search results from WordPress</p>
+                    </div>
+                    <ul>${wpResultsHtml}</ul>`;
                 }
         
                 list.html(combinedResults);
