@@ -25,6 +25,7 @@ class PortalService {
         'starter_annual_july_23',
 		'business_ltd',
 		'business-ltd',
+		'appsumo_tier_4'
 	];
 
 	public function __construct(  ) {
@@ -43,7 +44,7 @@ class PortalService {
 	public function check_portal_access(  ) {
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 		if (empty( $apiKey ) ) {
-			echo json_encode( [
+			echo wp_json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => [
@@ -56,7 +57,7 @@ class PortalService {
 		$hasAccess = get_transient( 'thrivedesk_portal_access' );
 
 		if ( $hasAccess ) {
-			echo json_encode( [
+			echo wp_json_encode( [
 				'code' => 200,
 				'status' => 'success',
 				'data' => true
@@ -68,13 +69,13 @@ class PortalService {
 
 		if ( isset( $plan['overview']['slug'] ) && in_array( $plan['overview']['slug'], $this->plans ) ) {
 			set_transient( 'thrivedesk_portal_access', true, 60 * 60 * 6 );
-			echo json_encode( [
+			echo wp_json_encode( [
 				'code' => 200,
 				'status' => 'success',
 				'data' => true
 			] );
 		} else {
-			echo json_encode( [
+			echo wp_json_encode( [
 				'code' => 422,
 				'status' => 'error',
 				'data' => false

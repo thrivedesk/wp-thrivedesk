@@ -1,14 +1,14 @@
 === ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base ===
 Contributors: thrivedesk
 
-Tags: chat, chatbot, livechat, helpdesk, help center, live chat,  woocommerce, surecart, freemius
+Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.0.13
-Requires PHP: 5.5
+Stable Tag: 2.1.5
+Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
-Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers’ questions, engage website visitors, generate leads, and increase sales.
+Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers' questions and provide excellent support.
 
 == Description ==
 
@@ -190,6 +190,61 @@ The easiest way to install ThriveDesk is to search for it via your site's Dashbo
 - Install it by clicking the "Install Now" link.
 - When the installation finishes, click "Activate Plugin."
 
+== External services ==
+
+This plugin connects to ThriveDesk's external services to provide live chat, helpdesk, and knowledge base functionality. Here are the details of the external services used:
+
+**ThriveDesk API Service:**
+- **Service:** ThriveDesk API (https://api.thrivedesk.com)
+- **Vendor:** ThriveDesk Inc.
+- **Purpose:** Used for managing conversations, tickets, knowledge base content, and live chat functionality
+- **Required/Optional:** Required for core plugin functionality
+- **Data sent:** 
+  - PII: Customer names, email addresses, conversation content, support ticket details
+  - Telemetry: Plugin settings, API usage statistics, response times
+- **When:** Data is sent when users interact with the live chat widget, create support tickets, or when administrators manage helpdesk settings
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**ThriveDesk Application Service:**
+- **Service:** ThriveDesk App (https://app.thrivedesk.com)
+- **Vendor:** ThriveDesk Inc.
+- **Purpose:** Used for plugin configuration, assistant management, and accessing the main ThriveDesk dashboard
+- **Required/Optional:** Required for plugin setup and configuration
+- **Data sent:**
+  - PII: Administrator email addresses, organization details
+  - Telemetry: Plugin authentication tokens, configuration settings, usage analytics
+- **When:** Data is sent during plugin setup and when accessing ThriveDesk dashboard features
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**ThriveDesk Documentation Service:**
+- **Service:** ThriveDesk Knowledge Base (https://thrivedeskdocs.com)
+- **Vendor:** ThriveDesk Inc.
+- **Purpose:** Used to fetch and display knowledge base articles and documentation
+- **Required/Optional:** Optional - used only when knowledge base features are enabled
+- **Data sent:**
+  - PII: None
+  - Telemetry: Search queries, article requests, page views
+- **When:** Data is sent when users search for help articles or access the knowledge base
+- **Disable:** Can be disabled by turning off knowledge base integration in plugin settings
+- **Terms of Service:** https://www.thrivedesk.com/terms/
+- **Privacy Policy:** https://www.thrivedesk.com/privacy/
+
+**Bunny Stream Video Service:**
+- **Service:** Bunny Stream (https://iframe.mediadelivery.net)
+- **Vendor:** BunnyWay d.o.o.
+- **Purpose:** Used to embed promotional and tutorial videos in the plugin interface
+- **Required/Optional:** Optional - used only for displaying help videos in admin interface
+- **Data sent:**
+  - PII: None
+  - Telemetry: IP address, User-Agent, Referrer URL, Video viewing timestamps, Playback analytics
+- **When:** Data is sent when the plugin admin interface loads embedded videos
+- **Disable:** Videos can be disabled by administrators and do not affect core functionality
+- **Terms of Service:** https://bunny.net/tos/
+- **Privacy Policy:** https://bunny.net/privacy/
+- **Verified:** January 2025
+
 == Frequently Asked Questions ==
 
 = Who should use ThriveDesk? =
@@ -239,10 +294,55 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 
 == Changelog ==
 
-= 2.0.13 =
+= 2.1.5 =
 - fix: PHP Warning for dates
 - fix: Search result object object error
 - fix: Link fixed for docs
+
+= 2.1.4 =
+- feat: Fix license activation and 
+- Improved: implement unified settings system
+
+= 2.1.3 =
+- Added: Reload Tickets button for refreshing conversation data and clearing cache
+- Added: Dynamic asset versioning from mix-manifest.json for proper cache busting
+- Fixed: Conversation loading issues with proper UUID handling
+- Improved: Asset loading with automatic version hash detection
+- Security: Enhanced nonce verification for AJAX requests
+- Performance: Optimized cache management and API request handling
+
+
+= 2.1.2 =
+- Fix: Post sync checkboxes not saving properly due to data processing issue
+- Fix: Array data corruption during sanitization in form submission
+- Fix: Cache not being cleared after saving settings
+- Added: Proper nonce verification for form security
+- Improved: Data sanitization to handle arrays and strings separately
+- Security: Enhanced form submission with proper nonce validation and user capability checks
+
+= 2.1.1 =
+- Fix: Portal permission fixed
+- Fix: Nonce validation error
+
+
+= 2.1.0 =
+- Added: Comprehensive external services documentation in readme for ThriveDesk API, App, Documentation, and MediaDelivery services
+- Added: ABSPATH checks to all view files to prevent direct file access
+- Improved: Replaced _e with esc_html_e where appropriate for better output escaping
+- Improved: Replaced json_encode with wp_json_encode for WordPress compatibility
+- Improved: Added proper output escaping (esc_url, esc_html, esc_attr, wp_kses_post) throughout templates
+- Security: Enhanced data sanitization and XSS prevention measures
+- Compliance: All WordPress.org plugin review issues addressed according to WordPress coding standards
+- Fixed: GPL-compatible license declaration in plugin header and readme
+- Fixed: Domain Path header to start with forward slash and created languages directory
+- Fixed: Replaced PHP short tags with full tags and proper escaping functions
+- Fixed: Removed non-permitted files (scripts/release.sh)
+- Fixed: Moved remote images to local assets directory to comply with WordPress.org guidelines
+- Fixed: Internationalization issues - corrected text domain from 'wp-thrivedesk' to 'thrivedesk', used string literals instead of variables
+- Fixed: Proper sanitization, validation and escaping throughout codebase using WordPress functions
+- Fixed: Unsafe SQL calls replaced with wpdb prepare statements for better security
+- Fixed: Limited readme tags to 5 maximum and shortened description to meet WordPress.org requirements
+- Fixed: Nonce verification with proper sanitization using sanitize_text_field and wp_unslash
 
 = 2.0.12 =
 - Fixed : Plugin name for Copyright issue
@@ -278,7 +378,6 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Feat: Organization info added to dashboard
 - Feat: Organization validation added
 
-== Changelog ==
 = 2.0.3 =
 - Fix: WooCommerce product data missing issue   
 - Fix : FunnelKit namespace issue
@@ -297,7 +396,6 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Feat: Added dedicated portal page.
 - Update: Reorganized dashboard with settings for better user experience.
 
-== Changelog ==
 = 1.2.4 =
 - Feat: Plugin is relocated to the main menu.
 
@@ -419,7 +517,6 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Improved Products details
 - Improved and optimized shipping details
 
-== Changelog ==
 = 0.9.8 =
 - Stable release of version 0.9.8
 
