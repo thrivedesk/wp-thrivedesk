@@ -171,11 +171,7 @@ jQuery(document).ready(($) => {
                         kbResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.links.getLink}">
                                 <div class="td-search-content">
-<<<<<<< HEAD
                                     <span class="td-search-tag">${item.categories.map(cat => cat.name).join(', ')}</span>
-=======
-                                    <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories[0] : ''}</span>
->>>>>>> develop
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -198,11 +194,7 @@ jQuery(document).ready(($) => {
                         wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
-<<<<<<< HEAD
                                     <span class="td-search-tag">${item.categories.map(cat => cat.name).join(', ')}</span>
-=======
-                                    <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories[0] : ''}</span>
->>>>>>> develop
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>

@@ -58,10 +58,7 @@ if (!function_exists('diff_for_humans')) {
 		$ago = new DateTime($datetime);
 		$diff = $now->diff($ago);
 
-<<<<<<< HEAD
-=======
 		// Calculate weeks manually without creating dynamic property
->>>>>>> develop
 		$weeks = floor($diff->d / 7);
 		$days = $diff->d - ($weeks * 7);
 
@@ -76,12 +73,6 @@ if (!function_exists('diff_for_humans')) {
 		);
 
 		$parts = array();
-<<<<<<< HEAD
-		foreach ($periods as $k => $v) {
-			$value = $v[2];
-			if ($value) {
-				$parts[] = $value . ' ' . $v[$value > 1 ? 1 : 0];
-=======
 		$values = array(
 			'y' => $diff->y,
 			'm' => $diff->m,
@@ -95,7 +86,6 @@ if (!function_exists('diff_for_humans')) {
 		foreach ($periods as $k => &$v) {
 			if ($values[$k]) {
 				$parts[] = $values[$k] . ' ' . $v[$values[$k] > 1];
->>>>>>> develop
 			}
 		}
 

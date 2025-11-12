@@ -97,15 +97,9 @@ $is_portal_available = (new PortalService())->has_portal_access();
                 </table>
             </div>
             <div class="td-portal-footer">
-<<<<<<< HEAD
-                <a class="flex items-center space-x-2 text-xs cursor-pointer text-slate-600 uppercase opacity-75 hover:opacity-100" href="https://www.thrivedesk.com/wordpress?utm_source=wpportal&utm_medium=<?php echo get_site_url(); ?>&utm_campaign=powered-by" target="_blank">
-                    <span><?php _e('Powered by', 'thrivedesk'); ?></span>
-                    <img src="<?php echo THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'; ?>" alt="ThriveDesk Logo"
-=======
                 <a class="flex items-center space-x-2 text-xs cursor-pointer text-slate-600 uppercase opacity-75 hover:opacity-100" href="<?php echo esc_url('https://www.thrivedesk.com/wordpress?utm_source=wpportal&utm_medium=' . get_site_url() . '&utm_campaign=powered-by'); ?>" target="_blank">
-                    <span>Powered by</span>
+                    <span><?php _e('Powered by', 'thrivedesk'); ?></span>
                     <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk Logo"
->>>>>>> develop
                          style="height: 15px; width: 84px; margin:0;">
                 </a>
 
