@@ -1,5 +1,9 @@
 *** WooCommerce Extension Changelog ***
 
+2025-08-29 - version 2.1.5
+* fix: PHP Warning for dates
+* fix: Search result object object error
+* fix: Link fixed for docs
 
 2025-08-29 - version 2.1.4
 * Fixed: License activation "Unauthorized" error by adding missing nonce parameter
