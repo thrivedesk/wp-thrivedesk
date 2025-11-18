@@ -169,7 +169,7 @@ jQuery(document).ready(($) => {
                 if (kbData.length > 0) {
                     kbData.forEach(function(item, i) {
                         kbResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
-                            <a target="_blank" href="${item.links.getLink}">
+                            <a target="_blank" href="${item.links?.getLink || '#'}">
                                 <div class="td-search-content">
                                     <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories.map(cat => cat.name).join(', ') : ''}</span>
                                     <span class="td-search-title">${item.title}</span>
@@ -192,7 +192,7 @@ jQuery(document).ready(($) => {
                     hasWpResults = true;
                     wpData.forEach(function(item, i) {
                         wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
-                            <a target="_blank" href="${item.link}">
+                            <a target="_blank" href="${item?.link || '#'}">
                                 <div class="td-search-content">
                                     <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories.map(cat => cat.name).join(', ') : ''}</span>
                                     <span class="td-search-title">${item.title}</span>
