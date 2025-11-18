@@ -63,13 +63,13 @@ if (!function_exists('diff_for_humans')) {
 		$days = $diff->d - ($weeks * 7);
 
 		$periods = array(
-			'y' => ['year', 'years'],
-			'm' => ['month', 'months'],
-			'w' => ['week', 'weeks'],
-			'd' => ['day', 'days'],
-			'h' => ['hour', 'hours'],
-			'i' => ['minute', 'minutes'],
-			's' => ['second', 'seconds']
+			'y' => ['year', 'years', $diff->y],
+			'm' => ['month', 'months', $diff->m],
+			'w' => ['week', 'weeks', $weeks],
+			'd' => ['day', 'days', $days],
+			'h' => ['hour', 'hours', $diff->h],
+			'i' => ['minute', 'minutes', $diff->i],
+			's' => ['second', 'seconds', $diff->s]
 		);
 
 		$parts = array();
