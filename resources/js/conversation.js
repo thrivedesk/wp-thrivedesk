@@ -187,14 +187,14 @@ jQuery(document).ready(($) => {
         
                 // Process WP data
                 var wpResultsHtml = '';
-                var noDataResult = true;
+                var hasWpResults = false;
                 if (typeof wpData == 'object' && wpData.length > 0) {
-                    noDataResult = false;
+                    hasWpResults = true;
                     wpData.forEach(function(item, i) {
                         wpResultsHtml += `<li class="td-search-item" id="td-search-item-${i}">
                             <a target="_blank" href="${item.link}">
                                 <div class="td-search-content">
-                                    <span class="td-search-tag">${item.categories.map(cat => cat.name).join(', ')}</span>
+                                    <span class="td-search-tag">${Array.isArray(item.categories) && item.categories.length > 0 ? item.categories.map(cat => cat.name).join(', ') : ''}</span>
                                     <span class="td-search-title">${item.title}</span>
                                     <span class="td-search-excerpt">${item.excerpt}</span>
                                 </div>
@@ -218,7 +218,7 @@ jQuery(document).ready(($) => {
                     <ul>${kbResultsHtml}</ul>`;
                 };
 
-                if (td_objects.wp_json_url && noDataResult === false) {
+                if (td_objects.wp_json_url && hasWpResults) {
                     combinedResults +=`<div>
                     <p class="px-4 font-bold">Search results from WordPress</p>
                     </div>
