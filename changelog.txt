@@ -1,5 +1,8 @@
 *** WooCommerce Extension Changelog ***
 
+2026-03-10 - version 2.1.6
+* fix: Cache-clear operation with request validation and user permission
+
 2025-08-29 - version 2.1.5
 * fix: PHP Warning for dates
 * fix: Search result object object error
