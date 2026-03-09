@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: chat, chatbot, helpdesk, livechat, support
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.1.5
+Stable Tag: 2.1.6
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -293,6 +293,9 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.1.6 =
+* fix: Cache-clear operation with request validation and user permission
 
 = 2.1.5 =
 - fix: PHP Warning for dates
