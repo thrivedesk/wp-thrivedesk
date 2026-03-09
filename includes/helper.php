@@ -236,6 +236,15 @@ if (!function_exists('remove_thrivedesk_conversation_cache')) {
  * Clear cache from ajax call
  */
 add_action('wp_ajax_thrivedesk_clear_cache', function () {
+	if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['nonce'] ) ), 'thrivedesk-nonce' ) ) {
+		wp_send_json_error( [ 'message' => __( 'Invalid nonce', 'thrivedesk' ) ] );
+	}
+
+    if ( ! current_user_can( 'manage_options' ) ) {
+		wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ] );
+	} 
+
+
 	remove_thrivedesk_all_cache();
 	remove_thrivedesk_conversation_cache();
 	wp_send_json_success();
