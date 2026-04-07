@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Plugin Name:         ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base
- * Description:         Live Chat, Help Desk & Knowledge Base plugin for WordPress
+ * Plugin Name:         Agentic Help Desk Plugin for WordPress - Live Chat, AI Chatbot & Ticketing - ThriveDesk
+ * Description:         ThriveDesk is a help desk plugin for WordPress that brings live chat, AI chatbot, support ticketing, and a knowledge base into one place. Built for WooCommerce stores and eCommerce businesses. Resolve customer support tickets faster with shared inbox, automation, and AI-powered replies.
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
  * Version:             2.1.6
@@ -15,7 +15,7 @@
  *
  * Requires PHP:        7.4
  * Requires at least:   4.9
- * Tested up to:        6.8
+ * Tested up to:        6.9.4
  *
  * ThriveDesk is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
