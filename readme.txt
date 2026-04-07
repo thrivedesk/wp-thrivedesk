@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.1.6
+Stable Tag: 2.1.7
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
