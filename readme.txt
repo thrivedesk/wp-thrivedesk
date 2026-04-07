@@ -11,14 +11,13 @@ License: GNU General Public License v2.0 or later
 Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer customers' questions and provide excellent support.
 
 == Description ==
-
 https://youtu.be/8aN5UWMOdjg
-
-# ThriveDesk – Customer Support Help Desk for WordPress & WooCommerce
 
 **The ridiculously simple, and remarkably productive, customer support software for WordPress — a complete help desk with shared inbox, ticketing system, live chat, and AI customer support, built for WooCommerce and ecommerce businesses.**
 
-Manage all customer conversations in one place. Reply to emails, answer live chats, open and resolve support tickets, and handle WooCommerce order requests — all from ThriveDesk, without ever leaving your dashboard. ThriveDesk is customer support software for WordPress that connects directly to your WooCommerce store so your agents can view order history, check shipping status, issue refunds, and manage subscriptions from inside every support ticket. No extra plugins. No tab switching. No compromises.
+ThriveDesk puts all your customer conversations in one place — email, live chat, and support tickets. Your team replies faster. Nothing gets missed.
+
+For WooCommerce stores, it goes further. Agents can view order history, check shipping status, issue refunds, and manage subscriptions — all from inside the support ticket. No tab switching. No extra plugins.
 
 Trusted by 2,000+ startups and growing businesses worldwide.
 
@@ -26,318 +25,337 @@ Trusted by 2,000+ startups and growing businesses worldwide.
 
 ---
 
-## Why WordPress and WooCommerce Businesses Choose ThriveDesk
+### 🤔 Why WordPress Businesses Choose ThriveDesk
 
-Most help desk tools are built for generic SaaS companies and bolted onto WordPress as an afterthought. ThriveDesk is different. We built native WooCommerce and WordPress support from day one — because your ecommerce customers don't wait for tab-switching, and your agents shouldn't have to either.
+Most help desk tools are built for big SaaS companies. WordPress support is an afterthought for them. ThriveDesk is different — we built native WordPress and WooCommerce support from day one.
 
-When a customer emails asking "where is my order?", your agent gets the full picture: order details, tracking status, payment method, subscription tier, and purchase history — all inside the ticket view. No toggling back to WooCommerce admin. No copy-pasting order IDs. Just context, instantly.
+When a customer asks "where is my order?", your agent sees everything: order details, shipping status, payment method, and purchase history — right inside the ticket. No switching to WooCommerce admin. No copying order IDs. Just instant context.
 
-But ThriveDesk isn't only a WooCommerce help desk. It's complete customer support software for WordPress — with a shared inbox, WordPress ticketing system, live chat, AI customer support, self-service knowledge base, workflow automation, team reporting, and mobile apps. Everything you need to run a professional ecommerce support operation, without the enterprise price tag.
+ThriveDesk is more than a WooCommerce help desk. It's a full customer support platform for WordPress — with a shared inbox, ticketing system, live chat, AI customer support, knowledge base, automation, reporting, and mobile apps. Everything in one place, without the enterprise price tag.
 
 ---
 
-## WooCommerce Support, Done Right
+### 🛒 WooCommerce Support, Done Right - Built-In, Not Bolted On
 
-### Built-In, Not Bolted On
-
-ThriveDesk's WooCommerce integration was built by our own engineers — not assembled from third-party connectors. That means it's fast, reliable, and deeply embedded into how your support workflow actually operates. Combine it with AI customer support, a full WordPress ticketing system, and a WooCommerce help desk that actually understands ecommerce — and you have everything in one place.
+ThriveDesk's WooCommerce integration was built by our own engineers. It's not a third-party connector. That means it's fast, reliable, and built into how your team works every day. Add AI customer support, a WordPress ticketing system, and a WooCommerce help desk — and you have a complete ecommerce support setup in one tool.
 
 https://www.youtube.com/watch?v=lmajbvfY_GQ
 
 **What your agents can do from inside every support ticket:**
 
-- **View complete order history** — every order the customer has placed, at a glance
-- **Check real-time shipping status** — no need to open a tracking link separately
-- **Cancel or refund orders** — process refunds without switching to WooCommerce admin
-- **Add, edit, or remove order items** — modify orders directly from the ticket view
-- **Manage subscriptions** — add, modify, or cancel subscription plans on the spot
-- **View customer lifetime value** — understand who you're talking to before you reply
+- 📦 **View complete order history** — see every order the customer has placed
+- 🚚 **Check real-time shipping status** — no need to open a tracking link
+- 💸 **Cancel or refund orders** — process refunds without leaving ThriveDesk
+- ✏️ **Add, edit, or remove order items** — modify orders from the ticket view
+- 🔄 **Manage subscriptions** — add, change, or cancel plans on the spot
+- 👤 **View customer lifetime value** — know who you're talking to before you reply
 
-No data is stored on ThriveDesk servers. Everything syncs via API in real-time, cached locally for speed. Your customer data stays yours.
+No customer data is stored on ThriveDesk servers. Everything syncs via API and is cached locally. Your data stays yours.
 
-### WooCommerce My Account — Embedded Support Portal
+#### WooCommerce My Account — Embedded Support Portal
 
-With ThriveDesk's **WPPortal**, you can embed a full customer support portal directly on your WooCommerce My Account page. Your customers can view their tickets, read your knowledge base, and start new support conversations — all without leaving your store. No external links. No confusion. Just seamless support integrated into the shopping experience they already know.
+With **WPPortal**, you can embed a full support portal inside your WooCommerce My Account page. Customers can view their tickets, read your knowledge base, and start new conversations — without leaving your store. No external links. No confusion.
 
-### Granular Agent Permissions
+#### Granular Agent Permissions
 
-Not every agent needs access to every order action. ThriveDesk gives you granular permission controls — decide exactly which agents can issue refunds, cancel orders, or modify subscriptions. Protect your operations while empowering your team.
+Not every agent should be able to refund orders or cancel subscriptions. ThriveDesk lets you control exactly what each agent can do. Your operations stay protected. Your team stays empowered.
 
-### Works with WooCommerce Subscriptions
+#### Works with WooCommerce Subscriptions
 
-Running a subscription business? ThriveDesk handles subscription management natively. Your agents can view subscription status, upcoming billing dates, plan details, and modify or cancel subscriptions — all from the ticket. Customer asks to pause their subscription? Done, in seconds, without leaving the conversation.
+Running a subscription store? ThriveDesk handles it natively. Agents can view subscription status, upcoming billing dates, and plan details — and modify or cancel subscriptions right from the ticket. No extra steps.
 
 ---
 
-## A Complete Helpdesk — Not Just a WooCommerce Plugin
+### ⚡ A Complete Help Desk — Not Just a WooCommerce Plugin
 
-ThriveDesk gives you everything a modern support team needs, built into one clean, fast, and affordable platform.
+ThriveDesk gives your support team everything they need in one clean, fast, affordable platform.
 
-### Shared Inbox & Ticketing System — Your Team's Command Center
+#### 📬 Shared Inbox & Ticketing System
 
-Stop losing customer emails in personal inboxes. ThriveDesk's shared inbox for WordPress consolidates all your support channels — email, live chat, and more — into one unified support ticket system where your entire team can collaborate. Every customer message becomes a trackable support ticket. Nothing falls through the cracks.
+Stop losing emails in personal inboxes. ThriveDesk's shared inbox for WordPress pulls all your support channels — email, live chat, and more — into one support ticket system. Every message becomes a trackable ticket. Nothing slips through.
 
-**Key capabilities:**
+**Key features:**
 
-- **Collision detection** — prevents two agents from replying to the same ticket at once
-- **@Mentions** — loop teammates into a conversation instantly
-- **Private Notes** — internal team discussion inside a ticket, invisible to the customer
-- **Canned Responses** — save and reuse your best replies; syncs in real-time across all agents
-- **Tags and Labels** — categorize tickets for routing, reporting, and pattern-spotting
-- **Custom Fields** — capture structured data per ticket: dropdown, text, toggle, and more
-- **Snooze Conversations** — natural language scheduling: "follow up in 2 hours", "tomorrow at 3pm"
-- **Schedule Reply** — write your reply now, deliver it at the right moment
-- **Undo Send** — 5–30 second configurable delay to catch mistakes before they reach customers
-- **Split Conversations** — cleanly separate when one ticket becomes two distinct issues
-- **Merge and Bulk Actions** — handle multiple tickets at once; merge duplicates with two clicks
+- **Collision detection** — stops two agents from replying to the same ticket
+- **@Mentions** — tag a teammate inside any conversation
+- **Private Notes** — internal comments that customers never see
+- **Canned Responses** — save your best replies and reuse them in seconds
+- **Tags and Labels** — organize tickets for routing and reporting
+- **Custom Fields** — collect structured info per ticket: dropdowns, text, toggles
+- **Snooze Conversations** — set a reminder: "follow up tomorrow at 3pm"
+- **Schedule Reply** — write now, send later
+- **Undo Send** — 5–30 second window to cancel a reply before it goes out
+- **Split Conversations** — break one ticket into two when topics diverge
+- **Merge and Bulk Actions** — merge duplicates, bulk-assign, bulk-close
 
-Every inbox can be configured independently — separate your sales email from your support email, your billing from your technical queue, without ever losing context.
+Each inbox is fully independent. Keep sales, billing, and technical support completely separate.
 
-### Live Chat — Real-Time Support on Your WordPress Site
+#### 💬 Live Chat for WordPress & WooCommerce
 
-ThriveDesk's live chat widget installs on any WordPress site or WooCommerce store in minutes. No coding required.
+ThriveDesk's live chat widget installs on any WordPress site or WooCommerce store in minutes. No coding needed.
 
-**What makes it different:**
+- Multiple agents can help one customer at the same time
+- Shareable chat links — hand off a conversation without starting over
+- Custom contact form fields — collect the right info before chat begins
+- Audio notifications — agents never miss a new chat
+- Firebase push notifications — reliable alerts across multiple agents
+- Works on all devices — fully mobile-responsive
+- Drag-and-drop file attachments — customers can share screenshots in chat
 
-- Multiple agents can assist one customer simultaneously — no more customers waiting for the "right" person
-- Shareable chat links — hand off a live conversation to a specialist without starting over
-- Contact form with custom fields — capture exactly the information you need before the conversation starts
-- Audio notifications — agents never miss an incoming chat
-- Firebase-powered push notifications — reliable delivery even across multiple agents
-- Mobile-responsive — works perfectly for customers on any device
-- RGB launcher animation — subtle, customizable attention cue for your widget button
-- Drag-and-drop file attachments — customers can share screenshots directly in chat
+Agents see full conversation history and customer details in the chat panel. WooCommerce stores also see the customer's order history — right there.
 
-Your agents see the full conversation history, customer contact details, and (for WooCommerce stores) the customer's order history — right inside the chat panel.
+#### 📚 Knowledge Base — Help Customers Help Themselves
 
-### Knowledge Base — Self-Service Support That Actually Works
+A good knowledge base reduces support tickets by up to 70%. ThriveDesk's knowledge base is fast to build and easy to keep current.
 
-Reduce your support ticket volume by up to 70% with a well-built self-service knowledge base. ThriveDesk's knowledge base is fast to build, easy to maintain, and designed to help customers find answers before they email you.
+**What you can build:**
 
-**What you can do:**
+- A public help center with your own domain and branding
+- Internal docs for your support team
+- In-app help embedded in your live chat widget
+- **WPPortal** — a full help center on any WordPress page
 
-- Build a branded public help center with a custom domain
-- Create internal documentation for your team
-- Embed help content directly in your live chat widget (in-app help)
-- Publish **WPPortal** — a full help center embedded inside any WordPress page
+**The editor makes writing fast:**
 
-**The editor is built for speed:**
-- Context-aware AI editing — generate documentation 3x faster
-- Toggle blocks — collapsible sections for clean, scannable articles
-- Stepper blocks — numbered step-by-step instructions for tutorials and walkthroughs
+- AI-assisted editing — write docs 3x faster
+- Toggle blocks — collapsible sections for long articles
+- Stepper blocks — numbered steps for tutorials
 - Media manager — add images and videos to any article
-- Drag-and-drop article ordering and sub-folder category structure
-- Article autosaving with version history — never lose a draft
+- Drag-and-drop ordering and nested categories
+- Autosave with version history — never lose your work
 
-**AI-powered search** understands intent, not just keywords. A customer searching "I can't log in" finds your password reset article even if it's titled "Account Access." Shareable search result links let your agents point customers to specific answers.
+The search is AI-powered. It understands what a customer means, not just what they typed. Someone searching "can't log in" finds your password reset article — even if it's not titled that way.
 
-Dark mode, SEO-friendly URLs, and a full CRUD API for developers who need to pull content programmatically.
+#### 🤖 AI Customer Support — Honest and Effective
 
-### AI Customer Support — Powered by Data, Grounded in Honesty
-
-ThriveDesk's AI assistant, **NEO**, is trained on your own knowledge base, uploaded documents, website content, and Q&A pairs. It handles repetitive questions automatically so your team can focus on conversations that need a human touch.
+ThriveDesk's AI assistant, **NEO**, learns from your own knowledge base, documents, and website. It handles common questions automatically so your team can focus on harder ones.
 
 **NEO can:**
-- Auto-reply to customer queries without agent intervention
-- Suggest draft replies for agents to review and send
-- Classify incoming tickets by tag and priority automatically
-- Hand off smoothly to a human agent with full conversation context preserved
-- Be trained progressively — add new knowledge sources and they take effect instantly
 
-**AI Copilot** assists your human agents in real-time:
-- Instant ticket summarization — catch up on a long thread in seconds
-- "Generate AI Draft" — AI writes a full reply based on conversation history and context
-- Proactive suggestions — Copilot flags actions and drafts without being prompted
+- Auto-reply to customer questions on its own
+- Suggest draft replies for agents to review
+- Tag and prioritize incoming tickets automatically
+- Hand off to a human agent with full context preserved
+- Update instantly when you add new training content
 
-We're honest about what AI can and can't do. In the first months, realistic AI resolution rates sit between 20–45%. Fully trained, ThriveDesk AI can handle up to 90% of first-tier support requests. But "deflected by AI" is not the same as "resolved by AI." We'll never tell you AI replaces human judgment — it amplifies it.
+**AI Copilot** helps your human agents too:
 
-**"Powered By AI, Support By Human."** That's the right balance.
+- Summarizes long threads in seconds
+- Generates a full draft reply from conversation history
+- Suggests next steps without being asked
 
-### Automation — Stop Doing Work That Should Happen Automatically
+We're upfront about AI performance. In the first few months, resolution rates are typically 20–45%. With a well-trained setup, ThriveDesk AI can handle up to 90% of first-tier requests. But we'll never claim AI solves everything — it supports your team, it doesn't replace them.
 
-ThriveDesk's workflow automation lets you define rules that handle routine operations without any manual effort. No code. Just simple if/then logic. Especially powerful for ecommerce support — where order status emails, refund requests, and shipping queries follow predictable patterns that should never need manual triage.
+**Powered By AI, Support By Human.** That's the right balance.
+
+#### ⚙️ Automation — Let the Routine Run Itself
+
+Set up simple rules and let ThriveDesk handle the repetitive work. No code. Just if/then logic. It's especially useful for ecommerce support — where refund requests, shipping questions, and order emails follow the same patterns every day.
 
 **What you can automate:**
 
-- **Routing** — route tickets to the right team based on subject, content, or custom field values
-- **Tagging** — auto-tag "refund", "billing", "shipping" based on keywords
-- **Assignment** — round-robin or rule-based agent assignment
-- **Escalation** — flag tickets with no reply after a set time
-- **Notifications** — alert a senior agent when a high-value customer writes in
-- **SLA management** — set and enforce response time targets by ticket type
+- **Routing** — send tickets to the right team based on content or custom fields
+- **Tagging** — auto-tag refund, billing, and shipping tickets by keyword
+- **Assignment** — assign tickets by rules or round-robin
+- **Escalation** — flag tickets that haven't been answered after a set time
+- **Notifications** — alert a senior agent when a VIP customer writes in
+- **SLA tracking** — set and enforce response time targets
 
-**Real examples teams use:**
-1. Subject contains "refund" → tag as Billing → assign to Billing team
-2. Customer email matches VIP list → add private note → assign to senior agent
-3. No agent reply in 4 hours → tag as Urgent → notify team lead
-4. Contact form dropdown = "Subscription" → route to Subscription team automatically
+**Examples your team can use today:**
+
+1. Subject contains "refund" → tag Billing → assign to Billing team
+2. Email matches VIP list → add note → assign to senior agent
+3. No reply in 4 hours → tag Urgent → notify team lead
+4. Contact form = "Subscription" → route to Subscription team
 5. Order status email detected → tag → move to Order Updates folder
 
-Automation runs silently in the background, reducing manual triage work and ensuring nothing slips through.
+#### 📊 Reporting — See What's Actually Happening
 
-### Reporting — Know How Your Team Is Actually Performing
+Stop guessing. ThriveDesk's dashboards show you how your support team is doing.
 
-Make decisions based on data, not gut feeling. ThriveDesk's reporting dashboards give you a clear view of support operations across every dimension.
+**Four dashboards:**
 
-**Four dashboards, four perspectives:**
+- **Conversations Dashboard** — volume, open vs. closed, trends over time
+- **Happiness Dashboard** — CSAT scores and satisfaction trends
+- **Leaderboard Dashboard** — agent performance, response times, resolution rates
+- **Company Dashboard** — team results measured against your goals
 
-- **Conversations Dashboard** — ticket volume, open vs. closed, trends over time
-- **Happiness Dashboard** — CSAT scores and satisfaction trend analysis
-- **Leaderboard Dashboard** — individual agent performance, response times, resolution rates
-- **Company Performance Dashboard** — team benchmarks measured against your own goals
+Your CSAT score is shareable. Display it as a badge on your website to build trust with new customers.
 
-Track average turnaround time, resolution rates, customer satisfaction scores, and volume trends across any date range. Your CSAT score is shareable — display it as a badge on your website to build trust with prospective customers.
+#### 🔌 SmartApp — Bring Your Own Data
 
-### SmartApp — Connect Any Data Source to Your Helpdesk
+Every business has unique data. SmartApp is a no-code drag-and-drop builder that connects ThriveDesk to any external API. Pull in CRM records, subscription data, billing history — whatever your agents need — right into the ticket view. No more switching tools.
 
-Every business has unique internal data. ThriveDesk's **SmartApp** is a no-code drag-and-drop app builder that lets you connect external APIs and surface any customer data — CRM records, subscription status, product usage metrics, billing history — directly inside a support ticket.
-
-No more switching between your helpdesk and your backend dashboards. Build a custom app once, and your agents always have the context they need.
-
-### Mobile Apps — Support from Anywhere
+#### 📱 Mobile Apps — Support from Anywhere
 
 **iOS App (v2.0):**
-- Redesigned conversations list for fast ticket triage
-- Floating Quick Action Bar — assign, change status, add tags, or reply in one tap
-- Full conversation history visible while composing a reply
+
+- Redesigned ticket list for fast triage
+- Quick Action Bar — assign, tag, change status, or reply in one tap
+- Full conversation history while you compose
 
 **Android App:**
+
 - View, reply, and forward tickets
-- @Mention colleagues in internal notes
-- Swipe actions for fast ticket management
+- @Mention teammates in notes
+- Swipe actions for quick ticket management
 - Live chat support
 - Dark mode
-- Real-time WebSocket updates — always in sync with your desktop
+- Real-time updates via WebSocket
 
 ---
 
-## Integrations Built for the WordPress Ecosystem
+### 🔗 Integrations Built for WordPress
 
-ThriveDesk connects with the tools WordPress and WooCommerce businesses already use:
+ThriveDesk connects with the tools WordPress and WooCommerce businesses already use.
 
-### E-Commerce & Payments
+#### E-Commerce & Payments
 
-| Integration | What it does in ThriveDesk |
-|-------------|---------------------------|
-| **WooCommerce** | Orders, refunds, subscriptions, customer history — all inside tickets |
-| **Easy Digital Downloads (EDD)** | Digital product purchase history in every ticket |
-| **SureCart** | All-in-one digital product platform data |
-| **Freemius** | Real-time customer and license data |
-| **Stripe** | Customer billing details and transaction history |
-| **Paddle** | Subscription status, billing dates, payment methods |
+* **WooCommerce** — Orders, refunds, subscriptions, and customer history — all inside tickets
+* **Easy Digital Downloads (EDD)** — Digital product purchase history in every ticket
+* **SureCart** — All-in-one digital product platform data
+* **Freemius** — Real-time customer and license data
+* **Stripe** — Customer billing details and transaction history
+* **Paddle** — Subscription status, billing dates, and payment methods
 
-### Developer Integrations
+#### Developer Integrations
 
-| Integration | What it does |
-|-------------|-------------|
-| **API & Webhooks** | Build custom integrations (Plus plan and above) |
-| **SmartApp** | Connect any external API via drag-and-drop — no code |
-| **GitHub** | Display repo names, issue titles, and status inside tickets |
-| **WordPress Forms** | Compatible with any WordPress form builder for ticket creation |
+* **API & Webhooks** — Build custom integrations (Plus plan and above)
+* **SmartApp** — Connect any external API via drag-and-drop — no code needed
+* **GitHub** — See repo names, issue titles, and status inside tickets
+* **WordPress Forms** — Works with any WordPress form builder for ticket creation
 
 ---
 
-## The WordPress Plugin — Lightweight, Fast, GDPR-Ready
+### 🔒 The WordPress Plugin — Fast, Lightweight, GDPR-Ready
 
-The ThriveDesk WordPress plugin is built to be light. No extra database queries. No impact on your site's loading speed. No coding required to set up.
+The ThriveDesk plugin is small and fast. It adds no extra database queries and won't slow down your site. Setup takes under 5 minutes.
 
-**What the plugin includes:**
+**What's included:**
 
-- **WPPortal** — embed your full help center (tickets + knowledge base) on any WordPress page or WooCommerce My Account page with a single shortcode
-- **Live chat widget** — add ThriveDesk live chat to your site in minutes
-- **Form builder compatibility** — connect any existing WordPress contact form to create support tickets automatically
+- **WPPortal** — embed your help center on any WordPress page or WooCommerce My Account page using a shortcode
+- **Live chat widget** — add chat to your site in minutes
+- **Form builder support** — connect any WordPress contact form to create tickets automatically
 - **GDPR-compliant** — nonce verification and secure form handling built in
-- **Auto-cache clearing** — plugin settings updates clear the cache automatically
+- **Auto-cache clearing** — settings updates clear the cache on their own
 
 Works with any WordPress theme. No page builder required.
 
 ---
 
-## Free Migration — Switching Is Painless
+### 🚚 Free Migration — Switching Is Easy
 
-Already on Zendesk or Help Scout? Move to ThriveDesk at no cost.
+Already on Zendesk or Help Scout? We'll move everything over for free.
 
-- **From Zendesk:** Complete migration — all conversations, contacts, and history preserved
-- **From Help Scout:** Full 1:1 migration — conversations, contacts, history, and conditions matched
+- **From Zendesk** — all conversations, contacts, and history fully preserved
+- **From Help Scout** — full 1:1 migration with conditions matched
 
-Both migrations are included free. Zero data loss guaranteed. Our team handles it.
+Zero data loss. Our team handles it. No extra charge.
 
 ---
 
-## What ThriveDesk Customers Say
+### 💬 What ThriveDesk Customers Say
 
-> *"Many businesses live under the impression that only renowned companies offer premium services. This is not always the case. After some digging, we found ThriveDesk. It has been a game changer for us since then."*
+> *"Many businesses think only big companies offer premium support tools. We found ThriveDesk and it's been a game changer."*
 > — Mohammad Zannatun Nime, Support Executive, **Themesgrove**
-> (Switched from Help Scout. Saved $4,200 per year.)
+> Switched from Help Scout. Saved $4,200 per year.
 
-> *"User classification data became vital for us. We needed to serve our premium customers first to keep our business running. ThriveDesk made that possible."*
+> *"We needed to serve our premium customers first. ThriveDesk made that possible."*
 > — Mehedi Hasan, CEO, **Themefisher**
-> (Switched from Zendesk. Increased sales by enabling premium customer prioritization.)
+> Switched from Zendesk. Increased sales with customer prioritization.
 
+---
 
-## Frequently Asked Questions
+### ❓ Frequently Asked Questions
 
 **Does ThriveDesk slow down my WordPress site?**
-No. The ThriveDesk WordPress plugin is engineered to be lightweight — no extra database queries, no render-blocking scripts. Your site's performance is unchanged.
+No. The plugin is lightweight — no extra database queries, no render-blocking scripts. Your site speed stays the same.
 
-**Does ThriveDesk store WooCommerce customer data on its servers?**
-No. WooCommerce data is synced via API in real-time and cached as files. Your customer data never leaves your environment and is never stored permanently on ThriveDesk servers.
+**Does ThriveDesk store WooCommerce customer data?**
+No. WooCommerce data syncs via API and is cached locally. It's never stored permanently on ThriveDesk servers.
 
 **Can I manage WooCommerce subscriptions from ThriveDesk?**
-Yes. Your agents can view subscription status, upcoming billing dates, and plan details, and can add, modify, or cancel subscriptions directly from inside a support ticket.
+Yes. Agents can view subscription status, billing dates, and plan details — and modify or cancel subscriptions right from the ticket.
 
-**Can I embed a customer portal in my WooCommerce My Account page?**
-Yes. WPPortal lets you embed a full support portal — ticket history, knowledge base, and new ticket submission — on any WordPress page, including the WooCommerce My Account page. No coding required.
+**Can I embed a support portal in my WooCommerce My Account page?**
+Yes. WPPortal adds a full support portal — ticket history, knowledge base, and new ticket form — to any WordPress page. No coding needed.
 
 **Can I use ThriveDesk with Easy Digital Downloads?**
-Yes. ThriveDesk integrates with EDD and displays purchase history in real-time inside every ticket, so your agents know exactly what a customer has bought before they reply.
+Yes. ThriveDesk shows EDD purchase history in real-time inside every ticket. Your agents know what the customer bought before they reply.
 
-**What happens to my data if I migrate from Help Scout or Zendesk?**
-Nothing is lost. ThriveDesk's free migration service preserves all conversations, contacts, ticket history, and conditions. Migration is included at no extra cost.
+**What happens to my data when I migrate from Help Scout or Zendesk?**
+Nothing is lost. All conversations, contacts, and ticket history are fully preserved. Migration is free and our team handles it.
 
-**Does ThriveDesk integrate with third-party tools I already use?**
-Yes. Beyond WooCommerce, ThriveDesk integrates with Stripe, Paddle, SureCart, Freemius, EDD, GitHub, and any external API via the SmartApp builder. Plus plan and above includes full API and webhook access.
+**Does ThriveDesk work with other tools?**
+Yes. ThriveDesk connects with Stripe, Paddle, SureCart, Freemius, EDD, and GitHub. Plus plan and above includes full API and webhook access.
 
 **How does the AI work?**
-ThriveDesk's AI assistant (NEO) is trained on your own knowledge base, uploaded documents, and website content. It can auto-reply to customer queries, suggest drafts for agents, and classify tickets by tag and priority. New knowledge sources take effect instantly — no processing delay.
+NEO is trained on your knowledge base, documents, and website. It can auto-reply, suggest drafts, and classify tickets. New content takes effect instantly — no delay.
 
 **What is the realistic AI resolution rate?**
-In the first months: 20–45%, depending on how well-trained your knowledge base is. Fully trained and maintained, ThriveDesk AI can handle up to 90% of first-tier support requests. We're honest about this because "deflected by AI" is not the same as "resolved by AI."
+In the first months: 20–45%. Fully trained, ThriveDesk AI can handle up to 90% of first-tier requests. Deflected by AI is not the same as resolved by AI — and we'll always be honest about that.
 
 **Is ThriveDesk GDPR-compliant?**
-Yes. The WordPress plugin uses nonce verification and secure form handling. ThriveDesk is GDPR-ready for EU businesses.
+Yes. The plugin uses nonce verification and secure form handling. ThriveDesk is GDPR-ready.
 
 **Do you offer a free trial?**
 Yes — 7 days, no credit card required.
 
-**Can I test the AI before it goes live to customers?**
-Yes. The AI Playground lets you test NEO's responses and refine them before enabling auto-reply for real customers.
+**Can I test the AI before going live?**
+Yes. The AI Playground lets you test NEO's replies and refine them before turning on auto-reply for customers.
 
-**Does ThriveDesk work with any WordPress theme?**
-Yes. ThriveDesk works with any theme that follows WordPress coding standards. No page builder required.
+**Does ThriveDesk work with my WordPress theme?**
+Yes. ThriveDesk works with any theme that follows WordPress standards. No page builder needed.
+
+**What is the best help desk plugin for WordPress?**
+ThriveDesk is built specifically for WordPress and WooCommerce — not ported from a generic tool. It combines a shared inbox, ticketing system, live chat, AI support, and a knowledge base in one plugin. For WooCommerce stores, it's the only help desk with native order management, refunds, and subscriptions built directly into the ticket view.
+
+**Can I use ThriveDesk as a ticketing system?**
+Yes. Every email, live chat, or contact form creates a trackable support ticket. Agents can assign, tag, prioritize, snooze, and resolve tickets. Automation routes them to the right team automatically.
+
+**Does ThriveDesk support email ticketing?**
+Yes. Connect your support email and every message becomes a ticket in your shared inbox. Canned responses speed up replies. Automation handles routing. No manual forwarding needed.
+
+**Is ThriveDesk a good Zendesk alternative for WordPress?**
+Yes — and it's 45% cheaper. Migration from Zendesk is free and preserves everything. ThriveDesk is built for WordPress and WooCommerce, so you get ecommerce features that Zendesk can't match without expensive add-ons.
+
+**Is ThriveDesk a Help Scout alternative?**
+Yes. Customers save up to $4,200 per year switching from Help Scout. Migration is free. ThriveDesk includes WooCommerce integration, AI support, live chat, and a knowledge base — at a lower price.
+
+**Does ThriveDesk work with Easy Digital Downloads?**
+Yes. ThriveDesk shows each customer's EDD purchase history — products, licenses, order dates — in real-time inside every ticket.
+
+**Can I use ThriveDesk without WooCommerce?**
+Absolutely. ThriveDesk works great for SaaS, digital downloads, membership sites, and agencies. WooCommerce is an integration — not a requirement.
+
+**How many agents can use ThriveDesk?**
+Starter supports up to 4 agents. Plus supports up to 10. Enterprise supports unlimited agents.
+
+**Does ThriveDesk have a mobile app?**
+Yes — iOS and Android apps are available. Agents can manage tickets, reply to customers, and handle live chat from anywhere.
 
 **What support do you offer?**
-Human support — from a real team that actually uses the product. Plus and Enterprise plans include priority support. All plans have access to our knowledge base and community resources.
+Real human support from a team that uses ThriveDesk themselves. Plus and Enterprise plans include priority support. All plans include access to our knowledge base.
 
 ---
 
-## Privacy and Security
+### 🛡️ Privacy and Security
 
 - GDPR-compliant plugin architecture
-- Nonce verification for all form submissions
+- Nonce verification on all form submissions
 - No WooCommerce customer data stored on ThriveDesk servers
 - 99.95% platform uptime
-- No third-party data brokers or advertising trackers
+- No third-party data brokers or ad trackers
 
 ---
 
-## Installation
+### 🚀 Installation
 
-1. Install ThriveDesk from the WordPress plugin directory or upload the ZIP file to `/wp-content/plugins/`.
-2. Activate through the Plugins menu in WordPress.
-3. Go to **Settings → ThriveDesk** and connect your ThriveDesk account (create one free at thrivedesk.com if you don't have one).
-4. Configure your inbox, enable live chat, and set up WPPortal on any page using the provided shortcode.
-5. To activate WooCommerce integration: go to ThriveDesk → Integrations → WooCommerce and connect your store.
+1. Install ThriveDesk from the WordPress plugin directory or upload the ZIP to `/wp-content/plugins/`.
+2. Activate it from the Plugins menu in WordPress.
+3. Go to **Settings → ThriveDesk** and connect your ThriveDesk account.
+4. Set up your inbox, enable live chat, and add WPPortal to any page using the shortcode.
+5. To connect WooCommerce: go to ThriveDesk → Integrations → WooCommerce.
 
 Setup takes under 5 minutes. No coding required.
 
@@ -345,7 +363,6 @@ Setup takes under 5 minutes. No coding required.
 
 *ThriveDesk — The ridiculously simple, and remarkably productive, customer support platform.*
 *Built for WordPress. Loved by WooCommerce stores.*
-
 
 == Screenshots ==
  
