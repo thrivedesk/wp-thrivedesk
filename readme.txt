@@ -1,7 +1,7 @@
-=== ThriveDesk - Live Chat, AI Chatbot, Helpdesk & Knowledge Base ===
+=== Agentic Help Desk Plugin for WordPress - Live Chat, AI Chatbot & Ticketing - ThriveDesk ===
 Contributors: thrivedesk
 
-Tags: chat, chatbot, helpdesk, livechat, support
+Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.8
 Stable Tag: 2.1.5
@@ -12,7 +12,7 @@ Add ThriveDesk AI Live Chat & Chatbot to your WordPress for free to answer custo
 
 == Description ==
 
-🛟 ThriveDesk - Live Chat and Helpdesk for WordPress with AI Chatbot, Ticketing, Knowledge Base, Customers Support & Sales Tools.
+ThriveDesk is an agentic AI help desk plugin for WordPress that brings live chat, AI chatbot, support ticketing, and a knowledge base into one place. Built for WooCommerce stores and eCommerce businesses. Resolve customer support tickets faster with shared inbox, automation, and AI-powered replies.
 
 Your search for [AI chatbot for WordPress](https://www.thrivedesk.com/wordpress) ends here. 
 
@@ -20,7 +20,7 @@ ThriveDesk is complete support ticketing, live chat, chatbot and knowledge base 
 
 ### Help Desk Plugin For WordPress ###
 
-[ThriveDesk](https://www.thrivedesk.com) is the ultimate helpdesk and ticketing software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing customer support.
+[ThriveDesk](https://www.thrivedesk.com) is the ultimate helpdesk and ticketing software for WordPress, offering a lightweight and fast assistant that attracts customers without slowing down your site. With personalized interactions, automated messages, and detailed analytics, it's the perfect solution for enhancing support ticket system.
 
 We designed ThriveDesk helpdesk to protect users’ privacy and align with the GDPR rules.
 
@@ -28,7 +28,7 @@ https://youtu.be/8aN5UWMOdjg
 
 ### WHY USE THRIVEDESK - THE BEST LIVE CHAT PLUGIN? ###
 
-Win your customers over by using this incredibly fast and lightweight customer support tool.
+Win your customers over by using this incredibly fast and lightweight support ticket system.
 
 Avoid slow page loading times and lag in message delivery and reception.
 
@@ -79,7 +79,7 @@ Available on:
 
 ### Helpdesk & Support Ticket Plugin for WordPress ###
 
-Manage all customer conversations through ThriveDesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+Manage all customer conversations through ThriveDesk's Shared Inbox (aka Ticket System). Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better support ticket system.
 
 https://www.youtube.com/watch?v=n2rUreB_aso&t=6s
 
@@ -113,7 +113,7 @@ ThriveDesk makes it easy for your team to manage emails through a single shared 
 
 https://youtu.be/C62yyLaUusU
 
-A shared inbox enables you to manage customer support requests with a smaller team, providing a more efficient use of resources and reducing the cost of maintaining a larger support team.
+A shared inbox enables you to manage customer support tickets requests with a smaller team, providing a more efficient use of resources and reducing the cost of maintaining a larger support team.
 
 Which means all customer interactions are in one place, making it easier for agents to manage, prioritize, and respond to requests. This helps reduce the risk of missing requests or duplicating efforts.
 
@@ -126,7 +126,7 @@ Which means all customer interactions are in one place, making it easier for age
 ✅ Better integration
 ✅ Seamless customer experience
 
-### CREATE STUNNING KNOWLEDGE BASE TO SCALE CUSTOMER SUPPORT ###
+### CREATE STUNNING KNOWLEDGE BASE TO SCALE CUSTOMER SUPPORT TICKETS ###
 
 Reduce ticket inflow, avoid repetitive incident logs, facilitate self-service on the portal, and improve resolution times with a repository of articles that can help the customers find answers to their problems.
 
@@ -261,9 +261,9 @@ ThriveDesk is free for 7 days, and we don't need your card details. Later on, yo
 
 = What is Shared Inbox? =
 
-Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better customer support experience.
+Shared Inbox is where all your tickets, live chat, and queries are directed, and the team collaborates to provide a better support ticket system.
 
-A shared inbox is a central location where multiple agents can access and respond to customer inquiries, requests, and support tickets. It is a collaborative tool that allows teams to manage customer support requests and interact with customers in real-time.
+A shared inbox is a central location where multiple agents can access and respond to customer inquiries, requests, and support tickets. It is a collaborative tool that allows teams to manage customer support tickets requests and interact with customers in real-time.
 
 In a shared inbox, all customer conversations are visible to every agent, so each team member can see what has been discussed and what actions have been taken. This helps ensure that all customer inquiries are handled promptly and efficiently, without any duplication of effort or miscommunication.
 
@@ -288,7 +288,7 @@ Privacy is our utmost priority, and we designed ThriveDesk in a way that aligned
  
 - WordPress Helpdesk plugin: Check all your tickets in one place
 - Reply ticket faster with real-time customer insights
-- Advance reporting: Complete overview of customer support and happiness score
+- Advance reporting: Complete overview of support ticket system and happiness score
 - WordPress Integration: WooCommerce, EDD, Slack, and more integrations
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
