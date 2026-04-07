@@ -676,6 +676,7 @@ jQuery(document).ready(($) => {
 		jQuery
 			.get(thrivedesk.ajax_url, {
 				action: 'thrivedesk_clear_cache',
+				nonce: thrivedesk.nonce,
 			})
 			.success(function (response) {
 				Swal.fire({
