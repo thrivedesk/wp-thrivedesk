@@ -23,7 +23,7 @@
 			@apply text-gray-500 hover:text-blue-500;
 		}
 		.td-card {
-			@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
+			@apply border border-slate-300 rounded-md p-4 transition bg-white hover:shadow-lg;
 		}
 		.td-card-heading {
 			@apply mb-4 pl-1;
@@ -38,7 +38,7 @@
 			@apply bg-white hover:bg-blue-100;
 		}
 		.alert {
-			@apply p-4 border rounded bg-neutral-100 mb-4 text-sm;
+			@apply p-4 border rounded bg-neutral-100 text-sm;
 		}
 		.alert-info {
 			@apply bg-blue-50 border-blue-300 text-blue-600;
