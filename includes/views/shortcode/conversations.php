@@ -9,6 +9,11 @@ $conversations       = Conversation::get_conversations();
 $conversation_data   = isset($conversations['data']) ? Conversation::td_conversation_sort_by_status($conversations['data']) : [];
 $links               = $conversations['meta']['links'] ?? [];
 $is_portal_available = (new PortalService())->has_portal_access();
+$settings            = get_td_helpdesk_settings();
+$ticket_page_id      = absint($settings['td_helpdesk_page_id'] ?? 0);
+$ticket_page_url     = $ticket_page_id ? get_page_link($ticket_page_id) : '#';
+$has_knowledgebase   = ! empty($settings['td_knowledgebase_slug']);
+$should_open_modal   = $has_knowledgebase && $ticket_page_id;
 
 ?>
 
@@ -22,15 +27,20 @@ $is_portal_available = (new PortalService())->has_portal_access();
         </div>
 
         <?php else: ?>
-            <div class="td-portal-header">
-                <input type="search" class="px-3 py-2 w-64 bg-white border rounded-md shadow-sm" id="td-ticket-search" placeholder="<?php esc_attr_e('Search...', 'thrivedesk'); ?>">
-                <div class="ml-auto flex space-x-3">
-                    <button type="button" id="reloadTickets" class="td-btn-secondary" title="<?php esc_attr_e('Reload tickets', 'thrivedesk'); ?>">
-                        <span><?php esc_html_e('Reload Tickets', 'thrivedesk'); ?></span>
-                    </button>
-                    <button type="submit" id="openConversationModal" class="td-btn-primary" data-modal-toggle="tdConversationModal">
+	            <div class="td-portal-header">
+	                <input type="search" class="td-portal-search" id="td-ticket-search" placeholder="<?php esc_attr_e('Search...', 'thrivedesk'); ?>">
+	                <div class="td-portal-actions">
+	                    <button type="button" id="reloadTickets" class="td-btn-secondary" title="<?php esc_attr_e('Reload tickets', 'thrivedesk'); ?>">
+	                        <span><?php esc_html_e('Reload Tickets', 'thrivedesk'); ?></span>
+	                    </button>
+                    <a
+                        href="<?php echo esc_url($ticket_page_url); ?>"
+                        id="openConversationModal"
+                        class="td-btn-primary"
+                        data-open-modal="<?php echo $should_open_modal ? 'true' : 'false'; ?>"
+                    >
                         <span><?php esc_html_e('Create a new ticket', 'thrivedesk'); ?></span>
-                    </button>
+                    </a>
                 </div>
             </div>
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg bg-white">

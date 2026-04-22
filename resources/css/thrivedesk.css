@@ -3,9 +3,14 @@ We are using Tailwind core with !important so try to use single selector.
 Anyone want to override can do so with parent + child selector with !important.
 eg: #thrivedesk .search{ display: flex !important; } 
 ------------------------------------------------------------------------------- */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+
+#thrivedesk {
+	@import "tailwindcss/preflight.css" layer(base);
+	@import "tailwindcss/utilities.css" layer(utilities);
+}
 /* --------------------------------------------------------------------------
 Everything is wrapped around #thrivedesk id.
 If you want to override with your own style. Use your theme .class #thrivedesk 
@@ -18,12 +23,12 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 	.td-btn{
 		@apply text-sm border border-solid border-slate-200 text-slate-600 bg-white rounded-md py-1 px-2 shadow-sm hover:bg-slate-50;
 	}
-	.td-btn-primary {
-		@apply border-none px-5 py-3 font-medium !text-white bg-gradient-to-b from-blue-500 bg-blue-600 rounded-md hover:bg-blue-500 hover:text-white shadow-sm;
-	}
-	.td-btn-secondary {
-		@apply text-sm border border-solid border-slate-300 text-slate-700 bg-white rounded-md py-2 px-4 shadow-sm hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200;
-	}
+		.td-btn-primary {
+			@apply inline-flex items-center justify-center border-none px-4 py-2 text-sm font-medium !text-white bg-gradient-to-b from-blue-500 bg-blue-600 rounded-md hover:bg-blue-500 hover:text-white shadow-sm leading-none;
+		}
+		.td-btn-secondary {
+			@apply inline-flex items-center justify-center text-sm border border-solid border-slate-300 text-slate-700 bg-white rounded-md py-2 px-3 shadow-sm hover:bg-slate-50 hover:border-slate-400 transition-colors duration-200 leading-none;
+		}
 
 	/* Status Tag  */
 	.status{
@@ -33,9 +38,19 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 	.status-pending { @apply bg-white border-yellow-400 text-yellow-500;}
 
 	/* ------------- Ticket Page ------------- */
-	.td-portal-header {
-		@apply flex items-center my-4;
-	}
+		.td-portal-header {
+			@apply flex flex-col gap-3 my-4 md:flex-row md:items-center;
+		}
+		.td-portal-search {
+			@apply w-full md:w-64 bg-white border border-slate-300 rounded-md px-3 py-2 shadow-sm;
+		}
+		.td-portal-actions {
+			@apply flex flex-wrap items-center gap-2 w-full md:w-auto md:ml-auto;
+		}
+		.td-portal-actions .td-btn-primary,
+		.td-portal-actions .td-btn-secondary {
+			@apply min-h-10 whitespace-nowrap;
+		}
 	/* Table - applied on <table> */
 	.td-portal-tickets {
 		/* Reset  */
@@ -75,7 +90,7 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 
 	/* ------------- Modal ------------- */
 	.td-modal-container {
-		@apply hidden fixed top-0 left-0 z-[99999] flex flex-col p-6 md:p-[10vh] 2xl:p-[12vh] bg-slate-900 bg-opacity-50 backdrop-blur-sm;
+		@apply hidden fixed top-0 left-0 z-[99999] flex flex-col p-6 md:p-[10vh] 2xl:p-[12vh] bg-slate-900/50 backdrop-blur-sm;
 	}
 
 	.td-modal {
@@ -89,7 +104,7 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 			@apply flex flex-1 items-center;
 
 			input {
-				@apply border-none bg-transparent px-2 h-14 flex-auto outline-none !important;
+				@apply border-none! bg-transparent! px-2! h-14! flex-auto! outline-hidden!;
 			}
 		}
 

@@ -357,6 +357,30 @@ final class WooCommerce extends Plugin {
 					"expiration_date"       => WC_Subscriptions_Product::get_expiration_date( $product ),
 				];
 			}
+
+			// WP Subscription - Subscription data injection.
+			if ( class_exists( 'SpringDevs\Subscription\Illuminate\Helper' ) ) {
+				$order_item_id     = $item->get_id();
+				$subscription      = \SpringDevs\Subscription\Illuminate\Helper::get_subscription_from_order_item_id( $order_item_id );
+				$subscription_id   = $subscription ? $subscription->subscription_id : 0;
+				$subscription_data = \SpringDevs\Subscription\Illuminate\Helper::get_subscription_data( $subscription_id );
+
+				if ( $subscription_data ) {
+					$subscription_info = [
+						'is_subscription' => true,
+						'interval'        => $subscription_data['schedule']['timing_per'] ?? '',
+						'period'          => $subscription_data['schedule']['timing_option'] ?? '',
+						'sign_up_fee'     => $subscription_data['signup_fee'] ?? '',
+						'start_date'      => $subscription_data['start_date'] ?? '',
+						'expiration_date' => $subscription_data['next_date'] ?? '',
+					];
+
+					if ( ! empty( $subscription_data['trial'] ) ) {
+						$subscription_info['trial_length'] = $subscription_data['trial']['timing_per'] ?? '';
+						$subscription_info['trial_period'] = $subscription_data['trial']['timing_option'] ?? '';
+					}
+				}
+			}
 			
 			if($product){
 				$productInfo = array(

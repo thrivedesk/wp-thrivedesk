@@ -220,14 +220,15 @@ $current_user = wp_get_current_user();
                 <div class="md:flex md:space-x-4">
                     <div class="space-y-4 flex-1">
                         <!-- ticket form page selection  -->
-                        <div class="bg-gray-50 border p-4 rounded">
-                            <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e('Ticket Form Page', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php echo wp_kses_post('Use any form plugin for ticket creation page. Learn how to create ticket form using any form plugin <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>', 'thrivedesk') ?></div>
-                            <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
-                                <option value=""> <?php esc_html_e('Select a page', 'thrivedesk'); ?> </option>
-                                <?php foreach (get_pages() as $key => $page) : ?>
-                                    <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
-                                        <?php echo esc_html($page->post_title); ?>
+	                        <div class="bg-gray-50 border p-4 rounded">
+	                            <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e('Ticket Submission Form Page', 'thrivedesk'); ?></label>
+	                            <div class="text-sm"><?php echo wp_kses_post('Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>.', 'thrivedesk') ?></div>
+	                            <div class="text-sm mt-2 px-3 py-2 rounded bg-blue-50 border border-blue-200 text-slate-700"><?php esc_html_e('Select the page that contains the embedded ticket form visitors will submit.', 'thrivedesk'); ?></div>
+	                            <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
+	                                <option value=""> <?php esc_html_e('Select the page with your ticket form', 'thrivedesk'); ?> </option>
+	                                <?php foreach (get_pages() as $key => $page) : ?>
+	                                    <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
+	                                        <?php echo esc_html($page->post_title); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
