@@ -60,8 +60,8 @@
 
 /* Reset wp  */
 #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html {
-	@apply !h-full;
+	@apply h-full!;
 }
 #wpbody-content, #wpcontent {
-	@apply !p-0 text-slate-700;
+	@apply p-0! text-slate-700;
 }

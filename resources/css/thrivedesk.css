@@ -94,7 +94,7 @@ If you want to override with your own style. Use your theme .class #thrivedesk
 			@apply flex flex-1 items-center;
 
 			input {
-				@apply !border-none !bg-transparent !px-2 !h-14 !flex-auto !outline-none;
+				@apply border-none! bg-transparent! px-2! h-14! flex-auto! outline-hidden!;
 			}
 		}
 
