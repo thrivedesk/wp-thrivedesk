@@ -9,11 +9,6 @@ module.exports = {
 			}
 		},
 	},
-	corePlugins: {
-		float: false,
-		objectFit: false,
-		objectPosition: false,
-	},
 	plugins: [
 		require('@tailwindcss/typography'),
 	],

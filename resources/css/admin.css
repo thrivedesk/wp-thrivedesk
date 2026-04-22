@@ -1,4 +1,5 @@
-@tailwind base;
+@import "tailwindcss";
+@config "../../tailwind.config.js";
 @layer base {
 	img {
 		border-style: none;
@@ -54,8 +55,6 @@
 	}
 	
 }
-@tailwind components;
-@tailwind utilities;
 
 /* Reset wp  */
 #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
