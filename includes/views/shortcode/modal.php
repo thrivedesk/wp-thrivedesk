@@ -38,7 +38,7 @@
 			$settings = get_td_helpdesk_settings();
 			$page_id = $settings['td_helpdesk_page_id'] ?? 0;
 
-			if ($td_helpdesk_page_id !== 0): ?>
+			if ($page_id !== 0): ?>
 				<a href="<?php echo esc_url(get_page_link( $page_id ));?>" id="td-new-ticket-url" target="_blank" class="td-btn-primary">
 				            <?php esc_html_e('Create a new ticket', 'thrivedesk'); ?>
 				</a>
