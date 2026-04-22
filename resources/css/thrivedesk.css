@@ -3,8 +3,14 @@ We are using Tailwind core with !important so try to use single selector.
 Anyone want to override can do so with parent + child selector with !important.
 eg: #thrivedesk .search{ display: flex !important; } 
 ------------------------------------------------------------------------------- */
-@import "tailwindcss";
-@config "../../tailwind.config.js";
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+
+#thrivedesk {
+	@import "tailwindcss/preflight.css" layer(base);
+	@import "tailwindcss/utilities.css" layer(utilities);
+}
 /* --------------------------------------------------------------------------
 Everything is wrapped around #thrivedesk id.
 If you want to override with your own style. Use your theme .class #thrivedesk 
