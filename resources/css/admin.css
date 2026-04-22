@@ -1,66 +1,67 @@
-@tailwind base;
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+
+.thrivedesk {
+	@import "tailwindcss/preflight.css" layer(base);
+	@import "tailwindcss/utilities.css" layer(utilities);
+}
+
 @layer base {
-	img {
-		border-style: none;
-		display: initial;
-	}
-	.thrivedesk{
-		p{
+	.thrivedesk {
+		img {
+			border-style: none;
+			display: initial;
+		}
+		p {
 			@apply text-sm;
 		}
-
-		a{
+		a {
 			@apply text-blue-500 text-sm;
 		}
-	}
-	.top-nav{
-		a{
+		.top-nav a {
 			@apply text-gray-500 hover:text-blue-500;
 		}
-	}
-	.td-card{
-		@apply border rounded-md p-4 transition bg-white hover:shadow-lg;
-	}
-	.td-card-heading{
-		@apply mb-4 pl-1;
-	}
-	.btn{
-		@apply flex items-center space-x-2 font-semibold text-sm rounded py-2 px-6 shadow;
-	}
-	.btn-primary{
-		@apply bg-blue-600 hover:bg-blue-700 text-white hover:text-white;
-	}
-	.btn-secondary{
-		@apply bg-white hover:bg-blue-100;
-	}
-	.alert{
-		@apply p-4 border rounded bg-neutral-100 mb-4 text-sm;
-	}
-	.alert-info{
-		@apply bg-blue-50 border-blue-300 text-blue-600;
-	}
-	.alert-danger{
-		@apply bg-rose-50 border-rose-300 text-rose-600;
-	}
-
-	.td-steps{
-		@apply mb-2 flex space-x-1;
-		>span{
-			@apply block w-2 h-2 rounded-full bg-green-200;
+		.td-card {
+			@apply border border-slate-300 rounded-md p-4 transition bg-white hover:shadow-lg;
 		}
-		>span.active{
-			@apply w-6 bg-green-400;
+		.td-card-heading {
+			@apply mb-4 pl-1;
+		}
+		.btn {
+			@apply flex items-center space-x-2 font-semibold text-sm rounded py-2 px-6 shadow;
+		}
+		.btn-primary {
+			@apply bg-blue-600 hover:bg-blue-700 text-white hover:text-white;
+		}
+		.btn-secondary {
+			@apply bg-white hover:bg-blue-100;
+		}
+		.alert {
+			@apply p-4 border rounded bg-neutral-100 text-sm;
+		}
+		.alert-info {
+			@apply bg-blue-50 border-blue-300 text-blue-600;
+		}
+		.alert-danger {
+			@apply bg-rose-50 border-rose-300 text-rose-600;
+		}
+		.td-steps {
+			@apply mb-2 flex space-x-1;
+			> span {
+				@apply block w-2 h-2 rounded-full bg-green-200;
+			}
+			> span.active {
+				@apply w-6 bg-green-400;
+			}
 		}
 	}
-	
 }
-@tailwind components;
-@tailwind utilities;
 
 /* Reset wp  */
-#wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html{
-	@apply !h-full;
+#wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html {
+	@apply h-full!;
 }
-#wpbody-content, #wpcontent{
-	@apply !p-0 text-slate-700;
+#wpbody-content, #wpcontent {
+	@apply p-0! text-slate-700;
 }
