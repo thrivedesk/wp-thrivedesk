@@ -2,6 +2,11 @@ import Swal from "sweetalert2";
 
 jQuery(document).ready(($) => {
     $('#openConversationModal').click(function (e) {
+        if ($(this).data('open-modal') !== true) {
+            return;
+        }
+
+        e.preventDefault();
         $('.td-modal-container').removeClass('hidden').fadeIn(500);
     });
 

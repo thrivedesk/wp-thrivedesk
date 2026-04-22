@@ -36,17 +36,13 @@
 		<div class="td-modal-footer">
 			<?php 
 			$settings = get_td_helpdesk_settings();
-			$page_id = $settings['td_helpdesk_page_id'] ?? 0;
+			$page_id = absint($settings['td_helpdesk_page_id'] ?? 0);
+			$new_ticket_url = $page_id ? get_page_link($page_id) : '#';
 
-			if ($page_id !== 0): ?>
-				<a href="<?php echo esc_url(get_page_link( $page_id ));?>" id="td-new-ticket-url" target="_blank" class="td-btn-primary">
-				            <?php esc_html_e('Create a new ticket', 'thrivedesk'); ?>
-				</a>
-			<?php else: ?>
-				<span class="text-slate-500">
-					<?php esc_html_e('Please select a ticket form page in the settings', 'thrivedesk'); ?>
-				</span>
-			<?php endif; ?>
+			?>
+			<a href="<?php echo esc_url($new_ticket_url); ?>" id="td-new-ticket-url" class="td-btn-primary">
+			            <?php esc_html_e('Create a new ticket', 'thrivedesk'); ?>
+			</a>
 		</div>
 	</div>
 </div>
