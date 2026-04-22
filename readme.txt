@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.8
-Stable Tag: 2.1.7
+Stable Tag: 2.2.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,18 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.2.0 =
+2026-04-22 - version 2.2.0
+* feat: Improved ticket submission experience with a cleaner and more intuitive settings interface
+* feat: Added smarter conditional modal triggers for better control during ticket creation
+* improve: Subscription details now visible inside AIP Integratins
+* fix: Fixed styling conflicts by properly scoping Tailwind classes
+* fix: Resolved layout issues by restructuring admin elements under a unified root
+* style: Optimized manual styles for better stability and rendering
+
+= 2.1.7 =
+* fix: Plugin intro.
 
 = 2.1.6 =
 * fix: Cache-clear operation with request validation and user permission
