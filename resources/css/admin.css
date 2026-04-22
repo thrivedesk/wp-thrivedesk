@@ -55,6 +55,9 @@
 				@apply w-6 bg-green-400;
 			}
 		}
+		#td-excluded-routes{
+			max-width: 100%;
+		}
 	}
 }
 
