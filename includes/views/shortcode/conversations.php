@@ -22,12 +22,12 @@ $is_portal_available = (new PortalService())->has_portal_access();
         </div>
 
         <?php else: ?>
-            <div class="td-portal-header">
-                <input type="search" class="px-3 py-2 w-64 bg-white border rounded-md shadow-sm" id="td-ticket-search" placeholder="<?php esc_attr_e('Search...', 'thrivedesk'); ?>">
-                <div class="ml-auto flex space-x-3">
-                    <button type="button" id="reloadTickets" class="td-btn-secondary" title="<?php esc_attr_e('Reload tickets', 'thrivedesk'); ?>">
-                        <span><?php esc_html_e('Reload Tickets', 'thrivedesk'); ?></span>
-                    </button>
+	            <div class="td-portal-header">
+	                <input type="search" class="td-portal-search" id="td-ticket-search" placeholder="<?php esc_attr_e('Search...', 'thrivedesk'); ?>">
+	                <div class="td-portal-actions">
+	                    <button type="button" id="reloadTickets" class="td-btn-secondary" title="<?php esc_attr_e('Reload tickets', 'thrivedesk'); ?>">
+	                        <span><?php esc_html_e('Reload Tickets', 'thrivedesk'); ?></span>
+	                    </button>
                     <button type="submit" id="openConversationModal" class="td-btn-primary" data-modal-toggle="tdConversationModal">
                         <span><?php esc_html_e('Create a new ticket', 'thrivedesk'); ?></span>
                     </button>
