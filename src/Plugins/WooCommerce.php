@@ -230,6 +230,10 @@ final class WooCommerce extends Plugin {
 			return [];
 		}
 
+		if ( strtolower( $order->get_billing_email() ) !== strtolower( $this->customer_email ) ) {
+			return [];
+		}
+
 		return [
 			'order_id'         => $order->get_order_number(),
 			'amount'           => $order->get_total(),

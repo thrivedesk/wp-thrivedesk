@@ -195,7 +195,11 @@ final class Api {
 	 */
 	public function get_woocommerce_order_status() {
 		$email    = sanitize_email( $_REQUEST['email'] ?? '' );
-		$order_id = strtolower( sanitize_key( $_REQUEST['order_id'] ?? '' ) );
+		$order_id = sanitize_key( $_REQUEST['order_id'] ?? '' );
+
+		if ( ! $order_id ) {
+			$this->apiResponse->error( 400, 'order_id is required.' );
+		}
 
 		if ( ! method_exists( $this->plugin, 'order_status' ) ) {
 			$this->apiResponse->error( 500, "Method 'order_status' not exist in plugin" );
@@ -208,6 +212,10 @@ final class Api {
 		}
 
 		$data = $this->plugin->order_status( $order_id );
+
+		if ( empty( $data ) ) {
+			$this->apiResponse->error( 404, "Order not found." );
+		}
 
 		$this->apiResponse->success( 200, $data, 'Success' );
 	}
