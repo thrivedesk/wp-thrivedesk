@@ -207,10 +207,6 @@ final class Api {
 
 		$this->plugin->customer_email = $email;
 
-		if ( ! $this->plugin->is_customer_exist() ) {
-			$this->apiResponse->error( 404, "Customer not found." );
-		}
-
 		$data = $this->plugin->order_status( $order_id );
 
 		if ( empty( $data ) ) {

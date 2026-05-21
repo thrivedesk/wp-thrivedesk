@@ -210,6 +210,29 @@ final class WooCommerce extends Plugin {
 	}
 
 	/**
+	 * Resolve an order by its customer-facing order number, with support for
+	 * custom order numbering plugins (WebToffee, SkyVerge Sequential Order
+	 * Numbers, Tyche Custom Order Numbers, etc).
+	 *
+	 * Uses WooCommerce's wc_get_order_id_by_order_number function which is the
+	 * standard way to resolve a user-facing order number to its internal ID.
+	 *
+	 * @param string|int $order_id_or_number
+	 *
+	 * @return \WC_Order|false
+	 */
+	private function get_order_by_number_or_id( $order_id_or_number ) {
+		if ( ! $order_id_or_number ) {
+			return false;
+		}
+
+		// Try to resolve the ID from the order number (handles custom order numbering plugins)
+		$order_id = wc_get_order_id_by_order_number( $order_id_or_number );
+
+		return wc_get_order( $order_id );
+	}
+
+	/**
 	 * get woocommerce order status
 	 *
 	 * @param $order_id
@@ -220,11 +243,7 @@ final class WooCommerce extends Plugin {
 	 * @since 0.8.4
 	 */
 	public function order_status( $order_id ): array {
-		if ( ! $this->is_customer_exist() ) {
-			return [];
-		}
-
-		$order = wc_get_order( $order_id );
+		$order = $this->get_order_by_number_or_id( $order_id );
 
 		if ( ! $order ) {
 			return [];
