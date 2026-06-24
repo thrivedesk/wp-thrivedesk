@@ -4,17 +4,34 @@
 
     <file>.</file>
 
-    <!-- Source only — skip vendor, node deps, and committed built assets. -->
+    <!-- Source only — skip vendor, node deps, committed built assets, and tests. -->
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
     <exclude-pattern>*/assets/*</exclude-pattern>
     <exclude-pattern>*/tests/*</exclude-pattern>
+
+    <!-- Legacy source is excluded while we adopt WPCS incrementally; drop a line as its directory goes clean. -->
+    <exclude-pattern>*/src/*</exclude-pattern>
+    <exclude-pattern>*/includes/*</exclude-pattern>
+    <exclude-pattern>*/Hooks/*</exclude-pattern>
+    <exclude-pattern>*/database/*</exclude-pattern>
 
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
     <arg value="sp"/>
 
     <rule ref="WordPress"/>
+
+    <!-- Entry file keeps the plugin-slug filename, the public ThriveDesk() factory, and bootstraps the class in the same file. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>thrivedesk.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.NamingConventions.ValidFunctionName">
+        <exclude-pattern>thrivedesk.php</exclude-pattern>
+    </rule>
+    <rule ref="Universal.Files.SeparateFunctionsFromOO">
+        <exclude-pattern>thrivedesk.php</exclude-pattern>
+    </rule>
 
     <!-- Min PHP version the plugin supports (from the plugin header). -->
     <config name="testVersion" value="7.4-"/>

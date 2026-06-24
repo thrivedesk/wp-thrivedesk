@@ -11,14 +11,14 @@ class ComposerStaticInit61ac37121bc927c3837fa0a0819ce1b8
     );
 
     public static $prefixLengthsPsr4 = array (
-        'T' => 
+        'T' =>
         array (
             'ThriveDesk\\' => 11,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'ThriveDesk\\' => 
+        'ThriveDesk\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
             1 => __DIR__ . '/../..' . '/src/Abstracts',

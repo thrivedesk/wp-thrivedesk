@@ -2,27 +2,50 @@
 /**
  * PHPUnit bootstrap for the ThriveDesk plugin.
  *
- * Loads the WordPress test framework from WP_TESTS_DIR (the path where the
- * dev environment installs the WP PHPUnit suite), then loads this plugin so
- * its hooks fire inside the test WordPress.
+ * @package ThriveDesk
  */
 
-$_tests_dir = getenv('WP_TESTS_DIR');
-if (! $_tests_dir) {
-    $_tests_dir = '/tmp/wordpress-tests-lib';
+// WP_TESTS_DIR override, then the wp-phpunit Composer package's own
+// WP_PHPUNIT__DIR env var, then the bundled vendor path, then the legacy
+// install-wp-tests.sh default of /tmp/wordpress-tests-lib.
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
+
+if ( ! $_tests_dir || ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+    $_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
 }
 
-$_phpunit_polyfills = dirname(__DIR__) . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
-if (file_exists($_phpunit_polyfills)) {
-    require_once $_phpunit_polyfills;
+if ( ! $_tests_dir || ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+    $_wp_phpunit = dirname( __DIR__ ) . '/vendor/wp-phpunit/wp-phpunit';
+
+    if ( file_exists( $_wp_phpunit . '/includes/functions.php' ) ) {
+        $_tests_dir = $_wp_phpunit;
+    } elseif ( file_exists( '/tmp/wordpress-tests-lib/includes/functions.php' ) ) {
+        $_tests_dir = '/tmp/wordpress-tests-lib';
+    }
+}
+
+if ( ! $_tests_dir || ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
+    fwrite(
+        STDERR,
+        "Could not locate the WordPress test library.\n" .
+        "Run `composer install` (provides wp-phpunit), or set WP_TESTS_DIR to an installed suite.\n"
+    );
+    exit( 1 );
+}
+
+$_polyfills = getenv( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' );
+if ( ! $_polyfills ) {
+    $_polyfills = dirname( __DIR__ ) . '/vendor/yoast/phpunit-polyfills';
+}
+if ( file_exists( $_polyfills . '/phpunitpolyfills-autoload.php' ) ) {
+    require_once $_polyfills . '/phpunitpolyfills-autoload.php';
 }
 
 require_once $_tests_dir . '/includes/functions.php';
 
-// Load the plugin before WordPress boots the test suite.
 function _td_manually_load_plugin() {
-    require dirname(__DIR__) . '/thrivedesk.php';
+    require dirname( __DIR__ ) . '/thrivedesk.php';
 }
-tests_add_filter('muplugins_loaded', '_td_manually_load_plugin');
+tests_add_filter( 'muplugins_loaded', '_td_manually_load_plugin' );
 
 require $_tests_dir . '/includes/bootstrap.php';
