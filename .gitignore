@@ -65,3 +65,7 @@ assets/img/.DS_Store
 *.lock
 releases
 svn
+
+# Testing #
+##########
+.phpunit.result.cache

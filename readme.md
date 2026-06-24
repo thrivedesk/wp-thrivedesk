@@ -3,8 +3,8 @@ Contributors: thrivedesk
 
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
-Tested up to: 6.8
-Stable Tag: 2.2.0
+Tested up to: 6.9
+Stable Tag: 2.3.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,15 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.3.0 =
+2026-06-24 - version 2.3.0
+* improve: Redesigned the WPPortal conversation experience with a cleaner conversations list and conversation details layout
+* improve: More reliable asset cache-busting for portal styles and scripts
+* security: Hardened URL output escaping across portal templates
+* fix: WooCommerce order items no longer trigger a warning when a product image/thumbnail is missing
+* dev: Assistant host is now configurable via the THRIVEDESK_ASSISTANT_URL constant
+* dev: Added WordPress Coding Standards (phpcs) ruleset and PHPUnit test scaffold
 
 = 2.2.0 =
 2026-04-22 - version 2.2.0
