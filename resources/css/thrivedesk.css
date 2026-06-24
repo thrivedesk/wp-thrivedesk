@@ -1,4 +1,4 @@
-/* ThriveDesk Portal — shadcn-style design system
+/* ThriveDesk Portal
    HSL tokens, system font stack, 8px radius, ring-2 focus. Primitives
    (button, input, card, badge, separator, avatar) are utility classes
    scoped under #thrivedesk. Don't refactor without checking the JS
@@ -51,7 +51,7 @@
 	background: hsl(var(--background));
 }
 
-/* shadcn primitives implemented as utility classes under #thrivedesk */
+/* utility classes under #thrivedesk */
 
 #thrivedesk {
 
