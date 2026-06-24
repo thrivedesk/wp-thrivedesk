@@ -520,8 +520,11 @@ class Conversation
 
 			if (isset($response['data']) && count($response['data']) > 0){
 				$data = $response;
-				set_transient($cache_key, $response, 60 * 10);
-				set_transient('thrivedesk_conversations_total_pages', $response['meta']['last_page'], 60 * 10);
+				// 30s TTL: same rationale as get_conversation() — ThriveDesk
+				// doesn't notify WP on agent activity, so the cache exists only
+				// to absorb rapid reloads, not to "hide" updates.
+				set_transient($cache_key, $response, 30);
+				set_transient('thrivedesk_conversations_total_pages', $response['meta']['last_page'], 30);
 			}
 		}
 
@@ -548,11 +551,16 @@ class Conversation
 			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
 			$response =( new TDApiService() )->getRequest($url);
 
+			// 30s TTL: the cache exists only to absorb rapid page reloads on
+			// the same conversation. A longer window hides agent replies
+			// (ThriveDesk doesn't notify WP when an agent sends a message,
+			// and the cache is only invalidated when the customer replies
+			// — see td_send_reply → remove_thrivedesk_conversation_cache).
 			if (isset($response['data'])) {
-				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
+				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 30);
 			} elseif (is_array($response) && !isset($response['wp_error'])) {
 				// If API returns data directly (not wrapped in 'data' key)
-				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 60 * 10);
+				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 30);
 			}
 		}
 
