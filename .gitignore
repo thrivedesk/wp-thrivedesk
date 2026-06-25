@@ -41,6 +41,7 @@ Thumbs.db
 
 # Composer #
 ##########
+/vendor/
 !assets/js/vendor/
 wpcs/
 
@@ -63,6 +64,8 @@ assets/bower_components/*
 library/vendors/composer
 assets/img/.DS_Store
 *.lock
+!composer.lock
+!package-lock.json
 releases
 svn
 
