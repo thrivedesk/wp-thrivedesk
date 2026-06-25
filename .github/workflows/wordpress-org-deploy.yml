@@ -1,26 +1,34 @@
 name: Deploy to WordPress.org
+
 on:
   push:
     tags:
-    - "*"
+      - "v[0-9]+.*"
+
+permissions:
+  contents: read
+
 jobs:
-  tag:
-    name: New tag
+  deploy:
+    name: Build and deploy
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: npm
-    - name: Build
-      run: |
-        composer install
-        npm install --no-package-lock
-        npm run production
-    - name: WordPress Plugin Deploy
-      uses: 10up/action-wordpress-plugin-deploy@stable
-      env:
-        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-        SLUG: thrivedesk
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Build
+        run: |
+          composer install --no-dev --optimize-autoloader
+          npm ci
+          npm run production
+
+      - name: WordPress Plugin Deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: thrivedesk

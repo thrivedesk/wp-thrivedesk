@@ -1,6 +1,6 @@
 {
 	"name": "thrivedesk",
-	"version": "2.1.6",
+	"version": "2.3.0",
 	"description": "ThriveDesk - Customer Support & Helpdesk Software for WordPress Startups",
 	"scripts": {
 		"dev": "npm run development",
@@ -31,7 +31,7 @@
 		"laravel-mix": "^6.0.49",
 		"postcss": "^8.4.21",
 		"tailwindcss": "^4.0.0",
-		"webpack": "^5.74.0",
+		"webpack": "5.88.2",
 		"webpack-cli": "^4.10.0"
 	},
 	"dependencies": {

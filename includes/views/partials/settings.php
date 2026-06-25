@@ -332,7 +332,7 @@ $current_user = wp_get_current_user();
         function s() {
             var t = e.getElementsByTagName("script")[0],
                 n = e.createElement("script");
-            n.type = "text/javascript", n.async = !0, n.src = "https://assistant.thrivedesk.com/bootloader.js?" + Date.now(),
+            n.type = "text/javascript", n.async = !0, n.src = "<?php echo esc_url_raw(THRIVEDESK_ASSISTANT_URL); ?>/bootloader.js?" + Date.now(),
                 t.parentNode.insertBefore(n, t)
         }
         if (t.Assistant = n = function(e, n, s) {

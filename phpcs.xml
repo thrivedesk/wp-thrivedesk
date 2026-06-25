@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<ruleset name="ThriveDesk WordPress Plugin">
+    <description>WordPress Coding Standards for the ThriveDesk plugin.</description>
+
+    <file>.</file>
+
+    <!-- Source only — skip vendor, node deps, committed built assets, and tests. -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/assets/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+
+    <!-- Legacy source is excluded while we adopt WPCS incrementally; drop a line as its directory goes clean. -->
+    <exclude-pattern>*/src/*</exclude-pattern>
+    <exclude-pattern>*/includes/*</exclude-pattern>
+    <exclude-pattern>*/Hooks/*</exclude-pattern>
+    <exclude-pattern>*/database/*</exclude-pattern>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <rule ref="WordPress"/>
+
+    <!-- Entry file keeps the plugin-slug filename, the public ThriveDesk() factory, and bootstraps the class in the same file. -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>thrivedesk.php</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.NamingConventions.ValidFunctionName">
+        <exclude-pattern>thrivedesk.php</exclude-pattern>
+    </rule>
+    <rule ref="Universal.Files.SeparateFunctionsFromOO">
+        <exclude-pattern>thrivedesk.php</exclude-pattern>
+    </rule>
+
+    <!-- Min PHP version the plugin supports (from the plugin header). -->
+    <config name="testVersion" value="7.4-"/>
+    <rule ref="PHPCompatibilityWP"/>
+
+    <!-- Text domain + prefix sniffs scoped to this plugin. -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="thrivedesk"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

@@ -476,13 +476,17 @@ final class WooCommerce extends Plugin {
 			}
 			
 			if($product){
+				// wp_get_attachment_image_src() returns false when the product has no
+				// featured image, so guard before indexing to avoid a warning.
+				$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $product_id ) );
+
 				$productInfo = array(
 					"product_id"        => $product_id,
 					"title"             => $product->get_name(),
 					"product_permalink" => get_permalink($product_id),
 					"quantity"          => $item["quantity"],
 					"total_tax"         => $this->get_formated_amount( (float) $item["total_tax"] ),
-					"image"             => wp_get_attachment_image_src( get_post_thumbnail_id($product_id) )[0],
+					"image"             => is_array( $thumbnail ) ? $thumbnail[0] : null,
 					"type"              => $product->get_type(),
 					"status"            => $product->get_status(),
 					"sku"               => $product->get_sku(),
