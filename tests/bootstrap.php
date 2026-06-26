@@ -49,3 +49,9 @@ function _td_manually_load_plugin() {
 tests_add_filter( 'muplugins_loaded', '_td_manually_load_plugin' );
 
 require $_tests_dir . '/includes/bootstrap.php';
+
+// Shared test support, loaded after WordPress and the plugin so the classes
+// they build on (WP_Ajax_UnitTestCase, ThriveDesk\Plugin) already exist.
+require_once __DIR__ . '/includes/listener-helpers.php';
+require_once __DIR__ . '/includes/class-fake-plugin.php';
+require_once __DIR__ . '/includes/class-td-ajax-testcase.php';

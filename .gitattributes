@@ -23,3 +23,6 @@
 /phpunit.xml.dist export-ignore
 /README.md export-ignore
 /webpack.config.babel.js export-ignore
+
+# Shell scripts must keep LF endings so they run inside Linux containers.
+*.sh text eol=lf
