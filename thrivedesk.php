@@ -49,6 +49,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Includes vendor files.
 require_once __DIR__ . '/vendor/autoload.php';
 
+// helper.php defines WordPress-dependent helper functions and registers a hook,
+// so it must load only once WordPress is available — not via Composer's eager
+// files-autoload, which also runs in non-WordPress CLI contexts (e.g. PHPUnit).
+require_once __DIR__ . '/includes/helper.php';
+
 /**
  * Core plugin bootstrap: wires the plugin's constants and subsystems together.
  */
