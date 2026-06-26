@@ -210,6 +210,99 @@ final class WooCommerce extends Plugin {
 	}
 
 	/**
+	 * Resolve an order by its customer-facing order number, with support for
+	 * custom order numbering plugins (WebToffee, SkyVerge Sequential Order
+	 * Numbers, Tyche Custom Order Numbers, etc).
+	 *
+	 * Lookup strategy:
+	 *   1. Numeric input is tried directly as a post ID.
+	 *   2. `woocommerce_order_id_from_number` filter (used by Sequential
+	 *      Order Numbers Pro and a few others) lets the active plugin
+	 *      resolve the number in one call.
+	 *   3. Meta query against the common `_order_number` post meta key
+	 *      (WebToffee, Tyche, SkyVerge free, default WC since 7.x).
+	 *
+	 * @param string|int $order_id_or_number
+	 *
+	 * @return \WC_Order|null
+	 */
+	private function get_order_by_number_or_id( $order_id_or_number ) {
+		if ( ! $order_id_or_number ) {
+			return null;
+		}
+
+		// 1) Fast path: pure numeric input → direct post ID lookup.
+		if ( ctype_digit( (string) $order_id_or_number ) ) {
+			$order = wc_get_order( (int) $order_id_or_number );
+			if ( $order ) {
+				return $order;
+			}
+		}
+
+		// 2) Plugin filter — Sequential Order Numbers Pro and others.
+		$resolved = (int) apply_filters( 'woocommerce_order_id_from_number', 0, $order_id_or_number );
+		if ( $resolved ) {
+			$order = wc_get_order( $resolved );
+			if ( $order ) {
+				return $order;
+			}
+		}
+
+		// 3) Meta lookup — handles WebToffee, Tyche, SkyVerge free, default WC.
+		// Direct SQL against both the legacy postmeta table AND the HPOS
+		// orders-meta table. On HPOS-enabled sites without the compat layer,
+		// _order_number lives only in wp_wc_orders_meta, so we MUST check
+		// both — otherwise the lookup silently returns nothing.
+		global $wpdb;
+		$order_types = wc_get_order_types( 'view-orders' );
+		$order_types = is_array( $order_types ) ? $order_types : [ 'shop_order' ];
+		$order_types = array_map( 'esc_sql', $order_types );
+		$types_sql   = "'" . implode( "','", $order_types ) . "'";
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$post_id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT p.ID FROM {$wpdb->posts} p
+				 INNER JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID
+				 WHERE pm.meta_key = '_order_number'
+				   AND pm.meta_value = %s
+				   AND p.post_type IN ({$types_sql})
+				 LIMIT 1",
+				(string) $order_id_or_number
+			)
+		);
+
+		// HPOS fallback: check the dedicated orders meta table. Only do this
+		// if the table exists — older WC installs don't have it.
+		if ( ! $post_id ) {
+			$hpos_table = $wpdb->prefix . 'wc_orders_meta';
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$table_exists = $wpdb->get_var(
+				$wpdb->prepare( "SHOW TABLES LIKE %s", $hpos_table )
+			);
+			if ( $table_exists ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				$post_id = (int) $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT order_id FROM {$hpos_table}
+						 WHERE meta_key = '_order_number'
+						   AND meta_value = %s
+						 LIMIT 1",
+						(string) $order_id_or_number
+					)
+				);
+			}
+		}
+
+		if ( $post_id ) {
+			$order = wc_get_order( $post_id );
+			if ( $order ) {
+				return $order;
+			}
+		}
+	}
+
+	/**
 	 * get woocommerce order status
 	 *
 	 * @param $order_id
@@ -220,13 +313,13 @@ final class WooCommerce extends Plugin {
 	 * @since 0.8.4
 	 */
 	public function order_status( $order_id ): array {
-		if ( ! $this->is_customer_exist() ) {
+		$order = $this->get_order_by_number_or_id( $order_id );
+
+		if ( ! $order ) {
 			return [];
 		}
 
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order ) {
+		if ( strtolower( $order->get_billing_email() ) !== strtolower( $this->customer_email ) ) {
 			return [];
 		}
 
