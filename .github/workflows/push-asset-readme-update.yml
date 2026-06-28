@@ -8,6 +8,7 @@ on:
       - "readme.txt"
       - "readme.md"
       - ".wordpress-org/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,6 +19,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Remove legacy vendor/ from WordPress.org trunk
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        run: |
+          set -e
+          sudo apt-get update -y
+          sudo apt-get install -y subversion
+          svn checkout --depth infinity --non-interactive \
+            --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+            https://plugins.svn.wordpress.org/thrivedesk/trunk /tmp/td-trunk
+          cd /tmp/td-trunk
+          if svn info vendor >/dev/null 2>&1; then
+            echo "Removing vendor/ from trunk"
+            svn rm --non-interactive \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" vendor
+            svn commit --non-interactive --no-auth-cache \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" \
+              -m "Remove vendor/ from trunk; tracked in git until 1ac2762 and should not ship in the WP.org distribution"
+          else
+            echo "vendor/ already absent from trunk, skipping"
+          fi
 
       - name: WordPress.org plugin asset/readme update
         uses: 10up/action-wordpress-plugin-asset-update@stable
