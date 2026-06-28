@@ -5,6 +5,7 @@
 /.git
 /.github
 /node_modules
+/vendor
 /scripts
 
 # Build configuration files
