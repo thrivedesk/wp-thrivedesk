@@ -144,12 +144,21 @@ class RestRoute
 	}
 
 	/**
-	 * doc search on new ticket modal
+	 * Doc search used by the new ticket modal.
+	 *
+	 * @param \WP_REST_Request $request
 	 * @return array
 	 */
-	public function get_search_data(): array {
-		$query_string = $_POST['query_string'] ?? '';
-		$select_post_types = get_option('td_helpdesk_settings')['td_helpdesk_post_types'];
+	public function get_search_data( $request ): array {
+		// get_param() picks up the query whether the body came in as
+		// JSON, form-encoded, or a query string. $_POST would miss
+		// the JSON case so we don't rely on it as a primary read.
+		$query_string = $request->get_param( 'query_string' );
+		if ( null === $query_string || '' === $query_string ) {
+			$query_string = $_POST['query_string'] ?? '';
+		}
+		$settings = get_option( 'td_helpdesk_settings', [] );
+		$select_post_types = $settings['td_helpdesk_post_types'] ?? '';
 
 		if (empty($select_post_types)) {
 			return [
@@ -179,7 +188,7 @@ class RestRoute
 
 		endwhile;
 
-		wp_reset_query();
+		wp_reset_postdata();
 
 		if (empty($search_posts)) {
 			return [

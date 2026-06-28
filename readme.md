@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.3.0
+Stable Tag: 2.3.1
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,19 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.3.1 =
+2026-06-28 - version 2.3.1
+* fix: WooCommerce order status no longer returns a different order than the one the customer asked for (resolves issue #167, "Lynne's bug")
+* fix: Compatibility with Sequential Order Numbers for WooCommerce (WebToffee), Tyche Custom Order Numbers, SkyVerge Sequential Order Numbers, and Sequential Order Numbers Pro custom order numbers now resolve to the right internal order
+* fix: A customer can no longer retrieve another customer's order by guessing an order number (ownership check on resolved order)
+* fix: HPOS-only WooCommerce installs are now supported (the resolver checks wp_wc_orders_meta in addition to wp_postmeta)
+* fix: Search modal in the helpdesk portal now renders KB and WordPress search results correctly
+* fix: WordPress REST search endpoint resolves whether or not pretty permalinks are enabled (uses ?rest_route= form)
+* fix: Locked "Create ticket" button no longer renders as a broken link when no ticket page is configured
+* improve: Search modal loading spinner moved into the dialog body for clearer in-flight feedback
+* improve: Modal header and loading label now use the same system font stack as the rest of the dialog
+* dev: PHPUnit regression tests for the order status resolver
 
 = 2.3.0 =
 2026-06-24 - version 2.3.0
