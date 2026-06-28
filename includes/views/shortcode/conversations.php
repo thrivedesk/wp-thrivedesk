@@ -15,7 +15,7 @@ $ticket_page_url     = $ticket_page_id ? get_page_link($ticket_page_id) : '';
 $has_knowledgebase   = ! empty($settings['td_knowledgebase_slug']);
 $should_open_modal   = $has_knowledgebase && $ticket_page_id;
 
-// new-ticket button state when no ticket page is configured — show it
+// new-ticket button state when no ticket page is configured. Show it
 // as disabled with an explanation instead of a broken # link
 $new_ticket_disabled = empty($ticket_page_url);
 $new_ticket_disabled_title = $new_ticket_disabled

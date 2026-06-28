@@ -82,7 +82,7 @@
 		pointer-events: none;
 		opacity: 0.5;
 	}
-	/* Locked button — new-ticket action without a ticket page
+	/* Locked button, new-ticket action without a ticket page
 	   configured. Kept focusable (aria-disabled, not disabled) so the
 	   tooltip stays reachable. The :hover rule pins it back to the
 	   primary fill so it doesn't darken on hover like a real button. */
@@ -266,7 +266,7 @@
 		border-top: 1px solid hsl(var(--border));
 	}
 
-	/* Badge — rounded-full, px-2.5 py-0.5, text-xs, mono-uppercase */
+	/* Badge, rounded-full, px-2.5 py-0.5, text-xs, mono-uppercase */
 	.td-badge {
 		display: inline-flex;
 		align-items: center;
@@ -522,7 +522,7 @@
 		border-color: hsl(var(--primary));
 	}
 
-	/* list card — border only, no shadow */
+	/* list card, border only, no shadow */
 	.td-list-card { margin-top: 1rem; }
 	.td-list-card > .td-card-content { padding: 0; }
 
@@ -596,7 +596,7 @@
 		white-space: nowrap;
 	}
 	.td-ticket-cell-subject a:hover { color: hsl(var(--foreground)); }
-	/* inline ticket ID ` [#1042]` — mono, muted, inline so it
+	/* inline ticket ID ` [#1042]`, mono, muted, inline so it
 	   truncates with the subject on the same line */
 	.td-ticket-id-inline {
 		color: hsl(var(--muted-foreground));
@@ -915,7 +915,7 @@
 		justify-content: space-between;
 		gap: 1rem;
 		margin-bottom: 1.25rem;
-		/* sticky on desktop — the subject header sticks below it */
+		/* sticky on desktop, the subject header sticks below it */
 		position: sticky;
 		top: 0;
 		z-index: 30;
@@ -967,7 +967,7 @@
 		min-width: 0;
 	}
 
-	/* sticky aside — position:sticky is on the grid cell itself, not
+	/* sticky aside, position:sticky is on the grid cell itself, not
 	   the inner flex container, because sticky needs the parent to
 	   stretch to the full row height. The grid track stretches by
 	   default since the main column is taller. */
@@ -1212,7 +1212,7 @@
 		padding: 0.875rem 0;
 	}
 
-	/* dot — column 2, centered on the rail */
+	/* dot, column 2, centered on the rail */
 	.td-timeline-dot {
 		position: relative;
 		grid-column: 2;
@@ -1359,7 +1359,7 @@
 		color: hsl(var(--muted-foreground));
 	}
 
-	/* compose card — dashed border to read as in-progress */
+	/* compose card, dashed border to read as in-progress */
 	.td-event-compose .td-timeline-card {
 		background: hsl(var(--card));
 		border-style: dashed;
@@ -1431,7 +1431,7 @@
 	}
 
 	/* modal: search docs
-	   Visually aligned with the rest of the portal — same surface
+	   Visually aligned with the rest of the portal, same surface
 	   (hsl(var(--background))), same card chrome (border + radius),
 	   same typography scale and muted-foreground for secondary text.
 	   The header / search / body / footer sections share the same
@@ -1493,6 +1493,7 @@
 		min-width: 0;
 	}
 	.td-modal-title {
+		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 		font-size: 1.125rem;
 		font-weight: 600;
 		letter-spacing: -0.01em;
@@ -1501,6 +1502,7 @@
 		margin: 0;
 	}
 	.td-modal-subtitle {
+		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 		font-size: 0.8125rem;
 		line-height: 1.25rem;
 		color: hsl(var(--muted-foreground));
@@ -1510,7 +1512,7 @@
 		flex-shrink: 0;
 	}
 
-	/* search field — uses the same .td-search-wrap as the portal
+	/* search field, same .td-search-wrap as the portal
 	   header so it feels like a focused view of the main search */
 	.td-modal-search {
 		padding: 0.875rem 1.5rem;
@@ -1535,14 +1537,14 @@
 	}
 
 	/* keep the dialog from resizing between states. 13rem fits the
-	   empty state without bloating for short result lists. */
+	   empty state without bloating for short result lists */
 	.td-search-items {
 		min-height: 13rem;
 	}
 
 	/* Centered loader. Sits in the body and overlays the results
-	   panel while a search is in flight. Big enough to actually see
-	   — the tiny in-input one kept getting lost. */
+	   panel while a search is in flight. Big enough to actually see,
+	   the tiny in-input one kept getting lost. */
 	.td-modal-loading {
 		position: absolute;
 		inset: 0;
@@ -1565,10 +1567,11 @@
 		width: 100%;
 		height: 100%;
 		animation: td-spin 0.8s linear infinite;
-		/* inline svgs collapse to 0; force block so it fills the box */
+		/* inline svgs collapse to 0, force block so it fills the box */
 		display: block;
 	}
 	.td-modal-loading-label {
+		font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 		font-size: 0.8125rem;
 		font-weight: 500;
 		color: hsl(var(--muted-foreground));
@@ -1596,7 +1599,7 @@
 		background: hsl(var(--muted) / 0.4);
 	}
 
-	/* grouped result sections — JS injects these into #td-search-results.
+	/* grouped result sections, JS injects these into #td-search-results.
 	   Each section uses the same header chrome as .td-aside-card-header
 	   so grouped result sets read the same as the meta cards. */
 	.td-search-section + .td-search-section {
@@ -1638,7 +1641,7 @@
 		padding: 0;
 	}
 
-	/* individual result row — echoes .td-ticket-cell-subject so a
+	/* individual result row, echoes .td-ticket-cell-subject so a
 	   search result and a ticket row share the same shape */
 	.td-search-item {
 		display: block;
@@ -1726,7 +1729,7 @@
 	max-width: 100%;
 }
 
-/* keyframe has to live at the top level — PostCSS/cssnano can't
+/* keyframe has to live at the top level , PostCSS/cssnano can't
    pick it up from inside the #thrivedesk block */
 @keyframes td-spin {
 	to { transform: rotate(360deg); }
