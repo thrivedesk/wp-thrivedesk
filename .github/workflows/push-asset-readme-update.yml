@@ -8,7 +8,6 @@ on:
       - "readme.txt"
       - "readme.md"
       - ".wordpress-org/**"
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -26,3 +25,5 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: thrivedesk
+          # only sync readme + assets, code (and the built vendor/) ships via the tag deploy workflow
+          IGNORE_OTHER_FILES: true
