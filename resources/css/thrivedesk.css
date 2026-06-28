@@ -187,6 +187,18 @@
 		padding-left: 2.25rem;
 		padding-right: 2.25rem;
 	}
+	/* kill the native clear button, we draw our own .td-search-clear */
+	.td-search-wrap input[type="search"]::-webkit-search-cancel-button,
+	.td-search-wrap input[type="search"]::-webkit-search-decoration {
+		-webkit-appearance: none;
+		appearance: none;
+	}
+	.td-search-wrap input[type="search"]::-ms-clear,
+	.td-search-wrap input[type="search"]::-ms-reveal {
+		display: none;
+		width: 0;
+		height: 0;
+	}
 	.td-search-icon {
 		position: absolute;
 		left: 0.625rem;
@@ -1418,99 +1430,260 @@
 		letter-spacing: 0.01em;
 	}
 
-	/* modal: search docs */
+	/* modal: search docs
+	   Visually aligned with the rest of the portal — same surface
+	   (hsl(var(--background))), same card chrome (border + radius),
+	   same typography scale and muted-foreground for secondary text.
+	   The header / search / body / footer sections share the same
+	   borders and padding rhythm as the portal pages. */
 	.td-modal-container {
 		position: fixed;
 		inset: 0;
 		width: 100vw;
 		height: 100vh;
 		display: none;
-		align-items: flex-start;
+		align-items: center;
 		justify-content: center;
-		padding: 6vh 1rem 1rem;
+		padding: 1rem;
 		background: rgba(0, 0, 0, 0.5);
 		backdrop-filter: blur(4px);
 		z-index: 99999;
 	}
+	/* .is-open is added by JS alongside removing .hidden so the
+	   container switches from display:none back to display:flex.
+	   Without this, the modal would render at the top-left of the
+	   viewport because align-items/justify-content have no effect
+	   on the default display:block. */
+	.td-modal-container.is-open {
+		display: flex;
+	}
 	.td-modal {
 		position: relative;
 		width: 100%;
-		max-width: 32rem;
+		max-width: 40rem;
 		background: hsl(var(--background));
 		border: 1px solid hsl(var(--border));
 		border-radius: var(--radius);
-		box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 		display: flex;
 		flex-direction: column;
-		max-height: 80vh;
+		/* Fixed height so the dialog never reflows during search.
+		   Without this, swapping between the initial empty state,
+		   loading spinner, and result list caused a visible
+		   "flicker" as the dialog grew and shrank. */
+		height: min(80vh, 720px);
+		max-height: min(80vh, 720px);
 		overflow: hidden;
 	}
+	/* header mirrors the conversation toolbar (border-bottom, tight
+	   padding, muted-foreground for subtitle) */
 	.td-modal-header {
 		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.5rem 0.75rem 0.5rem 0.875rem;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 1.25rem 1.5rem 1rem;
 		border-bottom: 1px solid hsl(var(--border));
 	}
-	.td-modal-header form {
+	.td-modal-header-text {
 		display: flex;
 		flex: 1 1 auto;
-		align-items: center;
-		gap: 0.5rem;
+		flex-direction: column;
+		gap: 0.25rem;
+		min-width: 0;
 	}
-	.td-modal-header svg { width: 1rem; height: 1rem; color: hsl(var(--muted-foreground)); }
-	.td-modal-header input {
-		flex: 1 1 auto;
-		border: 0;
-		background: transparent;
-		font-size: 0.9375rem;
+	.td-modal-title {
+		font-size: 1.125rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		line-height: 1.5rem;
 		color: hsl(var(--foreground));
-		padding: 0.5rem 0;
-		outline: none;
+		margin: 0;
 	}
-	.td-modal-header input::placeholder { color: hsl(var(--muted-foreground)); }
-	.td-modal-header .td-btn { height: 1.75rem; padding: 0 0.5rem; font-size: 0.6875rem; }
+	.td-modal-subtitle {
+		font-size: 0.8125rem;
+		line-height: 1.25rem;
+		color: hsl(var(--muted-foreground));
+		margin: 0;
+	}
+	.td-modal-header .td-btn {
+		flex-shrink: 0;
+	}
 
+	/* search field — uses the same .td-search-wrap as the portal
+	   header so it feels like a focused view of the main search */
+	.td-modal-search {
+		padding: 0.875rem 1.5rem;
+		border-bottom: 1px solid hsl(var(--border));
+	}
+	.td-modal-search .td-search-wrap {
+		max-width: none;
+	}
+
+	/* body hosts the search results / states */
 	.td-modal-body {
 		flex: 1 1 auto;
 		overflow: auto;
-		padding: 0.5rem 0;
+		padding: 0;
+		/* stop horizontal jump when the scrollbar pops in/out */
+		scrollbar-gutter: stable;
+		/* anchor for the loading overlay (position: absolute) */
+		position: relative;
 	}
+	.td-search-items {
+		padding: 0;
+	}
+
+	/* keep the dialog from resizing between states. 13rem fits the
+	   empty state without bloating for short result lists. */
+	.td-search-items {
+		min-height: 13rem;
+	}
+
+	/* Centered loader. Sits in the body and overlays the results
+	   panel while a search is in flight. Big enough to actually see
+	   — the tiny in-input one kept getting lost. */
+	.td-modal-loading {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		color: hsl(var(--muted-foreground));
+		background: hsl(var(--background) / 0.85);
+		backdrop-filter: blur(2px);
+		z-index: 1;
+	}
+	.td-modal-loading-spinner {
+		width: 2.5rem;
+		height: 2.5rem;
+		color: hsl(var(--foreground));
+	}
+	.td-modal-loading-spinner .td-spinner {
+		width: 100%;
+		height: 100%;
+		animation: td-spin 0.8s linear infinite;
+		/* inline svgs collapse to 0; force block so it fills the box */
+		display: block;
+	}
+	.td-modal-loading-label {
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: hsl(var(--muted-foreground));
+		letter-spacing: 0.01em;
+	}
+	/* belt-and-braces against tailwind's [hidden]{display:none!important} */
+	.td-modal-loading:not([hidden]) {
+		display: flex !important;
+	}
+
+	/* shared with .td-empty-state on the ticket list for visual rhythm */
+	.td-search-initial,
+	.td-search-empty {
+		padding: 0.5rem;
+	}
+
+	/* footer mirrors the portal-actions row, right-aligned CTA */
 	.td-modal-footer {
-		padding: 0.75rem 1rem;
+		padding: 0.875rem 1.5rem;
 		border-top: 1px solid hsl(var(--border));
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
+		gap: 0.5rem;
+		background: hsl(var(--muted) / 0.4);
 	}
 
-	/* search results inside the modal */
-	.td-search-items { padding: 0; }
-	.td-search-items .td-search-item a {
-		display: block;
-		padding: 0.75rem 1rem;
+	/* grouped result sections — JS injects these into #td-search-results.
+	   Each section uses the same header chrome as .td-aside-card-header
+	   so grouped result sets read the same as the meta cards. */
+	.td-search-section + .td-search-section {
+		border-top: 1px solid hsl(var(--border));
+	}
+	.td-search-section-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.625rem 1.5rem;
+		background: hsl(var(--muted) / 0.4);
 		border-bottom: 1px solid hsl(var(--border));
-		color: hsl(var(--foreground));
 	}
-	.td-search-items .td-search-item:last-child a { border-bottom: 0; }
-	.td-search-items .td-search-item a:hover { background: hsl(var(--accent)); }
-	.td-search-items .td-search-tag {
+	.td-search-section-label {
 		font-size: 0.6875rem;
-		color: hsl(var(--muted-foreground));
+		font-weight: 600;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		letter-spacing: 0.04em;
+		color: hsl(var(--muted-foreground));
 	}
-	.td-search-items .td-search-title {
+	.td-search-section-count {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 1.5rem;
+		height: 1.125rem;
+		padding: 0 0.375rem;
+		border-radius: 9999px;
+		background: hsl(var(--background));
+		border: 1px solid hsl(var(--border));
+		color: hsl(var(--muted-foreground));
+		font-size: 0.6875rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+	}
+	.td-search-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* individual result row — echoes .td-ticket-cell-subject so a
+	   search result and a ticket row share the same shape */
+	.td-search-item {
+		display: block;
+		border-bottom: 1px solid hsl(var(--border));
+	}
+	.td-search-item:last-child { border-bottom: 0; }
+	.td-search-item a {
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+		padding: 0.875rem 1.5rem;
+		color: hsl(var(--foreground));
+		text-decoration: none;
+		transition: background-color 0.1s ease;
+	}
+	.td-search-item a:hover,
+	.td-search-item a:focus-visible {
+		background: hsl(var(--accent));
+	}
+	.td-search-tag {
+		font-size: 0.6875rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: hsl(var(--muted-foreground));
+	}
+	.td-search-title {
 		font-size: 0.9375rem;
 		font-weight: 500;
 		color: hsl(var(--foreground));
-		margin: 0.125rem 0;
+		margin: 0.125rem 0 0;
+		line-height: 1.4;
 	}
-	.td-search-items .td-search-excerpt {
+	.td-search-item a:hover .td-search-title {
+		color: hsl(var(--foreground));
+	}
+	.td-search-excerpt {
 		font-size: 0.8125rem;
 		color: hsl(var(--muted-foreground));
+		margin: 0;
+		line-height: 1.45;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.td-spinner {
