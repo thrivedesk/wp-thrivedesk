@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ develop ]
 
+# These jobs only read the checkout, don't inherit the repo's default token scope.
+permissions:
+  contents: read
+
 jobs:
   phpunit:
     name: PHPUnit (PHP ${{ matrix.php }})
@@ -52,7 +56,7 @@ jobs:
       - name: Download WordPress core
         run: |
           mkdir -p "$WP_CORE_DIR"
-          curl -sSL "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz" -o /tmp/wp.tar.gz
+          curl -fsSL "https://wordpress.org/wordpress-${WP_VERSION}.tar.gz" -o /tmp/wp.tar.gz
           tar -xzf /tmp/wp.tar.gz -C /tmp
           cp -r /tmp/wordpress/. "$WP_CORE_DIR/"
 

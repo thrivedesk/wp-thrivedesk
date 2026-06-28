@@ -1,7 +1,8 @@
 <?php
 /**
  * Focused characterization of the ?listener= HMAC verification in
- * ThriveDesk\Api::verify_token(). See docs/hmac-signing.md for the spec.
+ * ThriveDesk\Api::verify_token(), which is the source of truth for the
+ * signing scheme these tests pin.
  *
  * Outcomes are asserted via the JSON body (the HTTP status code is not
  * observable under the PHPUnit CLI — see TD_Ajax_TestCase).

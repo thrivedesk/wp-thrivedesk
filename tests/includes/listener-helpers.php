@@ -19,8 +19,7 @@ if ( ! function_exists( 'td_test_sign_payload' ) ) {
 	 * Reproduce ThriveDesk\Api::verify_token()'s signing exactly: coerce the
 	 * "true"/"false" strings to booleans, run each string through
 	 * sanitize_text_field(), then HMAC-SHA1 the wp_json_encode()d result.
-	 *
-	 * See docs/hmac-signing.md for the full specification.
+	 * That method is the source of truth; keep this helper in step with it.
 	 *
 	 * @param array  $payload The request payload ($_REQUEST equivalent).
 	 * @param string $token   The integration api_token used as the HMAC key.
