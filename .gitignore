@@ -58,6 +58,8 @@ assets/bower_components/*
 # Compiled Files and Build Dirs #
 ##########
 /README.html
+# Generated deploy artifact
+/readme.txt
 
 # PhpStrom Project Files #
 .idea/
