@@ -26,6 +26,10 @@ jobs:
           npm ci
           npm run production
 
+      # wp.org requires readme.txt
+      - name: Generate readme.txt for WordPress.org
+        run: cp readme.md readme.txt
+
       - name: Verify packaged plugin includes the Composer autoloader
         run: |
           dist="$(mktemp -d)"
