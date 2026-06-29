@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.3.1
+Stable Tag: 2.4.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,13 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.4.0 =
+2026-06-29 - version 2.4.0
+* feat: Full translation support — the customer portal, the WooCommerce "Support" account tab, the admin settings screens, and all in-page dialogs are now localizable through the thrivedesk text domain
+* fix: Ticket status labels (Active/Pending/Closed), relative timestamps such as "3 months ago", and the portal pagination (Previous/Next) now follow the site language instead of always showing English
+* fix: The ticket-form setup hint on the settings page was never translatable because the text domain was passed to the wrong function; it now translates correctly
+* dev: Added PHPUnit coverage for the internationalization helpers across English, French, Spanish, German, Arabic, and multi-form (Russian-style) plural rules
 
 = 2.3.1 =
 2026-06-28 - version 2.3.1

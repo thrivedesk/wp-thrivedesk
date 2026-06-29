@@ -40,7 +40,7 @@ $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]),
 });
 $woo_plugin_installed = defined('WC_VERSION');
 $td_user_account_pages = array(
-    'woocommerce' => 'Add to WooCommerce'
+    'woocommerce' => __('Add to WooCommerce', 'thrivedesk')
 );
 
 // Fetch all published pages
@@ -222,7 +222,7 @@ $current_user = wp_get_current_user();
                         <!-- ticket form page selection  -->
 	                        <div class="bg-gray-50 border p-4 rounded">
 	                            <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e('Ticket Submission Form Page', 'thrivedesk'); ?></label>
-	                            <div class="text-sm"><?php echo wp_kses_post('Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>.', 'thrivedesk') ?></div>
+	                            <div class="text-sm"><?php echo wp_kses_post(__('Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>.', 'thrivedesk')) ?></div>
 	                            <div class="text-sm mt-2 px-3 py-2 rounded bg-blue-50 border border-blue-200 text-slate-700"><?php esc_html_e('Select the page that contains the embedded ticket form visitors will submit.', 'thrivedesk'); ?></div>
 	                            <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
 	                                <option value=""> <?php esc_html_e('Select the page with your ticket form', 'thrivedesk'); ?> </option>
@@ -270,7 +270,7 @@ $current_user = wp_get_current_user();
                                 <div class="text-sm"><?php esc_html_e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
                                 <div class="mt-3">
                                     <?php foreach ($td_user_account_pages as $key => $page) : ?>
-                                        <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="You must install and activate WooCommerce plugin to use this feature"' : ''; ?>>
+                                        <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="' . esc_attr__('You must install and activate WooCommerce plugin to use this feature', 'thrivedesk') . '"' : ''; ?>>
                                             <input class="td_user_account_pages" type="checkbox" name="td_user_account_pages[]" value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?php echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
                                             <label for="<?php echo esc_attr($page); ?>"> <?php echo esc_html($page); ?> </label>
                                         </div>
@@ -309,7 +309,7 @@ $current_user = wp_get_current_user();
                 </span>
                 <div class="flex items-center api-key-preview">
                     <input class="truncate w-2/3 bg-gray-50" type="password" disabled value="<?php echo esc_attr($td_api_key); ?>" />
-                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger">Update</span>
+                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
                 </div>
                 <div class="api-key-editable hidden">
                     <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_api_key); ?>" class="block p-2.5 w-full text-sm" />

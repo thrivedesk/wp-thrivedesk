@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import { __ } from '@wordpress/i18n';
 
 jQuery(document).ready(($) => {
     $('#openConversationModal').click(function (e) {
@@ -48,7 +49,7 @@ jQuery(document).ready(($) => {
                 if (response.success) {
                     Swal.fire({
                         icon: 'success',
-                        title: td_objects.i18n_success,
+                        title: __('Success!', 'thrivedesk'),
                         text: response.data.message,
                         timer: 2000,
                         showConfirmButton: false
@@ -58,8 +59,8 @@ jQuery(document).ready(($) => {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: td_objects.i18n_error,
-                        text: response.data.message || td_objects.i18n_failed_reload
+                        title: __('Error!', 'thrivedesk'),
+                        text: response.data.message || __('Failed to reload tickets', 'thrivedesk')
                     });
                 }
             },
@@ -67,8 +68,8 @@ jQuery(document).ready(($) => {
                 console.error('Reload tickets error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: td_objects.i18n_error,
-                    text: td_objects.i18n_failed_reload_try_again
+                    title: __('Error!', 'thrivedesk'),
+                    text: __('Failed to reload tickets. Please try again.', 'thrivedesk')
                 });
             },
             complete: function() {
@@ -218,7 +219,7 @@ jQuery(document).ready(($) => {
                     return buildSearchItem(item, i, 'kb');
                 }).join('');
                 combinedResults += buildSearchSection(
-                    td_objects.i18n_kb_label || 'Knowledge Base',
+                    __('Knowledge Base', 'thrivedesk'),
                     kbData.length,
                     kbItems
                 );
@@ -229,7 +230,7 @@ jQuery(document).ready(($) => {
                     return buildSearchItem(item, i, 'wp');
                 }).join('');
                 combinedResults += buildSearchSection(
-                    td_objects.i18n_wp_label || 'WordPress',
+                    __('WordPress', 'thrivedesk'),
                     wpData.length,
                     wpItems
                 );
@@ -434,8 +435,8 @@ jQuery(document).ready(($) => {
         if (reply_text === '') {
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'Reply text can not be empty!',
+                title: __('Oops...', 'thrivedesk'),
+                text: __('Reply text can not be empty!', 'thrivedesk'),
             })
         } else {
             $('#td-reply-spinner').show();
@@ -454,7 +455,7 @@ jQuery(document).ready(($) => {
                         $('#td-reply-spinner').hide();
                         Swal.fire({
                             icon: 'success',
-                            title: 'Reply sent',
+                            title: __('Reply sent', 'thrivedesk'),
                             text: response.message,
                         }).then(() => {
                             location.reload();
@@ -463,7 +464,7 @@ jQuery(document).ready(($) => {
                         $('#td-reply-spinner').hide();
                         Swal.fire({
                             icon: 'error',
-                            title: 'Oops...',
+                            title: __('Oops...', 'thrivedesk'),
                             text: response.message,
                         })
                     }

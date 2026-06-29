@@ -5,6 +5,11 @@ mix.disableNotifications();
 mix.webpackConfig({
 	stats: {
 		children: false
+	},
+	// WordPress serves @wordpress/i18n as the global wp.i18n (loaded via the
+	// wp-i18n script dependency), so reference it instead of bundling a copy.
+	externals: {
+		'@wordpress/i18n': 'wp.i18n'
 	}
 });
 

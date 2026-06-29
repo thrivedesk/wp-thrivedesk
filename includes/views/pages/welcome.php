@@ -7,7 +7,7 @@
 		<a href="https://www.thrivedesk.com/" target="_blank">
 		<img src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png' ); ?>" alt="ThriveDesk logo" class="w-32">
 		</a>
-		<a href="#" class="ml-auto text-brand-light inline-block mr-5">Need help?</a>
+		<a href="#" class="ml-auto text-brand-light inline-block mr-5"><?php esc_html_e( 'Need help?', 'thrivedesk' ); ?></a>
 	</div>
 
 	
@@ -29,8 +29,12 @@
 			<span><?php esc_html_e( 'Connect Existing Account', 'thrivedesk' ); ?></span>
 			</a>
 		</div>
-		<div class="text-gray-500 text-[12px]">Already have API key? <a href="/wp-admin/admin.php?page=td-api" class="underline">Add here</a></div>
-		<div class="text-gray-400 text-[12px]">By continuing, you agree to the <a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">Terms of Service</a> and <a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">Privacy Policy</a>.</div>
+		<div class="text-gray-500 text-[12px]"><?php
+			/* translators: %1$s: opening link tag, %2$s: closing link tag */
+			printf( esc_html__( 'Already have API key? %1$sAdd here%2$s', 'thrivedesk' ), '<a href="/wp-admin/admin.php?page=td-api" class="underline">', '</a>' ); ?></div>
+		<div class="text-gray-400 text-[12px]"><?php
+			/* translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags */
+			printf( esc_html__( 'By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s.', 'thrivedesk' ), '<a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">', '</a>', '<a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">', '</a>' ); ?></div>
 		</div>
 
 	</div>

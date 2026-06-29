@@ -49,7 +49,7 @@ class UserAccountPages {
 	}
 
 	public function add_td_portal_tab_into_account_page( $items ) {
-		$items['td-support'] = 'Support';
+		$items['td-support'] = __( 'Support', 'thrivedesk' );
 
 		return $items;
 	}
