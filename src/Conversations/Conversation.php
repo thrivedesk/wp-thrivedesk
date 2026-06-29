@@ -381,8 +381,9 @@ class Conversation
         
         wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', $css_version);
 
-        wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery'], $js_version);
- 
+        wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery', 'wp-i18n'], $js_version);
+        wp_set_script_translations('thrivedesk-conversations', 'thrivedesk');
+
 
         // Toggle the local WP docs search. off unless the admin picked at
         // least one post type, otherwise the REST handler would just
@@ -403,11 +404,6 @@ class Conversation
                 'kb_url'             => $this->getKnowledgeBaseUrl(),
                 'nonce'              => wp_create_nonce('thrivedesk-nonce'),
                 'wp_search_enabled'  => $wp_search_enabled,
-                'i18n_success'       => __('Success!', 'thrivedesk'),
-                'i18n_error'         => __('Error!', 'thrivedesk'),
-                'i18n_reloading'     => __('Reloading...', 'thrivedesk'),
-                'i18n_failed_reload' => __('Failed to reload tickets', 'thrivedesk'),
-                'i18n_failed_reload_try_again' => __('Failed to reload tickets. Please try again.', 'thrivedesk'),
             ]
         );
         wp_enqueue_script('thrivedesk-conversations');

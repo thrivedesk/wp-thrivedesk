@@ -183,7 +183,7 @@ $open_count = $counts['active'] + $counts['open'];
                                     >
                                         <td class="td-ticket-cell-status" data-label="<?php esc_attr_e('Status', 'thrivedesk'); ?>">
                                             <span class="td-badge td-badge-status-<?php echo esc_attr($conv_status); ?>">
-                                                <?php echo esc_html($conversation['status']); ?>
+                                                <?php echo esc_html(td_conversation_status_label($conversation['status'] ?? '')); ?>
                                             </span>
                                         </td>
                                         <td class="td-ticket-cell-subject-cell" data-label="<?php esc_attr_e('Subject', 'thrivedesk'); ?>">
@@ -232,20 +232,28 @@ $open_count = $counts['active'] + $counts['open'];
                     </a>
 
                     <?php if ($links): ?>
-                        <nav aria-label="Page navigation">
+                        <nav aria-label="<?php esc_attr_e('Page navigation', 'thrivedesk'); ?>">
                             <ul class="td-paginator">
                                 <?php foreach ($links as $key => $link):
                                     $params = parse_url($link['url'] ?? '', PHP_URL_QUERY);
                                     $page = 1;
                                     if ($params) { parse_str($params, $query); $page = $query['page'] ?? 1; }
+                                    // The API returns Laravel paginator labels ("&laquo; Previous",
+                                    // "Next &raquo;", page numbers); translate the words while keeping
+                                    // whatever chevron markup the API sent.
+                                    $label = str_ireplace(
+                                        ['Previous', 'Next'],
+                                        [__('Previous', 'thrivedesk'), __('Next', 'thrivedesk')],
+                                        (string) ($link['label'] ?? '')
+                                    );
                                 ?>
                                     <li class="<?php echo !empty($link['active']) ? 'pg-active' : ''; ?>">
                                         <?php if (!empty($link['url'])): ?>
-                                            <a href="<?php echo esc_url(get_permalink() . '?cv_page=' . $page); ?>" aria-label="<?php echo esc_attr($link['label']); ?>">
+                                            <a href="<?php echo esc_url(get_permalink() . '?cv_page=' . $page); ?>" aria-label="<?php echo esc_attr($label); ?>">
                                         <?php else: ?>
                                             <span>
                                         <?php endif; ?>
-                                            <?php echo esc_html($link['label']); ?>
+                                            <?php echo esc_html($label); ?>
                                         <?php if (!empty($link['url'])): ?>
                                             </a>
                                         <?php else: ?>

@@ -29,7 +29,7 @@ if ($is_portal_available && $conversation_id !== '') {
 <?php
 // precompute display data for the right-rail meta panel + timeline
 $status         = strtolower($conversation['status'] ?? 'unknown');
-$status_label   = $conversation['status'] ?? 'Unknown';
+$status_label   = td_conversation_status_label($conversation['status'] ?? '');
 $ticket_label   = $conversation['ticket_id'] ?? substr((string) $conversation_id, -6);
 $ticket_label   = $ticket_label !== '' ? $ticket_label : '—';
 $event_count    = !empty($conversation['events']) && is_array($conversation['events']) ? count($conversation['events']) : 0;

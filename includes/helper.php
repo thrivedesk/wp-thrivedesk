@@ -59,38 +59,52 @@ if (!function_exists('diff_for_humans')) {
 		$diff = $now->diff($ago);
 
 		// Calculate weeks manually without creating dynamic property
-		$weeks = floor($diff->d / 7);
+		$weeks = (int) floor($diff->d / 7);
 		$days = $diff->d - ($weeks * 7);
 
-		$periods = array(
-			'y' => ['year', 'years', $diff->y],
-			'm' => ['month', 'months', $diff->m],
-			'w' => ['week', 'weeks', $weeks],
-			'd' => ['day', 'days', $days],
-			'h' => ['hour', 'hours', $diff->h],
-			'i' => ['minute', 'minutes', $diff->i],
-			's' => ['second', 'seconds', $diff->s]
-		);
-
 		$parts = array();
-		$values = array(
-			'y' => $diff->y,
-			'm' => $diff->m,
-			'w' => $weeks,
-			'd' => $days,
-			'h' => $diff->h,
-			'i' => $diff->i,
-			's' => $diff->s
-		);
-		
-		foreach ($periods as $k => &$v) {
-			if ($values[$k]) {
-				$parts[] = $values[$k] . ' ' . $v[$values[$k] > 1];
-			}
-		}
+		if ($diff->y) { $parts[] = sprintf(_n('%d year', '%d years', $diff->y, 'thrivedesk'), $diff->y); }
+		if ($diff->m) { $parts[] = sprintf(_n('%d month', '%d months', $diff->m, 'thrivedesk'), $diff->m); }
+		if ($weeks)   { $parts[] = sprintf(_n('%d week', '%d weeks', $weeks, 'thrivedesk'), $weeks); }
+		if ($days)    { $parts[] = sprintf(_n('%d day', '%d days', $days, 'thrivedesk'), $days); }
+		if ($diff->h) { $parts[] = sprintf(_n('%d hour', '%d hours', $diff->h, 'thrivedesk'), $diff->h); }
+		if ($diff->i) { $parts[] = sprintf(_n('%d minute', '%d minutes', $diff->i, 'thrivedesk'), $diff->i); }
+		if ($diff->s) { $parts[] = sprintf(_n('%d second', '%d seconds', $diff->s, 'thrivedesk'), $diff->s); }
 
 		if (!$full) $parts = array_slice($parts, 0, 1);
-		return $parts ? implode(', ', $parts) . ' ago' : 'just now';
+
+		if (empty($parts)) {
+			return __('just now', 'thrivedesk');
+		}
+
+		/* translators: %s: human-readable time difference, e.g. "3 months" */
+		return sprintf(__('%s ago', 'thrivedesk'), implode(', ', $parts));
+	}
+}
+
+if (!function_exists('td_conversation_status_label')) {
+	/**
+	 * Translatable display label for a conversation status.
+	 *
+	 * The status value comes from the API as a slug (active, pending, closed);
+	 * map it to a localized label so the portal badge reads in the site language
+	 * instead of the raw English slug. The default keeps any future/unexpected
+	 * slug readable rather than blank.
+	 */
+	function td_conversation_status_label($status): string {
+		switch (strtolower(trim((string) $status))) {
+			case 'active':
+				return __('Active', 'thrivedesk');
+			case 'pending':
+				return __('Pending', 'thrivedesk');
+			case 'closed':
+				return __('Closed', 'thrivedesk');
+			case '':
+			case 'unknown':
+				return __('Unknown', 'thrivedesk');
+			default:
+				return ucfirst((string) $status);
+		}
 	}
 }
 

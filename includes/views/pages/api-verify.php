@@ -6,7 +6,7 @@
       <a href="https://www.thrivedesk.com/" target="_blank">
         <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk logo" class="w-32">
       </a>
-      <a href="https://help.thrivedesk.com/en/wpportal" target="_blank" class="ml-auto text-brand-light inline-block mr-5">Need help?</a>
+      <a href="https://help.thrivedesk.com/en/wpportal" target="_blank" class="ml-auto text-brand-light inline-block mr-5"><?php esc_html_e( 'Need help?', 'thrivedesk' ); ?></a>
     </div>
 
     
@@ -17,19 +17,23 @@
           <p class="mt-2 muted"><?php esc_html_e( 'We are excited to have you on board. Put your API key here and complete the setup', 'thrivedesk' ); ?></p>
         </div>
         <div class="td-card space-y-4">
-          <input type="password" id="td_helpdesk_api_key" class="w-full p-2! border border-slate-300! shadow-sm rounded" placeholder="Enter your API Key" value="<?php echo isset($_GET['token']) ? esc_html(sanitize_text_field($_GET['token'])) : ''; ?>"/>
+          <input type="password" id="td_helpdesk_api_key" class="w-full p-2! border border-slate-300! shadow-sm rounded" placeholder="<?php esc_attr_e( 'Enter your API Key', 'thrivedesk' ); ?>" value="<?php echo isset($_GET['token']) ? esc_html(sanitize_text_field($_GET['token'])) : ''; ?>"/>
           <button id="submit-btn" class="btn btn-primary w-full justify-center my-4">
             <span><?php esc_html_e( 'Complete Setup', 'thrivedesk' ); ?></span>
             <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#fff" fill="none"><path d="m14.527 18-1.408-1.414L16.689 13H3.5v-2h13.189l-3.57-3.587L14.527 6l5.973 6-5.973 6Z" fill="currentColor"/></svg></span>
           </button>
           
-          <div class="text-gray-400 text-[12px]">By continuing, you agree to the <a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">Terms of Service</a> and <a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">Privacy Policy</a>.</div>
+          <div class="text-gray-400 text-[12px]"><?php
+            /* translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags */
+            printf( esc_html__( 'By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s.', 'thrivedesk' ), '<a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">', '</a>', '<a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">', '</a>' ); ?></div>
             <div class="alert alert-info">
-                <p class="m-0! mb-4!">To ensure seamless integration with ThriveDesk, whitelist the following IP addresses in your server's firewall or security plugin:
-                  <code>20.68.187.32</code> <code>20.68.186.235</code> and <code>20.117.184.59</code>.
+                <p class="m-0! mb-4!"><?php
+                  /* translators: %1$s, %2$s, %3$s: ThriveDesk IP addresses */
+                  printf( esc_html__( "To ensure seamless integration with ThriveDesk, whitelist the following IP addresses in your server's firewall or security plugin: %1\$s %2\$s and %3\$s.", 'thrivedesk' ), '<code>20.68.187.32</code>', '<code>20.68.186.235</code>', '<code>20.117.184.59</code>' ); ?>
                 </p>
-                <p class="m-0!">
-                  Contact us with your IP address and website url and email at <a href="mailto:support@thrivedesk.com" class="underline">Support</a> if you have any questions or need assistance.
+                <p class="m-0!"><?php
+                  /* translators: %1$s: opening link tag, %2$s: closing link tag */
+                  printf( esc_html__( 'Contact us with your IP address and website url and email at %1$sSupport%2$s if you have any questions or need assistance.', 'thrivedesk' ), '<a href="mailto:support@thrivedesk.com" class="underline">', '</a>' ); ?>
                 </p>
 
             </div>
