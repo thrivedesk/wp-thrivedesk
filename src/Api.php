@@ -195,7 +195,9 @@ final class Api {
 	 */
 	public function get_woocommerce_order_status() {
 		$email    = sanitize_email( $_REQUEST['email'] ?? '' );
-		$order_id = sanitize_key( $_REQUEST['order_id'] ?? '' );
+		// Use sanitize_text_field instead of sanitize_key because custom order numbers
+		// can contain characters like slashes, dashes, or spaces (e.g., "2025/001").
+		$order_id = sanitize_text_field( wp_unslash( $_REQUEST['order_id'] ?? '' ) );
 
 		if ( ! $order_id ) {
 			$this->apiResponse->error( 400, 'order_id is required.' );
