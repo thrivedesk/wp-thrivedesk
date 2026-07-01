@@ -24,7 +24,7 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
     }
 
     /* ---------------------------------------------------------------------
-     * diff_for_humans — English behaviour
+     * diff_for_humans, English behaviour
      * ------------------------------------------------------------------- */
 
     public function test_diff_for_humans_empty_returns_unknown_time() {
@@ -47,7 +47,7 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
     }
 
     /* ---------------------------------------------------------------------
-     * diff_for_humans — localisation
+     * diff_for_humans, localisation
      * ------------------------------------------------------------------- */
 
     /**
@@ -92,8 +92,8 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
      * six, French treats 1 specially). The only way diff_for_humans() can be
      * correct in all of them is to hand the exact count to _n() and let the
      * active locale pick the form. Verify it passes the true integer for each
-     * case — this fails the moment anyone reverts to a hardcoded
-     * "n > 1 ? plural : singular" (which calls no _n() at all).
+     * case. This fails the moment anyone reverts to the hardcoded
+     * "n > 1 ? plural : singular" trick (which calls no _n() at all).
      */
     public function test_diff_for_humans_passes_exact_count_to_ngettext() {
         $captured = [];
@@ -117,7 +117,7 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
     }
 
     /* ---------------------------------------------------------------------
-     * td_conversation_status_label — English behaviour
+     * td_conversation_status_label, English behaviour
      * ------------------------------------------------------------------- */
 
     /**
@@ -150,7 +150,7 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
     }
 
     /* ---------------------------------------------------------------------
-     * td_conversation_status_label — localisation
+     * td_conversation_status_label, localisation
      * ------------------------------------------------------------------- */
 
     /**
@@ -190,7 +190,7 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
      * ------------------------------------------------------------------- */
 
     /**
-     * The chevron entities from the Laravel paginator must decode to real « / »
+     * The chevron entities from the Laravel paginator decode to real « / »
      * so esc_html() at render time doesn't print the raw "&laquo;" text.
      */
     public function test_paginator_label_decodes_chevron_entities() {
@@ -198,22 +198,22 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
         $this->assertSame( 'Next »', td_paginator_label( 'Next &raquo;' ) );
     }
 
-    /** Page numbers and the ellipsis separator pass through untouched. */
+    /** Page numbers and the ellipsis separator should pass through untouched. */
     public function test_paginator_label_passes_through_numbers_and_ellipsis() {
         $this->assertSame( '1', td_paginator_label( '1' ) );
         $this->assertSame( '42', td_paginator_label( '42' ) );
         $this->assertSame( '...', td_paginator_label( '...' ) );
     }
 
-    /** A null/empty label (defensive: missing url entry) stays an empty string. */
+    /** Null/empty label (defensive: missing url entry) stays an empty string. */
     public function test_paginator_label_handles_empty() {
         $this->assertSame( '', td_paginator_label( null ) );
         $this->assertSame( '', td_paginator_label( '' ) );
     }
 
     /**
-     * The Previous/Next words localise (chevron preserved), proving the label
-     * routes through the `thrivedesk` domain like the rest of the portal.
+     * Previous/Next localise (chevron preserved), proving the label routes
+     * through the thrivedesk domain like the rest of the portal.
      */
     public function test_paginator_label_translates_previous_next() {
         $map    = [ 'Previous' => 'Précédent', 'Next' => 'Suivant' ];

@@ -112,11 +112,11 @@ if (!function_exists('td_paginator_label')) {
 	/**
 	 * Display label for a paginator link.
 	 *
-	 * The API sends Laravel paginator labels, page numbers, an ellipsis, and
+	 * The API sends Laravel paginator labels: page numbers, an ellipsis, and
 	 * "&laquo; Previous" / "Next &raquo;" with the chevrons as HTML entities.
-	 * Decode the entities so the chevron renders as a real « / » (esc_html on
-	 * output would otherwise show the raw "&laquo;" text), and localise the
-	 * Previous/Next words so they follow the site language.
+	 * Decode the entities so esc_html() at render time shows a real « / »
+	 * instead of the raw "&laquo;" text, and run the Previous/Next words
+	 * through the text domain so they follow the site language.
 	 */
 	function td_paginator_label($label): string {
 		$label = html_entity_decode((string) $label, ENT_QUOTES);
@@ -133,12 +133,12 @@ if (!function_exists('td_portal_back_to_list_url')) {
 	/**
 	 * URL back to the ticket list from a single conversation.
 	 *
-	 * List vs. detail is chosen by the presence of the td_conversation_id query
-	 * arg, so dropping it returns to the list on the *same* page. This matters on
-	 * the WooCommerce My Account "Support" endpoint (/my-account/td-support/),
-	 * where get_permalink() resolves to the My Account page (/my-account/) and
-	 * would drop the customer out of the Support tab. Other args (status filter,
-	 * page) are kept so they land back where they were.
+	 * The detail view is just the list with td_conversation_id in the query,
+	 * so dropping it lands back on the list. On the WooCommerce "Support" tab
+	 * (/my-account/td-support/) get_permalink() would resolve to the bare
+	 * /my-account/ page and bounce the customer out of the tab, hence the
+	 * remove_query_arg() instead. Other query args (status filter, page) get
+	 * kept so the user lands back where they were.
 	 */
 	function td_portal_back_to_list_url(): string {
 		return remove_query_arg('td_conversation_id');
@@ -304,10 +304,10 @@ add_action('wp_ajax_thrivedesk_clear_cache', function () {
 /*
  * Make a gravatar url from the current user email.
  *
- * d=404 makes Gravatar return a 404 for addresses with no account instead of
- * its generic "mystery person" image, so the avatar <img>'s onerror handler can
- * fall back to the coloured initials. Without it every unknown email renders the
- * same grey silhouette.
+ * d=404 makes Gravatar 404 for unknown addresses instead of returning its
+ * generic silhouette, so the <img> onerror handler can swap in coloured
+ * initials. Without it everyone with no Gravatar account renders the same
+ * grey blob.
  */
 if (!function_exists('get_gravatar_url')) {
 	function get_gravatar_url($email, $size = 80): string {

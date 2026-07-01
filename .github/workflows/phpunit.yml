@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '8.4'
+          # Plugin's declared minimum (readme "Requires PHP: 7.4").
+          - php: '7.4'
             wp: latest
 
     services:
@@ -54,9 +55,15 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-progress
 
-    # WordPress core provides ABSPATH; the test framework itself is the vendored
-    # wp-phpunit dev dependency. WooCommerce is installed so the WC integration
-    # tests run instead of skipping. The test DB is the mariadb service above.
+    # Static guard that shipped source stays within PHP 7.4 (the declared
+    # minimum). Separate from `composer phpcs`, whose WPCS ruleset still
+    # excludes legacy source during incremental adoption.
+    - name: PHP 7.4 compatibility
+      run: composer phpcompat
+
+    # WordPress core (for ABSPATH) + WooCommerce (so the WC integration tests
+    # run instead of skipping) + the wp-tests-config.php for the mariadb service.
+    # The test framework itself is the vendored wp-phpunit dev dep.
     - name: Provision WordPress + WooCommerce test environment
       env:
         WP_VERSION: ${{ matrix.wp }}

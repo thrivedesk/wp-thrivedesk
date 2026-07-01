@@ -89,20 +89,20 @@ class TD_Plugin_Loads_Test extends WP_UnitTestCase {
         $this->assertStringContainsString(
             md5('foo@example.com'),
             $url,
-            'Gravatar hash must be the md5 of the lower-cased, trimmed email.'
+            'Gravatar hash is md5 of the lower-cased, trimmed email.'
         );
-        // d=404 makes unknown emails 404 so the avatar <img> onerror handler can
-        // fall back to initials instead of Gravatar's generic silhouette.
+        // d=404 makes unknown emails 404 so the <img> onerror handler can fall
+        // back to initials instead of Gravatar's generic silhouette.
         $this->assertStringContainsString(
             'd=404',
             $url,
-            'Gravatar URL must request d=404 so the initials fallback can trigger.'
+            'Gravatar URL should request d=404 so the initials fallback triggers.'
         );
     }
 
     public function test_portal_back_url_drops_conversation_id_and_keeps_context() {
         $prev = $_SERVER['REQUEST_URI'] ?? null;
-        // A conversation opened on the WooCommerce My Account "Support" endpoint.
+        // Conversation opened on the WooCommerce "Support" endpoint.
         $_SERVER['REQUEST_URI'] = '/my-account/td-support/?td_conversation_id=42&cv_status=open';
 
         $url = td_portal_back_to_list_url();
@@ -110,12 +110,12 @@ class TD_Plugin_Loads_Test extends WP_UnitTestCase {
         $this->assertStringNotContainsString(
             'td_conversation_id',
             $url,
-            'Back-to-list URL must drop td_conversation_id so the list renders.'
+            'Back URL should drop td_conversation_id so the list renders.'
         );
         $this->assertStringContainsString(
             '/my-account/td-support/',
             $url,
-            'Back-to-list URL must keep the current path (the Support tab), not fall back to /my-account/.'
+            'Back URL should keep the current path (Support tab), not fall back to /my-account/.'
         );
         $this->assertStringContainsString(
             'cv_status=open',
