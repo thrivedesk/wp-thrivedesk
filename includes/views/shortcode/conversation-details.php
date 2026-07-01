@@ -27,30 +27,13 @@ if ($is_portal_available && $conversation_id !== '') {
 ?>
 <?php if ($conversation_exists): ?>
 <?php
-// precompute display data for the right-rail meta panel + timeline
+// precompute display data for the header + timeline
 $status         = strtolower($conversation['status'] ?? 'unknown');
 $status_label   = td_conversation_status_label($conversation['status'] ?? '');
 $ticket_label   = $conversation['ticket_id'] ?? substr((string) $conversation_id, -6);
 $ticket_label   = $ticket_label !== '' ? $ticket_label : '—';
 $event_count    = !empty($conversation['events']) && is_array($conversation['events']) ? count($conversation['events']) : 0;
 $updated_human  = diff_for_humans($conversation['updated_at'] ?? '');
-$updated_abs    = !empty($conversation['updated_at']) ? strtotime($conversation['updated_at']) : null;
-$updated_abs_f  = $updated_abs ? date_i18n(get_option('date_format') . ' · ' . get_option('time_format'), $updated_abs) : '';
-$created_abs    = !empty($conversation['created_at']) ? strtotime($conversation['created_at']) : null;
-$created_abs_f  = $created_abs ? date_i18n(get_option('date_format'), $created_abs) : '';
-$created_human  = $created_abs ? diff_for_humans($conversation['created_at']) : '';
-
-// last reply summary (most recent non-note event)
-$last_event = null;
-if (!empty($conversation['events']) && is_array($conversation['events'])) {
-    foreach (array_reverse($conversation['events']) as $_ev) {
-        if (!empty($_ev['event']) && ($_ev['action'] ?? '') !== 'note') {
-            $last_event = $_ev;
-            break;
-        }
-    }
-}
-$last_reply_human = $last_event ? diff_for_humans($last_event['created_at'] ?? '') : '';
 ?>
 <div id="thrivedesk">
     <div class="td-portal-conversations">
@@ -216,74 +199,6 @@ $last_reply_human = $last_event ? diff_for_humans($last_event['created_at'] ?? '
                 </div>
 
             </div>
-
-            <!-- meta panel: sticky right column with status / ticket -->
-            <aside class="td-conv-aside" aria-label="<?php esc_attr_e('Ticket details', 'thrivedesk'); ?>">
-                <div class="td-conv-aside-inner">
-
-                    <!-- status -->
-                    <div class="td-card td-aside-card">
-                        <div class="td-aside-card-header">
-                            <span class="td-aside-label"><?php esc_html_e('Status', 'thrivedesk'); ?></span>
-                            <span class="td-badge td-badge-status-<?php echo esc_attr($status); ?>">
-                                <?php echo esc_html($status_label); ?>
-                            </span>
-                        </div>
-                        <div class="td-aside-row">
-                            <span class="td-aside-key"><?php esc_html_e('Last update', 'thrivedesk'); ?></span>
-                            <span class="td-aside-val">
-                                <?php echo esc_html($updated_human); ?>
-                                <?php if ($updated_abs_f): ?>
-                                    <span class="td-aside-val-sub"><?php echo esc_html($updated_abs_f); ?></span>
-                                <?php endif; ?>
-                            </span>
-                        </div>
-                        <div class="td-aside-row">
-                            <span class="td-aside-key"><?php esc_html_e('Messages', 'thrivedesk'); ?></span>
-                            <span class="td-aside-val"><?php echo (int) $event_count; ?></span>
-                        </div>
-                        <?php if ($last_reply_human): ?>
-                            <div class="td-aside-row">
-                                <span class="td-aside-key"><?php esc_html_e('Last reply', 'thrivedesk'); ?></span>
-                                <span class="td-aside-val"><?php echo esc_html($last_reply_human); ?></span>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- ticket -->
-                    <div class="td-card td-aside-card">
-                        <div class="td-aside-card-header">
-                            <span class="td-aside-label"><?php esc_html_e('Ticket', 'thrivedesk'); ?></span>
-                        </div>
-                        <div class="td-aside-row">
-                            <span class="td-aside-key"><?php esc_html_e('ID', 'thrivedesk'); ?></span>
-                            <span class="td-aside-val td-aside-mono">#<?php echo esc_html($ticket_label); ?></span>
-                        </div>
-                        <div class="td-aside-row">
-                            <span class="td-aside-key"><?php esc_html_e('Subject', 'thrivedesk'); ?></span>
-                            <span class="td-aside-val"><?php echo esc_html($conversation['subject'] ?? '—'); ?></span>
-                        </div>
-                        <?php if ($created_abs_f): ?>
-                            <div class="td-aside-row">
-                                <span class="td-aside-key"><?php esc_html_e('Opened', 'thrivedesk'); ?></span>
-                                <span class="td-aside-val">
-                                    <?php echo esc_html($created_human); ?>
-                                    <span class="td-aside-val-sub"><?php echo esc_html($created_abs_f); ?></span>
-                                </span>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- quick-reply shortcut -->
-                    <a href="#td_conversation_reply" class="td-btn td-btn-primary td-aside-cta">
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                        </svg>
-                        <span><?php esc_html_e('Reply to ticket', 'thrivedesk'); ?></span>
-                    </a>
-
-                </div>
-            </aside>
 
         </div>
 

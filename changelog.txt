@@ -1,19 +1,22 @@
 *** WooCommerce Extension Changelog ***
 
+2026-07-01 - version 2.4.2
+* improve: Dropped the right-side ticket-details panel from the conversation view. It just repeated what's already in the header (status, ticket ID, last update, message count), so the thread runs full-width now.
+
 2026-07-01 - version 2.4.1
-* fix: Support tab under My Account stopped throwing 404s on freshly enabled installs — no more "save permalinks" workaround
-* fix: Portal pagination was rendering the literal `&laquo;` / `&raquo;` text on the page; styled the disabled prev/next/ellipsis buttons to match the page numbers too
-* fix: Portal layout was ignoring the narrow My Account column and squashing everything; now it adapts to whatever width it actually gets
-* fix: On stacked layouts the ticket-details panel sits above the conversation again instead of getting shoved into a sliver beside it
-* fix: Customer avatars fall back to initials when there's no Gravatar (default silhouette was a bit too spooky)
-* fix: "Back to tickets" takes you to the Support tab list again, not the main My Account dashboard
-* dev: PHPUnit suite runs in CI on PHP 7.4 (our min-supported version), with a hard 7.4 compat gate and regression coverage for the portal fixes above
+* fix: Support tab under My Account stopped throwing 404s on freshly enabled installs. No more "save permalinks" workaround.
+* fix: Portal pagination was rendering the literal `&laquo;` / `&raquo;` text on the page. Styled the disabled prev/next/ellipsis buttons to match the page numbers too.
+* fix: Portal layout was ignoring the narrow My Account column and squashing everything. It now adapts to whatever width it actually gets.
+* fix: On stacked layouts the ticket-details panel sits above the conversation again instead of getting shoved into a sliver beside it.
+* fix: Customer avatars fall back to initials when there's no Gravatar (the default silhouette was unsettling).
+* fix: "Back to tickets" takes you to the Support tab list again, not the main My Account dashboard.
+* dev: PHPUnit suite runs in CI on PHP 7.4 (our min-supported version), with a hard 7.4 compat gate and regression coverage for the portal fixes above.
 
 2026-06-29 - version 2.4.0
-* feat: Full translation support — the customer portal, WooCommerce "Support" tab, admin settings screens, and in-page dialogs all go through the `thrivedesk` text domain now
-* fix: Status labels (Active/Pending/Closed), "3 months ago"-style timestamps, and the portal prev/next pagination honor the site language instead of staying English
-* fix: Settings-page hint about setting up the ticket form wasn't translatable at all (text domain was being passed to the wrong function — a classic); now it actually translates
-* dev: Added PHPUnit coverage for the i18n helpers — English, French, Spanish, German, Arabic, and the Russian-style multi-form plural rules
+* feat: Full translation support. The customer portal, WooCommerce "Support" tab, admin settings screens, and in-page dialogs all go through the `thrivedesk` text domain now.
+* fix: Status labels (Active/Pending/Closed), "3 months ago"-style timestamps, and the portal prev/next pagination honor the site language instead of staying English.
+* fix: Settings-page hint about setting up the ticket form wasn't translatable at all. The text domain was being passed to the wrong function. Now it actually translates.
+* dev: Added PHPUnit coverage for the i18n helpers in English, French, Spanish, German, Arabic, and the Russian-style multi-form plural rules.
 
 2026-06-28 - version 2.3.1
 * fix: WooCommerce order status no longer returns a different order than the one the customer asked for (resolves issue #167, "Lynne's bug")

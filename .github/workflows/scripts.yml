@@ -1,0 +1,33 @@
+name: "Scripts"
+
+on:
+  push:
+    branches: [ develop ]
+    paths:
+      - '.github/scripts/**'
+      - '.github/workflows/scripts.yml'
+      - 'changelog.txt'
+  pull_request:
+    branches: [ develop ]
+    paths:
+      - '.github/scripts/**'
+      - '.github/workflows/scripts.yml'
+      - 'changelog.txt'
+
+concurrency:
+  group: scripts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run tests
+        run: node --test .github/scripts/parse-changelog.test.js
