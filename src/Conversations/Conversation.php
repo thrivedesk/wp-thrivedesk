@@ -331,11 +331,8 @@ class Conversation
                 add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
 
-            // The WooCommerce "Support" tab uses the td-support rewrite endpoint, which only
-            // matches /my-account/td-support/ once rewrite rules are regenerated. Queue a flush
-            // whenever the toggle changes so the route stops 404ing (or falling through to the
-            // default account page); UserAccountPages::maybe_flush_rewrite_rules() runs it on the
-            // next request, after the endpoint is registered on init.
+            // /my-account/td-support/ 404s until rewrite rules are refreshed. Tell
+            // UserAccountPages to flush on the next init if the WC tab toggle changed.
             $old_pages = is_array($existing_settings) ? (array) ($existing_settings['td_user_account_pages'] ?? []) : [];
             UserAccountPages::instance()->maybe_queue_rewrite_flush(
                 $old_pages,

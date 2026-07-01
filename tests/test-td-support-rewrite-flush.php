@@ -1,16 +1,14 @@
 <?php
 /**
- * Regression tests for the td-support WooCommerce endpoint rewrite-flush fix.
+ * Tests for the td-support WC endpoint rewrite-flush fix.
  *
- * Background: the td-support rewrite endpoint is registered dynamically when the
- * "Add to WooCommerce" setting is enabled, but rewrite rules were never flushed.
- * So /my-account/td-support/ returned a 404 (or fell through to the default account
- * page) until permalinks were manually re-saved.
+ * The td-support endpoint is registered dynamically when the "Add to WooCommerce"
+ * setting is on, but nothing used to flush rewrite rules afterwards. So
+ * /my-account/td-support/ kept 404-ing until someone manually re-saved permalinks.
  *
- * UserAccountPages now queues a flush whenever the toggle flips
- * (maybe_queue_rewrite_flush) and performs it on the next init
- * (maybe_flush_rewrite_rules). These tests lock in both halves, plus the
- * end-to-end result that the endpoint ends up in the persisted rewrite rules.
+ * UserAccountPages now queues a flush when the toggle flips and runs it on the
+ * next init. These tests cover both halves plus the end-to-end case where the
+ * endpoint actually ends up in the persisted rewrite rules.
  *
  * @package ThriveDesk
  */
@@ -35,50 +33,45 @@ class TD_Support_Endpoint_Rewrite_Test extends WP_UnitTestCase {
         return (bool) get_option( \ThriveDesk\Portal\UserAccountPages::FLUSH_FLAG_OPTION );
     }
 
-    // --- queueing: which membership changes schedule a flush ---------------
+    // queueing -------------------------------------------------------------
 
-    /** Enabling the WooCommerce tab (off -> on) must queue a flush. */
     public function test_queue_flush_when_woocommerce_enabled() {
         $this->pages->maybe_queue_rewrite_flush( [], [ 'woocommerce' ] );
 
         $this->assertTrue(
             $this->flag_is_set(),
-            'Enabling the WooCommerce tab must queue a rewrite flush.'
+            'Enabling the WC tab should queue a rewrite flush.'
         );
     }
 
-    /** Disabling the WooCommerce tab (on -> off) must queue a flush so the rule is dropped. */
     public function test_queue_flush_when_woocommerce_disabled() {
         $this->pages->maybe_queue_rewrite_flush( [ 'woocommerce' ], [] );
 
         $this->assertTrue(
             $this->flag_is_set(),
-            'Disabling the WooCommerce tab must queue a rewrite flush.'
+            'Disabling the WC tab should queue a rewrite flush so the rule gets dropped.'
         );
     }
 
-    /** No membership change (still on, or still off) must NOT queue a flush. */
     public function test_no_flush_when_membership_unchanged() {
         $this->pages->maybe_queue_rewrite_flush( [ 'woocommerce' ], [ 'woocommerce' ] );
-        $this->assertFalse( $this->flag_is_set(), 'Still-enabled WC must not queue a flush.' );
+        $this->assertFalse( $this->flag_is_set(), 'WC still on, no flush needed.' );
 
         $this->pages->maybe_queue_rewrite_flush( [], [] );
-        $this->assertFalse( $this->flag_is_set(), 'Never-enabled WC must not queue a flush.' );
+        $this->assertFalse( $this->flag_is_set(), 'WC never on, no flush needed.' );
     }
 
-    /** Changing an unrelated page entry while WC stays on must NOT queue a flush. */
     public function test_no_flush_when_only_unrelated_pages_change() {
         $this->pages->maybe_queue_rewrite_flush( [ 'woocommerce' ], [ 'woocommerce', 'edd' ] );
 
         $this->assertFalse(
             $this->flag_is_set(),
-            'WC membership unchanged (still present) must not queue a flush even if other pages change.'
+            'WC membership unchanged, other pages toggling should not queue a flush.'
         );
     }
 
-    // --- execution: the queued flush runs once, then clears itself ---------
+    // execution ------------------------------------------------------------
 
-    /** A queued flush regenerates the persisted rewrite rules and clears the flag. */
     public function test_maybe_flush_regenerates_rules_and_clears_flag() {
         global $wp_rewrite;
         $wp_rewrite->set_permalink_structure( '/%postname%/' );
@@ -90,15 +83,14 @@ class TD_Support_Endpoint_Rewrite_Test extends WP_UnitTestCase {
 
         $this->assertNotFalse(
             get_option( 'rewrite_rules' ),
-            'A queued flush must regenerate the rewrite_rules option.'
+            'Flush should regenerate the rewrite_rules option.'
         );
         $this->assertFalse(
             $this->flag_is_set(),
-            'The flush flag must be cleared after flushing so it only runs once.'
+            'Flag should clear after flushing so it only runs once.'
         );
     }
 
-    /** Without the flag set, the init callback is a no-op (no flush). */
     public function test_maybe_flush_is_noop_without_flag() {
         global $wp_rewrite;
         $wp_rewrite->set_permalink_structure( '/%postname%/' );
@@ -110,22 +102,22 @@ class TD_Support_Endpoint_Rewrite_Test extends WP_UnitTestCase {
 
         $this->assertFalse(
             get_option( 'rewrite_rules' ),
-            'rewrite_rules must stay unset when no flush was queued.'
+            'No queued flush, rewrite_rules should stay unset.'
         );
     }
 
-    // --- end-to-end: the route actually becomes resolvable -----------------
+    // end-to-end -----------------------------------------------------------
 
     /**
      * Once the endpoint is registered and the queued flush runs, the persisted
-     * rewrite rules contain td-support — i.e. /my-account/td-support/ resolves
-     * instead of 404ing. This is the exact condition the bug report described.
+     * rewrite rules contain td-support (i.e. /my-account/td-support/ resolves
+     * instead of 404-ing.
      */
     public function test_flushed_rules_include_td_support_endpoint() {
         global $wp_rewrite;
         $wp_rewrite->set_permalink_structure( '/%postname%/' );
 
-        // Register the endpoint the way handle_pages() -> init does on a real request.
+        // Same call handle_pages() -> init makes on a real request.
         $this->pages->register_td_portal_endpoint_for_woocommerce_account_page();
 
         update_option( \ThriveDesk\Portal\UserAccountPages::FLUSH_FLAG_OPTION, true );
@@ -137,7 +129,7 @@ class TD_Support_Endpoint_Rewrite_Test extends WP_UnitTestCase {
         $this->assertStringContainsString(
             'td-support',
             implode( ' ', array_keys( (array) $rules ) ),
-            'Flushed rules must contain the td-support endpoint so the route resolves.'
+            'Flushed rules should contain the td-support endpoint.'
         );
     }
 }

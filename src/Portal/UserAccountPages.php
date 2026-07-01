@@ -3,10 +3,8 @@
 namespace ThriveDesk\Portal;
 
 class UserAccountPages {
-	/**
-	 * Option flag set when the td-support endpoint is toggled on/off, signalling
-	 * that rewrite rules must be regenerated on the next request.
-	 */
+	// Flag set when the WC "Support" tab toggle flips; tells us rewrite rules
+	// need a refresh on the next request.
 	const FLUSH_FLAG_OPTION = 'td_flush_rewrite_needed';
 
 	private static $instance = null;
@@ -49,14 +47,14 @@ class UserAccountPages {
 	}
 
 	/**
-	 * Queue a rewrite-rules flush when the WooCommerce "Support" tab is toggled on or off.
+	 * Queue a rewrite-rules flush when the WC tab toggle changes.
 	 *
-	 * The td-support endpoint only matches /my-account/td-support/ after rewrite rules are
-	 * regenerated, so flipping membership must schedule a flush. Unchanged membership is a
-	 * no-op to avoid flushing on every settings save. Called from the settings-save handler.
+	 * /my-account/td-support/ only resolves once rewrite rules are regenerated,
+	 * so flipping the toggle has to schedule a flush. If the toggle stays the
+	 * same we bail out, otherwise every settings save would flush for nothing.
 	 *
-	 * @param string[] $old_pages Previously saved td_user_account_pages values.
-	 * @param string[] $new_pages Newly saved td_user_account_pages values.
+	 * @param string[] $old_pages
+	 * @param string[] $new_pages
 	 */
 	public function maybe_queue_rewrite_flush( array $old_pages, array $new_pages ): void {
 		$old_has_wc = in_array( 'woocommerce', $old_pages, true );
@@ -68,12 +66,12 @@ class UserAccountPages {
 	}
 
 	/**
-	 * Flush rewrite rules once after the td-support endpoint is toggled on or off.
+	 * Flush rewrite rules once, when the flag is set.
 	 *
-	 * Runs at init priority 99, after register_td_portal_endpoint_for_woocommerce_account_page()
-	 * (init, 10), so the regenerated rules include the endpoint when WooCommerce support is on
-	 * and drop it when off. The flag is queued by maybe_queue_rewrite_flush(); without this,
-	 * /my-account/td-support/ keeps 404ing until permalinks are manually re-saved.
+	 * Pinned to init:99 so register_td_portal_endpoint_for_woocommerce_account_page()
+	 * (init:10) has already run by the time we flush. That way the new rules
+	 * pick up the endpoint when WC support is on and drop it when off. Without
+	 * this, /my-account/td-support/ stays 404 until someone re-saves permalinks.
 	 */
 	public function maybe_flush_rewrite_rules(): void {
 		if ( get_option( self::FLUSH_FLAG_OPTION ) ) {
