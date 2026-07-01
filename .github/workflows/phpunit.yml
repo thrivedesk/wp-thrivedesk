@@ -54,8 +54,39 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-progress
 
+    # WordPress core provides ABSPATH; the test framework itself is the vendored
+    # wp-phpunit dev dependency. WooCommerce is installed so the WC integration
+    # tests run instead of skipping. The test DB is the mariadb service above.
     - name: Provision WordPress + WooCommerce test environment
-      run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }}
+      env:
+        WP_VERSION: ${{ matrix.wp }}
+      run: |
+        set -euo pipefail
+        WP_CORE_DIR=/tmp/wordpress
+        mkdir -p "$WP_CORE_DIR"
+        archive="https://wordpress.org/latest.tar.gz"
+        if [ "$WP_VERSION" != latest ]; then
+          archive="https://wordpress.org/wordpress-${WP_VERSION}.tar.gz"
+        fi
+        curl -sSL "$archive" | tar --strip-components=1 -xz -C "$WP_CORE_DIR"
+        curl -sSL https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip -o /tmp/woocommerce.zip
+        unzip -q /tmp/woocommerce.zip -d "$WP_CORE_DIR/wp-content/plugins/"
+        cat > "$WP_PHPUNIT__TESTS_CONFIG" <<'PHP'
+        <?php
+        define( 'ABSPATH', '/tmp/wordpress/' );
+        define( 'WP_DEFAULT_THEME', 'default' );
+        define( 'DB_NAME', 'wordpress_test' );
+        define( 'DB_USER', 'root' );
+        define( 'DB_PASSWORD', 'root' );
+        define( 'DB_HOST', '127.0.0.1' );
+        define( 'DB_CHARSET', 'utf8' );
+        define( 'DB_COLLATE', '' );
+        $table_prefix = 'wptests_';
+        define( 'WP_TESTS_DOMAIN', 'example.org' );
+        define( 'WP_TESTS_EMAIL', 'admin@example.org' );
+        define( 'WP_TESTS_TITLE', 'Test Blog' );
+        define( 'WP_PHP_BINARY', 'php' );
+        PHP
 
     - name: Run PHPUnit
       run: composer test

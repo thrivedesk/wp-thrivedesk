@@ -6,7 +6,7 @@
  * translated UI: the relative timestamps ("3 months ago") and the status
  * badges ("ACTIVE"/"CLOSED"). These tests lock in that both helpers route
  * their output through the `thrivedesk` text domain, that the relative-time
- * pluralisation is correct, and that the output localises in real languages —
+ * pluralisation is correct, and that the output localises in real languages
  * including ones where the "ago" phrase precedes the value (French/Spanish)
  * and ones with more than two plural forms (Russian).
  *
@@ -18,7 +18,7 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
     public function set_up() {
         parent::set_up();
 
-        if ( ! function_exists( 'diff_for_humans' ) || ! function_exists( 'td_conversation_status_label' ) ) {
+        if ( ! function_exists( 'diff_for_humans' ) || ! function_exists( 'td_conversation_status_label' ) || ! function_exists( 'td_paginator_label' ) ) {
             $this->markTestSkipped( 'Portal helpers are not loaded.' );
         }
     }
@@ -181,6 +181,50 @@ class TD_I18n_Helpers_Test extends WP_UnitTestCase {
                 $this->assertSame( $expected, td_conversation_status_label( $slug ), "{$language}: {$slug}" );
             }
         }
+
+        remove_filter( 'gettext_thrivedesk', $filter, 10 );
+    }
+
+    /* ---------------------------------------------------------------------
+     * td_paginator_label
+     * ------------------------------------------------------------------- */
+
+    /**
+     * The chevron entities from the Laravel paginator must decode to real « / »
+     * so esc_html() at render time doesn't print the raw "&laquo;" text.
+     */
+    public function test_paginator_label_decodes_chevron_entities() {
+        $this->assertSame( '« Previous', td_paginator_label( '&laquo; Previous' ) );
+        $this->assertSame( 'Next »', td_paginator_label( 'Next &raquo;' ) );
+    }
+
+    /** Page numbers and the ellipsis separator pass through untouched. */
+    public function test_paginator_label_passes_through_numbers_and_ellipsis() {
+        $this->assertSame( '1', td_paginator_label( '1' ) );
+        $this->assertSame( '42', td_paginator_label( '42' ) );
+        $this->assertSame( '...', td_paginator_label( '...' ) );
+    }
+
+    /** A null/empty label (defensive: missing url entry) stays an empty string. */
+    public function test_paginator_label_handles_empty() {
+        $this->assertSame( '', td_paginator_label( null ) );
+        $this->assertSame( '', td_paginator_label( '' ) );
+    }
+
+    /**
+     * The Previous/Next words localise (chevron preserved), proving the label
+     * routes through the `thrivedesk` domain like the rest of the portal.
+     */
+    public function test_paginator_label_translates_previous_next() {
+        $map    = [ 'Previous' => 'Précédent', 'Next' => 'Suivant' ];
+        $filter = static function ( $translation, $text ) use ( $map ) {
+            return $map[ $text ] ?? $translation;
+        };
+
+        add_filter( 'gettext_thrivedesk', $filter, 10, 2 );
+
+        $this->assertSame( '« Précédent', td_paginator_label( '&laquo; Previous' ) );
+        $this->assertSame( 'Suivant »', td_paginator_label( 'Next &raquo;' ) );
 
         remove_filter( 'gettext_thrivedesk', $filter, 10 );
     }

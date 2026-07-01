@@ -239,13 +239,9 @@ $open_count = $counts['active'] + $counts['open'];
                                     $page = 1;
                                     if ($params) { parse_str($params, $query); $page = $query['page'] ?? 1; }
                                     // The API returns Laravel paginator labels ("&laquo; Previous",
-                                    // "Next &raquo;", page numbers); translate the words while keeping
-                                    // whatever chevron markup the API sent.
-                                    $label = str_ireplace(
-                                        ['Previous', 'Next'],
-                                        [__('Previous', 'thrivedesk'), __('Next', 'thrivedesk')],
-                                        (string) ($link['label'] ?? '')
-                                    );
+                                    // "Next &raquo;", page numbers). td_paginator_label() decodes the
+                                    // chevron entities and localises the Previous/Next words.
+                                    $label = td_paginator_label($link['label'] ?? '');
                                 ?>
                                     <li class="<?php echo !empty($link['active']) ? 'pg-active' : ''; ?>">
                                         <?php if (!empty($link['url'])): ?>

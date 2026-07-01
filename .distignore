@@ -33,7 +33,6 @@ phpunit.xml
 phpunit.xml.dist
 .phpunit.result.cache
 tests/
-/bin
 .travis.yml
 .circleci/
 .codeclimate.yml
