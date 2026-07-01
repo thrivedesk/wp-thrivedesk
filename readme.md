@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.4.0
+Stable Tag: 2.4.1
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,16 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.4.1 =
+2026-07-01 - version 2.4.1
+* fix: The WooCommerce "Support" account tab (/my-account/td-support/) now resolves on its own once it's enabled, instead of returning a 404 until permalinks are manually re-saved
+* fix: Portal pagination now renders the « / » chevrons correctly instead of showing their raw HTML-entity text, and the disabled Previous/Next and "…" controls are styled to match the page numbers
+* fix: The ticket list and conversation view no longer render cramped inside the narrow WooCommerce My Account "Support" column — the portal layout now adapts to the width it actually has
+* fix: On the Support tab the ticket-details panel now sits above the conversation when the layout stacks, instead of being squeezed into a sliver beside it
+* fix: Customer avatars fall back to their initials instead of a generic Gravatar silhouette when the address has no Gravatar
+* fix: "Back to tickets" now returns to the Support tab list instead of dropping out to the main My Account page
+* dev: Plugin PHPUnit suite now runs in CI against PHP 7.4 (the minimum supported), with a PHP 7.4 compatibility gate and regression tests covering the portal fixes above
 
 = 2.4.0 =
 2026-06-29 - version 2.4.0
