@@ -5,6 +5,7 @@ namespace ThriveDesk\Conversations;
 // Exit if accessed directly.
 use DOMDocument;
 use ThriveDesk\Admin;
+use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -322,11 +323,21 @@ class Conversation
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             
-            if (get_option('td_helpdesk_settings')) {
+            $existing_settings = get_option('td_helpdesk_settings');
+
+            if ($existing_settings) {
                 update_option('td_helpdesk_settings', $td_helpdesk_settings);
             } else {
                 add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
+
+            // /my-account/td-support/ 404s until rewrite rules are refreshed. Tell
+            // UserAccountPages to flush on the next init if the WC tab toggle changed.
+            $old_pages = is_array($existing_settings) ? (array) ($existing_settings['td_user_account_pages'] ?? []) : [];
+            UserAccountPages::instance()->maybe_queue_rewrite_flush(
+                $old_pages,
+                (array) $td_helpdesk_settings['td_user_account_pages']
+            );
             
             // Clear all caches to ensure fresh data
             if (function_exists('remove_thrivedesk_all_cache')) {

@@ -1,0 +1,99 @@
+name: "PHPUnit"
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+concurrency:
+  group: phpunit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: PHPUnit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Plugin's declared minimum (readme "Requires PHP: 7.4").
+          - php: '7.4'
+            wp: latest
+
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      WP_PHPUNIT__TESTS_CONFIG: /tmp/wp-tests-config.php
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: mysqli, gd, zip, intl, mbstring, bcmath, exif
+        coverage: none
+        tools: composer
+
+    - name: Install Composer dependencies
+      run: composer install --prefer-dist --no-progress
+
+    # Static guard that shipped source stays within PHP 7.4 (the declared
+    # minimum). Separate from `composer phpcs`, whose WPCS ruleset still
+    # excludes legacy source during incremental adoption.
+    - name: PHP 7.4 compatibility
+      run: composer phpcompat
+
+    # WordPress core (for ABSPATH) + WooCommerce (so the WC integration tests
+    # run instead of skipping) + the wp-tests-config.php for the mariadb service.
+    # The test framework itself is the vendored wp-phpunit dev dep.
+    - name: Provision WordPress + WooCommerce test environment
+      env:
+        WP_VERSION: ${{ matrix.wp }}
+      run: |
+        set -euo pipefail
+        WP_CORE_DIR=/tmp/wordpress
+        mkdir -p "$WP_CORE_DIR"
+        archive="https://wordpress.org/latest.tar.gz"
+        if [ "$WP_VERSION" != latest ]; then
+          archive="https://wordpress.org/wordpress-${WP_VERSION}.tar.gz"
+        fi
+        curl -sSL "$archive" | tar --strip-components=1 -xz -C "$WP_CORE_DIR"
+        curl -sSL https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip -o /tmp/woocommerce.zip
+        unzip -q /tmp/woocommerce.zip -d "$WP_CORE_DIR/wp-content/plugins/"
+        cat > "$WP_PHPUNIT__TESTS_CONFIG" <<'PHP'
+        <?php
+        define( 'ABSPATH', '/tmp/wordpress/' );
+        define( 'WP_DEFAULT_THEME', 'default' );
+        define( 'DB_NAME', 'wordpress_test' );
+        define( 'DB_USER', 'root' );
+        define( 'DB_PASSWORD', 'root' );
+        define( 'DB_HOST', '127.0.0.1' );
+        define( 'DB_CHARSET', 'utf8' );
+        define( 'DB_COLLATE', '' );
+        $table_prefix = 'wptests_';
+        define( 'WP_TESTS_DOMAIN', 'example.org' );
+        define( 'WP_TESTS_EMAIL', 'admin@example.org' );
+        define( 'WP_TESTS_TITLE', 'Test Blog' );
+        define( 'WP_PHP_BINARY', 'php' );
+        PHP
+
+    - name: Run PHPUnit
+      run: composer test

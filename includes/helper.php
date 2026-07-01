@@ -108,6 +108,43 @@ if (!function_exists('td_conversation_status_label')) {
 	}
 }
 
+if (!function_exists('td_paginator_label')) {
+	/**
+	 * Display label for a paginator link.
+	 *
+	 * The API sends Laravel paginator labels: page numbers, an ellipsis, and
+	 * "&laquo; Previous" / "Next &raquo;" with the chevrons as HTML entities.
+	 * Decode the entities so esc_html() at render time shows a real « / »
+	 * instead of the raw "&laquo;" text, and run the Previous/Next words
+	 * through the text domain so they follow the site language.
+	 */
+	function td_paginator_label($label): string {
+		$label = html_entity_decode((string) $label, ENT_QUOTES);
+
+		return str_ireplace(
+			['Previous', 'Next'],
+			[__('Previous', 'thrivedesk'), __('Next', 'thrivedesk')],
+			$label
+		);
+	}
+}
+
+if (!function_exists('td_portal_back_to_list_url')) {
+	/**
+	 * URL back to the ticket list from a single conversation.
+	 *
+	 * The detail view is just the list with td_conversation_id in the query,
+	 * so dropping it lands back on the list. On the WooCommerce "Support" tab
+	 * (/my-account/td-support/) get_permalink() would resolve to the bare
+	 * /my-account/ page and bounce the customer out of the tab, hence the
+	 * remove_query_arg() instead. Other query args (status filter, page) get
+	 * kept so the user lands back where they were.
+	 */
+	function td_portal_back_to_list_url(): string {
+		return remove_query_arg('td_conversation_id');
+	}
+}
+
 /**
  * helpdesk options
  */
@@ -265,11 +302,16 @@ add_action('wp_ajax_thrivedesk_clear_cache', function () {
 });
 
 /*
- * Make a gravatar url from the current user email
+ * Make a gravatar url from the current user email.
+ *
+ * d=404 makes Gravatar 404 for unknown addresses instead of returning its
+ * generic silhouette, so the <img> onerror handler can swap in coloured
+ * initials. Without it everyone with no Gravatar account renders the same
+ * grey blob.
  */
 if (!function_exists('get_gravatar_url')) {
 	function get_gravatar_url($email, $size = 80): string {
 		$hash = md5(strtolower(trim($email)));
-		return "https://www.gravatar.com/avatar/$hash?s=$size";
+		return "https://www.gravatar.com/avatar/$hash?s=$size&d=404";
 	}
 }

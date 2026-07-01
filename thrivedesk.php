@@ -4,7 +4,7 @@
  * Description:         ThriveDesk is a help desk plugin for WordPress that brings live chat, AI chatbot, support ticketing, and a knowledge base into one place. Built for WooCommerce stores and eCommerce businesses. Resolve customer support tickets faster with shared inbox, automation, and AI-powered replies.
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, helpdesk, free live chat, knowledge base, thrivedesk
- * Version:             2.4.0
+ * Version:             2.4.1
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -49,6 +49,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Includes vendor files.
 require_once __DIR__ . '/vendor/autoload.php';
 
+// helpers.php registers hooks at file scope, so it has to load after WP is up.
+// Not via Composer's eager files autoload: that runs at vendor/autoload time,
+// which under PHPUnit is before WordPress exists.
+require_once __DIR__ . '/includes/helper.php';
+
 /**
  * Core plugin bootstrap: wires the plugin's constants and subsystems together.
  */
@@ -59,7 +64,7 @@ final class ThriveDesk {
 	 *
 	 * @var string
 	 */
-	public $version = '2.4.0';
+	public $version = '2.4.1';
 
 	/**
 	 * The single instance of this class

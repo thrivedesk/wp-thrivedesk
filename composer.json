@@ -24,6 +24,9 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
 	},
 	"config": {
+		"platform": {
+			"php": "7.4"
+		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
@@ -35,13 +38,11 @@
 				"src/Abstracts",
 				"Hooks/"
 			]
-		},
-		"files": [
-			"includes/helper.php"
-		]
+		}
 	},
 	"scripts": {
 		"phpcs": "phpcs",
+		"phpcompat": "phpcs -n --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php src includes Hooks database thrivedesk.php",
 		"test": "phpunit"
 	}
 }
