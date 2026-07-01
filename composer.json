@@ -42,7 +42,7 @@
 	},
 	"scripts": {
 		"phpcs": "phpcs",
-		"phpcompat": "phpcs --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php src includes Hooks database thrivedesk.php",
+		"phpcompat": "phpcs -n --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php src includes Hooks database thrivedesk.php",
 		"test": "phpunit"
 	}
 }
