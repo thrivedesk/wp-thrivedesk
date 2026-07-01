@@ -953,175 +953,15 @@
 		}
 	}
 
-	/* 2-col layout: thread on the left, sticky meta panel on the right.
-	   Collapses to one column on <1024px. No top margin so the meta
-	   panel starts flush with the toolbar/header at the top of the page. */
+	/* single-column layout: just the thread */
 	.td-conv-layout {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr);
-		gap: 1.5rem;
+		display: block;
 		margin-top: 0;
-	}
-	@container (min-width: 1024px) {
-		.td-conv-layout {
-			grid-template-columns: minmax(0, 1fr) 18rem;
-			gap: 2rem;
-		}
-	}
-	@container (min-width: 1280px) {
-		.td-conv-layout {
-			grid-template-columns: minmax(0, 1fr) 20rem;
-			gap: 2.5rem;
-		}
 	}
 
 	.td-conv-main {
 		min-width: 0;
 	}
-
-	/* sticky aside, position:sticky is on the grid cell itself, not
-	   the inner flex container, because sticky needs the parent to
-	   stretch to the full row height. The grid track stretches by
-	   default since the main column is taller. */
-	.td-conv-aside {
-		min-width: 0;
-		/* when stacked (single column, e.g. the My Account column) show the
-		   ticket-details panel above the thread; the two-column layout below
-		   resets this so the aside sits on the right. DOM order stays main-first
-		   for reading order. */
-		order: -1;
-	}
-	.td-conv-aside-inner {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-	@container (min-width: 1024px) {
-		.td-conv-aside {
-			order: 0;
-			position: sticky;
-			top: 5.5rem;
-			align-self: start; /* content-sized, but sticky still works
-			                      because the grid track itself stretches */
-			max-height: calc(100vh - 3rem);
-			overflow-y: auto;
-			scrollbar-width: thin;
-			scrollbar-color: hsl(var(--border)) transparent;
-		}
-		.td-conv-aside::-webkit-scrollbar { width: 6px; }
-		.td-conv-aside::-webkit-scrollbar-thumb {
-			background: hsl(var(--border));
-			border-radius: 3px;
-		}
-	}
-
-	/* meta cards inside the aside */
-	.td-aside-card {
-		padding: 0;
-		overflow: hidden;
-	}
-	.td-aside-card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem;
-		padding: 0.625rem 1rem;
-		border-bottom: 1px solid hsl(var(--border));
-		background: hsl(var(--muted) / 0.4);
-	}
-	.td-aside-label {
-		font-size: 0.6875rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: hsl(var(--muted-foreground));
-	}
-	.td-aside-row {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 0.75rem;
-		padding: 0.5rem 1rem;
-		border-bottom: 1px solid hsl(var(--border));
-		font-size: 0.8125rem;
-	}
-	.td-aside-row:last-child { border-bottom: 0; }
-	.td-aside-key {
-		color: hsl(var(--muted-foreground));
-		flex-shrink: 0;
-		font-weight: 500;
-	}
-	.td-aside-val {
-		color: hsl(var(--foreground));
-		text-align: right;
-		min-width: 0;
-		overflow-wrap: anywhere;
-		font-weight: 500;
-	}
-	.td-aside-val-sub {
-		display: block;
-		font-size: 0.6875rem;
-		color: hsl(var(--muted-foreground) / 0.8);
-		font-weight: 400;
-		margin-top: 0.125rem;
-	}
-	.td-aside-mono {
-		font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-		font-size: 0.75rem;
-		letter-spacing: 0.01em;
-	}
-
-	/* people card */
-	.td-aside-person {
-		display: flex;
-		align-items: flex-start;
-		gap: 0.625rem;
-		padding: 0.625rem 1rem;
-	}
-	.td-aside-person-meta {
-		display: flex;
-		flex-direction: column;
-		min-width: 0;
-		gap: 0.0625rem;
-	}
-	.td-aside-person-name {
-		font-size: 0.8125rem;
-		font-weight: 600;
-		color: hsl(var(--foreground));
-		overflow-wrap: anywhere;
-	}
-	.td-aside-person-role {
-		font-size: 0.625rem;
-		font-weight: 600;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
-		color: hsl(var(--muted-foreground));
-		margin-top: 0.0625rem;
-	}
-	.td-aside-person-email {
-		font-size: 0.6875rem;
-		color: hsl(var(--muted-foreground));
-		overflow-wrap: anywhere;
-		margin-top: 0.125rem;
-	}
-	.td-aside-sep {
-		height: 1px;
-		background: hsl(var(--border));
-	}
-	.td-aside-empty {
-		padding: 0.5rem 1rem 0.75rem;
-		font-size: 0.75rem;
-		color: hsl(var(--muted-foreground));
-		font-style: italic;
-	}
-
-	/* aside CTA */
-	.td-aside-cta {
-		margin-top: 0.25rem;
-		justify-content: center;
-		width: 100%;
-	}
-	.td-aside-cta svg { width: 1rem; height: 1rem; }
 
 	.td-back-link {
 		display: inline-flex;
@@ -1617,9 +1457,7 @@
 		background: hsl(var(--muted) / 0.4);
 	}
 
-	/* grouped result sections, JS injects these into #td-search-results.
-	   Each section uses the same header chrome as .td-aside-card-header
-	   so grouped result sets read the same as the meta cards. */
+	/* grouped result sections, JS injects these into #td-search-results */
 	.td-search-section + .td-search-section {
 		border-top: 1px solid hsl(var(--border));
 	}
