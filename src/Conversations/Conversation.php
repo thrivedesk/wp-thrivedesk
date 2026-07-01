@@ -5,6 +5,7 @@ namespace ThriveDesk\Conversations;
 // Exit if accessed directly.
 use DOMDocument;
 use ThriveDesk\Admin;
+use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -322,11 +323,24 @@ class Conversation
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             
-            if (get_option('td_helpdesk_settings')) {
+            $existing_settings = get_option('td_helpdesk_settings');
+
+            if ($existing_settings) {
                 update_option('td_helpdesk_settings', $td_helpdesk_settings);
             } else {
                 add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
+
+            // The WooCommerce "Support" tab uses the td-support rewrite endpoint, which only
+            // matches /my-account/td-support/ once rewrite rules are regenerated. Queue a flush
+            // whenever the toggle changes so the route stops 404ing (or falling through to the
+            // default account page); UserAccountPages::maybe_flush_rewrite_rules() runs it on the
+            // next request, after the endpoint is registered on init.
+            $old_pages = is_array($existing_settings) ? (array) ($existing_settings['td_user_account_pages'] ?? []) : [];
+            UserAccountPages::instance()->maybe_queue_rewrite_flush(
+                $old_pages,
+                (array) $td_helpdesk_settings['td_user_account_pages']
+            );
             
             // Clear all caches to ensure fresh data
             if (function_exists('remove_thrivedesk_all_cache')) {

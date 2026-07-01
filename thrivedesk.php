@@ -49,6 +49,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Includes vendor files.
 require_once __DIR__ . '/vendor/autoload.php';
 
+// Procedural helpers register WordPress hooks at file scope, so load them here
+// (with WordPress present) rather than via Composer's eager files autoload — that
+// runs at vendor/autoload time, which under PHPUnit is before WordPress exists.
+require_once __DIR__ . '/includes/helper.php';
+
 /**
  * Core plugin bootstrap: wires the plugin's constants and subsystems together.
  */
