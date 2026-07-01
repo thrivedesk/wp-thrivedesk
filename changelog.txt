@@ -1,5 +1,8 @@
 *** WooCommerce Extension Changelog ***
 
+2026-07-01 - version 2.4.2
+* improve: Dropped the right-side ticket-details panel from the conversation view. It just repeated what's already in the header (status, ticket ID, last update, message count), so the thread runs full-width now.
+
 2026-07-01 - version 2.4.1
 * fix: Support tab under My Account stopped throwing 404s on freshly enabled installs. No more "save permalinks" workaround.
 * fix: Portal pagination was rendering the literal `&laquo;` / `&raquo;` text on the page. Styled the disabled prev/next/ellipsis buttons to match the page numbers too.

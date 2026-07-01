@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.4.1
+Stable Tag: 2.4.2
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,10 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.4.2 =
+2026-07-01 - version 2.4.2
+* improve: Dropped the right-side ticket-details panel from the conversation view. It just repeated what's already in the header (status, ticket ID, last update, message count), so the thread runs full-width now.
 
 = 2.4.1 =
 2026-07-01 - version 2.4.1
