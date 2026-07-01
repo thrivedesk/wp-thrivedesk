@@ -30,12 +30,13 @@
 		"cssnano": "^5.1.14",
 		"laravel-mix": "^6.0.49",
 		"postcss": "^8.4.21",
-		"tailwindcss": "^4.0.0",
-		"webpack": "5.88.2",
-		"webpack-cli": "^4.10.0"
+		"tailwindcss": "^4.0.0"
 	},
 	"dependencies": {
 		"confetti-js": "^0.0.18",
 		"sweetalert2": "^11.4.8"
+	},
+	"overrides": {
+		"webpack": "~5.88.0"
 	}
 }
