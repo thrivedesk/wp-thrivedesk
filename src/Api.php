@@ -28,6 +28,7 @@ final class Api {
 	private $amount = null;
 	private $reason = null;
 	private $item_id = null;
+	private $subscription_status = null;
 
 	/**
 	 * Construct Api class.
@@ -100,6 +101,9 @@ final class Api {
 			$this->coupon       = sanitize_key( $_GET['coupon'] ?? '' );
 			$this->amount       = sanitize_key( $_GET['amount'] ?? '' );
 			$this->reason       = sanitize_key( $_GET['reason'] ?? '' );
+			// subscription_status is a free-text status key (e.g. 'cancelled',
+			// 'pending-cancellation'). sanitize_text_field keeps the dash.
+			$this->subscription_status = sanitize_text_field( wp_unslash( $_GET['subscription_status'] ?? '' ) );
 
 			// Plugin invalid response
 			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
@@ -146,6 +150,8 @@ final class Api {
 				$this->get_woocommerce_status_list();
 			} elseif ( isset( $action ) && 'woocommerce_order_status_update' === $action ) {
 				$this->woocommerce_order_status_update( $this->order_id, $this->order_status );
+			} elseif ( isset( $action ) && 'woocommerce_subscription_cancel' === $action ) {
+				$this->woocommerce_subscription_cancel( $this->order_id, $this->subscription_status );
 			} elseif ( isset( $action ) && 'woocommerce_order_quantity_update' === $action ) {
 				$this->woocommerce_order_quantity_update( $this->order_id, $this->item_id, $this->quantity );
 			} elseif ( isset( $action ) && 'woocommerce_order_apply_coupon' === $action ) {
@@ -327,6 +333,55 @@ final class Api {
 		$order->update_status( $orderStatus, '' );
 
 		$this->apiResponse->success( 200, [], 'Success' );
+	}
+
+	/**
+	 * Cancel (or mark pending-cancellation) any WooCommerce Subscriptions
+	 * attached to the given order. Used as a follow-up when an agent cancels
+	 * or fully refunds an order from the ThriveDesk ticket panel and the
+	 * merchant has opted in via the WooCommerce app settings.
+	 *
+	 * @param string $order_id
+	 * @param string $subscription_status  'cancelled' or 'pending-cancellation'.
+	 *
+	 * @return void
+	 */
+	public function woocommerce_subscription_cancel( string $order_id, string $subscription_status ) {
+		if ( ! function_exists( 'wcs_get_subscriptions_for_order' ) ) {
+			$this->apiResponse->error( 400, 'WooCommerce Subscriptions is not active on this site.' );
+			return;
+		}
+
+		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancellation' ], true ) ) {
+			$this->apiResponse->error( 400, 'Invalid subscription_status. Use cancelled or pending-cancellation.' );
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			$this->apiResponse->error( 404, 'Order not found.' );
+			return;
+		}
+
+		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent', 'renewal' ] ] );
+		if ( empty( $subscriptions ) ) {
+			$this->apiResponse->error( 404, 'No subscriptions found for this order.' );
+			return;
+		}
+
+		// Skip subscriptions already at the target status to avoid re-firing
+		// the WooCommerce status-changed hooks and downstream email/webhook
+		// cascades for a no-op update.
+		$updated = [];
+		foreach ( $subscriptions as $subscription ) {
+			if ( $subscription->get_status() === $subscription_status ) {
+				continue;
+			}
+			$subscription->update_status( $subscription_status );
+			$updated[] = (string) $subscription->get_id();
+		}
+
+		$this->apiResponse->success( 200, [ 'subscription_ids' => $updated ], 'Success' );
 	}
 
 	/**
