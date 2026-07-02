@@ -334,6 +334,58 @@ final class WooCommerce extends Plugin {
 		];
 	}
 
+	/**
+	 * Cancel (or mark pending-cancel) every WooCommerce Subscription whose
+	 * parent purchase is the given order. Used as a follow-up when an agent
+	 * cancels or fully refunds an order from the ThriveDesk ticket panel
+	 * and the merchant has opted in via the WooCommerce app settings.
+	 *
+	 * Returns the IDs of subscriptions whose status was actually changed.
+	 * Returns an empty array if no parent subscriptions exist for the order,
+	 * or if the order doesn't resolve, so the caller can map that to a 404.
+	 *
+	 * @param string $order_id
+	 * @param string $subscription_status  'cancelled' or 'pending-cancel'.
+	 *
+	 * @return int[]
+	 */
+	public function cancel_subscriptions_for_order( string $order_id, string $subscription_status ): array {
+		if ( ! function_exists( 'wcs_get_subscriptions_for_order' ) ) {
+			throw new \RuntimeException( 'WooCommerce Subscriptions is not active on this site.' );
+		}
+
+		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancel' ], true ) ) {
+			throw new \InvalidArgumentException( "Invalid subscription_status. Use 'cancelled' or 'pending-cancel'." );
+		}
+
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return [];
+		}
+
+		// Only target subscriptions whose parent purchase is this order.
+		// A renewal order represents one billing cycle; cancelling it should
+		// not stop the underlying subscription, only that single renewal.
+		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent' ] ] );
+		if ( empty( $subscriptions ) ) {
+			return [];
+		}
+
+		// Skip subscriptions already at the target status to avoid re-firing
+		// the WooCommerce status-changed hooks and downstream email/webhook
+		// cascades for a no-op update.
+		$updated = [];
+		foreach ( $subscriptions as $subscription ) {
+			if ( $subscription->get_status() === $subscription_status ) {
+				continue;
+			}
+			$subscription->update_status( $subscription_status );
+			$updated[] = (int) $subscription->get_id();
+		}
+
+		return $updated;
+	}
+
 
 	/**
 	 * get order shipping details

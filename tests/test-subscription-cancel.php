@@ -113,12 +113,12 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
         ] );
         $this->assertNotWPError( $subscription );
 
-        $response = $this->dispatch_subscription_cancel( (string) $order->get_id(), 'pending-cancellation' );
+        $response = $this->dispatch_subscription_cancel( (string) $order->get_id(), 'pending-cancel' );
 
         $this->assertSame( 'Success', $response['message'] ?? null );
 
         $subscription = wcs_get_subscription( $subscription->get_id() );
-        $this->assertSame( 'pending-cancellation', $subscription->get_status() );
+        $this->assertSame( 'pending-cancel', $subscription->get_status() );
     }
 
     public function test_subscription_cancel_updates_multiple_subscriptions_for_same_order() {
@@ -171,5 +171,37 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
         $this->expectException( \Exception::class );
 
         $this->dispatch_subscription_cancel( (string) $order->get_id(), 'cancelled' );
+    }
+
+    public function test_subscription_cancel_does_not_cancel_when_passed_a_renewal_order() {
+        // Parent order with a subscription; then create a renewal order for
+        // that subscription. Invoking the handler with the renewal order's
+        // ID must NOT cancel the underlying subscription.
+        $parent = wc_create_order();
+        $parent->set_status( 'processing' );
+        $parent->save();
+
+        $subscription = wcs_create_subscription( [
+            'order_id' => $parent->get_id(),
+            'status'   => 'active',
+            'billing_period' => 'month',
+            'billing_interval' => 1,
+        ] );
+        $this->assertNotWPError( $subscription );
+
+        $renewal = wc_create_order();
+        $renewal->set_status( 'pending' );
+        $renewal->save();
+        // Link the renewal to the subscription the way Subscriptions does.
+        $renewal->update_meta_data( '_subscription_renewal', $subscription->get_id() );
+        $renewal->save();
+
+        // Call the handler with the RENEWAL order id; we expect a 404
+        // because no subscriptions are linked to it as a parent.
+        $this->expectException( \Exception::class );
+        $this->dispatch_subscription_cancel( (string) $renewal->get_id(), 'cancelled' );
+
+        // Verify the underlying subscription is untouched.
+        $this->assertSame( 'active', wcs_get_subscription( $subscription->get_id() )->get_status() );
     }
 }

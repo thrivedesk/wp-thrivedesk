@@ -336,13 +336,13 @@ final class Api {
 	}
 
 	/**
-	 * Cancel (or mark pending-cancellation) any WooCommerce Subscriptions
-	 * attached to the given order. Used as a follow-up when an agent cancels
-	 * or fully refunds an order from the ThriveDesk ticket panel and the
-	 * merchant has opted in via the WooCommerce app settings.
+	 * Cancel (or mark pending-cancel) any WooCommerce Subscriptions whose
+	 * parent purchase is the given order. Used as a follow-up when an agent
+	 * cancels or fully refunds an order from the ThriveDesk ticket panel
+	 * and the merchant has opted in via the WooCommerce app settings.
 	 *
 	 * @param string $order_id
-	 * @param string $subscription_status  'cancelled' or 'pending-cancellation'.
+	 * @param string $subscription_status  'cancelled' or 'pending-cancel'.
 	 *
 	 * @return void
 	 */
@@ -352,8 +352,8 @@ final class Api {
 			return;
 		}
 
-		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancellation' ], true ) ) {
-			$this->apiResponse->error( 400, 'Invalid subscription_status. Use cancelled or pending-cancellation.' );
+		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancel' ], true ) ) {
+			$this->apiResponse->error( 400, "Invalid subscription_status. Use 'cancelled' or 'pending-cancel'." );
 			return;
 		}
 
@@ -363,7 +363,10 @@ final class Api {
 			return;
 		}
 
-		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent', 'renewal' ] ] );
+		// Only target subscriptions whose parent purchase is this order.
+		// A renewal order represents one billing cycle; cancelling it should
+		// not stop the underlying subscription, only that single renewal.
+		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent' ] ] );
 		if ( empty( $subscriptions ) ) {
 			$this->apiResponse->error( 404, 'No subscriptions found for this order.' );
 			return;
