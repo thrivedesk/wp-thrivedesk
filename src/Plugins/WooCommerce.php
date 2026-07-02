@@ -340,14 +340,17 @@ final class WooCommerce extends Plugin {
 	 * cancels or fully refunds an order from the ThriveDesk ticket panel
 	 * and the merchant has opted in via the WooCommerce app settings.
 	 *
-	 * Returns the IDs of subscriptions whose status was actually changed.
-	 * Returns an empty array if no parent subscriptions exist for the order,
-	 * or if the order doesn't resolve, so the caller can map that to a 404.
-	 *
 	 * @param string $order_id
 	 * @param string $subscription_status  'cancelled' or 'pending-cancel'.
 	 *
-	 * @return int[]
+	 * @return array {
+	 *     @type bool   $found            Whether any parent subscriptions
+	 *                                     exist for this order.
+	 *     @type int[]  $updated_ids      Subscription IDs whose status was
+	 *                                     actually changed. Empty when every
+	 *                                     subscription was already at the
+	 *                                     target status.
+	 * }
 	 */
 	public function cancel_subscriptions_for_order( string $order_id, string $subscription_status ): array {
 		if ( ! function_exists( 'wcs_get_subscriptions_for_order' ) ) {
@@ -360,7 +363,7 @@ final class WooCommerce extends Plugin {
 
 		$order = wc_get_order( $order_id );
 		if ( ! $order ) {
-			return [];
+			throw new \RuntimeException( 'Order not found.' );
 		}
 
 		// Only target subscriptions whose parent purchase is this order.
@@ -368,22 +371,25 @@ final class WooCommerce extends Plugin {
 		// not stop the underlying subscription, only that single renewal.
 		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent' ] ] );
 		if ( empty( $subscriptions ) ) {
-			return [];
+			return [ 'found' => false, 'updated_ids' => [] ];
 		}
 
 		// Skip subscriptions already at the target status to avoid re-firing
 		// the WooCommerce status-changed hooks and downstream email/webhook
 		// cascades for a no-op update.
-		$updated = [];
+		$updated_ids = [];
 		foreach ( $subscriptions as $subscription ) {
 			if ( $subscription->get_status() === $subscription_status ) {
 				continue;
 			}
 			$subscription->update_status( $subscription_status );
-			$updated[] = (int) $subscription->get_id();
+			$updated_ids[] = (int) $subscription->get_id();
 		}
 
-		return $updated;
+		return [
+			'found'       => true,
+			'updated_ids' => $updated_ids,
+		];
 	}
 
 

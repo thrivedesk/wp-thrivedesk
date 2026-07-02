@@ -100,7 +100,7 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
         $this->assertSame( 'cancelled', $subscription->get_status() );
     }
 
-    public function test_subscription_cancel_sets_status_to_pending_cancellation() {
+    public function test_subscription_cancel_sets_status_to_pending_cancel() {
         $order = wc_create_order();
         $order->set_status( 'processing' );
         $order->save();
@@ -161,6 +161,62 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
         $this->expectException( \Exception::class );
 
         $this->dispatch_subscription_cancel( (string) $order->get_id(), 'not-a-real-status' );
+    }
+
+    public function test_subscription_cancel_is_idempotent_when_already_cancelled() {
+        // Once the subscription is already cancelled, a second call should
+        // succeed (200) with an empty subscription_ids list rather than
+        // returning a 404. Cancellation is the desired end state; treating
+        // "already there" as an error would surface confusing messages to
+        // the agent.
+        $order = wc_create_order();
+        $order->set_status( 'processing' );
+        $order->save();
+
+        $subscription = wcs_create_subscription( [
+            'order_id' => $order->get_id(),
+            'status'   => 'cancelled',
+            'billing_period' => 'month',
+            'billing_interval' => 1,
+        ] );
+        $this->assertNotWPError( $subscription );
+
+        $response = $this->dispatch_subscription_cancel( (string) $order->get_id(), 'cancelled' );
+
+        $this->assertSame( 'Success', $response['message'] ?? null );
+        $this->assertSame( [], $response['data']['subscription_ids'] ?? [ 'unexpected' ] );
+    }
+
+    public function test_plugin_cancel_subscriptions_for_order_returns_structured_result() {
+        // Exercises the plugin-class contract directly, not via the Api
+        // dispatcher. The plugin returns [ 'found' => bool, 'updated_ids' => int[] ]
+        // so the dispatcher can distinguish "no subscriptions" (404) from
+        // "already cancelled" (200, empty list).
+        $order = wc_create_order();
+        $order->save();
+
+        // No subscriptions for this order — result must report not found.
+        $result = $this->plugin->cancel_subscriptions_for_order( (string) $order->get_id(), 'cancelled' );
+        $this->assertFalse( $result['found'] );
+        $this->assertSame( [], $result['updated_ids'] );
+
+        // Add a subscription and try again.
+        $sub = wcs_create_subscription( [
+            'order_id' => $order->get_id(),
+            'status'   => 'active',
+            'billing_period' => 'month',
+            'billing_interval' => 1,
+        ] );
+        $this->assertNotWPError( $sub );
+
+        $result = $this->plugin->cancel_subscriptions_for_order( (string) $order->get_id(), 'cancelled' );
+        $this->assertTrue( $result['found'] );
+        $this->assertSame( [ $sub->get_id() ], $result['updated_ids'] );
+
+        // Idempotent: sub is now cancelled.
+        $result = $this->plugin->cancel_subscriptions_for_order( (string) $order->get_id(), 'cancelled' );
+        $this->assertTrue( $result['found'] );
+        $this->assertSame( [], $result['updated_ids'] );
     }
 
     public function test_subscription_cancel_returns_404_for_order_without_subscriptions() {

@@ -337,54 +337,35 @@ final class Api {
 
 	/**
 	 * Cancel (or mark pending-cancel) any WooCommerce Subscriptions whose
-	 * parent purchase is the given order. Used as a follow-up when an agent
-	 * cancels or fully refunds an order from the ThriveDesk ticket panel
-	 * and the merchant has opted in via the WooCommerce app settings.
+	 * parent purchase is the given order. Delegates to the plugin class.
 	 *
-	 * @param string $order_id
-	 * @param string $subscription_status  'cancelled' or 'pending-cancel'.
-	 *
-	 * @return void
+	 * @since 2.x.x
 	 */
 	public function woocommerce_subscription_cancel( string $order_id, string $subscription_status ) {
-		if ( ! function_exists( 'wcs_get_subscriptions_for_order' ) ) {
-			$this->apiResponse->error( 400, 'WooCommerce Subscriptions is not active on this site.' );
-			return;
+		if ( ! $order_id ) {
+			$this->apiResponse->error( 400, 'order_id is required.' );
 		}
 
-		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancel' ], true ) ) {
-			$this->apiResponse->error( 400, "Invalid subscription_status. Use 'cancelled' or 'pending-cancel'." );
-			return;
+		if ( ! method_exists( $this->plugin, 'cancel_subscriptions_for_order' ) ) {
+			$this->apiResponse->error( 500, "Method 'cancel_subscriptions_for_order' not exist in plugin" );
 		}
 
-		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
-			$this->apiResponse->error( 404, 'Order not found.' );
-			return;
+		try {
+			$result = $this->plugin->cancel_subscriptions_for_order( $order_id, $subscription_status );
+		} catch ( \InvalidArgumentException $e ) {
+			$this->apiResponse->error( 400, $e->getMessage() );
+		} catch ( \RuntimeException $e ) {
+			$this->apiResponse->error( 404, $e->getMessage() );
 		}
 
-		// Only target subscriptions whose parent purchase is this order.
-		// A renewal order represents one billing cycle; cancelling it should
-		// not stop the underlying subscription, only that single renewal.
-		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent' ] ] );
-		if ( empty( $subscriptions ) ) {
-			$this->apiResponse->error( 404, 'No subscriptions found for this order.' );
-			return;
+		if ( empty( $result['found'] ) ) {
+			$this->apiResponse->error( 404, 'No parent subscriptions found for this order.' );
 		}
 
-		// Skip subscriptions already at the target status to avoid re-firing
-		// the WooCommerce status-changed hooks and downstream email/webhook
-		// cascades for a no-op update.
-		$updated = [];
-		foreach ( $subscriptions as $subscription ) {
-			if ( $subscription->get_status() === $subscription_status ) {
-				continue;
-			}
-			$subscription->update_status( $subscription_status );
-			$updated[] = (string) $subscription->get_id();
-		}
-
-		$this->apiResponse->success( 200, [ 'subscription_ids' => $updated ], 'Success' );
+		// Idempotent success: subs exist, all were already at the target
+		// status, so nothing changed — return 200 with an empty list rather
+		// than treating it as an error.
+		$this->apiResponse->success( 200, [ 'subscription_ids' => array_map( 'strval', $result['updated_ids'] ) ], 'Success' );
 	}
 
 	/**
