@@ -1,11 +1,11 @@
 <?php
 /**
- * Tests for the WooCommerce subscription cancel handler
- * (Api::woocommerce_subscription_cancel).
+ * Tests for the WooCommerce subscription cancel handler.
  *
- * Locks in the fix for the bug where cancelling or fully refunding an order
- * from the ThriveDesk ticket panel only updated the parent order, leaving the
- * underlying WooCommerce Subscriptions subscription Active and still billing.
+ * The business logic lives in \ThriveDesk\Plugins\WooCommerce::
+ * cancel_subscriptions_for_order(); \ThriveDesk\Api::woocommerce_subscription_cancel()
+ * is a thin dispatcher that converts the structured result into a JSON
+ * response. Both layers are exercised here.
  *
  * @package ThriveDesk
  */
