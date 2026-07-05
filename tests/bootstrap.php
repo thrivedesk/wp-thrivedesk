@@ -52,6 +52,12 @@ function _td_manually_load_plugin() {
         require $woocommerce;
     }
 
+    // WPSubscription if the env has it — cancel handler covers its API.
+    $wpsubscription = WP_PLUGIN_DIR . '/subscription/subscription.php';
+    if ( file_exists( $wpsubscription ) ) {
+        require $wpsubscription;
+    }
+
     require dirname( __DIR__ ) . '/thrivedesk.php';
 
     // WooCommerce Subscriptions is commercial and not part of this

@@ -61,10 +61,11 @@ jobs:
     - name: PHP 7.4 compatibility
       run: composer phpcompat
 
-    # WordPress core (for ABSPATH) + WooCommerce (so the WC integration tests
-    # run instead of skipping) + the wp-tests-config.php for the mariadb service.
-    # The test framework itself is the vendored wp-phpunit dev dep.
-    - name: Provision WordPress + WooCommerce test environment
+    # WordPress core (for ABSPATH) + WooCommerce and WPSubscription (so the
+    # integration tests for both run instead of skipping) + the
+    # wp-tests-config.php for the mariadb service. The test framework itself
+    # is the vendored wp-phpunit dev dep.
+    - name: Provision WordPress + WooCommerce + WPSubscription test environment
       env:
         WP_VERSION: ${{ matrix.wp }}
       run: |
@@ -78,6 +79,8 @@ jobs:
         curl -sSL "$archive" | tar --strip-components=1 -xz -C "$WP_CORE_DIR"
         curl -sSL https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip -o /tmp/woocommerce.zip
         unzip -q /tmp/woocommerce.zip -d "$WP_CORE_DIR/wp-content/plugins/"
+        curl -sSL https://downloads.wordpress.org/plugin/subscription.latest-stable.zip -o /tmp/subscription.zip
+        unzip -q /tmp/subscription.zip -d "$WP_CORE_DIR/wp-content/plugins/"
         cat > "$WP_PHPUNIT__TESTS_CONFIG" <<'PHP'
         <?php
         define( 'ABSPATH', '/tmp/wordpress/' );
