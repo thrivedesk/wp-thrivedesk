@@ -1,5 +1,12 @@
 *** WooCommerce Extension Changelog ***
 
+2026-07-05 - version 2.5.0
+* feat: Cancelling or fully refunding an order from a ThriveDesk ticket now cancels the related subscription, so recurring billing actually stops. Works with both WooCommerce Subscriptions and WPSubscription (the "Subscription for WooCommerce" plugin).
+* feat: Fully refunding a renewal order cancels the subscription it belongs to. Cancelling a single renewal order leaves the subscription running, so one skipped invoice never kills a customer's plan.
+* fix: Order status updates from ThriveDesk resolve custom order numbers now (WebToffee, SkyVerge, Tyche and friends). Before this the update reported success while changing nothing on stores with custom numbering, and a miss now returns a proper 404 instead of a blind success.
+* fix: ThriveDesk API requests are processed on wp_loaded instead of init. Running inside init could fatal mid-request on stores where another plugin (WooCommerce Subscriptions among them) had not finished its own setup yet.
+* dev: CI provisions WooCommerce and WPSubscription so the integration tests for both run on every build instead of skipping. WooCommerce Subscriptions is exercised through a lightweight test double since the extension can't be redistributed.
+
 2026-07-01 - version 2.4.2
 * improve: Dropped the right-side ticket-details panel from the conversation view. It just repeated what's already in the header (status, ticket ID, last update, message count), so the thread runs full-width now.
 

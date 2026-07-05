@@ -52,7 +52,20 @@ function _td_manually_load_plugin() {
         require $woocommerce;
     }
 
+    // WPSubscription if the env has it — cancel handler covers its API.
+    // Its current code needs PHP 8.0+ (union types), so skip on older PHP.
+    $wpsubscription = WP_PLUGIN_DIR . '/subscription/subscription.php';
+    if ( PHP_VERSION_ID >= 80000 && file_exists( $wpsubscription ) ) {
+        require $wpsubscription;
+    }
+
     require dirname( __DIR__ ) . '/thrivedesk.php';
+
+    // WooCommerce Subscriptions is commercial and not part of this
+    // environment. Stubs keep the subscription-cancel tests running
+    // instead of skipping, and stay dormant when the real extension
+    // is loaded.
+    require __DIR__ . '/stubs/wcs-functions.php';
 }
 tests_add_filter( 'muplugins_loaded', '_td_manually_load_plugin' );
 
