@@ -53,8 +53,9 @@ function _td_manually_load_plugin() {
     }
 
     // WPSubscription if the env has it — cancel handler covers its API.
+    // Its current code needs PHP 8.0+ (union types), so skip on older PHP.
     $wpsubscription = WP_PLUGIN_DIR . '/subscription/subscription.php';
-    if ( file_exists( $wpsubscription ) ) {
+    if ( PHP_VERSION_ID >= 80000 && file_exists( $wpsubscription ) ) {
         require $wpsubscription;
     }
 

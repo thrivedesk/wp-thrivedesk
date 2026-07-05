@@ -458,6 +458,14 @@ final class WooCommerce extends Plugin {
 	 * The durable fix is a stable public API in WPSubscription itself.
 	 */
 	private function is_wpsubscription_usable(): bool {
+		// WPSubscription's current code needs PHP 8.0 (union types) despite
+		// its declared 7.4 minimum. class_exists() autoloads the class, so
+		// probing it on older PHP would trigger the plugin's own parse
+		// error. Bail before touching its autoloader.
+		if ( PHP_VERSION_ID < 80000 ) {
+			return false;
+		}
+
 		return class_exists( '\SpringDevs\Subscription\Illuminate\Helper' )
 			&& class_exists( '\SpringDevs\Subscription\Illuminate\Action' )
 			&& method_exists( '\SpringDevs\Subscription\Illuminate\Helper', 'get_subscriptions_from_order' )
