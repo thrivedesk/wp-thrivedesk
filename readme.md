@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.4.2
+Stable Tag: 2.5.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,14 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.5.0 =
+2026-07-05 - version 2.5.0
+* feat: Cancelling or fully refunding an order from a ThriveDesk ticket now cancels the related subscription, so recurring billing actually stops. Works with both WooCommerce Subscriptions and WPSubscription (the "Subscription for WooCommerce" plugin).
+* feat: Fully refunding a renewal order cancels the subscription it belongs to. Cancelling a single renewal order leaves the subscription running, so one skipped invoice never kills a customer's plan.
+* fix: Order status updates from ThriveDesk resolve custom order numbers now (WebToffee, SkyVerge, Tyche and friends). Before this the update reported success while changing nothing on stores with custom numbering, and a miss now returns a proper 404 instead of a blind success.
+* fix: ThriveDesk API requests are processed on wp_loaded instead of init. Running inside init could fatal mid-request on stores where another plugin (WooCommerce Subscriptions among them) had not finished its own setup yet.
+* dev: CI provisions WooCommerce and WPSubscription so the integration tests for both run on every build instead of skipping. WooCommerce Subscriptions is exercised through a lightweight test double since the extension can't be redistributed.
 
 = 2.4.2 =
 2026-07-01 - version 2.4.2
