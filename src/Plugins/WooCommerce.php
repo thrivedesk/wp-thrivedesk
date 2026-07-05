@@ -335,16 +335,46 @@ final class WooCommerce extends Plugin {
 	}
 
 	/**
-	 * Cancel (or mark pending-cancel) every WooCommerce Subscription whose
-	 * parent purchase is the given order. Used as a follow-up when an agent
-	 * cancels or fully refunds an order from the ThriveDesk ticket panel
-	 * and the merchant has opted in via the WooCommerce app settings.
+	 * Update an order's status. Resolves the panel's customer-facing order
+	 * number to the real order, so stores running sequential order numbering
+	 * update the order the agent is actually looking at.
 	 *
-	 * @param string $order_id
-	 * @param string $subscription_status  'cancelled' or 'pending-cancel'.
+	 * @param string $order_id    Customer-facing order number or post ID.
+	 * @param string $new_status  WooCommerce order status (wc- prefix allowed).
+	 *
+	 * @return bool false when no order matches.
+	 *
+	 * @since 2.5.0
+	 */
+	public function update_order_status( string $order_id, string $new_status ): bool {
+		$order = $this->get_order_by_number_or_id( $order_id );
+		if ( ! $order ) {
+			return false;
+		}
+
+		$order->update_status( $new_status, '' );
+
+		return true;
+	}
+
+	/**
+	 * Cancel (or mark pending-cancel) every WooCommerce Subscription related
+	 * to the given order. Used as a follow-up when an agent cancels or fully
+	 * refunds an order from the ThriveDesk ticket panel and the merchant has
+	 * opted in via the WooCommerce app settings.
+	 *
+	 * Order-cancel follow-ups pass [ 'parent' ] so cancelling one renewal
+	 * invoice never kills the subscription. Full-refund follow-ups pass
+	 * [ 'parent', 'renewal' ] so refunding a renewal order stops the billing
+	 * the customer just got their money back for.
+	 *
+	 * @param string   $order_id             Customer-facing order number or post ID.
+	 * @param string   $subscription_status  'cancelled' or 'pending-cancel'.
+	 * @param string[] $order_types          How the order relates to the
+	 *                                       subscription: 'parent' and/or 'renewal'.
 	 *
 	 * @return array {
-	 *     @type bool   $found            Whether any parent subscriptions
+	 *     @type bool   $found            Whether any related subscriptions
 	 *                                     exist for this order.
 	 *     @type int[]  $updated_ids      Subscription IDs whose status was
 	 *                                     actually changed. Empty when every
@@ -352,34 +382,44 @@ final class WooCommerce extends Plugin {
 	 *                                     target status.
 	 * }
 	 */
-	public function cancel_subscriptions_for_order( string $order_id, string $subscription_status ): array {
+	public function cancel_subscriptions_for_order( string $order_id, string $subscription_status, array $order_types = [ 'parent' ] ): array {
+		// No Subscriptions extension means nothing can need cancelling.
+		// This runs automatically after every panel cancel/refund, so it
+		// must be a quiet no-op on stores that don't sell subscriptions.
 		if ( ! function_exists( 'wcs_get_subscriptions_for_order' ) ) {
-			throw new \RuntimeException( 'WooCommerce Subscriptions is not active on this site.' );
+			return [ 'found' => false, 'updated_ids' => [] ];
 		}
 
 		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancel' ], true ) ) {
 			throw new \InvalidArgumentException( "Invalid subscription_status. Use 'cancelled' or 'pending-cancel'." );
 		}
 
-		$order = wc_get_order( $order_id );
+		$order_types = array_values( array_intersect( $order_types, [ 'parent', 'renewal' ] ) );
+		if ( empty( $order_types ) ) {
+			throw new \InvalidArgumentException( "Invalid order_types. Use 'parent' and/or 'renewal'." );
+		}
+
+		// The panel sends the customer-facing order number, which differs
+		// from the post ID on stores running sequential order numbering.
+		$order = $this->get_order_by_number_or_id( $order_id );
 		if ( ! $order ) {
 			throw new \RuntimeException( 'Order not found.' );
 		}
 
-		// Only target subscriptions whose parent purchase is this order.
-		// A renewal order represents one billing cycle; cancelling it should
-		// not stop the underlying subscription, only that single renewal.
-		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => [ 'parent' ] ] );
+		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => $order_types ] );
 		if ( empty( $subscriptions ) ) {
 			return [ 'found' => false, 'updated_ids' => [] ];
 		}
 
-		// Skip subscriptions already at the target status to avoid re-firing
-		// the WooCommerce status-changed hooks and downstream email/webhook
-		// cascades for a no-op update.
+		// Skip subscriptions already at the target status (idempotent retry)
+		// and ones WCS refuses to transition (e.g. already expired), so a
+		// no-op never re-fires the status-changed hook cascade.
 		$updated_ids = [];
 		foreach ( $subscriptions as $subscription ) {
 			if ( $subscription->get_status() === $subscription_status ) {
+				continue;
+			}
+			if ( ! $subscription->can_be_updated_to( $subscription_status ) ) {
 				continue;
 			}
 			$subscription->update_status( $subscription_status );

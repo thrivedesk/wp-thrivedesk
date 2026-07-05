@@ -53,6 +53,12 @@ function _td_manually_load_plugin() {
     }
 
     require dirname( __DIR__ ) . '/thrivedesk.php';
+
+    // WooCommerce Subscriptions is commercial and not part of this
+    // environment. Stubs keep the subscription-cancel tests running
+    // instead of skipping, and stay dormant when the real extension
+    // is loaded.
+    require __DIR__ . '/stubs/wcs-functions.php';
 }
 tests_add_filter( 'muplugins_loaded', '_td_manually_load_plugin' );
 
