@@ -1,10 +1,40 @@
 *** WooCommerce Extension Changelog ***
 
-2026-06-25 - version 2.3.1
+2026-07-05 - version 2.5.0
+* feat: Cancelling or fully refunding an order from a ThriveDesk ticket now cancels the related subscription, so recurring billing actually stops. Works with both WooCommerce Subscriptions and WPSubscription (the "Subscription for WooCommerce" plugin).
+* feat: Fully refunding a renewal order cancels the subscription it belongs to. Cancelling a single renewal order leaves the subscription running, so one skipped invoice never kills a customer's plan.
+* fix: Order status updates from ThriveDesk resolve custom order numbers now (WebToffee, SkyVerge, Tyche and friends). Before this the update reported success while changing nothing on stores with custom numbering, and a miss now returns a proper 404 instead of a blind success.
+* fix: ThriveDesk API requests are processed on wp_loaded instead of init. Running inside init could fatal mid-request on stores where another plugin (WooCommerce Subscriptions among them) had not finished its own setup yet.
+* dev: CI provisions WooCommerce and WPSubscription so the integration tests for both run on every build instead of skipping. WooCommerce Subscriptions is exercised through a lightweight test double since the extension can't be redistributed.
+
+2026-07-01 - version 2.4.2
+* improve: Dropped the right-side ticket-details panel from the conversation view. It just repeated what's already in the header (status, ticket ID, last update, message count), so the thread runs full-width now.
+
+2026-07-01 - version 2.4.1
+* fix: Support tab under My Account stopped throwing 404s on freshly enabled installs. No more "save permalinks" workaround.
+* fix: Portal pagination was rendering the literal `&laquo;` / `&raquo;` text on the page. Styled the disabled prev/next/ellipsis buttons to match the page numbers too.
+* fix: Portal layout was ignoring the narrow My Account column and squashing everything. It now adapts to whatever width it actually gets.
+* fix: On stacked layouts the ticket-details panel sits above the conversation again instead of getting shoved into a sliver beside it.
+* fix: Customer avatars fall back to initials when there's no Gravatar (the default silhouette was unsettling).
+* fix: "Back to tickets" takes you to the Support tab list again, not the main My Account dashboard.
+* dev: PHPUnit suite runs in CI on PHP 7.4 (our min-supported version), with a hard 7.4 compat gate and regression coverage for the portal fixes above.
+
+2026-06-29 - version 2.4.0
+* feat: Full translation support. The customer portal, WooCommerce "Support" tab, admin settings screens, and in-page dialogs all go through the `thrivedesk` text domain now.
+* fix: Status labels (Active/Pending/Closed), "3 months ago"-style timestamps, and the portal prev/next pagination honor the site language instead of staying English.
+* fix: Settings-page hint about setting up the ticket form wasn't translatable at all. The text domain was being passed to the wrong function. Now it actually translates.
+* dev: Added PHPUnit coverage for the i18n helpers in English, French, Spanish, German, Arabic, and the Russian-style multi-form plural rules.
+
+2026-06-28 - version 2.3.1
 * fix: WooCommerce order status no longer returns a different order than the one the customer asked for (resolves issue #167, "Lynne's bug")
 * fix: Compatibility with Sequential Order Numbers for WooCommerce (WebToffee), Tyche Custom Order Numbers, SkyVerge Sequential Order Numbers, and Sequential Order Numbers Pro custom order numbers now resolve to the right internal order
 * fix: A customer can no longer retrieve another customer's order by guessing an order number (ownership check on resolved order)
 * fix: HPOS-only WooCommerce installs are now supported (the resolver checks wp_wc_orders_meta in addition to wp_postmeta)
+* fix: Search modal in the helpdesk portal now renders KB and WordPress search results correctly
+* fix: WordPress REST search endpoint resolves whether or not pretty permalinks are enabled (uses ?rest_route= form)
+* fix: Locked "Create ticket" button no longer renders as a broken link when no ticket page is configured
+* improve: Search modal loading spinner moved into the dialog body for clearer in-flight feedback
+* improve: Modal header and loading label now use the same system font stack as the rest of the dialog
 * dev: PHPUnit regression tests for the order status resolver
 
 2026-06-24 - version 2.3.0

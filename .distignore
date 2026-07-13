@@ -37,8 +37,8 @@ tests/
 .circleci/
 .codeclimate.yml
 
-# Documentation (if not needed in release)
-README.md
+# Exclude readme.md since wp.org uses the generated readme.txt
+readme.md
 CHANGELOG.md
 CONTRIBUTING.md
 

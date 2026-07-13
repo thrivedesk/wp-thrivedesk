@@ -4,7 +4,6 @@ namespace ThriveDesk;
 
 use ThriveDesk\Api\ApiResponse;
 use WC_Product_Query;
-use WC_Order;
 use WC_Order_Item_Product;
 
 // Exit if accessed directly.
@@ -28,6 +27,8 @@ final class Api {
 	private $amount = null;
 	private $reason = null;
 	private $item_id = null;
+	private $subscription_status = null;
+	private $order_types = null;
 
 	/**
 	 * Construct Api class.
@@ -36,7 +37,11 @@ final class Api {
 	 * @access private
 	 */
 	private function __construct() {
-		add_action( 'init', [ $this, 'api_listener' ] );
+		// wp_loaded, not init: the listener drives other plugins (order
+		// status changes fire WooCommerce Subscriptions' scheduler, which
+		// only finishes its own setup at init 10). Running inside init can
+		// execute before that setup and fatal mid-request.
+		add_action( 'wp_loaded', [ $this, 'api_listener' ] );
 
 		$this->apiResponse = new ApiResponse();
 	}
@@ -100,6 +105,11 @@ final class Api {
 			$this->coupon       = sanitize_key( $_GET['coupon'] ?? '' );
 			$this->amount       = sanitize_key( $_GET['amount'] ?? '' );
 			$this->reason       = sanitize_key( $_GET['reason'] ?? '' );
+			// subscription_status is a status key with a dash (e.g. 'cancelled',
+			// 'pending-cancel') and order_types a comma list ('parent,renewal'),
+			// so sanitize_text_field instead of sanitize_key for both.
+			$this->subscription_status = sanitize_text_field( wp_unslash( $_GET['subscription_status'] ?? '' ) );
+			$this->order_types         = sanitize_text_field( wp_unslash( $_GET['order_types'] ?? '' ) );
 
 			// Plugin invalid response
 			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
@@ -146,6 +156,8 @@ final class Api {
 				$this->get_woocommerce_status_list();
 			} elseif ( isset( $action ) && 'woocommerce_order_status_update' === $action ) {
 				$this->woocommerce_order_status_update( $this->order_id, $this->order_status );
+			} elseif ( isset( $action ) && 'woocommerce_subscription_cancel' === $action ) {
+				$this->woocommerce_subscription_cancel( $this->order_id, $this->subscription_status, $this->order_types );
 			} elseif ( isset( $action ) && 'woocommerce_order_quantity_update' === $action ) {
 				$this->woocommerce_order_quantity_update( $this->order_id, $this->item_id, $this->quantity );
 			} elseif ( isset( $action ) && 'woocommerce_order_apply_coupon' === $action ) {
@@ -195,7 +207,9 @@ final class Api {
 	 */
 	public function get_woocommerce_order_status() {
 		$email    = sanitize_email( $_REQUEST['email'] ?? '' );
-		$order_id = sanitize_key( $_REQUEST['order_id'] ?? '' );
+		// Use sanitize_text_field instead of sanitize_key because custom order numbers
+		// can contain characters like slashes, dashes, or spaces (e.g., "2025/001").
+		$order_id = sanitize_text_field( wp_unslash( $_REQUEST['order_id'] ?? '' ) );
 
 		if ( ! $order_id ) {
 			$this->apiResponse->error( 400, 'order_id is required.' );
@@ -321,10 +335,56 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_status_update( string $order_id, string $orderStatus ) {
-		$order = new WC_Order( $order_id );
-		$order->update_status( $orderStatus, '' );
+		if ( ! method_exists( $this->plugin, 'update_order_status' ) ) {
+			$this->apiResponse->error( 500, "Method 'update_order_status' not exist in plugin" );
+		}
+
+		// The panel sends the customer-facing order number, which on stores
+		// running sequential order numbering differs from the post ID. The
+		// plugin resolves it and reports a miss instead of a blind success.
+		if ( ! $this->plugin->update_order_status( $order_id, $orderStatus ) ) {
+			$this->apiResponse->error( 404, 'Order not found.' );
+		}
 
 		$this->apiResponse->success( 200, [], 'Success' );
+	}
+
+	/**
+	 * Cancel (or mark pending-cancel) any WooCommerce Subscriptions related
+	 * to the given order. Delegates to the plugin class.
+	 *
+	 * Runs as an automatic follow-up to every panel cancel/refund, so an
+	 * order with no related subscriptions (or a store without the
+	 * Subscriptions extension) responds 200 with an empty id list rather
+	 * than an error. Only bad input or a missing order is a failure.
+	 *
+	 * @param string $order_id
+	 * @param string $subscription_status  'cancelled' or 'pending-cancel'.
+	 * @param string $order_types          Comma list of order relationships
+	 *                                     ('parent', 'renewal'). Empty means parent.
+	 *
+	 * @since 2.5.0
+	 */
+	public function woocommerce_subscription_cancel( string $order_id, string $subscription_status, string $order_types = '' ) {
+		if ( ! $order_id ) {
+			$this->apiResponse->error( 400, 'order_id is required.' );
+		}
+
+		if ( ! method_exists( $this->plugin, 'cancel_subscriptions_for_order' ) ) {
+			$this->apiResponse->error( 500, "Method 'cancel_subscriptions_for_order' not exist in plugin" );
+		}
+
+		$order_types = $order_types ? array_map( 'trim', explode( ',', $order_types ) ) : [ 'parent' ];
+
+		try {
+			$result = $this->plugin->cancel_subscriptions_for_order( $order_id, $subscription_status, $order_types );
+		} catch ( \InvalidArgumentException $e ) {
+			$this->apiResponse->error( 400, $e->getMessage() );
+		} catch ( \RuntimeException $e ) {
+			$this->apiResponse->error( 404, $e->getMessage() );
+		}
+
+		$this->apiResponse->success( 200, [ 'subscription_ids' => array_map( 'strval', $result['updated_ids'] ) ], 'Success' );
 	}
 
 	/**

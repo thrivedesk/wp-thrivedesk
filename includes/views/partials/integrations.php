@@ -92,7 +92,7 @@ $plugins = [
                         </button>
                         <?php if ( ! $plugin['installed'] ) : ?>
                             <div class="text-gray-400 text-[11px] text-center mt-1">
-                                <span>Not installed</span>
+                                <span><?php esc_html_e( 'Not installed', 'thrivedesk' ); ?></span>
                             </div>
                         <?php endif; ?>
                     <?php endif; ?>
@@ -124,7 +124,7 @@ $plugins = [
             </div>
             <!-- CTA  -->
             <div class="ml-auto">
-                <a href="https://app.thrivedesk.com/apps/surecart" target="_blank" class="btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">Connect</a>
+                <a href="https://app.thrivedesk.com/apps/surecart" target="_blank" class="btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white"><?php esc_html_e( 'Connect', 'thrivedesk' ); ?></a>
             </div>
         </div>
         <!-- Freemius : because Freemius integration works differently  -->
@@ -139,7 +139,7 @@ $plugins = [
             </div>
             <!-- CTA  -->
             <div class="ml-auto">
-                <a href="https://app.thrivedesk.com/apps/freemius" target="_blank" class="btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">Connect</a>
+                <a href="https://app.thrivedesk.com/apps/freemius" target="_blank" class="btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white"><?php esc_html_e( 'Connect', 'thrivedesk' ); ?></a>
             </div>
         </div>
     </div>

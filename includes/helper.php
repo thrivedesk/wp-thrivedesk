@@ -59,38 +59,89 @@ if (!function_exists('diff_for_humans')) {
 		$diff = $now->diff($ago);
 
 		// Calculate weeks manually without creating dynamic property
-		$weeks = floor($diff->d / 7);
+		$weeks = (int) floor($diff->d / 7);
 		$days = $diff->d - ($weeks * 7);
 
-		$periods = array(
-			'y' => ['year', 'years', $diff->y],
-			'm' => ['month', 'months', $diff->m],
-			'w' => ['week', 'weeks', $weeks],
-			'd' => ['day', 'days', $days],
-			'h' => ['hour', 'hours', $diff->h],
-			'i' => ['minute', 'minutes', $diff->i],
-			's' => ['second', 'seconds', $diff->s]
-		);
-
 		$parts = array();
-		$values = array(
-			'y' => $diff->y,
-			'm' => $diff->m,
-			'w' => $weeks,
-			'd' => $days,
-			'h' => $diff->h,
-			'i' => $diff->i,
-			's' => $diff->s
-		);
-		
-		foreach ($periods as $k => &$v) {
-			if ($values[$k]) {
-				$parts[] = $values[$k] . ' ' . $v[$values[$k] > 1];
-			}
-		}
+		if ($diff->y) { $parts[] = sprintf(_n('%d year', '%d years', $diff->y, 'thrivedesk'), $diff->y); }
+		if ($diff->m) { $parts[] = sprintf(_n('%d month', '%d months', $diff->m, 'thrivedesk'), $diff->m); }
+		if ($weeks)   { $parts[] = sprintf(_n('%d week', '%d weeks', $weeks, 'thrivedesk'), $weeks); }
+		if ($days)    { $parts[] = sprintf(_n('%d day', '%d days', $days, 'thrivedesk'), $days); }
+		if ($diff->h) { $parts[] = sprintf(_n('%d hour', '%d hours', $diff->h, 'thrivedesk'), $diff->h); }
+		if ($diff->i) { $parts[] = sprintf(_n('%d minute', '%d minutes', $diff->i, 'thrivedesk'), $diff->i); }
+		if ($diff->s) { $parts[] = sprintf(_n('%d second', '%d seconds', $diff->s, 'thrivedesk'), $diff->s); }
 
 		if (!$full) $parts = array_slice($parts, 0, 1);
-		return $parts ? implode(', ', $parts) . ' ago' : 'just now';
+
+		if (empty($parts)) {
+			return __('just now', 'thrivedesk');
+		}
+
+		/* translators: %s: human-readable time difference, e.g. "3 months" */
+		return sprintf(__('%s ago', 'thrivedesk'), implode(', ', $parts));
+	}
+}
+
+if (!function_exists('td_conversation_status_label')) {
+	/**
+	 * Translatable display label for a conversation status.
+	 *
+	 * The status value comes from the API as a slug (active, pending, closed);
+	 * map it to a localized label so the portal badge reads in the site language
+	 * instead of the raw English slug. The default keeps any future/unexpected
+	 * slug readable rather than blank.
+	 */
+	function td_conversation_status_label($status): string {
+		switch (strtolower(trim((string) $status))) {
+			case 'active':
+				return __('Active', 'thrivedesk');
+			case 'pending':
+				return __('Pending', 'thrivedesk');
+			case 'closed':
+				return __('Closed', 'thrivedesk');
+			case '':
+			case 'unknown':
+				return __('Unknown', 'thrivedesk');
+			default:
+				return ucfirst((string) $status);
+		}
+	}
+}
+
+if (!function_exists('td_paginator_label')) {
+	/**
+	 * Display label for a paginator link.
+	 *
+	 * The API sends Laravel paginator labels: page numbers, an ellipsis, and
+	 * "&laquo; Previous" / "Next &raquo;" with the chevrons as HTML entities.
+	 * Decode the entities so esc_html() at render time shows a real « / »
+	 * instead of the raw "&laquo;" text, and run the Previous/Next words
+	 * through the text domain so they follow the site language.
+	 */
+	function td_paginator_label($label): string {
+		$label = html_entity_decode((string) $label, ENT_QUOTES);
+
+		return str_ireplace(
+			['Previous', 'Next'],
+			[__('Previous', 'thrivedesk'), __('Next', 'thrivedesk')],
+			$label
+		);
+	}
+}
+
+if (!function_exists('td_portal_back_to_list_url')) {
+	/**
+	 * URL back to the ticket list from a single conversation.
+	 *
+	 * The detail view is just the list with td_conversation_id in the query,
+	 * so dropping it lands back on the list. On the WooCommerce "Support" tab
+	 * (/my-account/td-support/) get_permalink() would resolve to the bare
+	 * /my-account/ page and bounce the customer out of the tab, hence the
+	 * remove_query_arg() instead. Other query args (status filter, page) get
+	 * kept so the user lands back where they were.
+	 */
+	function td_portal_back_to_list_url(): string {
+		return remove_query_arg('td_conversation_id');
 	}
 }
 
@@ -251,11 +302,16 @@ add_action('wp_ajax_thrivedesk_clear_cache', function () {
 });
 
 /*
- * Make a gravatar url from the current user email
+ * Make a gravatar url from the current user email.
+ *
+ * d=404 makes Gravatar 404 for unknown addresses instead of returning its
+ * generic silhouette, so the <img> onerror handler can swap in coloured
+ * initials. Without it everyone with no Gravatar account renders the same
+ * grey blob.
  */
 if (!function_exists('get_gravatar_url')) {
 	function get_gravatar_url($email, $size = 80): string {
 		$hash = md5(strtolower(trim($email)));
-		return "https://www.gravatar.com/avatar/$hash?s=$size";
+		return "https://www.gravatar.com/avatar/$hash?s=$size&d=404";
 	}
 }

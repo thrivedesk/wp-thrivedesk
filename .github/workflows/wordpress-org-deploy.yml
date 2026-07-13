@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     name: Build and deploy
@@ -26,9 +30,46 @@ jobs:
           npm ci
           npm run production
 
+      # wp.org requires readme.txt
+      - name: Generate readme.txt for WordPress.org
+        run: cp readme.md readme.txt
+
+      - name: Verify packaged plugin includes the Composer autoloader
+        run: |
+          dist="$(mktemp -d)"
+          rsync -a --exclude-from=.distignore ./ "$dist/"
+          if [ ! -f "$dist/vendor/autoload.php" ]; then
+            echo "::error::vendor/autoload.php is missing from the deploy package — the plugin will fatal on load. Check .distignore and the Build step."
+            exit 1
+          fi
+          echo "Autoloader present in package: OK"
+
       - name: WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: thrivedesk
+
+  release-notes:
+    name: Publish release notes from changelog.txt
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create or update release
+        env:
+          TAG: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/parse-changelog.js

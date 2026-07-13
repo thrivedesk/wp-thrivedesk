@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.3.0
+Stable Tag: 2.5.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,48 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.5.0 =
+2026-07-05 - version 2.5.0
+* feat: Cancelling or fully refunding an order from a ThriveDesk ticket now cancels the related subscription, so recurring billing actually stops. Works with both WooCommerce Subscriptions and WPSubscription (the "Subscription for WooCommerce" plugin).
+* feat: Fully refunding a renewal order cancels the subscription it belongs to. Cancelling a single renewal order leaves the subscription running, so one skipped invoice never kills a customer's plan.
+* fix: Order status updates from ThriveDesk resolve custom order numbers now (WebToffee, SkyVerge, Tyche and friends). Before this the update reported success while changing nothing on stores with custom numbering, and a miss now returns a proper 404 instead of a blind success.
+* fix: ThriveDesk API requests are processed on wp_loaded instead of init. Running inside init could fatal mid-request on stores where another plugin (WooCommerce Subscriptions among them) had not finished its own setup yet.
+* dev: CI provisions WooCommerce and WPSubscription so the integration tests for both run on every build instead of skipping. WooCommerce Subscriptions is exercised through a lightweight test double since the extension can't be redistributed.
+
+= 2.4.2 =
+2026-07-01 - version 2.4.2
+* improve: Dropped the right-side ticket-details panel from the conversation view. It just repeated what's already in the header (status, ticket ID, last update, message count), so the thread runs full-width now.
+
+= 2.4.1 =
+2026-07-01 - version 2.4.1
+* fix: The WooCommerce "Support" account tab (/my-account/td-support/) now resolves on its own once it's enabled, instead of returning a 404 until permalinks are manually re-saved
+* fix: Portal pagination now renders the « / » chevrons correctly instead of showing their raw HTML-entity text, and the disabled Previous/Next and "…" controls are styled to match the page numbers
+* fix: The ticket list and conversation view no longer render cramped inside the narrow WooCommerce My Account "Support" column — the portal layout now adapts to the width it actually has
+* fix: On the Support tab the ticket-details panel now sits above the conversation when the layout stacks, instead of being squeezed into a sliver beside it
+* fix: Customer avatars fall back to their initials instead of a generic Gravatar silhouette when the address has no Gravatar
+* fix: "Back to tickets" now returns to the Support tab list instead of dropping out to the main My Account page
+* dev: Plugin PHPUnit suite now runs in CI against PHP 7.4 (the minimum supported), with a PHP 7.4 compatibility gate and regression tests covering the portal fixes above
+
+= 2.4.0 =
+2026-06-29 - version 2.4.0
+* feat: Full translation support — the customer portal, the WooCommerce "Support" account tab, the admin settings screens, and all in-page dialogs are now localizable through the thrivedesk text domain
+* fix: Ticket status labels (Active/Pending/Closed), relative timestamps such as "3 months ago", and the portal pagination (Previous/Next) now follow the site language instead of always showing English
+* fix: The ticket-form setup hint on the settings page was never translatable because the text domain was passed to the wrong function; it now translates correctly
+* dev: Added PHPUnit coverage for the internationalization helpers across English, French, Spanish, German, Arabic, and multi-form (Russian-style) plural rules
+
+= 2.3.1 =
+2026-06-28 - version 2.3.1
+* fix: WooCommerce order status no longer returns a different order than the one the customer asked for (resolves issue #167, "Lynne's bug")
+* fix: Compatibility with Sequential Order Numbers for WooCommerce (WebToffee), Tyche Custom Order Numbers, SkyVerge Sequential Order Numbers, and Sequential Order Numbers Pro custom order numbers now resolve to the right internal order
+* fix: A customer can no longer retrieve another customer's order by guessing an order number (ownership check on resolved order)
+* fix: HPOS-only WooCommerce installs are now supported (the resolver checks wp_wc_orders_meta in addition to wp_postmeta)
+* fix: Search modal in the helpdesk portal now renders KB and WordPress search results correctly
+* fix: WordPress REST search endpoint resolves whether or not pretty permalinks are enabled (uses ?rest_route= form)
+* fix: Locked "Create ticket" button no longer renders as a broken link when no ticket page is configured
+* improve: Search modal loading spinner moved into the dialog body for clearer in-flight feedback
+* improve: Modal header and loading label now use the same system font stack as the rest of the dialog
+* dev: PHPUnit regression tests for the order status resolver
 
 = 2.3.0 =
 2026-06-24 - version 2.3.0

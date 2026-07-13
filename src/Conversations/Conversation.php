@@ -5,6 +5,7 @@ namespace ThriveDesk\Conversations;
 // Exit if accessed directly.
 use DOMDocument;
 use ThriveDesk\Admin;
+use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\Services\TDApiService;
 
 if (!defined('ABSPATH')) {
@@ -322,11 +323,21 @@ class Conversation
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
             
-            if (get_option('td_helpdesk_settings')) {
+            $existing_settings = get_option('td_helpdesk_settings');
+
+            if ($existing_settings) {
                 update_option('td_helpdesk_settings', $td_helpdesk_settings);
             } else {
                 add_option('td_helpdesk_settings', $td_helpdesk_settings);
             }
+
+            // /my-account/td-support/ 404s until rewrite rules are refreshed. Tell
+            // UserAccountPages to flush on the next init if the WC tab toggle changed.
+            $old_pages = is_array($existing_settings) ? (array) ($existing_settings['td_user_account_pages'] ?? []) : [];
+            UserAccountPages::instance()->maybe_queue_rewrite_flush(
+                $old_pages,
+                (array) $td_helpdesk_settings['td_user_account_pages']
+            );
             
             // Clear all caches to ensure fresh data
             if (function_exists('remove_thrivedesk_all_cache')) {
@@ -381,20 +392,29 @@ class Conversation
         
         wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', $css_version);
 
-        wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery'], $js_version);
- 
+        wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery', 'wp-i18n'], $js_version);
+        wp_set_script_translations('thrivedesk-conversations', 'thrivedesk');
+
+
+        // Toggle the local WP docs search. off unless the admin picked at
+        // least one post type, otherwise the REST handler would just
+        // hand back an empty list anyway.
+        $wp_search_post_types = get_option('td_helpdesk_settings')['td_helpdesk_post_types'] ?? [];
+        $wp_search_enabled    = ! empty($wp_search_post_types);
+
+        // ?rest_route= form works regardless of permalink settings.
+        // /wp-json/... only works when pretty permalinks are on; with
+        // the default plain setting that path 404s even though the
+        // REST API itself is fine.
+        $wp_rest_url = site_url( '/?rest_route=' );
 
         wp_localize_script('thrivedesk-conversations',
             'td_objects', [
-                'wp_json_url' => site_url('wp-json'),
-                'ajax_url'    => admin_url('admin-ajax.php'),
-                'kb_url'      => $this->getKnowledgeBaseUrl(),
-                'nonce'       => wp_create_nonce('thrivedesk-nonce'),
-                'i18n_success' => __('Success!', 'thrivedesk'),
-                'i18n_error' => __('Error!', 'thrivedesk'),
-                'i18n_reloading' => __('Reloading...', 'thrivedesk'),
-                'i18n_failed_reload' => __('Failed to reload tickets', 'thrivedesk'),
-                'i18n_failed_reload_try_again' => __('Failed to reload tickets. Please try again.', 'thrivedesk'),
+                'wp_json_url'        => $wp_rest_url,
+                'ajax_url'           => admin_url('admin-ajax.php'),
+                'kb_url'             => $this->getKnowledgeBaseUrl(),
+                'nonce'              => wp_create_nonce('thrivedesk-nonce'),
+                'wp_search_enabled'  => $wp_search_enabled,
             ]
         );
         wp_enqueue_script('thrivedesk-conversations');
@@ -520,7 +540,7 @@ class Conversation
 
 			if (isset($response['data']) && count($response['data']) > 0){
 				$data = $response;
-				// 30s TTL: same rationale as get_conversation() — ThriveDesk
+				// 30s TTL: same rationale as get_conversation(), ThriveDesk
 				// doesn't notify WP on agent activity, so the cache exists only
 				// to absorb rapid reloads, not to "hide" updates.
 				set_transient($cache_key, $response, 30);
@@ -555,7 +575,7 @@ class Conversation
 			// the same conversation. A longer window hides agent replies
 			// (ThriveDesk doesn't notify WP when an agent sends a message,
 			// and the cache is only invalidated when the customer replies
-			// — see td_send_reply → remove_thrivedesk_conversation_cache).
+			// see td_send_reply -> remove_thrivedesk_conversation_cache).
 			if (isset($response['data'])) {
 				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 30);
 			} elseif (is_array($response) && !isset($response['wp_error'])) {

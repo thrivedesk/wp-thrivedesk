@@ -23,6 +23,7 @@ build() {
   cp -vr ./changelog.txt ./releases/thrivedesk
   cp -vr ./composer.json ./releases/thrivedesk
   cp -vr ./composer.lock ./releases/thrivedesk
+  cp -vr ./vendor ./releases/thrivedesk
   cp -vr ./thrivedesk.php ./releases/thrivedesk
 
   echo "[+] Finished combingFiles"

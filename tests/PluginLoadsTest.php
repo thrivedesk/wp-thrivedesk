@@ -83,6 +83,53 @@ class TD_Plugin_Loads_Test extends WP_UnitTestCase {
         $this->assertSame('assistant-123', $settings['td_helpdesk_assistant_id']);
     }
 
+    public function test_gravatar_url_normalises_email_and_uses_404_default() {
+        $url = get_gravatar_url(' Foo@Example.com ');
+
+        $this->assertStringContainsString(
+            md5('foo@example.com'),
+            $url,
+            'Gravatar hash is md5 of the lower-cased, trimmed email.'
+        );
+        // d=404 makes unknown emails 404 so the <img> onerror handler can fall
+        // back to initials instead of Gravatar's generic silhouette.
+        $this->assertStringContainsString(
+            'd=404',
+            $url,
+            'Gravatar URL should request d=404 so the initials fallback triggers.'
+        );
+    }
+
+    public function test_portal_back_url_drops_conversation_id_and_keeps_context() {
+        $prev = $_SERVER['REQUEST_URI'] ?? null;
+        // Conversation opened on the WooCommerce "Support" endpoint.
+        $_SERVER['REQUEST_URI'] = '/my-account/td-support/?td_conversation_id=42&cv_status=open';
+
+        $url = td_portal_back_to_list_url();
+
+        $this->assertStringNotContainsString(
+            'td_conversation_id',
+            $url,
+            'Back URL should drop td_conversation_id so the list renders.'
+        );
+        $this->assertStringContainsString(
+            '/my-account/td-support/',
+            $url,
+            'Back URL should keep the current path (Support tab), not fall back to /my-account/.'
+        );
+        $this->assertStringContainsString(
+            'cv_status=open',
+            $url,
+            'Other query args (filters/page) should be preserved.'
+        );
+
+        if ($prev === null) {
+            unset($_SERVER['REQUEST_URI']);
+        } else {
+            $_SERVER['REQUEST_URI'] = $prev;
+        }
+    }
+
     public function test_woocommerce_thumbnail_guard_preserves_null_when_missing() {
         if (!class_exists('ThriveDesk\\Plugins\\WooCommerce')) {
             $this->markTestSkipped('WooCommerce integration class is not autoloaded.');

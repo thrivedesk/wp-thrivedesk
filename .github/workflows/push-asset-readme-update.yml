@@ -8,20 +8,33 @@ on:
       - "readme.txt"
       - "readme.md"
       - ".wordpress-org/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+# Serialize SVN-mutating runs so a fast push and a manual run can't race.
+concurrency:
+  group: wporg-assets
+  cancel-in-progress: false
 
 jobs:
   assets:
     name: Update assets and readme
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      # wp.org requires readme.txt
+      - name: Generate readme.txt for WordPress.org
+        run: cp readme.md readme.txt
 
       - name: WordPress.org plugin asset/readme update
-        uses: 10up/action-wordpress-plugin-asset-update@stable
+        uses: 10up/action-wordpress-plugin-asset-update@2480306f6f693672726d08b5917ea114cb2825f7 # 2.2.0
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: thrivedesk
+          # only sync readme + assets, code (and the built vendor/) ships via the tag deploy workflow
+          IGNORE_OTHER_FILES: true

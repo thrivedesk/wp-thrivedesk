@@ -149,9 +149,9 @@ final class Admin
             100
         ); 
         add_submenu_page(
-            'thrivedesk', 
-            'API Verify', 
-            'API Verify',
+            'thrivedesk',
+            __( 'API Verify', 'thrivedesk' ),
+            __( 'API Verify', 'thrivedesk' ),
             'manage_options',
             'td-api',
             array( $this, 'verification_page'),
@@ -209,7 +209,8 @@ final class Admin
             $js_version = thrivedesk_get_asset_version('/js/admin.js');
             
             wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', [], $css_version);
-            wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery'], $js_version);
+            wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery', 'wp-i18n'], $js_version);
+            wp_set_script_translations('thrivedesk-js', 'thrivedesk');
 
             if (current_user_can( 'manage_options' )) {
                 echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';

@@ -334,6 +334,187 @@ final class WooCommerce extends Plugin {
 		];
 	}
 
+	/**
+	 * Update an order's status. Resolves the panel's customer-facing order
+	 * number to the real order, so stores running sequential order numbering
+	 * update the order the agent is actually looking at.
+	 *
+	 * @param string $order_id    Customer-facing order number or post ID.
+	 * @param string $new_status  WooCommerce order status (wc- prefix allowed).
+	 *
+	 * @return bool false when no order matches.
+	 *
+	 * @since 2.5.0
+	 */
+	public function update_order_status( string $order_id, string $new_status ): bool {
+		$order = $this->get_order_by_number_or_id( $order_id );
+		if ( ! $order ) {
+			return false;
+		}
+
+		$order->update_status( $new_status, '' );
+
+		return true;
+	}
+
+	/**
+	 * Cancel (or mark pending-cancel) subscriptions related to an order
+	 * after an agent cancels or fully refunds it from the panel.
+	 *
+	 * No-op on stores that don't use subscriptions, since this fires after
+	 * every panel cancel/refund.
+	 *
+	 * @param string   $order_id             Customer-facing order number or post ID.
+	 * @param string   $subscription_status  'cancelled' or 'pending-cancel'.
+	 * @param string[] $order_types          'parent' and/or 'renewal'. Pass
+	 *                                       both on full refund so renewing
+	 *                                       orders kill their own billing.
+	 */
+	public function cancel_subscriptions_for_order( string $order_id, string $subscription_status, array $order_types = [ 'parent' ] ): array {
+		if ( ! in_array( $subscription_status, [ 'cancelled', 'pending-cancel' ], true ) ) {
+			throw new \InvalidArgumentException( "Invalid subscription_status. Use 'cancelled' or 'pending-cancel'." );
+		}
+
+		$order_types = array_values( array_intersect( $order_types, [ 'parent', 'renewal' ] ) );
+		if ( empty( $order_types ) ) {
+			throw new \InvalidArgumentException( "Invalid order_types. Use 'parent' and/or 'renewal'." );
+		}
+
+		$has_wcs            = function_exists( 'wcs_get_subscriptions_for_order' );
+		$has_wpsubscription = $this->is_wpsubscription_usable();
+
+		// No subscription plugin means nothing can need cancelling.
+		if ( ! $has_wcs && ! $has_wpsubscription ) {
+			return [ 'found' => false, 'updated_ids' => [] ];
+		}
+
+		// The panel sends the customer-facing order number, which differs
+		// from the post ID on stores running sequential order numbering.
+		$order = $this->get_order_by_number_or_id( $order_id );
+		if ( ! $order ) {
+			throw new \RuntimeException( 'Order not found.' );
+		}
+
+		$found       = false;
+		$updated_ids = [];
+
+		if ( $has_wcs ) {
+			$result      = $this->cancel_wcs_subscriptions( $order, $subscription_status, $order_types );
+			$found       = $found || $result['found'];
+			$updated_ids = array_merge( $updated_ids, $result['updated_ids'] );
+		}
+
+		if ( $has_wpsubscription ) {
+			$result      = $this->cancel_wpsubscription_subscriptions( $order, $subscription_status, $order_types );
+			$found       = $found || $result['found'];
+			$updated_ids = array_merge( $updated_ids, $result['updated_ids'] );
+		}
+
+		return [
+			'found'       => $found,
+			'updated_ids' => $updated_ids,
+		];
+	}
+
+	/**
+	 * WooCommerce Subscriptions branch.
+	 *
+	 * @param \WC_Order $order
+	 * @param string    $subscription_status 'cancelled' or 'pending-cancel'.
+	 * @param string[]  $order_types
+	 */
+	private function cancel_wcs_subscriptions( $order, string $subscription_status, array $order_types ): array {
+		$subscriptions = wcs_get_subscriptions_for_order( $order, [ 'order_type' => $order_types ] );
+		if ( empty( $subscriptions ) ) {
+			return [ 'found' => false, 'updated_ids' => [] ];
+		}
+
+		// Skip subs already at target status, plus ones WCS won't let us
+		// transition (expired, etc.) — keeps retries idempotent.
+		$updated_ids = [];
+		foreach ( $subscriptions as $subscription ) {
+			if ( $subscription->get_status() === $subscription_status ) {
+				continue;
+			}
+			if ( ! $subscription->can_be_updated_to( $subscription_status ) ) {
+				continue;
+			}
+			$subscription->update_status( $subscription_status );
+			$updated_ids[] = (int) $subscription->get_id();
+		}
+
+		return [
+			'found'       => true,
+			'updated_ids' => $updated_ids,
+		];
+	}
+
+	/**
+	 * Whether WPSubscription is active with the exact internals this
+	 * integration touches. These are the plugin's internal classes, not a
+	 * published API, so every symbol is checked: if a future WPSubscription
+	 * release renames or moves them (e.g. a SpringDevs to ConversWP
+	 * namespace rebrand), the branch turns itself off instead of fataling.
+	 * The durable fix is a stable public API in WPSubscription itself.
+	 */
+	private function is_wpsubscription_usable(): bool {
+		// WPSubscription's current code needs PHP 8.0 (union types) despite
+		// its declared 7.4 minimum. class_exists() autoloads the class, so
+		// probing it on older PHP would trigger the plugin's own parse
+		// error. Bail before touching its autoloader.
+		if ( PHP_VERSION_ID < 80000 ) {
+			return false;
+		}
+
+		return class_exists( '\SpringDevs\Subscription\Illuminate\Helper' )
+			&& class_exists( '\SpringDevs\Subscription\Illuminate\Action' )
+			&& method_exists( '\SpringDevs\Subscription\Illuminate\Helper', 'get_subscriptions_from_order' )
+			&& method_exists( '\SpringDevs\Subscription\Illuminate\Action', 'status' );
+	}
+
+	/**
+	 * WPSubscription branch.
+	 *
+	 * WPSubscription already cancels related subs via its own status-changed
+	 * hook, so this is mostly a fallback for orders whose status didn't
+	 * transition (already cancelled/refunded when the agent acted).
+	 *
+	 * @param \WC_Order $order
+	 * @param string    $subscription_status 'cancelled' or 'pending-cancel'.
+	 * @param string[]  $order_types
+	 */
+	private function cancel_wpsubscription_subscriptions( $order, string $subscription_status, array $order_types ): array {
+		$type_map      = [ 'parent' => 'new', 'renewal' => 'renew' ];
+		$wanted_types  = array_values( array_intersect_key( $type_map, array_flip( $order_types ) ) );
+		$target_status = 'pending-cancel' === $subscription_status ? 'pe_cancelled' : 'cancelled';
+
+		$histories = \SpringDevs\Subscription\Illuminate\Helper::get_subscriptions_from_order( $order->get_id() );
+
+		$found       = false;
+		$updated_ids = [];
+		foreach ( (array) $histories as $history ) {
+			if ( ! in_array( $history->type, $wanted_types, true ) ) {
+				continue;
+			}
+
+			$found  = true;
+			$status = get_post_status( (int) $history->subscription_id );
+
+			// Terminal states stay put; only live subs flip.
+			if ( $status === $target_status || in_array( $status, [ 'cancelled', 'expired' ], true ) ) {
+				continue;
+			}
+
+			\SpringDevs\Subscription\Illuminate\Action::status( $target_status, (int) $history->subscription_id );
+			$updated_ids[] = (int) $history->subscription_id;
+		}
+
+		return [
+			'found'       => $found,
+			'updated_ids' => $updated_ids,
+		];
+	}
+
 
 	/**
 	 * get order shipping details

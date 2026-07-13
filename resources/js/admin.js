@@ -1,5 +1,6 @@
 import Swal from 'sweetalert2';
 import ConfettiGenerator from "confetti-js";
+import { __, sprintf } from '@wordpress/i18n';
 var assistants = [];
 
 jQuery(document).ready(($) => {
@@ -10,7 +11,7 @@ jQuery(document).ready(($) => {
 		let $target = $(this);
 
 		if (1 == $target.data('connected')) {
-			alert('Are you sure to disconnect this integration?');
+			alert(__('Are you sure to disconnect this integration?', 'thrivedesk'));
 			jQuery.post(
 				thrivedesk.ajax_url,
 				{
@@ -45,7 +46,7 @@ jQuery(document).ready(($) => {
 						}, 750);
 					} else {
 						alert(
-							'Unable to connect with ThriveDesk. Make sure you are using this plugin on a live site.'
+							__('Unable to connect with ThriveDesk. Make sure you are using this plugin on a live site.', 'thrivedesk')
 						);
 					}
 				}
@@ -103,8 +104,8 @@ jQuery(document).ready(($) => {
 			console.error('ThriveDesk: Configuration not loaded');
 			Swal.fire({
 				icon: 'error',
-				title: 'Error',
-				text: 'ThriveDesk configuration not loaded. Please refresh the page.',
+				title: __('Error', 'thrivedesk'),
+				text: __('ThriveDesk configuration not loaded. Please refresh the page.', 'thrivedesk'),
 			});
 			return;
 		}
@@ -130,8 +131,8 @@ jQuery(document).ready(($) => {
 				console.error('ThriveDesk: Failed to parse response:', e);
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Invalid response from server',
+					title: __('Error', 'thrivedesk'),
+					text: __('Invalid response from server', 'thrivedesk'),
 				});
 				return;
 			}
@@ -174,8 +175,8 @@ jQuery(document).ready(($) => {
 						console.error('ThriveDesk: Failed to parse helpdesk form response:', e);
 						Swal.fire({
 							icon: 'error',
-							title: 'Error',
-							text: 'Invalid response from helpdesk form submission',
+							title: __('Error', 'thrivedesk'),
+							text: __('Invalid response from helpdesk form submission', 'thrivedesk'),
 						});
 						return;
 					}
@@ -185,9 +186,9 @@ jQuery(document).ready(($) => {
 						parsedResponse.status === 'success' ? (icon = 'success') : (icon = 'error');
 						Swal.fire({
 							icon: icon,
-							title: parsedResponse.status.charAt(0).toUpperCase() + `${parsedResponse.status}`.slice(1),
+							title: ( parsedResponse.status === 'success' ? __('Success', 'thrivedesk') : __('Error', 'thrivedesk') ),
 							text: parsedResponse.message,
-							confirmButtonText: 'Continue to settings',
+							confirmButtonText: __('Continue to settings', 'thrivedesk'),
 						}).then((result) => {
 							localStorage.setItem('shouldTriggerConfetti', 'true');
 							if (result.isConfirmed) {
@@ -199,22 +200,23 @@ jQuery(document).ready(($) => {
 					console.error('ThriveDesk: Helpdesk form submission failed:', error);
 					Swal.fire({
 						icon: 'error',
-						title: 'Error',
-						text: 'Failed to save helpdesk form: ' + error,
+						title: __('Error', 'thrivedesk'),
+						// translators: %s: error message
+						text: sprintf(__('Failed to save helpdesk form: %s', 'thrivedesk'), error),
 					});
 				});
 			});
 		}).fail(function (error) {
 			Swal.fire({
 				icon: 'error',
-				title: 'Error',
-				text: 'Something went wrong',
+				title: __('Error', 'thrivedesk'),
+				text: __('Something went wrong', 'thrivedesk'),
 			});
 		}).always(function() {
 			// Remove loading state
 			setTimeout(function() {
 				$btn.prop('disabled', false)
-					.html('Complete Setup');
+					.html(__('Complete Setup', 'thrivedesk'));
 			}, 1500);
 		});
 
@@ -265,7 +267,7 @@ jQuery(document).ready(($) => {
 	$('#td_helpdesk_form').submit(async function (e) {
 		let $btn = $('#td_setting_btn_submit');
 		$btn.prop('disabled', true)
-			.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+			.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + __('Processing...', 'thrivedesk'));
 
 
 		e.preventDefault();
@@ -275,7 +277,7 @@ jQuery(document).ready(($) => {
 				response.status === 'success' ? (icon = 'success') : (icon = 'error');
 				Swal.fire({
 					icon: icon,
-					title: response.status.charAt(0).toUpperCase() + `${response.status}`.slice(1),
+					title: ( response.status === 'success' ? __('Success', 'thrivedesk') : __('Error', 'thrivedesk') ),
 					text: response.message,
 				});
 				// .then((result) => {
@@ -288,14 +290,14 @@ jQuery(document).ready(($) => {
 				// Remove loading state
 				setTimeout(function() {
 					$btn.prop('disabled', false)
-						.html('Save');
+						.html(__('Save', 'thrivedesk'));
 				}, 1000);
 			}
 		}).catch(()=>{
 			Swal.fire({
 				icon: 'error',
-				title: 'Error',
-				text: 'Form submition failed',
+				title: __('Error', 'thrivedesk'),
+				text: __('Form submition failed', 'thrivedesk'),
 			});
 		});
 	});
@@ -348,8 +350,8 @@ jQuery(document).ready(($) => {
 		if (apiKey === '') {
 			Swal.fire({
 				icon: 'error',
-				title: 'Error',
-				text: 'API Key is required',
+				title: __('Error', 'thrivedesk'),
+				text: __('API Key is required', 'thrivedesk'),
 			});
 			return;
 		}
@@ -394,7 +396,7 @@ jQuery(document).ready(($) => {
 					}
 				})
 
-				$target.text('Verified');
+				$target.text(__('Verified', 'thrivedesk'));
 				$target.prop('disabled', true);
 
 				// remove the disabled attribute from the id td-assistants and td-inboxes
@@ -405,7 +407,7 @@ jQuery(document).ready(($) => {
 
 				Swal.fire({
 					icon: 'success',
-					title: 'Success',
+					title: __('Success', 'thrivedesk'),
 					text: data?.message,
 				}).then(async (result)=>{
 					if (result.isConfirmed) {
@@ -426,15 +428,15 @@ jQuery(document).ready(($) => {
 								}).catch(() => {
 									Swal.fire({
 										icon: 'error',
-										title: 'Error',
-										text: 'Form submition failed',
+										title: __('Error', 'thrivedesk'),
+										text: __('Form submition failed', 'thrivedesk'),
 									});
 								});
 							}).error(function (error) {
 							Swal.fire({
 								icon: 'error',
-								title: 'Error',
-								text: 'Something went wrong',
+								title: __('Error', 'thrivedesk'),
+								text: __('Something went wrong', 'thrivedesk'),
 							});
 						});
 					}
@@ -447,8 +449,8 @@ jQuery(document).ready(($) => {
 			.error(function (error) {
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Something went wrong',
+					title: __('Error', 'thrivedesk'),
+					text: __('Something went wrong', 'thrivedesk'),
 				});
 			});
 	});
@@ -460,7 +462,7 @@ jQuery(document).ready(($) => {
 			if (parsedResponse?.code === 422) {
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
+					title: __('Error', 'thrivedesk'),
 					text: data?.message,
 				});
 
@@ -469,8 +471,8 @@ jQuery(document).ready(($) => {
 			if(data?.message==='Unauthenticated.'){
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Invalid API Key',
+					title: __('Error', 'thrivedesk'),
+					text: __('Invalid API Key', 'thrivedesk'),
 				});
 
 				return false;
@@ -478,16 +480,16 @@ jQuery(document).ready(($) => {
 			else if (data?.message==='Server Error'){
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Server Error',
+					title: __('Error', 'thrivedesk'),
+					text: __('Server Error', 'thrivedesk'),
 				});
 				return false;
 			}
 			else {
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: data?.message || parsedResponse?.message || 'Something went wrong',
+					title: __('Error', 'thrivedesk'),
+					text: data?.message || parsedResponse?.message || __('Something went wrong', 'thrivedesk'),
 				});
 
 				return false;
@@ -522,15 +524,15 @@ jQuery(document).ready(($) => {
 				if(data?.message==='Unauthenticated.'){
 					Swal.fire({
 						icon: 'error',
-						title: 'Error',
-						text: 'Invalid API Key',
+						title: __('Error', 'thrivedesk'),
+						text: __('Invalid API Key', 'thrivedesk'),
 					});
 				}
 				else if (data?.message==='Server Error'){
 					Swal.fire({
 						icon: 'error',
-						title: 'Error',
-						text: 'Server Error',
+						title: __('Error', 'thrivedesk'),
+						text: __('Server Error', 'thrivedesk'),
 					});
 				} else {
 
@@ -539,7 +541,7 @@ jQuery(document).ready(($) => {
 
 					if (data?.assistants?.length > 0) {
 						assistants = data?.assistants;
-						assistantList.append('<option value="">Select Assistant</option>');
+						assistantList.append('<option value="">' + __('Select Assistant', 'thrivedesk') + '</option>');
 						data.assistants.forEach(function (item) {
 							assistantList.append(
 								'<option value="' + item.id + '">' + item.name + '</option>'
@@ -547,7 +549,7 @@ jQuery(document).ready(($) => {
 						});
 					}else {
 						assistantList.append(
-							'<option value="">No Assistant Found</option>'
+							'<option value="">' + __('No Assistant Found', 'thrivedesk') + '</option>'
 						);
 
 						assistantList.prop('disabled', true);
@@ -558,8 +560,8 @@ jQuery(document).ready(($) => {
 			.error(function () {
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Something went wrong',
+					title: __('Error', 'thrivedesk'),
+					text: __('Something went wrong', 'thrivedesk'),
 				});
 			                    });
     }
@@ -581,15 +583,15 @@ jQuery(document).ready(($) => {
                 if(data?.message==='Unauthenticated.'){
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'Invalid API Key',
+                        title: __('Error', 'thrivedesk'),
+                        text: __('Invalid API Key', 'thrivedesk'),
                     });
                 }
                 else if (data?.message==='Server Error'){
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'Server Error',
+                        title: __('Error', 'thrivedesk'),
+                        text: __('Server Error', 'thrivedesk'),
                     });
                 } else {
                     let inboxList = $('#td-inboxes');
@@ -601,7 +603,7 @@ jQuery(document).ready(($) => {
 
                     if (data?.data?.length > 0) {
                         inboxes = data?.data;
-                        inboxList.append('<option value="">All inboxes</option>');
+                        inboxList.append('<option value="">' + __('All inboxes', 'thrivedesk') + '</option>');
                         data.data.forEach(function (item) {
                             let isSelected = (savedInboxId === item.id);
                             inboxList.append(
@@ -615,7 +617,7 @@ jQuery(document).ready(($) => {
                         }
                     }else {
                         inboxList.append(
-                            '<option value="">No Inbox Found</option>'
+                            '<option value="">' + __('No Inbox Found', 'thrivedesk') + '</option>'
                         );
 
                         inboxList.prop('disabled', true);
@@ -623,16 +625,17 @@ jQuery(document).ready(($) => {
                 }
             })
             .error(function (xhr, status, error) {
-                let errorMessage = 'Something went wrong';
+                let errorMessage = __('Something went wrong', 'thrivedesk');
                 if (status === 'timeout') {
-                    errorMessage = 'Request timed out. Please try again.';
+                    errorMessage = __('Request timed out. Please try again.', 'thrivedesk');
                 } else if (error) {
-                    errorMessage = 'Error: ' + error;
+                    // translators: %s: error message
+                    errorMessage = sprintf(__('Error: %s', 'thrivedesk'), error);
                 }
                 
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
+                    title: __('Error', 'thrivedesk'),
                     text: errorMessage,
                 });
             });
@@ -666,8 +669,8 @@ jQuery(document).ready(($) => {
 			.error(function () {
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Something went wrong',
+					title: __('Error', 'thrivedesk'),
+					text: __('Something went wrong', 'thrivedesk'),
 				});
 			});
 	}
@@ -681,8 +684,8 @@ jQuery(document).ready(($) => {
 			.success(function (response) {
 				Swal.fire({
 					icon: 'success',
-					title: 'Success',
-					text: 'Cache Cleared',
+					title: __('Success', 'thrivedesk'),
+					text: __('Cache Cleared', 'thrivedesk'),
 				}).then((result) => {
 					location.reload();
 				});
@@ -690,8 +693,8 @@ jQuery(document).ready(($) => {
 			.error(function () {
 				Swal.fire({
 					icon: 'error',
-					title: 'Error',
-					text: 'Something went wrong',
+					title: __('Error', 'thrivedesk'),
+					text: __('Something went wrong', 'thrivedesk'),
 				});
 			});
 	});

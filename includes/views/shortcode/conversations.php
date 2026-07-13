@@ -15,7 +15,7 @@ $ticket_page_url     = $ticket_page_id ? get_page_link($ticket_page_id) : '';
 $has_knowledgebase   = ! empty($settings['td_knowledgebase_slug']);
 $should_open_modal   = $has_knowledgebase && $ticket_page_id;
 
-// new-ticket button state when no ticket page is configured — show it
+// new-ticket button state when no ticket page is configured. Show it
 // as disabled with an explanation instead of a broken # link
 $new_ticket_disabled = empty($ticket_page_url);
 $new_ticket_disabled_title = $new_ticket_disabled
@@ -183,7 +183,7 @@ $open_count = $counts['active'] + $counts['open'];
                                     >
                                         <td class="td-ticket-cell-status" data-label="<?php esc_attr_e('Status', 'thrivedesk'); ?>">
                                             <span class="td-badge td-badge-status-<?php echo esc_attr($conv_status); ?>">
-                                                <?php echo esc_html($conversation['status']); ?>
+                                                <?php echo esc_html(td_conversation_status_label($conversation['status'] ?? '')); ?>
                                             </span>
                                         </td>
                                         <td class="td-ticket-cell-subject-cell" data-label="<?php esc_attr_e('Subject', 'thrivedesk'); ?>">
@@ -232,20 +232,24 @@ $open_count = $counts['active'] + $counts['open'];
                     </a>
 
                     <?php if ($links): ?>
-                        <nav aria-label="Page navigation">
+                        <nav aria-label="<?php esc_attr_e('Page navigation', 'thrivedesk'); ?>">
                             <ul class="td-paginator">
                                 <?php foreach ($links as $key => $link):
                                     $params = parse_url($link['url'] ?? '', PHP_URL_QUERY);
                                     $page = 1;
                                     if ($params) { parse_str($params, $query); $page = $query['page'] ?? 1; }
+                                    // The API returns Laravel paginator labels ("&laquo; Previous",
+                                    // "Next &raquo;", page numbers). td_paginator_label() decodes the
+                                    // chevron entities and localises the Previous/Next words.
+                                    $label = td_paginator_label($link['label'] ?? '');
                                 ?>
                                     <li class="<?php echo !empty($link['active']) ? 'pg-active' : ''; ?>">
                                         <?php if (!empty($link['url'])): ?>
-                                            <a href="<?php echo esc_url(get_permalink() . '?cv_page=' . $page); ?>" aria-label="<?php echo esc_attr($link['label']); ?>">
+                                            <a href="<?php echo esc_url(get_permalink() . '?cv_page=' . $page); ?>" aria-label="<?php echo esc_attr($label); ?>">
                                         <?php else: ?>
                                             <span>
                                         <?php endif; ?>
-                                            <?php echo esc_html($link['label']); ?>
+                                            <?php echo esc_html($label); ?>
                                         <?php if (!empty($link['url'])): ?>
                                             </a>
                                         <?php else: ?>
