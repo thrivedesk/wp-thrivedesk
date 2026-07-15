@@ -85,3 +85,9 @@ function _td_install_woocommerce() {
 tests_add_filter( 'setup_theme', '_td_install_woocommerce' );
 
 require $_tests_dir . '/includes/bootstrap.php';
+
+// Shared test support, loaded after WordPress and the plugin so the classes
+// they build on (WP_Ajax_UnitTestCase, ThriveDesk\Plugin) already exist.
+require_once __DIR__ . '/includes/listener-helpers.php';
+require_once __DIR__ . '/includes/class-fake-plugin.php';
+require_once __DIR__ . '/includes/class-td-ajax-testcase.php';
