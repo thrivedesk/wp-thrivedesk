@@ -40,11 +40,13 @@ class ListenerGoldenTest extends TD_Ajax_TestCase {
 		$dir  = __DIR__ . '/golden/listener';
 		$file = $dir . '/' . $name . '.json';
 
-		if ( getenv( 'TD_UPDATE_GOLDEN' ) || ! file_exists( $file ) ) {
+		if ( getenv( 'TD_UPDATE_GOLDEN' ) ) {
 			if ( ! is_dir( $dir ) ) {
 				mkdir( $dir, 0777, true );
 			}
 			file_put_contents( $file, wp_json_encode( $actual, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) . "\n" );
+		} elseif ( ! file_exists( $file ) ) {
+			$this->fail( "Missing listener golden '{$name}'. Re-run with TD_UPDATE_GOLDEN=1 to generate it, then review the diff." );
 		}
 
 		$expected = json_decode( (string) file_get_contents( $file ), true );
@@ -62,12 +64,14 @@ class ListenerGoldenTest extends TD_Ajax_TestCase {
 	}
 
 	public function test_inactive_plugin_currently_leaks_before_auth() {
-		// WooCommerce is autoloaded but WC() is undefined, so it reads inactive.
+		// FluentCRM's is_plugin_active() reads the active_plugins option, which
+		// the test suite never populates, so it is inactive in every environment.
+		// (WooCommerce would flip active/inactive with the CI provisioning.)
 		$this->golden(
 			'inactive-plugin',
 			[
 				'listener' => 'thrivedesk',
-				'plugin'   => 'woocommerce',
+				'plugin'   => 'fluentcrm',
 				'action'   => 'connect',
 			]
 		);

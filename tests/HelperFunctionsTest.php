@@ -77,7 +77,7 @@ class HelperFunctionsTest extends WP_UnitTestCase {
 	public function test_get_gravatar_url_normalizes_email() {
 		$expected_hash = md5( 'ada@example.com' );
 		$this->assertSame(
-			"https://www.gravatar.com/avatar/{$expected_hash}?s=80",
+			"https://www.gravatar.com/avatar/{$expected_hash}?s=80&d=404",
 			get_gravatar_url( '  Ada@Example.com ' )
 		);
 		$this->assertStringContainsString( '?s=200', get_gravatar_url( 'x@y.com', 200 ) );

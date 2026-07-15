@@ -44,7 +44,7 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
      * Dispatch a woocommerce_subscription_cancel request through the Api
      * singleton and capture the JSON response body.
      *
-     * Mirrors the dispatch helper used in test-order-status.php.
+     * Mirrors the dispatch helper used in OrderStatusTest.php.
      */
     private function dispatch_subscription_cancel( string $order_id, string $subscription_status, string $order_types = '' ): array {
         $api = \ThriveDesk\Api::instance();
