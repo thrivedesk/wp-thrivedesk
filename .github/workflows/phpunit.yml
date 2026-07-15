@@ -26,7 +26,7 @@ jobs:
             wp: latest
             wpsubscription: false
           # Modern PHP job: also runs the WPSubscription integration tests.
-          - php: '8.3'
+          - php: '8.4'
             wp: latest
             wpsubscription: true
 
