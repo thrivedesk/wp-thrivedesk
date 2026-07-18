@@ -72,6 +72,16 @@ class Conversation
 
     public function thrivedesk_system_info(): void
     {
+        // Settings action: the 'thrivedesk-nonce' is also handed to any
+        // logged-in portal visitor, so the capability check is the real guard.
+        if (
+            ! isset( $_POST['nonce'] )
+            || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
+            || ! current_user_can( 'manage_options' )
+        ) {
+            wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
+        }
+
         $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
         if (empty($apiKey)) {
@@ -173,19 +183,12 @@ class Conversation
 
 	public function td_verify_helpdesk_api_key(  ): void {
         // verify the nonce
-        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' ) ) {
-            // Log security issue
-            error_log('ThriveDesk: Invalid nonce verification attempt');
-
-            // return json response
-            echo wp_json_encode( [
-                'code' => 401,
-                'status' => 'error',
-                'data' => [
-                    'message' => 'Invalid nonce'
-                ]
-            ] );
-            die();
+        if (
+            ! isset( $_POST['nonce'] )
+            || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
+            || ! current_user_can( 'manage_options' )
+        ) {
+            wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
         }
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
         

@@ -137,6 +137,15 @@ final class Api {
 				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
+			// Only connect/disconnect may run before the integration is
+			// connected. Every data or mutation action requires a completed
+			// connection, so a valid signature alone (e.g. during the connect
+			// handshake, before the SaaS callback flips 'connected') can't drive
+			// store changes.
+			if ( 'connect' !== $action && 'disconnect' !== $action && ! $this->plugin->get_plugin_data( 'connected' ) ) {
+				$this->apiResponse->error( 401, 'Request unauthorized' );
+			}
+
 			if ( isset( $action ) && 'connect' === $action ) {
 				$this->connect_action_handler();
 			} elseif ( isset( $action ) && 'disconnect' === $action ) {
@@ -395,18 +404,19 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
+		if ( (int) $quantity <= 0 ) {
+			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
+		}
 
 		$order = wc_get_order( $order_id );
-		if ( $quantity > 0 ) {
-			foreach ( $order->get_items() as $item_id => $item ) {
+		foreach ( $order->get_items() as $item_id => $item ) {
 
-				if ( $item["product_id"] == (string) $product_id ) {
-					wc_update_order_item_meta( $item_id, '_qty', $quantity );
-					$order->calculate_totals();
-				}
+			if ( $item["product_id"] == (string) $product_id ) {
+				wc_update_order_item_meta( $item_id, '_qty', $quantity );
+				$order->calculate_totals();
 			}
-			$this->apiResponse->success( 200, [], 'Success' );
 		}
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
 	/**
@@ -546,6 +556,13 @@ final class Api {
 		}
 
 		$api_token = $this->plugin->get_plugin_data( 'api_token' );
+
+		// An empty key is forgeable: hash_hmac() with '' yields a value anyone
+		// can reproduce. A disconnected or never-connected integration has no
+		// token, so reject rather than authorize against an empty secret.
+		if (empty($api_token)) {
+			return false;
+		}
 
 		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '';
 		if (empty($signature)) {

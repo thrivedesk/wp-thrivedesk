@@ -413,6 +413,7 @@ jQuery(document).ready(($) => {
 					if (result.isConfirmed) {
 						jQuery.post(thrivedesk.ajax_url, {
 							action: 'thrivedesk_system_info',
+							nonce: thrivedesk.nonce,
 							data: {
 								td_helpdesk_api_key: apiKey,
 							},
@@ -571,6 +572,7 @@ jQuery(document).ready(($) => {
         jQuery
             .post(thrivedesk.ajax_url, {
                 action: 'thrivedesk_load_inboxes',
+                nonce: thrivedesk.nonce,
                 data: {
                     td_helpdesk_api_key: apiKey,
                 },
@@ -647,6 +649,7 @@ jQuery(document).ready(($) => {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_check_portal_access',
+				nonce: thrivedesk.nonce,
 				data: {
 					td_helpdesk_api_key: apiKey,
 				},

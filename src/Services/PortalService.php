@@ -42,6 +42,14 @@ class PortalService {
 	}
 
 	public function check_portal_access(  ) {
+		if (
+			! isset( $_POST['nonce'] )
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
+			|| ! current_user_can( 'manage_options' )
+		) {
+			wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
+		}
+
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 		if (empty( $apiKey ) ) {
 			echo wp_json_encode( [
