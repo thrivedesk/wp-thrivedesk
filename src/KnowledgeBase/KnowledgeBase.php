@@ -22,7 +22,7 @@ class KnowledgeBase
     public function get_knowledgebase($apiKey = '')
     {
         $apiService = new TDApiService();
-        if(empty($apiKey)) {
+        if(!empty($apiKey)) {
             $apiService->setApiKey($apiKey);
         }
 

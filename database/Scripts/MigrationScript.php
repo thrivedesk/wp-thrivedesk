@@ -23,7 +23,22 @@ class MigrationScript {
 	}
 
 	private function runMigrationScript() {
+		$this->migrateSchema();
 		$this->migratePostSyncOption();
+	}
+
+	/**
+	 * Apply schema migrations on load, not just on activation, so a version bump
+	 * shipped in a plugin update reaches already-installed stores that never
+	 * re-activate. Gated on the stored version so it is a no-op once caught up.
+	 */
+	private function migrateSchema() {
+		if ( (float) get_option( (string) OPTION_THRIVEDESK_DB_VERSION ) >= (float) THRIVEDESK_DB_VERSION ) {
+			return;
+		}
+
+		require_once THRIVEDESK_DIR . '/database/DBMigrator.php';
+		\ThriveDeskDBMigrator::migrate();
 	}
 
 	private function migratePostSyncOption() {

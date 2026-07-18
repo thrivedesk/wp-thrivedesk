@@ -87,11 +87,11 @@ class Assistant {
                 t.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},
                 n.readyQueue=[],"complete"===e.readyState)return s();
             t.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}
-            (window,document,window.Assistant||function(){}),window.Assistant("init","'.$assistant_id.'");
+            (window,document,window.Assistant||function(){}),window.Assistant("init","'.esc_js($assistant_id).'");
 
             Assistant("identify", {
-                name: "'.$current_user->display_name.'",
-                email: "'.$current_user->user_email.'"})
+                name: "'.esc_js($current_user->display_name).'",
+                email: "'.esc_js($current_user->user_email).'"})
         </script>
         ';
 

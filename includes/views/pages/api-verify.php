@@ -17,7 +17,7 @@
           <p class="mt-2 muted"><?php esc_html_e( 'We are excited to have you on board. Put your API key here and complete the setup', 'thrivedesk' ); ?></p>
         </div>
         <div class="td-card space-y-4">
-          <input type="password" id="td_helpdesk_api_key" class="w-full p-2! border border-slate-300! shadow-sm rounded" placeholder="<?php esc_attr_e( 'Enter your API Key', 'thrivedesk' ); ?>" value="<?php echo isset($_GET['token']) ? esc_html(sanitize_text_field($_GET['token'])) : ''; ?>"/>
+          <input type="password" id="td_helpdesk_api_key" class="w-full p-2! border border-slate-300! shadow-sm rounded" placeholder="<?php esc_attr_e( 'Enter your API Key', 'thrivedesk' ); ?>" value="<?php echo isset($_GET['token']) ? esc_attr(sanitize_text_field($_GET['token'])) : ''; ?>"/>
           <button id="submit-btn" class="btn btn-primary w-full justify-center my-4">
             <span><?php esc_html_e( 'Complete Setup', 'thrivedesk' ); ?></span>
             <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#fff" fill="none"><path d="m14.527 18-1.408-1.414L16.689 13H3.5v-2h13.189l-3.57-3.587L14.527 6l5.973 6-5.973 6Z" fill="currentColor"/></svg></span>
