@@ -23,14 +23,6 @@ final class Admin
      */
     private function __construct()
     {
-	    // allow to redirect to the getting started page
-	    register_activation_hook(THRIVEDESK_FILE, [$this, 'add_option_for_welcome_page_redirection']);
-
-        // define the hook when this plugin is inactivated
-        register_deactivation_hook(THRIVEDESK_FILE, [$this, 'deactivate']);
-
-        add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
-
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
         add_action('activated_plugin', [$this, 'create_portal_page'], 10);
@@ -38,8 +30,6 @@ final class Admin
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
 		add_action('admin_init', [$this, 'redirect_to_getting_started_page']);
-
-        register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
 
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
 
@@ -58,15 +48,11 @@ final class Admin
      * @since  0.0.1
      * @access public
      */
-    public function deactivate()
+    public static function deactivate()
     {
-        // Clear any plugin-related options
-        delete_option('td_db_version');
-        delete_option('thrivedesk_options');
-        delete_option('td_helpdesk_system_info');
-        delete_option('td_helpdesk_settings');
-        delete_option('thrivedesk_installed');
-        delete_option('thrivedesk_version');
+        // Configuration and settings are preserved so deactivation is
+        // reversible; destructive teardown (options + table) lives in
+        // uninstall.php.
     
         // Remove all transient data
         global $wpdb;
@@ -82,7 +68,7 @@ final class Admin
 		add_filter( 'admin_footer_text', '__return_empty_string', 11 );
 	}
 
-	public function add_option_for_welcome_page_redirection(): void {
+	public static function add_option_for_welcome_page_redirection(): void {
 		add_option('wp_thrivedesk_activation_redirect', true);
 	}
 
@@ -104,12 +90,6 @@ final class Admin
 			exit;
 		}
 	}
-
-    public function db_migrate()
-    {
-        require_once(THRIVEDESK_DIR . '/database/DBMigrator.php');
-        \ThriveDeskDBMigrator::migrate();
-    }
 
     /**
      * Main Admin Instance.
@@ -375,7 +355,7 @@ final class Admin
      * @since  0.0.1
      * @access public
      */
-    public function activate(): void
+    public static function activate(): void
     {
         $installed = get_option('thrivedesk_installed');
 
@@ -390,8 +370,11 @@ final class Admin
             if (false == get_option('thrivedesk_options')) update_option('thrivedesk_options', []);
         }
 
-        // migrate action for thrivedesk database
-        do_action('thrivedesk_db_migrate');
+        // Create/upgrade the ThriveDesk schema directly (not via an action) so
+        // activation works under WP-CLI, where the admin-only Admin singleton
+        // that hosted the migrate listener is never constructed.
+        require_once(THRIVEDESK_DIR . '/database/DBMigrator.php');
+        \ThriveDeskDBMigrator::migrate();
     }
   
     /**

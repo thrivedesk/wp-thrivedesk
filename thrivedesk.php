@@ -201,3 +201,9 @@ function ThriveDesk() {
 }
 
 ThriveDesk();
+
+// Lifecycle hooks live at file scope (not inside the is_admin()-gated Admin
+// singleton) so they register in every context, including WP-CLI activation.
+register_activation_hook( __FILE__, array( 'ThriveDesk\\Admin', 'add_option_for_welcome_page_redirection' ) );
+register_activation_hook( __FILE__, array( 'ThriveDesk\\Admin', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'ThriveDesk\\Admin', 'deactivate' ) );
