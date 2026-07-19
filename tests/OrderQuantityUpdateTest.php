@@ -10,9 +10,16 @@
 class OrderQuantityUpdateTest extends TD_Ajax_TestCase {
 
 	public function test_non_positive_quantity_returns_an_error() {
+		$api         = \ThriveDesk\Api::instance();
+		$plugin_prop = ( new \ReflectionClass( $api ) )->getProperty( 'plugin' );
+		$plugin_prop->setAccessible( true );
+		$plugin_prop->setValue( $api, \ThriveDesk\Plugins\WooCommerce::instance() );
+
+		// order 123 does not exist, so ownership resolves to not-found (not a
+		// mismatch) and the quantity guard is what answers.
 		$body = $this->capture_json(
-			function () {
-				\ThriveDesk\Api::instance()->woocommerce_order_quantity_update( '123', '456', '0' );
+			function () use ( $api ) {
+				$api->woocommerce_order_quantity_update( '123', '456', '0' );
 			}
 		);
 

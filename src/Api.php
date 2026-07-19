@@ -295,6 +295,8 @@ final class Api {
 	 * @return void
 	 */
 	public function wc_order_add_new_item( string $order_id, $item ) {
+		$this->guard_order_ownership( $order_id );
+
 		$product = wc_get_product_object( 'line_item', $item );
 
 		$item = new WC_Order_Item_Product();
@@ -323,6 +325,8 @@ final class Api {
 	 * @return void
 	 */
 	public function wc_order_remove_item( string $order_id, string $product_id ) {
+		$this->guard_order_ownership( $order_id );
+
 		$order = wc_get_order( $order_id );
 
 		foreach ( $order->get_items() as $item_id => $item ) {
@@ -344,6 +348,8 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_status_update( string $order_id, string $orderStatus ) {
+		$this->guard_order_ownership( $order_id );
+
 		if ( ! method_exists( $this->plugin, 'update_order_status' ) ) {
 			$this->apiResponse->error( 500, "Method 'update_order_status' not exist in plugin" );
 		}
@@ -379,6 +385,8 @@ final class Api {
 			$this->apiResponse->error( 400, 'order_id is required.' );
 		}
 
+		$this->guard_order_ownership( $order_id );
+
 		if ( ! method_exists( $this->plugin, 'cancel_subscriptions_for_order' ) ) {
 			$this->apiResponse->error( 500, "Method 'cancel_subscriptions_for_order' not exist in plugin" );
 		}
@@ -404,6 +412,8 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
+		$this->guard_order_ownership( $order_id );
+
 		if ( (int) $quantity <= 0 ) {
 			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
 		}
@@ -426,6 +436,8 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ) {
+		$this->guard_order_ownership( $order_id );
+
 		$order = wc_get_order( $order_id );
 
 		if ( $coupon ) {
@@ -527,6 +539,27 @@ final class Api {
 		$data = $this->plugin->prepare_data();
 
 		$this->apiResponse->success( 200, $data, 'Success' );
+	}
+
+	/**
+	 * Reject an inbound WooCommerce mutation whose signed customer email does
+	 * not match the target order's billing email. The SaaS signs `email` on
+	 * every mutator request, so this is a second factor on top of the HMAC.
+	 */
+	private function guard_order_ownership( string $order_id ): void {
+		if ( ! method_exists( $this->plugin, 'order_belongs_to_customer' ) ) {
+			// Can't verify ownership without the WooCommerce resolver: fail closed.
+			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
+		}
+
+		$email = sanitize_email( $_REQUEST['email'] ?? '' );
+		$owns  = $this->plugin->order_belongs_to_customer( $order_id, $email );
+
+		// null = order not found; let the mutator emit its own 404 rather than a
+		// misleading ownership error. A definite false is a real mismatch.
+		if ( false === $owns ) {
+			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
+		}
 	}
 
 	/**

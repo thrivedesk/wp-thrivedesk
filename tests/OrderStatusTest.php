@@ -242,6 +242,8 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
             };
         } );
 
+        $_REQUEST['email'] = self::LYNNE_EMAIL;
+
         ob_start();
         try {
             $api->woocommerce_order_status_update( $order_id, $order_status );
@@ -249,6 +251,8 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
             // Expected exception from wp_die.
         }
         $body = ob_get_clean();
+
+        unset( $_REQUEST['email'] );
 
         return json_decode( $body, true ) ?: [];
     }

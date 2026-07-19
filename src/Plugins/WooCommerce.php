@@ -358,6 +358,23 @@ final class WooCommerce extends Plugin {
 	}
 
 	/**
+	 * Whether the order (by customer-facing number or post ID) belongs to the
+	 * given customer, matched on billing email. Gates the inbound mutators,
+	 * mirroring the ownership check in order_status().
+	 *
+	 * @since 2.6.0
+	 */
+	public function order_belongs_to_customer( string $order_id, string $email ): ?bool {
+		$order = $this->get_order_by_number_or_id( $order_id );
+		if ( ! $order ) {
+			return null;
+		}
+
+		return '' !== $email
+			&& strtolower( $order->get_billing_email() ) === strtolower( $email );
+	}
+
+	/**
 	 * Cancel (or mark pending-cancel) subscriptions related to an order
 	 * after an agent cancels or fully refunds it from the panel.
 	 *
