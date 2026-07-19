@@ -33,7 +33,6 @@
 		"tailwindcss": "^4.0.0"
 	},
 	"dependencies": {
-		"confetti-js": "^0.0.18",
 		"sweetalert2": "^11.4.8"
 	},
 	"overrides": {
