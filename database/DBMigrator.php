@@ -1,18 +1,28 @@
 <?php
+/**
+ * Dispatches ThriveDesk database migrations.
+ *
+ * @package ThriveDesk
+ */
 
-require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-require_once(THRIVEDESK_DIR . '/database/TDConversation.php');
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
+require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+require_once THRIVEDESK_DIR . '/database/TDConversation.php';
 
-class ThriveDeskDBMigrator
-{
-    /**
-     * ThriveDesk Database migrations
-     *
-     * @since 0.7.0
-     */
-    public static function migrate()
-    {
-        \ThriveDeskDBMigrations\TDConversation::migrate();
-    }
+/**
+ * Runs each registered migration in order.
+ */
+class ThriveDeskDBMigrator {
+
+	/**
+	 * ThriveDesk Database migrations
+	 *
+	 * @since 0.7.0
+	 */
+	public static function migrate() {
+		\ThriveDeskDBMigrations\TDConversation::migrate();
+	}
 }

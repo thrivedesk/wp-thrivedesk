@@ -13,8 +13,6 @@
     <!-- Legacy source is excluded while we adopt WPCS incrementally; drop a line as its directory goes clean. -->
     <exclude-pattern>*/src/*</exclude-pattern>
     <exclude-pattern>*/includes/*</exclude-pattern>
-    <exclude-pattern>*/Hooks/*</exclude-pattern>
-    <exclude-pattern>*/database/*</exclude-pattern>
 
     <arg name="extensions" value="php"/>
     <arg name="colors"/>
@@ -22,10 +20,13 @@
 
     <rule ref="WordPress"/>
 
-    <!-- Entry file keeps the plugin-slug filename, the public ThriveDesk() factory, and bootstraps the class in the same file. -->
+    <!-- PSR-4 (composer) autoloading uses CamelCase class filenames, which the
+         WP hyphenated-lowercase file-name sniff cannot accommodate plugin-wide. -->
     <rule ref="WordPress.Files.FileName">
-        <exclude-pattern>thrivedesk.php</exclude-pattern>
+        <severity>0</severity>
     </rule>
+
+    <!-- Entry file keeps the plugin-slug filename, the public ThriveDesk() factory, and bootstraps the class in the same file. -->
     <rule ref="WordPress.NamingConventions.ValidFunctionName">
         <exclude-pattern>thrivedesk.php</exclude-pattern>
     </rule>
