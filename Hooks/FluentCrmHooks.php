@@ -110,16 +110,7 @@ class FluentCrmHooks {
 						$formatted_tickets = array();
 
 						foreach ( $td_conversations as $td_conversation ) {
-							$conversation_url = THRIVEDESK_APP_URL . '/conversations/' . $td_conversation->id;
-
-							$action_html         = '<a target="_blank" href="' . $conversation_url . '">View conversation</a>';
-							$formatted_tickets[] = array(
-								'id'           => '#' . $td_conversation->ticket_id,
-								'title'        => $td_conversation->title,
-								'status'       => $td_conversation->status,
-								'Submitted at' => gmdate( $td_conversation->created_at ),
-								'action'       => $action_html,
-							);
+							$formatted_tickets[] = self::format_ticket( $td_conversation );
 						}
 
 						return array(
@@ -131,6 +122,25 @@ class FluentCrmHooks {
 					2
 				);
 			}
+		);
+	}
+
+	/**
+	 * Shape a stored conversation row into a FluentCRM ticket entry.
+	 *
+	 * @param object $conversation Row from the conversations table.
+	 * @return array
+	 */
+	public static function format_ticket( object $conversation ): array {
+		$conversation_url = THRIVEDESK_APP_URL . '/conversations/' . $conversation->id;
+		$action_html      = '<a target="_blank" href="' . $conversation_url . '">View conversation</a>';
+
+		return array(
+			'id'           => '#' . $conversation->ticket_id,
+			'title'        => $conversation->title,
+			'status'       => $conversation->status,
+			'Submitted at' => $conversation->created_at,
+			'action'       => $action_html,
 		);
 	}
 }
