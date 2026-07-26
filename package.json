@@ -29,7 +29,7 @@
 		"@wordpress/scripts": "^32.0.0",
 		"cssnano": "^5.1.14",
 		"laravel-mix": "^6.0.49",
-		"postcss": "^8.4.21",
+		"postcss": "^8.5.23",
 		"tailwindcss": "^4.0.0"
 	},
 	"dependencies": {
