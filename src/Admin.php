@@ -314,7 +314,7 @@ final class Admin
 
         echo esc_url(THRIVEDESK_APP_URL . '/apps/' . esc_attr($plugin) . '?connect=' . esc_attr($hash));
 
-        die();
+        wp_die();
     }
 
     /**
@@ -345,7 +345,7 @@ final class Admin
 
         echo 1;
 
-        die();
+        wp_die();
     }
 
     /**
