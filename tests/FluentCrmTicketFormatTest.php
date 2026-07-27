@@ -33,4 +33,21 @@ class FluentCrmTicketFormatTest extends WP_UnitTestCase {
 		$this->assertSame( 'open', $row['status'] );
 		$this->assertStringContainsString( '/conversations/conv_abc', $row['action'] );
 	}
+
+	/**
+	 * The id comes off the inbound sync, where sanitize_text_field leaves quotes
+	 * alone, and it is interpolated into the anchor's href.
+	 */
+	public function test_conversation_id_cannot_break_out_of_the_action_link() {
+		$conversation     = $this->conversation();
+		$conversation->id = 'conv" onmouseover="alert(1)';
+
+		$row = \ThriveDesk\FluentCrmHooks::format_ticket( $conversation );
+
+		$this->assertMatchesRegularExpression(
+			'~^<a target="_blank" href="[^"]*">View conversation</a>$~',
+			$row['action'],
+			'a quote in the id must not open a new attribute on the anchor'
+		);
+	}
 }

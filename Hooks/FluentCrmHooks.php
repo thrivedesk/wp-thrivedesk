@@ -132,7 +132,10 @@ class FluentCrmHooks {
 	 * @return array
 	 */
 	public static function format_ticket( object $conversation ): array {
-		$conversation_url = THRIVEDESK_APP_URL . '/conversations/' . $conversation->id;
+		// The id comes off the inbound sync payload, where sanitize_text_field
+		// leaves quotes intact, and it lands inside the href. Escape it or a
+		// quoted id opens a new attribute on the anchor.
+		$conversation_url = esc_url( THRIVEDESK_APP_URL . '/conversations/' . $conversation->id );
 		$action_html      = '<a target="_blank" href="' . $conversation_url . '">View conversation</a>';
 
 		return array(
