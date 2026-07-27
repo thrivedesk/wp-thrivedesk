@@ -21,9 +21,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # CodeQL has no PHP extractor (c-cpp, csharp, go, java-kotlin,
+          # javascript-typescript, python, ruby, rust, swift, actions only), so
+          # the PHP surface is covered by PHPCS + the PHPUnit matrix instead.
           - language: javascript-typescript
-            build-mode: none
-          - language: php
             build-mode: none
 
     steps:
