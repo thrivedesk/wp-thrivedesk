@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.5.0
+Stable Tag: 2.6.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,24 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.6.0 =
+2026-07-27 - version 2.6.0
+* fix: Order actions taken from a ThriveDesk ticket (status change, subscription cancel, quantity change, coupon, add or remove item) now verify the order belongs to the customer on that ticket before changing anything.
+* fix: Store requests are rejected when the integration has no API token or has not finished connecting, so a half-connected or disconnected store can no longer be driven.
+* fix: The connect token is generated from a cryptographic random source instead of a hashed timestamp.
+* fix: The settings screen's background requests (system info, inbox list, assistant list, portal check, connect, disconnect, API key verify) require an administrator instead of any logged-in user.
+* fix: The conversation sync writes only the fields it owns. Anything else in the payload is dropped instead of reaching the database.
+* fix: Deactivating the plugin keeps your settings. Only deleting it removes the conversations table and the plugin's options.
+* fix: Activating with WP-CLI creates the conversations table. Before this, activation only completed from the dashboard.
+* fix: Schema changes shipped in an update apply on load, so stores that never re-activate are no longer left on an old schema.
+* fix: Doc search on the customer portal returns published content only and caps its result set.
+* fix: The API key, the connect nonce, and full API responses are no longer written to the PHP error log.
+* fix: The assistant snippet escapes the logged-in user's display name and email before writing them into the page.
+* fix: Knowledge base requests use the API key they are given instead of falling back to the stored one.
+* fix: Setting an order line to a quantity of zero or less returns a clear error instead of silently doing nothing.
+* fix: The FluentCRM ticket list shows each conversation's stored submission time.
+* dev: Removed the unused SmartPay integration and the confetti animation dependency. Hooks/ and database/ are linted under the full WordPress coding standard, and the suite covers every change above.
 
 = 2.5.0 =
 2026-07-05 - version 2.5.0
