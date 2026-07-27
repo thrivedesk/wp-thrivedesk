@@ -261,73 +261,69 @@ final class FluentCRM extends Plugin {
 	public function sync_conversation_with_fluentcrm(string $syncType, array $extra = []): void {
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::DB_TABLE_TD_CONVERSATION;
+		$data       = \ThriveDesk\Data\ConversationSyncData::fromExtra($extra);
 
 		switch ($syncType) {
 			case self::TYPE_CREATE_CONVERSATION:
-				$extra['conversation'] && (
-				$wpdb->replace($table_name, $extra['conversation'])
+				$conversation = $data->conversationRow();
+				$conversation && (
+				$wpdb->replace($table_name, $conversation)
 				);
 
-				$extra['create_new_contact'] && (
-				$this->create_new_contact($extra['contact_name'] ?? '')
+				$data->createNewContact() && (
+				$this->create_new_contact($data->contactName())
 				);
 				break;
 			case self::TYPE_DELETE_CONVERSATION:
-				if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
-					foreach ($extra['conversation_ids'] as $conversationId) {
-						$wpdb->update(
-							$table_name,
-							[
-								'deleted_at' => current_time('mysql'),
-							],
-							[
-								'id'       => $conversationId,
-								'inbox_id' => $extra['inbox_id'] ?? '',
-							]
-						);
-					}
+				foreach ($data->conversationIds() as $conversationId) {
+					$wpdb->update(
+						$table_name,
+						[
+							'deleted_at' => current_time('mysql'),
+						],
+						[
+							'id'       => $conversationId,
+							'inbox_id' => $data->inboxId(),
+						]
+					);
 				}
 				break;
 			case self::TYPE_FORCE_DELETE_CONVERSATION:
-				if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
-					foreach ($extra['conversation_ids'] as $conversationId) {
-						$wpdb->delete(
-							$table_name,
-							[
-								'id'       => $conversationId,
-								'inbox_id' => $extra['inbox_id'] ?? '',
-							]
-						);
-					}
+				foreach ($data->conversationIds() as $conversationId) {
+					$wpdb->delete(
+						$table_name,
+						[
+							'id'       => $conversationId,
+							'inbox_id' => $data->inboxId(),
+						]
+					);
 				}
 				break;
 			case self::TYPE_RESTORE_CONVERSATION:
-				if (isset($extra['conversation_ids']) && count($extra['conversation_ids'])) {
-					foreach ($extra['conversation_ids'] as $conversationId) {
-						$wpdb->update(
-							$table_name,
-							[
-								'deleted_at' => null,
-							],
-							[
-								'id'       => $conversationId,
-								'inbox_id' => $extra['inbox_id'] ?? '',
-							]
-						);
-					}
+				foreach ($data->conversationIds() as $conversationId) {
+					$wpdb->update(
+						$table_name,
+						[
+							'deleted_at' => null,
+						],
+						[
+							'id'       => $conversationId,
+							'inbox_id' => $data->inboxId(),
+						]
+					);
 				}
 				break;
 			case self::TYPE_UPDATE_CONVERSATION_STATUS:
-				$extra['status'] && $extra['conversation_id'] && (
+				$data->status() && $data->conversationId() && (
 				$wpdb->update(
 					$table_name,
 					[
-						'status'     => $extra['status'],
+						'status'     => $data->status(),
 						'updated_at' => current_time('mysql'),
 					],
 					[
-						'id'       => $extra['conversation_id'],
-						'inbox_id' => $extra['inbox_id'],
+						'id'       => $data->conversationId(),
+						'inbox_id' => $data->inboxId(),
 					]
 				)
 				);

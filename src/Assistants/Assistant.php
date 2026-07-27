@@ -20,6 +20,14 @@ class Assistant {
     }
 
 	public function thrivedesk_load_assistants(  ): void {
+		if (
+			! isset( $_POST['nonce'] )
+			|| ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
+			|| ! current_user_can( 'manage_options' )
+		) {
+			wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
+		}
+
 		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
 
 		if (empty($apiKey)) {
@@ -79,11 +87,11 @@ class Assistant {
                 t.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},
                 n.readyQueue=[],"complete"===e.readyState)return s();
             t.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}
-            (window,document,window.Assistant||function(){}),window.Assistant("init","'.$assistant_id.'");
+            (window,document,window.Assistant||function(){}),window.Assistant("init","'.esc_js($assistant_id).'");
 
             Assistant("identify", {
-                name: "'.$current_user->display_name.'",
-                email: "'.$current_user->user_email.'"})
+                name: "'.esc_js($current_user->display_name).'",
+                email: "'.esc_js($current_user->user_email).'"})
         </script>
         ';
 

@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2';
-import ConfettiGenerator from "confetti-js";
 import { __, sprintf } from '@wordpress/i18n';
 var assistants = [];
 
@@ -190,7 +189,6 @@ jQuery(document).ready(($) => {
 							text: parsedResponse.message,
 							confirmButtonText: __('Continue to settings', 'thrivedesk'),
 						}).then((result) => {
-							localStorage.setItem('shouldTriggerConfetti', 'true');
 							if (result.isConfirmed) {
 								window.location.href = '/wp-admin/admin.php?page=thrivedesk';
 							}
@@ -280,12 +278,6 @@ jQuery(document).ready(($) => {
 					title: ( response.status === 'success' ? __('Success', 'thrivedesk') : __('Error', 'thrivedesk') ),
 					text: response.message,
 				});
-				// .then((result) => {
-				// 	localStorage.setItem('shouldTriggerConfetti', 'true');
-				// 	if (result.isConfirmed) {
-				// 		window.location.href = '/wp-admin/admin.php?page=thrivedesk';
-				// 	}
-				// });
 
 				// Remove loading state
 				setTimeout(function() {
@@ -301,45 +293,6 @@ jQuery(document).ready(($) => {
 			});
 		});
 	});
-
-	// Confetti
-	async function triggerConfetti() {
-		var confettiElement = document.getElementById('confetti-canvas');
-		confettiElement.style.display = 'block';
-
-		var confettiSettings = {
-			target: confettiElement,
-			max: 600,
-			size: 0.5,
-			animate: true,
-			props: ['circle', 'square', 'triangle'],
-			colors: [[255, 0, 64], [0, 255, 64], [0, 64, 255]],
-			clock: 60,
-			rotate: true,
-			start_from_edge: false,
-			respawn: true,
-			width: 960,
-			height: 767,
-		};
-
-
-		var confetti = new ConfettiGenerator(confettiSettings);
-		confetti.render();
-
-		setTimeout(() => {
-			confetti.clear();
-			confettiElement.style.display = 'none';
-		}, 2500);
-
-	}
-	// Confetti for API Key validation
-	var $key = $('#td_helpdesk_api_key').val().trim();
-	if ($key) {
-		if (localStorage.getItem('shouldTriggerConfetti') === 'true') {
-			triggerConfetti();
-			localStorage.setItem('shouldTriggerConfetti', 'false');
-		}
-	}
 
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {
@@ -413,6 +366,7 @@ jQuery(document).ready(($) => {
 					if (result.isConfirmed) {
 						jQuery.post(thrivedesk.ajax_url, {
 							action: 'thrivedesk_system_info',
+							nonce: thrivedesk.nonce,
 							data: {
 								td_helpdesk_api_key: apiKey,
 							},
@@ -420,7 +374,6 @@ jQuery(document).ready(($) => {
 							.success(function (response) {
 								handleThriveDeskMainForm().then((response) => {
 									if (response.status === 'success') {
-										localStorage.setItem('shouldTriggerConfetti', 'true');
 										setTimeout(() => {
 											window.location.href = '/wp-admin/admin.php?page=thrivedesk';
 										}, 1000);
@@ -571,6 +524,7 @@ jQuery(document).ready(($) => {
         jQuery
             .post(thrivedesk.ajax_url, {
                 action: 'thrivedesk_load_inboxes',
+                nonce: thrivedesk.nonce,
                 data: {
                     td_helpdesk_api_key: apiKey,
                 },
@@ -647,6 +601,7 @@ jQuery(document).ready(($) => {
 		jQuery
 			.post(thrivedesk.ajax_url, {
 				action: 'thrivedesk_check_portal_access',
+				nonce: thrivedesk.nonce,
 				data: {
 					td_helpdesk_api_key: apiKey,
 				},

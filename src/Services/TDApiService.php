@@ -56,7 +56,7 @@ class TDApiService {
                 // Success: Process the response body
                 return json_decode($body, true);
             } else {
-                error_log( 'ThriveDesk - API Request Failed. Response Code: ' . $response_code .'.  '. print_r($response, true)); // Log the error
+                error_log( 'ThriveDesk - API Request Failed. Response Code: ' . $response_code );
 
                 if ( 403 === $response_code || 402 === $response_code ) {
                     $body               = wp_remote_retrieve_body($response);

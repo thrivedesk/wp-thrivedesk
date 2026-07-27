@@ -87,4 +87,41 @@ class HmacSignatureTest extends TD_Ajax_TestCase {
 
 		$this->assertSame( 'Request unauthorized', $body['message'] );
 	}
+
+	public function test_empty_api_token_rejects_forged_signature() {
+		// Active-but-never-connected and post-disconnect both leave api_token ''.
+		// hash_hmac() with an empty key is a value anyone can reproduce, so a
+		// signature computed against it is forgeable. It must never authorize.
+		update_option( 'thrivedesk_options', [ 'edd' => [ 'api_token' => '' ] ] );
+		$payload = [
+			'listener' => 'thrivedesk',
+			'plugin'   => 'edd',
+			'action'   => 'connect',
+		];
+		// The attacker signs with the known-empty key, exactly as verify_token would.
+		$forged = td_test_sign_payload( $payload, '' );
+		$body   = $this->dispatch( $payload, $forged );
+
+		$this->assertSame( 'Request unauthorized', $body['message'] );
+	}
+
+	public function test_data_action_requires_connected_integration() {
+		// After the admin starts connect the token exists but 'connected' stays
+		// false until the SaaS calls back. In that window only connect/disconnect
+		// may run: a data or mutation action must be rejected even with a valid
+		// signature, so a leaked token can't drive store changes pre-connection.
+		update_option(
+			'thrivedesk_options',
+			[ 'woocommerce' => [ 'api_token' => self::TOKEN, 'connected' => false ] ]
+		);
+		$payload = [
+			'listener' => 'thrivedesk',
+			'plugin'   => 'woocommerce',
+			'action'   => 'get_woocommerce_order_status_list',
+		];
+		$sig  = td_test_sign_payload( $payload, self::TOKEN );
+		$body = $this->dispatch( $payload, $sig );
+
+		$this->assertSame( 'Request unauthorized', $body['message'] );
+	}
 }

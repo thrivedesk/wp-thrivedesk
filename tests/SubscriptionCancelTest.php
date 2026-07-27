@@ -20,6 +20,9 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
     /** @var \ThriveDesk\Plugins\WooCommerce */
     private $plugin;
 
+    /** @var string The billing email the fixtures use; the signed request must match it. */
+    private const OWNER_EMAIL = 'customer@example.com';
+
     public function set_up() {
         parent::set_up();
 
@@ -62,6 +65,8 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
             };
         } );
 
+        $_REQUEST['email'] = self::OWNER_EMAIL;
+
         ob_start();
         try {
             $api->woocommerce_subscription_cancel( $order_id, $subscription_status, $order_types );
@@ -70,12 +75,15 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
         }
         $body = ob_get_clean();
 
+        unset( $_REQUEST['email'] );
+
         return json_decode( $body, true ) ?: [];
     }
 
     private function create_order( string $status = 'processing' ): \WC_Order {
         $order = wc_create_order();
         $order->set_status( $status );
+        $order->set_billing_email( self::OWNER_EMAIL );
         $order->save();
 
         return $order;
@@ -98,6 +106,7 @@ class TD_Subscription_Cancel_Test extends WP_UnitTestCase {
     private function create_renewal_order( $subscription ): \WC_Order {
         $renewal = wc_create_order();
         $renewal->set_status( 'processing' );
+        $renewal->set_billing_email( self::OWNER_EMAIL );
         $renewal->update_meta_data( '_subscription_renewal', $subscription->get_id() );
         $renewal->save();
 

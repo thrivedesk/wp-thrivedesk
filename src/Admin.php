@@ -23,14 +23,6 @@ final class Admin
      */
     private function __construct()
     {
-	    // allow to redirect to the getting started page
-	    register_activation_hook(THRIVEDESK_FILE, [$this, 'add_option_for_welcome_page_redirection']);
-
-        // define the hook when this plugin is inactivated
-        register_deactivation_hook(THRIVEDESK_FILE, [$this, 'deactivate']);
-
-        add_action('thrivedesk_db_migrate', [$this, 'db_migrate']);
-
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
         add_action('activated_plugin', [$this, 'create_portal_page'], 10);
@@ -38,8 +30,6 @@ final class Admin
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
 		add_action('admin_init', [$this, 'redirect_to_getting_started_page']);
-
-        register_activation_hook(THRIVEDESK_FILE, [$this, 'activate']);
 
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
 
@@ -58,15 +48,11 @@ final class Admin
      * @since  0.0.1
      * @access public
      */
-    public function deactivate()
+    public static function deactivate()
     {
-        // Clear any plugin-related options
-        delete_option('td_db_version');
-        delete_option('thrivedesk_options');
-        delete_option('td_helpdesk_system_info');
-        delete_option('td_helpdesk_settings');
-        delete_option('thrivedesk_installed');
-        delete_option('thrivedesk_version');
+        // Configuration and settings are preserved so deactivation is
+        // reversible; destructive teardown (options + table) lives in
+        // uninstall.php.
     
         // Remove all transient data
         global $wpdb;
@@ -82,7 +68,7 @@ final class Admin
 		add_filter( 'admin_footer_text', '__return_empty_string', 11 );
 	}
 
-	public function add_option_for_welcome_page_redirection(): void {
+	public static function add_option_for_welcome_page_redirection(): void {
 		add_option('wp_thrivedesk_activation_redirect', true);
 	}
 
@@ -104,12 +90,6 @@ final class Admin
 			exit;
 		}
 	}
-
-    public function db_migrate()
-    {
-        require_once(THRIVEDESK_DIR . '/database/DBMigrator.php');
-        \ThriveDeskDBMigrator::migrate();
-    }
 
     /**
      * Main Admin Instance.
@@ -263,11 +243,6 @@ final class Admin
             thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
-            // if token is passed, log it
-            if(isset($_GET['token'])){
-                error_log('ThriveDesk: Token received from request: ' . $_GET['token']);
-            }
-
             thrivedesk_view('pages/api-verify');
         }
         else{
@@ -292,19 +267,33 @@ final class Admin
     }
 
     /**
+     * Generate a high-entropy per-store api_token: 32 random bytes, hex-encoded.
+     * This is the HMAC key for the inbound ?listener= contract, so it must not
+     * be guessable from the connect time the way the old md5(time()) was.
+     */
+    private static function generate_api_token(): string
+    {
+        return bin2hex(random_bytes(32));
+    }
+
+    /**
      * Handle plugin connect action
      *
      * @return void
      */
     public function ajax_connect_plugin()
     {
-        error_log(wp_json_encode(array_map('sanitize_text_field', wp_unslash($_POST['data']))));
-
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'thrivedesk-plugin-action')) die;
+        if (
+            ! current_user_can('manage_options')
+            || ! isset($_POST['data']['plugin'])
+            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
+        ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
+        }
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
-        $api_token = md5(time());
+        $api_token = self::generate_api_token();
 
         $thrivedesk_options          = get_option('thrivedesk_options', []);
         $thrivedesk_options[$plugin] = $thrivedesk_options[$plugin] ?? [];
@@ -325,7 +314,7 @@ final class Admin
 
         echo esc_url(THRIVEDESK_APP_URL . '/apps/' . esc_attr($plugin) . '?connect=' . esc_attr($hash));
 
-        die();
+        wp_die();
     }
 
     /**
@@ -335,7 +324,13 @@ final class Admin
      */
     public function ajax_disconnect_plugin(): void
     {
-        if (!isset($_POST['data']['plugin']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'thrivedesk-plugin-action')) die;
+        if (
+            ! current_user_can('manage_options')
+            || ! isset($_POST['data']['plugin'])
+            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
+        ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
+        }
 
         $plugin = sanitize_key($_POST['data']['plugin']);
 
@@ -350,7 +345,7 @@ final class Admin
 
         echo 1;
 
-        die();
+        wp_die();
     }
 
     /**
@@ -360,7 +355,7 @@ final class Admin
      * @since  0.0.1
      * @access public
      */
-    public function activate(): void
+    public static function activate(): void
     {
         $installed = get_option('thrivedesk_installed');
 
@@ -375,8 +370,11 @@ final class Admin
             if (false == get_option('thrivedesk_options')) update_option('thrivedesk_options', []);
         }
 
-        // migrate action for thrivedesk database
-        do_action('thrivedesk_db_migrate');
+        // Create/upgrade the ThriveDesk schema directly (not via an action) so
+        // activation works under WP-CLI, where the admin-only Admin singleton
+        // that hosted the migrate listener is never constructed.
+        require_once(THRIVEDESK_DIR . '/database/DBMigrator.php');
+        \ThriveDeskDBMigrator::migrate();
     }
   
     /**

@@ -16,7 +16,6 @@ if($api_key && !$systemInfo) {
 ?>
 
 <div class="thrivedesk">
-    <canvas id="confetti-canvas" style="position: absolute; z-index: 999; display: none" class="w-full "></canvas>
     <!-- header  -->
     <div class="flex items-center py-5 px-9">
         <div class="flex flex-col">

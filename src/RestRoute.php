@@ -22,6 +22,12 @@ class RestRoute
 	 */
 	public const POST_TITLE_LIMIT = 20;
 
+	/**
+	 * Cap the public doc-search result set so the anonymous endpoint can't be
+	 * driven into an unbounded query on stores with a large posts_per_page.
+	 */
+	public const SEARCH_RESULT_LIMIT = 20;
+
 	/** Main RestRoute
 	 *
 	 * @return RestRoute
@@ -157,6 +163,8 @@ class RestRoute
 		if ( null === $query_string || '' === $query_string ) {
 			$query_string = $_POST['query_string'] ?? '';
 		}
+		$query_string = sanitize_text_field( (string) $query_string );
+
 		$settings = get_option( 'td_helpdesk_settings', [] );
 		$select_post_types = $settings['td_helpdesk_post_types'] ?? '';
 
@@ -168,8 +176,11 @@ class RestRoute
 
 		$x_query = new \WP_Query(
 			array(
-				's'         => $query_string,
-				'post_type' => $select_post_types
+				's'              => $query_string,
+				'post_type'      => $select_post_types,
+				'post_status'    => 'publish',
+				'posts_per_page' => self::SEARCH_RESULT_LIMIT,
+				'no_found_rows'  => true,
 			)
 		);
 
