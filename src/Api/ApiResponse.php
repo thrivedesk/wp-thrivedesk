@@ -1,12 +1,20 @@
 <?php
+/**
+ * JSON response builder for the ?listener= endpoint.
+ *
+ * @package ThriveDesk
+ */
 
 namespace ThriveDesk\Api;
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Fluent builder that terminates the request with a JSON body.
+ */
 class ApiResponse {
 	/**
 	 * Response status
@@ -32,9 +40,9 @@ class ApiResponse {
 	/**
 	 * Response data
 	 *
-	 * @var Array|Object
+	 * @var array|object
 	 */
-	public $data = [];
+	public $data = array();
 
 	/**
 	 * Construct Response class.
@@ -45,41 +53,84 @@ class ApiResponse {
 	public function __construct() {
 	}
 
-	public function status_code(int $status_code): object {
+	/**
+	 * Set the HTTP status code.
+	 *
+	 * @param int $status_code HTTP status code.
+	 *
+	 * @return object
+	 */
+	public function status_code( int $status_code ): object {
 		$this->status_code = $status_code;
 
 		return $this;
 	}
 
-	public function message(string $message): object {
+	/**
+	 * Set the response message.
+	 *
+	 * @param string $message Human-readable message.
+	 *
+	 * @return object
+	 */
+	public function message( string $message ): object {
 		$this->message = $message;
 
 		return $this;
 	}
 
-	public function data(array $data): object {
+	/**
+	 * Set the response payload.
+	 *
+	 * @param array $data Payload returned under the 'data' key.
+	 *
+	 * @return object
+	 */
+	public function data( array $data ): object {
 		$this->data = $data;
 
 		return $this;
 	}
 
-	public function error(int $status_code, string $message = '') {
-		return $this->status_code($status_code)->message($message)->send();
+	/**
+	 * Send an error response and end the request.
+	 *
+	 * @param int    $status_code HTTP status code.
+	 * @param string $message     Human-readable message.
+	 *
+	 * @return void
+	 */
+	public function error( int $status_code, string $message = '' ) {
+		$this->status_code( $status_code )->message( $message )->send();
 	}
 
-	public function success(int $status_code = 200, array $data = [], string $message = '') {
-		return $this->status_code($status_code)->data($data)->message($message)->send();
+	/**
+	 * Send a success response and end the request.
+	 *
+	 * @param int    $status_code HTTP status code.
+	 * @param array  $data        Payload returned under the 'data' key.
+	 * @param string $message     Human-readable message.
+	 *
+	 * @return void
+	 */
+	public function success( int $status_code = 200, array $data = array(), string $message = '' ) {
+		$this->status_code( $status_code )->data( $data )->message( $message )->send();
 	}
 
+	/**
+	 * Emit the JSON body. wp_send_json() ends the request.
+	 *
+	 * @return void
+	 */
 	public function send(): void {
-		$response = [
+		$response = array(
 			'message' => $this->message,
-		];
+		);
 
-		if (true === $this->status && $this->data) {
+		if ( true === $this->status && $this->data ) {
 			$response['data'] = $this->data;
 		}
 
-		wp_send_json($response, $this->status_code);
+		wp_send_json( $response, $this->status_code );
 	}
 }

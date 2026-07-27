@@ -1,4 +1,9 @@
 <?php
+/**
+ * Base class every ThriveDesk integration extends.
+ *
+ * @package ThriveDesk
+ */
 
 namespace ThriveDesk;
 
@@ -7,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Shared contract and order maths for the per-platform integrations.
+ */
 abstract class Plugin {
 	/**
 	 * Customer email
@@ -60,7 +68,7 @@ abstract class Plugin {
 	/**
 	 * Get plugin data
 	 *
-	 * @param  string  $key
+	 * @param string $key Key to read from the integration's stored options; empty returns them all.
 	 *
 	 * @return mixed
 	 */
@@ -83,7 +91,7 @@ abstract class Plugin {
 	/**
 	 * Get the formated amount
 	 *
-	 * @param  float  $amount
+	 * @param float $amount Raw order amount.
 	 *
 	 * @return string
 	 */
@@ -101,46 +109,53 @@ abstract class Plugin {
 	/**
 	 * Get the accepted orders only
 	 *
-	 * @param  array  $orders
+	 * @param array $orders Orders as returned by get_orders().
 	 *
 	 * @return array
 	 */
 	public function filter_accepted_orders( array $orders ): array {
-		$accepted_statuses = $this->accepted_statuses() ?? [];
+		$accepted_statuses = $this->accepted_statuses() ?? array();
 
-		return array_filter( $orders, function ( $order ) use ( $accepted_statuses ) {
-			return in_array( $order['order_status'], $accepted_statuses );
-		} );
+		return array_filter(
+			$orders,
+			function ( $order ) use ( $accepted_statuses ) {
+				return in_array( $order['order_status'], $accepted_statuses, true );
+			}
+		);
 	}
 
 	/**
 	 * Get the lifetime order value of the customer
 	 *
-	 * @param  array  $orders
+	 * @param array $orders Accepted orders.
 	 *
 	 * @return float
 	 */
 	public function get_lifetime_order( array $orders ): float {
-		// TODO: Ignore pending or refunded amounts
+		// TODO: Ignore pending or refunded amounts.
 		return array_sum( array_column( $orders, 'amount' ) );
 	}
 
 	/**
 	 * Get this year order value of the customer
 	 *
-	 * @param  array  $orders
+	 * @param array $orders Accepted orders.
 	 *
 	 * @return float
 	 */
 	public function get_this_year_order( array $orders ): float {
-		// TODO: Ignore pending or refunded amounts
-		return array_reduce( $orders, function ( $carry, $item ) {
-			if ( strtotime( $item['date'] ) >= strtotime( '-1 year' ) ) {
-				$carry += (float) $item['amount'];
-			}
+		// TODO: Ignore pending or refunded amounts.
+		return array_reduce(
+			$orders,
+			function ( $carry, $item ) {
+				if ( strtotime( $item['date'] ) >= strtotime( '-1 year' ) ) {
+					$carry += (float) $item['amount'];
+				}
 
-			return $carry;
-		}, 0 );
+				return $carry;
+			},
+			0
+		);
 	}
 
 	/**
@@ -163,14 +178,14 @@ abstract class Plugin {
 
 		$avg_order = number_format( (float) $avg_order, 2, '.', '' );
 
-		return [
-			"customer"        => $customer,
-			"customer_since"  => $customer['registered_at'] ?? '',
-			"lifetime_order"  => $this->get_formated_amount( $lifetime_order ),
-			"this_year_order" => $this->get_formated_amount( $this_year_order ),
-			"avg_order"       => $this->get_formated_amount( $avg_order ),
-			"orders"          => $orders,
-			'add_order'       => admin_url( "post-new.php?post_type=shop_order" ) ?? '',
-		];
+		return array(
+			'customer'        => $customer,
+			'customer_since'  => $customer['registered_at'] ?? '',
+			'lifetime_order'  => $this->get_formated_amount( $lifetime_order ),
+			'this_year_order' => $this->get_formated_amount( $this_year_order ),
+			'avg_order'       => $this->get_formated_amount( $avg_order ),
+			'orders'          => $orders,
+			'add_order'       => admin_url( 'post-new.php?post_type=shop_order' ) ?? '',
+		);
 	}
 }
