@@ -10,8 +10,22 @@
     <exclude-pattern>*/assets/*</exclude-pattern>
     <exclude-pattern>*/tests/*</exclude-pattern>
 
-    <!-- Legacy source is excluded while we adopt WPCS incrementally; drop a line as its directory goes clean. -->
-    <exclude-pattern>*/src/*</exclude-pattern>
+    <!-- Legacy source is excluded while we adopt WPCS incrementally. Listed one
+         path at a time rather than a blanket */src/* so the remaining debt is
+         visible: bring a path clean, delete its line, and it stays enforced.
+         Anything under src/ not listed here is already clean. -->
+    <exclude-pattern>*/src/Admin.php</exclude-pattern>
+    <exclude-pattern>*/src/Api.php</exclude-pattern>
+    <exclude-pattern>*/src/RestRoute.php</exclude-pattern>
+    <exclude-pattern>*/src/Assistants/*</exclude-pattern>
+    <exclude-pattern>*/src/Conversations/*</exclude-pattern>
+    <!-- Needs its camelCase accessors renamed to snake_case, which changes two
+         call sites in src/Plugins and its test. Code change, not formatting. -->
+    <exclude-pattern>*/src/Data/*</exclude-pattern>
+    <exclude-pattern>*/src/Inboxes/*</exclude-pattern>
+    <exclude-pattern>*/src/KnowledgeBase/*</exclude-pattern>
+    <exclude-pattern>*/src/Plugins/*</exclude-pattern>
+    <exclude-pattern>*/src/Services/*</exclude-pattern>
     <exclude-pattern>*/includes/*</exclude-pattern>
 
     <arg name="extensions" value="php"/>
