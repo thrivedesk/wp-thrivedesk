@@ -15,8 +15,7 @@ parse_str($parts, $query_params);
 $is_portal_available = false;
 $conversation_exists = false;
 
-$raw_conversation_id = isset($query_params['td_conversation_id']) ? (string) $query_params['td_conversation_id'] : '';
-$conversation_id = preg_match('/^[A-Za-z0-9-]{1,64}$/', $raw_conversation_id) ? $raw_conversation_id : '';
+$conversation_id = Conversation::sanitize_conversation_id($query_params['td_conversation_id'] ?? '');
 
 $is_portal_available = (new PortalService())->has_portal_access();
 

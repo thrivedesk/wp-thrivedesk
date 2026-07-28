@@ -120,23 +120,14 @@ class Conversation
         }
 
         try {
-            // Clear all ThriveDesk transients
-            self::clear_all_thrivedesk_transients();
-            
-            // Get fresh conversations data
-            $conversations = self::get_conversations();
-            
-            if (!empty($conversations)) {
-                wp_send_json_success([
-                    'message' => __('Tickets reloaded successfully', 'thrivedesk'),
-                    'data' => $conversations
-                ]);
-            } else {
-                wp_send_json_success([
-                    'message' => __('Tickets reloaded successfully', 'thrivedesk'),
-                    'data' => []
-                ]);
-            }
+            // Only the caller's own cached list is dropped. This runs for any
+            // logged-in portal user, so it must not evict other customers.
+            $conversations = self::get_conversations(true);
+
+            wp_send_json_success([
+                'message' => __('Tickets reloaded successfully', 'thrivedesk'),
+                'data' => $conversations
+            ]);
         } catch (Exception $e) {
             wp_send_json_error([
                 'message' => __('Failed to reload tickets', 'thrivedesk'),
@@ -495,49 +486,44 @@ class Conversation
         );
     }
 
-    /**
-     * Clear all ThriveDesk transients to force reload
-     *
-     * @return void
-     */
-    public static function clear_all_thrivedesk_transients()
-    {
-        global $wpdb;
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
-                WHERE a.option_name LIKE %s
-                AND a.option_name NOT LIKE %s
-                AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )",
-                $wpdb->esc_like( '_transient_thrivedesk_' ) . '%',
-                $wpdb->esc_like( '_transient_timeout_' ) . '%'
-            )
-        );
-    }
-
 	/**
 	 * get all conversations
 	 *
+	 * @param bool $force_refresh Drop this caller's cached page before fetching.
+	 *
 	 * @return mixed|null
 	 */
-	public static function get_conversations()
+	public static function get_conversations(bool $force_refresh = false)
 	{
         self::delete_thrivedesk_expired_transients();
-		$page               = $_GET['cv_page'] ?? 1;
+		$page               = max(1, absint($_GET['cv_page'] ?? 1));
 		$current_user_email = wp_get_current_user()->user_email;
 		$inbox_id           = get_option('td_helpdesk_settings')['td_helpdesk_inbox_id'] ?? '';
-		
+
 		// get data from cache - include inbox_id in cache key for proper filtering
 		$cache_key = 'thrivedesk_conversations_' . $page . '_' . $current_user_email . '_' . $inbox_id;
+
+		if ($force_refresh) {
+			delete_transient($cache_key);
+		}
+
 		$data = get_transient($cache_key);
 
 		if (!$data) {
-			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?customer_email=' . $current_user_email . '&page=' . $page . '&per-page=15';
-			
+			$query = [
+				'customer_email' => $current_user_email,
+				'page'           => $page,
+				'per-page'       => 15,
+			];
+
 			// Add inbox filtering if inbox is selected
 			if (!empty($inbox_id)) {
-				$url .= '&inbox_id=' . $inbox_id;
+				$query['inbox_id'] = $inbox_id;
 			}
+
+			// http_build_query encodes every value, so nothing carried in on the
+			// request can close one parameter and open a customer_email of its own.
+			$url = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . '?' . http_build_query($query);
 
 			$response =( new TDApiService() )->getRequest($url);
 
@@ -555,6 +541,22 @@ class Conversation
 	}
 
 	/**
+	 * A conversation id lands in the path of an authenticated API call, so a
+	 * value carrying a slash or a query separator would repoint that call.
+	 * Anything outside the id alphabet is rejected rather than escaped.
+	 *
+	 * @param mixed $raw
+	 *
+	 * @return string Empty when the id is unusable.
+	 */
+	public static function sanitize_conversation_id($raw): string
+	{
+		$id = is_scalar($raw) ? (string) $raw : '';
+
+		return preg_match('/^[A-Za-z0-9-]{1,64}$/', $id) ? $id : '';
+	}
+
+	/**
 	 * get single conversation
 	 *
 	 * @param $conversation_id
@@ -563,7 +565,9 @@ class Conversation
 	 */
 	public static function get_conversation($conversation_id)
 	{
-		if (!$conversation_id) {
+		$conversation_id = self::sanitize_conversation_id($conversation_id);
+
+		if ('' === $conversation_id) {
 			return null;
 		}
 
@@ -571,7 +575,7 @@ class Conversation
 
 		if (!$response) {
 			$current_user_email = wp_get_current_user()->user_email;
-			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . $current_user_email;
+			$url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id .'?customer_email=' . rawurlencode($current_user_email);
 			$response =( new TDApiService() )->getRequest($url);
 
 			// 30s TTL: the cache exists only to absorb rapid page reloads on
@@ -612,12 +616,18 @@ class Conversation
             || !isset($_POST['data']['conversation_id'])
             || !isset($_POST['data']['reply_text'])
             || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'])), 'td-reply-conversation-action')) {
-            die;
+            wp_die();
+        }
+
+        $conversation_id = self::sanitize_conversation_id($_POST['data']['conversation_id']);
+
+        if ('' === $conversation_id) {
+            wp_die();
         }
 
 		$current_user_email = wp_get_current_user()->user_email;
 
-        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $_POST['data']['conversation_id'] . '/reply?customer_email=' . $current_user_email;
+        $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id . '/reply?customer_email=' . rawurlencode($current_user_email);
 
         $data = [
             'message' => stripslashes($_POST['data']['reply_text']),
@@ -637,7 +647,7 @@ class Conversation
         }catch (\Exception $e) {
             echo wp_json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
-        die;
+        wp_die();
     }
 
     public static function td_conversation_sort_by_status($data)
