@@ -3,7 +3,7 @@
 2026-07-27 - version 2.6.0
 * fix: The customer portal's ticket list is scoped to the customer viewing it. A crafted page link could previously make the site ask ThriveDesk for someone else's tickets and show them to whoever was logged in.
 * fix: Replying from the portal checks the ticket id before contacting ThriveDesk, so a crafted id can no longer point that request somewhere else.
-* fix: The portal's reload button refreshes your own ticket list instead of clearing every customer's cached view, and now actually returns fresh tickets rather than the cached ones.
+* fix: The portal's reload button refreshes the page of your own ticket list you are looking at, instead of clearing every customer's cached view, and now actually returns fresh tickets rather than the cached ones.
 * fix: Order actions taken from a ThriveDesk ticket (status change, subscription cancel, quantity change, coupon, add or remove item) now verify the order belongs to the customer on that ticket before changing anything.
 * fix: Store requests are rejected when the integration has no API token or has not finished connecting, so a half-connected or disconnected store can no longer be driven.
 * fix: The connect token is generated from a cryptographic random source instead of a hashed timestamp.

@@ -122,13 +122,13 @@ class Conversation
         try {
             // Only the caller's own cached list is dropped. This runs for any
             // logged-in portal user, so it must not evict other customers.
-            $conversations = self::get_conversations(true);
+            $conversations = self::get_conversations(true, self::referred_page());
 
             wp_send_json_success([
                 'message' => __('Tickets reloaded successfully', 'thrivedesk'),
                 'data' => $conversations
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             wp_send_json_error([
                 'message' => __('Failed to reload tickets', 'thrivedesk'),
                 'error' => $e->getMessage()
@@ -136,6 +136,25 @@ class Conversation
         }
         
         die();
+    }
+
+    /**
+     * The page the caller is looking at. admin-ajax carries none of the portal
+     * page's query string, so it comes from the URL they clicked Reload on.
+     * wp_get_referer() rejects anything off-site, and an absent one leaves the
+     * first page rather than a guess.
+     */
+    private static function referred_page(): int
+    {
+        $referer = wp_get_referer();
+
+        if (!$referer) {
+            return 1;
+        }
+
+        parse_str((string) wp_parse_url($referer, PHP_URL_QUERY), $query);
+
+        return max(1, absint($query['cv_page'] ?? 1));
     }
 
     public static function get_system_info($apiKey): array
@@ -489,14 +508,15 @@ class Conversation
 	/**
 	 * get all conversations
 	 *
-	 * @param bool $force_refresh Drop this caller's cached page before fetching.
+	 * @param bool     $force_refresh Drop this caller's cached page before fetching.
+	 * @param int|null $page          Page to fetch. Defaults to the one in the URL.
 	 *
 	 * @return mixed|null
 	 */
-	public static function get_conversations(bool $force_refresh = false)
+	public static function get_conversations(bool $force_refresh = false, ?int $page = null)
 	{
         self::delete_thrivedesk_expired_transients();
-		$page               = max(1, absint($_GET['cv_page'] ?? 1));
+		$page               = max(1, $page ?? absint($_GET['cv_page'] ?? 1));
 		$current_user_email = wp_get_current_user()->user_email;
 		$inbox_id           = get_option('td_helpdesk_settings')['td_helpdesk_inbox_id'] ?? '';
 
@@ -533,7 +553,6 @@ class Conversation
 				// doesn't notify WP on agent activity, so the cache exists only
 				// to absorb rapid reloads, not to "hide" updates.
 				set_transient($cache_key, $response, 30);
-				set_transient('thrivedesk_conversations_total_pages', $response['meta']['last_page'], 30);
 			}
 		}
 

@@ -79,7 +79,6 @@ class TDApiService {
     public function clearAllTransients()
     {
         delete_transient('thrivedesk_assistants');
-        delete_transient('thrivedesk_conversations_total_pages');
         delete_transient('thrivedesk_portal_access');
     }
 
