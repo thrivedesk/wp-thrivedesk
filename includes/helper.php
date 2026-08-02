@@ -274,15 +274,6 @@ if (!function_exists('remove_thrivedesk_all_cache')) {
 	}
 }
 
-if (!function_exists('remove_thrivedesk_conversation_cache')) {
-	function remove_thrivedesk_conversation_cache() {
-		global $wpdb;
-		$wpdb->query($wpdb->prepare(
-			"DELETE FROM $wpdb->options WHERE option_name LIKE %s", 
-			'_transient_thrivedesk_conversation%'));
-	}
-}
-
 /*
  * Clear cache from ajax call
  */
@@ -297,7 +288,6 @@ add_action('wp_ajax_thrivedesk_clear_cache', function () {
 
 
 	remove_thrivedesk_all_cache();
-	remove_thrivedesk_conversation_cache();
 	wp_send_json_success();
 });
 
