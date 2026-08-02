@@ -6,6 +6,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 class TDApiService {
+    /**
+     * Generous enough for the endpoints that do real work upstream. Callers
+     * that only need a liveness answer, and that run inside a page render,
+     * should pass something far shorter.
+     */
+    public const DEFAULT_TIMEOUT = 90;
+
     private $api_token;
 
     public function __construct()
@@ -28,7 +35,7 @@ class TDApiService {
         return json_decode($body, true);
     }
 
-    public function getRequest(string $url)
+    public function getRequest(string $url, int $timeout = self::DEFAULT_TIMEOUT)
     {
         $args               = [
             'headers' => [
@@ -36,7 +43,7 @@ class TDApiService {
                 'Content-Type'  => 'application/json',
                 'Accept'        => 'application/json',
             ],
-	        'timeout' => 90,
+	        'timeout' => $timeout,
         ];
 
         $response           = wp_remote_get($url, $args);
@@ -47,14 +54,24 @@ class TDApiService {
 		if ( is_wp_error( $response ) ) {
             $error_message = $response->get_error_message();
             error_log( 'ThriveDesk - API call error: ' . $error_message ); // Log the error
-            return ['wp_error' => true, 'message' => 'ThriveDesk - API call error:' . $error_message];
+            // The request never reached ThriveDesk (DNS/SSL/timeout/connection
+            // refused) - this happens transiently right after a domain
+            // migration while DNS/SSL are still settling, and says nothing
+            // about whether the stored token is valid, so callers must not
+            // treat it the same as a real auth rejection.
+            return ['wp_error' => true, 'error_type' => 'network', 'message' => 'ThriveDesk - API call error:' . $error_message];
 		} else {
             // Check the response code
             $body               = wp_remote_retrieve_body($response);
 
             if ( 200 === $response_code ) {
-                // Success: Process the response body
-                return json_decode($body, true);
+                $decoded = json_decode($body, true);
+
+                // Every caller indexes what comes back, so a body that isn't
+                // the JSON object they expect (a proxy answering with a bare
+                // string, an empty body) has to arrive as "nothing useful"
+                // rather than as something that fatals on the first offset.
+                return is_array($decoded) ? $decoded : [];
             } else {
                 error_log( 'ThriveDesk - API Request Failed. Response Code: ' . $response_code );
 
@@ -62,18 +79,30 @@ class TDApiService {
                     $body               = wp_remote_retrieve_body($response);
 
                     if (str_contains($body, 'Cloudflare')) {
-                        return ['wp_error' => true, 'message' => 'ThriveDesk - API blocked by Cloudflare. ' . $instruction_ip_whitelist];
+                        return ['wp_error' => true, 'error_type' => 'network', 'message' => 'ThriveDesk - API blocked by Cloudflare. ' . $instruction_ip_whitelist];
                     }
                 }
 
                 $body = json_decode($body, true);
 
-                return ['wp_error' => true, 'message' => 'ThriveDesk - API request failed. Response Code:' . $response_code. '. Message: '. $body['message'] ?? ''];
+                // An error body isn't always the JSON object we expect - a
+                // proxy in front of the API can answer with a bare JSON string,
+                // and indexing one of those is a fatal TypeError.
+                $api_message = is_array($body) ? ($body['message'] ?? '') : '';
+
+                // 401/403 (once the Cloudflare/WAF case above is ruled out)
+                // mean the API itself rejected the token - only this is a
+                // genuine auth failure. Anything else (5xx, etc.) is a
+                // server-side/transient problem and must not be read as
+                // "the token is invalid".
+                $error_type = in_array($response_code, [401, 403], true) ? 'auth' : 'server';
+
+                return ['wp_error' => true, 'error_type' => $error_type, 'message' => 'ThriveDesk - API request failed. Response Code:' . $response_code . '. Message: ' . $api_message];
             }
         }
 
         error_log( 'ThriveDesk - API Request Failed. Unknown error: ' . $response_code ); // Log the error
-        return ['wp_error' => true, 'message' => 'ThriveDesk - Unknown API request error. Response Code:' . $response_code];
+        return ['wp_error' => true, 'error_type' => 'server', 'message' => 'ThriveDesk - Unknown API request error. Response Code:' . $response_code];
     }
 
     public function clearAllTransients()
