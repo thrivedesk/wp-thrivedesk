@@ -157,7 +157,7 @@ class Conversation
         return max(1, absint($query['cv_page'] ?? 1));
     }
 
-    public static function get_system_info($apiKey): array
+    public static function get_system_info($apiKey, int $timeout = TDApiService::DEFAULT_TIMEOUT): array
     {
         $apiService = new TDApiService();
 
@@ -175,8 +175,8 @@ class Conversation
 		$apiService->setApiKey( $apiKey );
 
         $url = THRIVEDESK_API_URL . '/v1/me';
-    
-        $response = $apiService->getRequest($url);
+
+        $response = $apiService->getRequest($url, $timeout);
 
         if (isset($response['company'])) {
             $company = $response['company'];
@@ -200,8 +200,8 @@ class Conversation
         ) {
             wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
         }
-		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
-        
+		$apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
+
 		if ( empty( $apiKey ) ) {
             error_log('ThriveDesk: API Key is required for verification');
 
@@ -212,8 +212,13 @@ class Conversation
 					'message' => 'API Key is required'
 				]
 			] );
-			die();
+			wp_die();
 		}
+
+        // reset_td_settings() replaces the stored key with whatever was just
+        // submitted, so the current verification status only describes the key
+        // on file for as long as the two are the same.
+        $is_same_key = $apiKey === ( get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '' );
 
         // save the api key to the database
         $this->reset_td_settings($apiKey);
@@ -225,7 +230,16 @@ class Conversation
 
         if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 
-            Admin::set_api_verification_status();
+            // Only a genuine auth rejection (401/403 from the API) means the
+            // key itself is bad. A network-level failure (DNS/SSL/timeout -
+            // e.g. right after a domain migration while things are still
+            // settling) says nothing about the key, so an already-verified key
+            // keeps its status over what may well be a transient blip. A key
+            // that was just changed has never been verified, so it must not
+            // inherit the previous key's status.
+            if ( ! $is_same_key || ( $data['error_type'] ?? '' ) === 'auth' ) {
+                Admin::set_api_verification_status();
+            }
 
             error_log('ThriveDesk: API verification failed - ' . $data['message']);
 
@@ -236,7 +250,7 @@ class Conversation
                     'message' => $data['message']
                 ]
             ] );
-            die();
+            wp_die();
         }
 
         if(!isset($data['company'])){
@@ -249,11 +263,11 @@ class Conversation
 				'code' => 401,
 				'status' => 'error',
 				'data' => [
-					'message' =>  'Something went wrong: ' . $data['message']
+					'message' =>  'Something went wrong: ' . ( $data['message'] ?? '' )
 				]
 			] );
 
-			die();
+			wp_die();
         }
 
         Admin::set_api_verification_status(true);
@@ -266,7 +280,7 @@ class Conversation
             ]
         ] );
 
-        die();
+        wp_die();
 	}
 
     /**

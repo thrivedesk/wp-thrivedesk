@@ -2,6 +2,7 @@
 
 namespace ThriveDesk;
 use WP_Query;
+use ThriveDesk\Conversations\Conversation;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -10,6 +11,13 @@ if (!defined('ABSPATH')) {
 
 final class Admin
 {
+    /**
+     * Seconds to wait on the re-verification probe in load_pages(). This one
+     * runs inside a page render, so it has to give up long before PHP's
+     * max_execution_time does.
+     */
+    private const REVERIFY_TIMEOUT = 10;
+
     /**
      * The single instance of this class
      */
@@ -225,21 +233,42 @@ final class Admin
             echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
         }
 
-        // Get the correct settings option where the API key is actually stored
-        $td_helpdesk_settings = get_td_helpdesk_settings();
-        $td_api_key = $td_helpdesk_settings['td_helpdesk_api_key'] ?? '';
-        
+        $td_api_key = self::stored_api_key();
+        $api_status = self::get_api_verification_status();
+
+        // Anything short of "connected" gets a second look before it is acted
+        // on, because a domain migration has two ways of faking it. The first:
+        // restoring a DB dump onto a host whose Redis/Memcached still holds the
+        // previous install's options leaves the cache disagreeing with the
+        // database. Both options are autoloaded, so they are cached under the
+        // shared 'alloptions' entry rather than their own keys - that entry is
+        // what has to go to force a fresh read.
+        if (!$td_api_key || !$api_status) {
+            wp_cache_delete('alloptions', 'options');
+
+            $td_api_key = self::stored_api_key();
+            $api_status = self::get_api_verification_status();
+        }
+
         // Essential logging only
         if (empty($td_api_key)) {
             error_log('ThriveDesk: No API key found in settings');
         }
 
-        $api_status = self::get_api_verification_status();
+        // The second: a transient network failure while DNS/SSL settle on the
+        // new domain cleared the flag on a key that still works. Ask ThriveDesk
+        // directly rather than sending the site owner through a brand new
+        // authorization. Throttled to once a minute, and on a short timeout, so
+        // a dead key or an unreachable API can't stall this page on every load.
+        if ($td_api_key && !$api_status && false === get_transient('thrivedesk_reverify_attempted')) {
+            set_transient('thrivedesk_reverify_attempted', true, MINUTE_IN_SECONDS);
+
+            if (!empty(Conversation::get_system_info($td_api_key, self::REVERIFY_TIMEOUT))) {
+                $api_status = self::get_api_verification_status();
+            }
+        }
 
         if($td_api_key && $api_status){
-            // Clear any cached options to ensure fresh data
-            wp_cache_delete('td_helpdesk_settings', 'options');
-            wp_cache_delete('td_helpdesk_verified', 'options');
             thrivedesk_view('setting');
         }
         elseif($td_api_key == '' || isset($_GET['token'])){
@@ -252,6 +281,11 @@ final class Admin
 
     public function verification_page(){
                     thrivedesk_view('pages/api-verify');
+    }
+
+    private static function stored_api_key(): string
+    {
+        return get_td_helpdesk_settings()['td_helpdesk_api_key'] ?? '';
     }
 
     public static function set_api_verification_status($status = false): void

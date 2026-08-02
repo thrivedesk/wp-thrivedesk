@@ -394,6 +394,8 @@ Setup takes under 5 minutes. No coding required.
 * fix: Knowledge base requests use the API key they are given instead of falling back to the stored one.
 * fix: Setting an order line to a quantity of zero or less returns a clear error instead of silently doing nothing.
 * fix: The FluentCRM ticket list shows each conversation's stored submission time.
+* fix: A saved API key keeps working after the site moves to a new domain. The plugin re-checks the key it already has instead of sending you back through the connect screen, and a network or server hiccup no longer marks a working key as invalid.
+* fix: An unexpected reply from the API (an error page from a proxy, an empty body) no longer breaks the settings screen.
 * dev: Removed the unused SmartPay integration and the confetti animation dependency. Hooks/ and database/ are linted under the full WordPress coding standard, and the suite covers every change above.
 
 = 2.5.0 =
