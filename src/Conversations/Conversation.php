@@ -576,6 +576,18 @@ class Conversation
 	}
 
 	/**
+	 * Nothing here decides who may read a conversation - the API does, from the
+	 * customer_email on the request. A cache hit returns before that request is
+	 * made, so the reader belongs in the key just as it does for the list
+	 * above; without it the next reader is served whatever the last one was
+	 * allowed to see.
+	 */
+	private static function conversation_cache_key(string $conversation_id): string
+	{
+		return 'thrivedesk_conversation_' . $conversation_id . '_' . wp_get_current_user()->user_email;
+	}
+
+	/**
 	 * get single conversation
 	 *
 	 * @param $conversation_id
@@ -590,7 +602,8 @@ class Conversation
 			return null;
 		}
 
-		$response = get_transient('thrivedesk_conversation_' . $conversation_id);
+		$cache_key = self::conversation_cache_key($conversation_id);
+		$response  = get_transient($cache_key);
 
 		if (!$response) {
 			$current_user_email = wp_get_current_user()->user_email;
@@ -600,13 +613,13 @@ class Conversation
 			// 30s TTL: the cache exists only to absorb rapid page reloads on
 			// the same conversation. A longer window hides agent replies
 			// (ThriveDesk doesn't notify WP when an agent sends a message,
-			// and the cache is only invalidated when the customer replies
-			// see td_send_reply -> remove_thrivedesk_conversation_cache).
+			// and the only explicit invalidation is the customer's own reply
+			// in td_send_reply).
 			if (isset($response['data'])) {
-				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 30);
+				set_transient($cache_key, $response, 30);
 			} elseif (is_array($response) && !isset($response['wp_error'])) {
 				// If API returns data directly (not wrapped in 'data' key)
-				set_transient('thrivedesk_conversation_' . $conversation_id, $response, 30);
+				set_transient($cache_key, $response, 30);
 			}
 		}
 
@@ -657,7 +670,9 @@ class Conversation
         try {
             $response_body =( new TDApiService() )->postRequest($url, $data);
 
-	        remove_thrivedesk_conversation_cache();
+            // The reply invalidates this customer's view of this conversation
+            // and nothing else. Anyone else's cached copy is theirs to keep.
+            delete_transient(self::conversation_cache_key($conversation_id));
 
             echo wp_json_encode([
                 'status'  => 'success',
