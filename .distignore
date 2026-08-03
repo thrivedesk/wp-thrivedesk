@@ -33,6 +33,10 @@ phpunit.xml
 phpunit.xml.dist
 .phpunit.result.cache
 tests/
+/e2e
+playwright.config.ts
+playwright-report/
+test-results/
 .travis.yml
 .circleci/
 .codeclimate.yml
