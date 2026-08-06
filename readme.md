@@ -375,7 +375,8 @@ Setup takes under 5 minutes. No coding required.
 == Changelog ==
 
 = 2.6.0 =
-2026-07-27 - version 2.6.0
+2026-08-06 - version 2.6.0
+* fix: Connecting a store, and loading customer and order details inside a conversation, keep working when another plugin on the site adds its own parameters to the page URL. Product filter plugins such as HUSKY/WOOF, along with caching, analytics, or multilingual plugins, previously made the store reject these requests as unauthorized.
 * fix: The customer portal's ticket list is scoped to the customer viewing it. A crafted page link could previously make the site ask ThriveDesk for someone else's tickets and show them to whoever was logged in.
 * fix: Replying from the portal checks the ticket id before contacting ThriveDesk, so a crafted id can no longer point that request somewhere else.
 * fix: A ticket's messages are cached per customer, so a ticket someone else just opened is no longer shown to whoever asks for it by id. Sending a reply clears only your own cached copy instead of every customer's.

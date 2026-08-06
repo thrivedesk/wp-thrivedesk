@@ -13,6 +13,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Api {
 	/**
+	 * Request parameters that make up the signed inbound contract, across every
+	 * integration (EDD, WooCommerce, FluentCRM, Autonami, WPPostSync). The SaaS
+	 * signs an HMAC over exactly the params it sends; verify_token() hashes only
+	 * these, so a store plugin that injects its own query var into the request
+	 * (WOOF's woof_parse_query, a cache-buster, utm_*, a multilingual lang) can't
+	 * alter the signature. Keep in step with the signers in
+	 * app/apps/<Integration>/Services/*Service.php.
+	 *
+	 * @var string[]
+	 */
+	private const SIGNED_PARAMS = [
+		'listener',
+		'plugin',
+		'action',
+		'email',
+		'shipping_param',
+		'order_id',
+		'order_status',
+		'item',
+		'item_id',
+		'quantity',
+		'coupon',
+		'amount',
+		'reason',
+		'subscription_status',
+		'order_types',
+		'sync_type',
+		'extra',
+		'query',
+	];
+
+	/**
 	 * The single instance of this class
 	 */
 	private static $instance = null;
@@ -569,7 +601,13 @@ final class Api {
 	 * @since 0.0.4
 	 */
 	private function verify_token(): bool {
-		$payload = $_REQUEST;
+		// Hash only the contract params, never the raw $_REQUEST: a third-party
+		// plugin on the store can add its own query var to every request (this hit
+		// a customer whose WOOF plugin injected woof_parse_query), and folding that
+		// into the HMAC breaks the signature the SaaS computed over the contract
+		// alone. The superglobals are left untouched, so the dispatcher below still
+		// reads the real values.
+		$payload = array_intersect_key( $_REQUEST, array_flip( self::SIGNED_PARAMS ) );
 
 		if ( $payload ) {
 			foreach ( $payload as $key => $value ) {
