@@ -105,6 +105,36 @@ class HmacSignatureTest extends TD_Ajax_TestCase {
 		$this->assertSame( 'Request unauthorized', $body['message'] );
 	}
 
+	public function test_foreign_request_params_are_ignored() {
+		// A store plugin can add its own query var to every front-end request,
+		// including our ?listener= endpoint. HUSKY/WOOF's woof_parse_query is the
+		// real-world case: it broke both connect and the conversation widget's
+		// data calls on a customer store; utm_/lang stand in for the rest
+		// (cache-busters, analytics, multilingual). verify_token() runs the same
+		// for every action (connect and every widget/data call alike), so filtering
+		// on the connect payload here covers all of them: the SaaS signs only the
+		// contract params, so verify_token() must hash only those and ignore
+		// anything else in $_REQUEST, or the signature never matches.
+		$signed    = [
+			'listener' => 'thrivedesk',
+			'plugin'   => 'edd',
+			'action'   => 'connect',
+		];
+		$signature = td_test_sign_payload( $signed, self::TOKEN );
+
+		$received = array_merge(
+			$signed,
+			[
+				'woof_parse_query' => '1',
+				'utm_source'       => 'newsletter',
+				'lang'             => 'en',
+			]
+		);
+		$body = $this->dispatch( $received, $signature );
+
+		$this->assertSame( 'Site connected successfully', $body['message'] );
+	}
+
 	public function test_data_action_requires_connected_integration() {
 		// After the admin starts connect the token exists but 'connected' stays
 		// false until the SaaS calls back. In that window only connect/disconnect
