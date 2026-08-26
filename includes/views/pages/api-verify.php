@@ -2,10 +2,10 @@
 <div class="thrivedesk">
   <?php // One centred stack - the logo sits directly over the card, so the card
         // stays the only thing on the screen to look at. ?>
-  <div class="flex flex-col min-h-screen items-center justify-center gap-6 relative p-10">
+  <div class="flex flex-col td-fullscreen items-center justify-center relative p-10">
 
-    <a href="https://www.thrivedesk.com/" target="_blank">
-      <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk logo" class="w-32">
+    <a href="https://www.thrivedesk.com/" target="_blank" class="mb-10">
+      <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk logo" class="w-48">
     </a>
 
     <?php // The card is the split itself: `is-open` lands here, so the same class
@@ -17,7 +17,7 @@
 
             <div>
               <h1 class="text-2xl font-bold m-0! p-0!"><?php esc_html_e( "Just one last step!", 'thrivedesk' ); ?></h1>
-              <p class="mt-2 text-gray-500"><?php esc_html_e( 'We are excited to have you on board. Put your API key here and complete the setup.', 'thrivedesk' ); ?></p>
+              <p class="mt-2 text-gray-500"><?php esc_html_e( 'Add your API key to connect this site to ThriveDesk.', 'thrivedesk' ); ?></p>
             </div>
 
             <div class="space-y-1.5">
@@ -66,7 +66,7 @@
                 <div class="text-sm font-semibold text-slate-700"><?php esc_html_e( 'Allowlist our IP addresses', 'thrivedesk' ); ?></div>
                 <?php // The rail is gone once the panel is open, so the way back lives here. ?>
                 <button type="button" class="td-aside-close ml-auto" aria-label="<?php esc_attr_e( 'Collapse additional info', 'thrivedesk' ); ?>" title="<?php esc_attr_e( 'Collapse additional info', 'thrivedesk' ); ?>">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                 </button>
               </div>
               <p class="mt-2 m-0! text-gray-500"><?php esc_html_e( "For a seamless integration, add these IP addresses to your server's firewall or security plugin.", 'thrivedesk' ); ?></p>
@@ -105,9 +105,12 @@
             </p>
 
             <?php // mt-auto pins this to the foot of the column however tall the left side runs. ?>
-            <div class="mt-auto pt-4 border-t border-slate-200 text-gray-400 text-[12px]"><?php
+            <?php // A <p>, so WordPress sizes it exactly like the paragraphs above it
+                  // rather than us guessing at the value it applies. Margins need
+                  // forcing for the same reason. ?>
+            <p class="mt-auto! mb-0! pt-4 border-t border-slate-200 text-gray-500"><?php
               /* translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags */
-              printf( esc_html__( 'By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s.', 'thrivedesk' ), '<a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">', '</a>', '<a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">', '</a>' ); ?></div>
+              printf( esc_html__( 'By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s.', 'thrivedesk' ), '<a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="td-inline-link">', '</a>', '<a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="td-inline-link">', '</a>' ); ?></p>
 
             </div>
 

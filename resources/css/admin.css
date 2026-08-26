@@ -34,11 +34,22 @@
 		.btn-primary {
 			@apply bg-blue-600 hover:bg-blue-700 text-white hover:text-white;
 		}
+		/* Colour forced, or the label reads link-blue and competes with the
+		   primary action beside it. WordPress styles admin links from an ID
+		   selector (#3858E9), which outranks any plain class here. */
 		.btn-secondary {
-			@apply bg-white hover:bg-blue-100;
+			@apply bg-white text-slate-900! hover:bg-blue-100 hover:text-slate-900!;
 		}
 		.btn-dark {
 			@apply bg-slate-900 hover:bg-slate-800 text-white hover:text-white;
+		}
+		/* A link sitting inside a sentence, reading as part of it rather than as
+		   a control. Both properties need forcing: WordPress sets admin link
+		   colour and size from ID selectors that outrank utilities. */
+		.td-inline-link {
+			color: inherit !important;
+			font-size: inherit !important;
+			@apply underline;
 		}
 		.alert {
 			@apply p-4 border rounded bg-neutral-100 text-sm;
@@ -53,6 +64,15 @@
 		   until it is asked for; opening it takes the split to 60/40. Below md
 		   there is one column and the rail becomes an ordinary horizontal bar,
 		   because a vertical strip has nothing to be tall against. */
+		/* Full height without the scrollbar. The admin bar is fixed above this
+		   content, so 100vh overshoots by exactly its height and every visit got
+		   a pointless 32px of scroll. WordPress publishes that height, and moves
+		   it to 46px below 783px, so read it rather than hardcoding either.
+		   min-height, not height: content taller than the viewport must still
+		   scroll rather than be clipped. */
+		.td-fullscreen {
+			min-height: calc(100vh - var(--wp-admin--admin-bar--height, 0px));
+		}
 		.td-split {
 			@apply grid grid-cols-1 w-full;
 			max-width: 35rem;
@@ -83,8 +103,11 @@
 		.td-split.is-open .td-aside-toggle {
 			@apply hidden;
 		}
+		/* flex-1 so the panel fills the rail it sits in: the aside stays a flex
+		   container when open, and without this the panel would size to its own
+		   content and leave the terms line short of the bottom. */
 		.td-split.is-open .td-aside-panel {
-			@apply flex flex-col gap-4 p-8;
+			@apply flex flex-col gap-4 p-8 flex-1;
 		}
 		@media (width >= 48rem) {
 			.td-split {
@@ -99,10 +122,6 @@
 			   ended up tracking the viewport instead of its own content. */
 			.td-aside {
 				@apply flex border-t-0 border-l;
-			}
-			/* The panel lays itself out; the flex rail would size it to content. */
-			.td-split.is-open .td-aside {
-				@apply block;
 			}
 			.td-aside-toggle {
 				writing-mode: vertical-rl;
