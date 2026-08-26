@@ -341,9 +341,21 @@ class Conversation
         }
 
         if (isset($data['td_helpdesk_api_key'])) {
+            $existing_settings = get_option('td_helpdesk_settings');
+
+            // The settings screen no longer renders the key into the DOM, so
+            // the field arrives empty on every save the admin did not
+            // deliberately re-key. That means "unchanged", never "disconnect" -
+            // otherwise toggling any unrelated setting would silently take the
+            // integration offline.
+            $submitted_api_key = trim($data['td_helpdesk_api_key']);
+            $api_key           = '' !== $submitted_api_key
+                ? $submitted_api_key
+                : (is_array($existing_settings) ? ($existing_settings['td_helpdesk_api_key'] ?? '') : '');
+
             // add option to database
             $td_helpdesk_settings = [
-                'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
+                'td_helpdesk_api_key'                   => $api_key,
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
                 'td_helpdesk_inbox_id'                  => $data['td_helpdesk_inbox_id'] ?? '',
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
@@ -353,8 +365,6 @@ class Conversation
                 'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
-            
-            $existing_settings = get_option('td_helpdesk_settings');
 
             if ($existing_settings) {
                 update_option('td_helpdesk_settings', $td_helpdesk_settings);

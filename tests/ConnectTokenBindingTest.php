@@ -175,8 +175,10 @@ class ConnectTokenBindingTest extends WP_UnitTestCase {
 		$this->reset_memo();
 		$_GET['token'] = 'ATTACKER-KEY';
 
+		// Included directly: thrivedesk_view() uses require_once, so a view
+		// renders at most once per process.
 		ob_start();
-		thrivedesk_view( 'pages/api-verify' );
+		include THRIVEDESK_DIR . '/includes/views/pages/api-verify.php';
 		$html = (string) ob_get_clean();
 
 		$this->assertStringNotContainsString( 'ATTACKER-KEY', $html, 'the field must not be pre-filled from a planted link' );
@@ -203,7 +205,7 @@ class ConnectTokenBindingTest extends WP_UnitTestCase {
 		$_GET['token'] = 'ATTACKER-KEY';
 
 		ob_start();
-		thrivedesk_view( 'setting' );
+		include THRIVEDESK_DIR . '/includes/views/partials/settings.php';
 		$html = (string) ob_get_clean();
 
 		$this->assertStringNotContainsString( 'ATTACKER-KEY', $html, 'a connected site must ignore a planted token entirely' );
