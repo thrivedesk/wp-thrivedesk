@@ -120,28 +120,37 @@ final class Api {
 	 * @since 0.0.1
 	 */
 	public function api_listener(): void {
+		// The listener flag only decides whether the request is ours at all; it
+		// is part of the signed contract too, so a forged one still has to get
+		// past verify_token() below.
 		$listener = sanitize_key( $_GET['listener'] ?? '' );
-		if ( ! isset( $listener ) || 'thrivedesk' !== $listener ) {
+		if ( 'thrivedesk' !== $listener ) {
 			return;
 		}
 
 		try {
-			$action = strtolower( sanitize_key( $_GET['action'] ?? '' ) );
-			$plugin = strtolower( sanitize_key( $_GET['plugin'] ?? 'edd' ) );
+			// One array for the whole request: verify_token() hashes exactly
+			// this and every handler reads exactly this, so the payload that
+			// was signed is always the payload that runs.
+			$contract = $this->contract();
 
-			$this->order_id     = sanitize_key( $_GET['order_id'] ?? '' );
-			$this->order_status = sanitize_key( $_GET['order_status'] ?? '' );
-			$this->quantity     = sanitize_key( $_GET['quantity'] ?? '' );
-			$this->item         = sanitize_key( $_GET['item'] ?? '' );
-			$this->item_id      = sanitize_key( $_GET['item_id'] ?? '' );
-			$this->coupon       = sanitize_key( $_GET['coupon'] ?? '' );
-			$this->amount       = sanitize_key( $_GET['amount'] ?? '' );
-			$this->reason       = sanitize_key( $_GET['reason'] ?? '' );
+			$action = strtolower( sanitize_key( $this->contract_string( 'action' ) ) );
+			$plugin = strtolower( sanitize_key( $this->contract_string( 'plugin' ) ) ) ?: 'edd';
+
+			$this->order_id     = sanitize_key( $this->contract_string( 'order_id' ) );
+			$this->order_status = sanitize_key( $this->contract_string( 'order_status' ) );
+			$this->quantity     = sanitize_key( $this->contract_string( 'quantity' ) );
+			$this->item         = sanitize_key( $this->contract_string( 'item' ) );
+			$this->item_id      = sanitize_key( $this->contract_string( 'item_id' ) );
+			$this->coupon       = sanitize_key( $this->contract_string( 'coupon' ) );
+			$this->amount       = sanitize_key( $this->contract_string( 'amount' ) );
+			$this->reason       = sanitize_key( $this->contract_string( 'reason' ) );
 			// subscription_status is a status key with a dash (e.g. 'cancelled',
 			// 'pending-cancel') and order_types a comma list ('parent,renewal'),
-			// so sanitize_text_field instead of sanitize_key for both.
-			$this->subscription_status = sanitize_text_field( wp_unslash( $_GET['subscription_status'] ?? '' ) );
-			$this->order_types         = sanitize_text_field( wp_unslash( $_GET['order_types'] ?? '' ) );
+			// so sanitize_text_field instead of sanitize_key for both. contract()
+			// already unslashed the values, so no wp_unslash() here.
+			$this->subscription_status = sanitize_text_field( $this->contract_string( 'subscription_status' ) );
+			$this->order_types         = sanitize_text_field( $this->contract_string( 'order_types' ) );
 
 			// Plugin invalid response
 			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
@@ -165,7 +174,7 @@ final class Api {
 				$this->apiResponse->error( 500, "The plugin '{$plugin_name}' isn't installed or active." );
 			}
 
-			if ( ! $this->verify_token() ) {
+			if ( ! $this->verify_token( $contract ) ) {
 				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
@@ -187,7 +196,7 @@ final class Api {
 			} elseif ( isset( $action ) && 'handle_autonami' === $action ) {
 				$this->autonami_handler();
 			} elseif ( isset( $action ) && 'get_wppostsync_data' === $action ) {
-				$remote_query_string = strtolower( $_GET['query'] ?? '' );
+				$remote_query_string = strtolower( $this->contract_string( 'query' ) );
 				$this->wp_postsync_data_handler( $remote_query_string );
 			} elseif ( isset( $action ) && 'get_woocommerce_product_list' === $action ) {
 				$this->get_woocommerce_product_list();
@@ -221,11 +230,11 @@ final class Api {
 	 * handler autonami action
 	 */
 	public function autonami_handler() {
-		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
-		$this->plugin->customer_email = sanitize_email( $_GET['email'] ?? '' );
+		$syncType                     = strtolower( sanitize_key( $this->contract_string( 'sync_type' ) ) );
+		$this->plugin->customer_email = sanitize_email( $this->contract_string( 'email' ) );
 
 		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_autonami( $syncType, $_REQUEST['extra'] ?? [] );
+			$this->plugin->sync_conversation_with_autonami( $syncType, $this->contract()['extra'] ?? [] );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
@@ -247,10 +256,10 @@ final class Api {
 	 * @since 0.9.0
 	 */
 	public function get_woocommerce_order_status() {
-		$email    = sanitize_email( $_REQUEST['email'] ?? '' );
+		$email    = sanitize_email( $this->contract_string( 'email' ) );
 		// Use sanitize_text_field instead of sanitize_key because custom order numbers
 		// can contain characters like slashes, dashes, or spaces (e.g., "2025/001").
-		$order_id = sanitize_text_field( wp_unslash( $_REQUEST['order_id'] ?? '' ) );
+		$order_id = sanitize_text_field( $this->contract_string( 'order_id' ) );
 
 		if ( ! $order_id ) {
 			$this->apiResponse->error( 400, 'order_id is required.' );
@@ -490,11 +499,11 @@ final class Api {
 	 * @since 0.7.0
 	 */
 	public function fluentcrm_handler(): void {
-		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
-		$this->plugin->customer_email = sanitize_email( $_REQUEST['email'] ?? '' );
+		$syncType                     = strtolower( sanitize_key( $this->contract_string( 'sync_type' ) ) );
+		$this->plugin->customer_email = sanitize_email( $this->contract_string( 'email' ) );
 
 		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $_REQUEST['extra'] ?? [] );
+			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $this->contract()['extra'] ?? [] );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_fluentcrm_data' ) ) {
 				$this->apiResponse->error( 500, "Method 'prepare_fluentcrm_data' not exist in plugin" );
@@ -554,8 +563,8 @@ final class Api {
 	 */
 	public function plugin_data_action_handler() {
 
-		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
-		$enableShipping = isset($_REQUEST['shipping_param']) == 1 ? true : false;
+		$email          = sanitize_email( $this->contract_string( 'email' ) );
+		$enableShipping = isset( $this->contract()['shipping_param'] ) == 1 ? true : false;
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 			$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
@@ -584,7 +593,7 @@ final class Api {
 			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
 		}
 
-		$email = sanitize_email( $_REQUEST['email'] ?? '' );
+		$email = sanitize_email( $this->contract_string( 'email' ) );
 		$owns  = $this->plugin->order_belongs_to_customer( $order_id, $email );
 
 		// null = order not found; let the mutator emit its own 404 rather than a
@@ -595,19 +604,54 @@ final class Api {
 	}
 
 	/**
+	 * The signed inbound contract: exactly the params the SaaS signs, read from
+	 * $_REQUEST (WordPress builds it as $_GET + $_POST in wp_magic_quotes(), so
+	 * this works whether the panel sends the payload on the query string or in
+	 * the body) and unslashed back to the raw values the SaaS hashed.
+	 *
+	 * Hash only these, never the whole $_REQUEST: a third-party plugin on the
+	 * store can add its own query var to every request (this hit a customer whose
+	 * WOOF plugin injected woof_parse_query), and folding that into the HMAC
+	 * breaks the signature the SaaS computed over the contract alone.
+	 *
+	 * Every handler reads through here and verify_token() hashes this same array,
+	 * so what was signed is always what runs. The dispatcher used to read $_GET
+	 * while the HMAC covered $_REQUEST, which let a POSTed `action=connect` sign a
+	 * query-string `action=disconnect`. This is a pure function of $_REQUEST, so
+	 * the array the signature was checked against and the array the handlers read
+	 * are the same array however often it is derived.
+	 *
+	 * @return array
+	 */
+	private function contract(): array {
+		return wp_unslash( array_intersect_key( $_REQUEST, array_flip( self::SIGNED_PARAMS ) ) );
+	}
+
+	/**
+	 * One contract param as a raw string. Anything the SaaS never sends as a
+	 * scalar (an array smuggled in as `order_id[]=…`) collapses to '' instead of
+	 * fataling the sanitizers, which all expect a string.
+	 *
+	 * @param string $key Contract param name.
+	 *
+	 * @return string
+	 */
+	private function contract_string( string $key ): string {
+		$value = $this->contract()[ $key ] ?? '';
+
+		return is_scalar( $value ) ? (string) $value : '';
+	}
+
+	/**
 	 * Verify api request token
+	 *
+	 * @param array $contract The signed contract params, as built by contract().
 	 *
 	 * @return boolean
 	 * @since 0.0.4
 	 */
-	private function verify_token(): bool {
-		// Hash only the contract params, never the raw $_REQUEST: a third-party
-		// plugin on the store can add its own query var to every request (this hit
-		// a customer whose WOOF plugin injected woof_parse_query), and folding that
-		// into the HMAC breaks the signature the SaaS computed over the contract
-		// alone. The superglobals are left untouched, so the dispatcher below still
-		// reads the real values.
-		$payload = array_intersect_key( $_REQUEST, array_flip( self::SIGNED_PARAMS ) );
+	private function verify_token( array $contract ): bool {
+		$payload = $contract;
 
 		if ( $payload ) {
 			foreach ( $payload as $key => $value ) {

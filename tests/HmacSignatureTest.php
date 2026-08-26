@@ -58,6 +58,72 @@ class HmacSignatureTest extends TD_Ajax_TestCase {
 		$this->assertSame( 'Request unauthorized', $body['message'] );
 	}
 
+	/**
+	 * Send a split request the way wp_magic_quotes() assembles one: the query
+	 * string and the body are merged into $_REQUEST, with POST winning.
+	 */
+	private function dispatch_split( array $get, array $post, string $signature ): array {
+		$_GET                           = $get;
+		$_POST                          = $post;
+		$_REQUEST                       = array_merge( $get, $post ); // exactly what wp_magic_quotes() does.
+		$_SERVER['HTTP_X_TD_SIGNATURE'] = $signature;
+
+		return $this->capture_json(
+			function () {
+				\ThriveDesk\Api::instance()->api_listener();
+			}
+		);
+	}
+
+	public function test_a_connect_signature_cannot_execute_disconnect() {
+		// The signature covered $_REQUEST (POST wins the merge) while the
+		// dispatcher executed $_GET, so a signed `action=connect` in the body ran
+		// `action=disconnect` from the query string and answered "Site has been
+		// disconnected". Now the verified array is the executed array: only the
+		// action that was actually signed runs.
+		update_option(
+			'thrivedesk_options',
+			[ 'edd' => [ 'api_token' => self::TOKEN, 'connected' => true ] ]
+		);
+
+		$signed    = [
+			'listener' => 'thrivedesk',
+			'plugin'   => 'edd',
+			'action'   => 'connect',
+		];
+		$signature = td_test_sign_payload( $signed, self::TOKEN );
+
+		$body = $this->dispatch_split(
+			[
+				'listener' => 'thrivedesk',
+				'plugin'   => 'edd',
+				'action'   => 'disconnect',
+			],
+			[ 'action' => 'connect' ],
+			$signature
+		);
+
+		$this->assertSame( 'Site connected successfully', $body['message'] ?? null );
+
+		$opts = get_option( 'thrivedesk_options' );
+		$this->assertTrue( $opts['edd']['connected'], 'the query-string disconnect must not have run' );
+		$this->assertSame( self::TOKEN, $opts['edd']['api_token'], 'disconnect() blanks the token; it must still be set' );
+	}
+
+	public function test_signature_over_the_query_string_view_alone_is_rejected() {
+		// The mirror image: the dispatcher no longer reads $_GET behind the
+		// HMAC's back, so a signature computed over just the query-string view of
+		// a GET+POST request does not match the contract that actually runs.
+		$get  = [
+			'listener' => 'thrivedesk',
+			'plugin'   => 'edd',
+			'action'   => 'disconnect',
+		];
+		$body = $this->dispatch_split( $get, [ 'action' => 'connect' ], td_test_sign_payload( $get, self::TOKEN ) );
+
+		$this->assertSame( 'Request unauthorized', $body['message'] ?? null );
+	}
+
 	public function test_wrong_token_is_rejected() {
 		$payload = [
 			'listener' => 'thrivedesk',
