@@ -556,17 +556,22 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ) {
-		$order = $this->guard_order_ownership( $order_id );
-
-		if ( $coupon ) {
-			$res = $order->apply_coupon( $coupon );
-			if ( isset( $res->errors ) ) {
-				$this->apiResponse->error( 404, "Coupon does not exist!." );
-			} else {
-				$this->apiResponse->success( 200, [], 'Success' );
-			}
+		// An empty coupon used to fall off the end of the method: no branch was
+		// taken, no response was sent, and the request ended at wp_die() with an
+		// empty 200 body the panel could not tell from a success.
+		if ( '' === trim( $coupon ) ) {
+			$this->apiResponse->error( 400, 'coupon is required.' );
 		}
 
+		$order = $this->guard_order_ownership( $order_id );
+
+		$res = $order->apply_coupon( $coupon );
+
+		if ( isset( $res->errors ) ) {
+			$this->apiResponse->error( 404, "Coupon does not exist!." );
+		}
+
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
 	/**
