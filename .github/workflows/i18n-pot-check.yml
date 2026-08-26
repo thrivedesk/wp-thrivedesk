@@ -1,0 +1,74 @@
+name: i18n POT
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+# This job only reads the checkout, don't inherit the repo's default token scope.
+permissions:
+  contents: read
+
+concurrency:
+  group: i18n-pot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pot-drift:
+    name: Translation template is up to date
+    runs-on: ubuntu-latest
+    steps:
+      # make-pot derives the Report-Msgid-Bugs-To slug from the directory
+      # name, so check out into `thrivedesk` rather than the repo name or
+      # every run reports a bogus one-line diff.
+      - uses: actions/checkout@v4
+        with:
+          path: thrivedesk
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          # Peast, the JS parser make-pot uses, exhausts the default 512M
+          # walking this plugin's admin bundles.
+          ini-values: memory_limit=2G
+
+      - name: Install WP-CLI
+        run: |
+          curl -sSLo /usr/local/bin/wp \
+            https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          chmod +x /usr/local/bin/wp
+          wp --info
+
+      # No composer install: vendor/ is excluded from the scan anyway.
+      - name: Regenerate the POT
+        working-directory: thrivedesk
+        run: |
+          wp i18n make-pot . /tmp/expected.pot \
+            --domain=thrivedesk \
+            --exclude=vendor,node_modules,tests,docker,plugins,assets
+
+      - name: Compare against the committed POT
+        working-directory: thrivedesk
+        run: |
+          # POT-Creation-Date is a timestamp, it always differs. Strip it from
+          # both sides into plain temp files; no process substitution, so this
+          # behaves the same under any shell.
+          grep -v '^"POT-Creation-Date:' resources/languages/thrivedesk.pot > /tmp/committed.stripped
+          grep -v '^"POT-Creation-Date:' /tmp/expected.pot > /tmp/expected.stripped
+
+          if diff -u /tmp/committed.stripped /tmp/expected.stripped > /tmp/pot.diff; then
+            echo "The translation template is up to date."
+            exit 0
+          fi
+
+          echo "::error::resources/languages/thrivedesk.pot is out of date. Regenerate it and commit the result."
+          echo
+          echo "Regenerate with:"
+          echo "  wp i18n make-pot . resources/languages/thrivedesk.pot --domain=thrivedesk --exclude=vendor,node_modules,tests,docker,plugins,assets"
+          echo
+          echo "Difference (committed vs regenerated):"
+          cat /tmp/pot.diff
+          exit 1
