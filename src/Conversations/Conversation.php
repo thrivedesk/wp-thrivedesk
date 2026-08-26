@@ -88,7 +88,7 @@ class Conversation
             error_log('ThriveDesk: API Key is required for verification');
 
             echo wp_json_encode(['status' => 'false', 'data' => []]);
-            die();
+            wp_die();
         }
 
         $systemInfo = $this->get_system_info($apiKey);
@@ -98,7 +98,7 @@ class Conversation
         } else {
             echo wp_json_encode(['status' => 'false', 'data' => []]);
         }
-        die();
+        wp_die();
     }
 
     /**
@@ -322,7 +322,7 @@ class Conversation
         ) {
             error_log('ThriveDesk: Unauthorized access attempt to helpdesk form');
             echo wp_json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-            die();
+            wp_die();
         }
         
         // Process data properly - handle arrays and strings separately
@@ -379,11 +379,11 @@ class Conversation
             wp_cache_delete('td_helpdesk_settings', 'options');
             
             echo wp_json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
-            die();
+            wp_die();
         }
 
         echo wp_json_encode(['status' => 'error', 'message' => 'Something went wrong']);
-        die();
+        wp_die();
     }
 
     /**
