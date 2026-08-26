@@ -325,7 +325,12 @@ final class WooCommerce extends Plugin {
 			return [];
 		}
 
-		if ( strtolower( $order->get_billing_email() ) !== strtolower( $this->customer_email ) ) {
+		// An order with no billing email is not "owned by nobody": a request that
+		// supplies no email must not match it. Mirrors the guard in
+		// order_belongs_to_customer().
+		$email = (string) $this->customer_email;
+
+		if ( '' === $email || strtolower( $order->get_billing_email() ) !== strtolower( $email ) ) {
 			return [];
 		}
 

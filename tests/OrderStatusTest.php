@@ -155,6 +155,22 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
     }
 
     /**
+     * Both emails empty compared equal, so an order with no billing email
+     * (phone orders, some POS and manual entries) handed its full detail — total,
+     * shipping address, line items — to a request that supplied no email at all.
+     */
+    public function test_order_status_does_not_match_an_order_with_no_billing_email() {
+        $order = wc_create_order();
+        $order->set_billing_email( '' );
+        $order->set_status( 'completed' );
+        $order->save();
+
+        $this->plugin->customer_email = '';
+
+        $this->assertSame( [], $this->plugin->order_status( (string) $order->get_id() ) );
+    }
+
+    /**
      * Email comparison is case-insensitive (WooCommerce doesn't guarantee
      * stored casing). Make sure the ownership check tolerates both.
      */
