@@ -63,10 +63,10 @@ class ApiResponse {
 	/**
 	 * Whether a response has already left through send().
 	 *
-	 * wp_send_json() ends the request with wp_die(), which the WordPress test
-	 * suite turns into a throwable. A caller that catches broadly has to tell
-	 * that signal apart from a handler failure, or it answers a second time on
-	 * top of a response that is already on the wire.
+	 * Sending ends the request through wp_die(), which the WordPress test suite
+	 * turns into a throwable. A caller that catches broadly has to tell that
+	 * signal apart from a handler failure, or it answers a second time on top of
+	 * a response that is already on the wire.
 	 *
 	 * @return bool
 	 */
