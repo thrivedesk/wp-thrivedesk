@@ -82,13 +82,18 @@ class Conversation
             wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
         }
 
-        $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+        // Same form as td_verify_helpdesk_api_key(): unslashed and sanitized on
+        // read. It was going into an 'Authorization: Bearer ' concatenation
+        // untouched, which an array turns into a PHP 8 fatal.
+        $apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 
         if (empty($apiKey)) {
-            error_log('ThriveDesk: API Key is required for verification');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API Key is required for verification');
+            }
 
             echo wp_json_encode(['status' => 'false', 'data' => []]);
-            die();
+            wp_die();
         }
 
         $systemInfo = $this->get_system_info($apiKey);
@@ -98,7 +103,7 @@ class Conversation
         } else {
             echo wp_json_encode(['status' => 'false', 'data' => []]);
         }
-        die();
+        wp_die();
     }
 
     /**
@@ -203,7 +208,9 @@ class Conversation
 		$apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 
 		if ( empty( $apiKey ) ) {
-            error_log('ThriveDesk: API Key is required for verification');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API Key is required for verification');
+            }
 
             echo wp_json_encode( [
 				'code' => 422,
@@ -215,13 +222,11 @@ class Conversation
 			wp_die();
 		}
 
-        // reset_td_settings() replaces the stored key with whatever was just
-        // submitted, so the current verification status only describes the key
-        // on file for as long as the two are the same.
+        // Nothing is written until the key has actually authenticated. Saving
+        // first meant a key that failed verification - including one an
+        // attacker pre-filled into the form via ?token= - was already the key
+        // on file by the time the check came back.
         $is_same_key = $apiKey === ( get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '' );
-
-        // save the api key to the database
-        $this->reset_td_settings($apiKey);
 
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
@@ -230,18 +235,20 @@ class Conversation
 
         if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 
-            // Only a genuine auth rejection (401/403 from the API) means the
-            // key itself is bad. A network-level failure (DNS/SSL/timeout -
-            // e.g. right after a domain migration while things are still
-            // settling) says nothing about the key, so an already-verified key
-            // keeps its status over what may well be a transient blip. A key
-            // that was just changed has never been verified, so it must not
-            // inherit the previous key's status.
-            if ( ! $is_same_key || ( $data['error_type'] ?? '' ) === 'auth' ) {
+            // The stored key is untouched on this path, so the flag still has
+            // to describe *that* key. A failure while checking some other
+            // submitted key says nothing about it. And even for the same key,
+            // only a genuine auth rejection (401/403) means the key is bad - a
+            // network-level failure (DNS/SSL/timeout, e.g. right after a domain
+            // migration while things are still settling) is a transient blip
+            // that must not cost the site its connection.
+            if ( $is_same_key && ( $data['error_type'] ?? '' ) === 'auth' ) {
                 Admin::set_api_verification_status();
             }
 
-            error_log('ThriveDesk: API verification failed - ' . $data['message']);
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API verification failed - ' . $data['message']);
+            }
 
             echo wp_json_encode( [
                 'code' => 422,
@@ -255,9 +262,14 @@ class Conversation
 
         if(!isset($data['company'])){
 
-            Admin::set_api_verification_status();
+            // Same reasoning as above: only the key on file can lose its flag.
+            if ( $is_same_key ) {
+                Admin::set_api_verification_status();
+            }
 
-            error_log('ThriveDesk: API verification failed - company data not found');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API verification failed - company data not found');
+            }
 
             echo wp_json_encode( [
 				'code' => 401,
@@ -269,6 +281,9 @@ class Conversation
 
 			wp_die();
         }
+
+        // Verified: only now does this key become the key on file.
+        $this->reset_td_settings($apiKey);
 
         Admin::set_api_verification_status(true);
 
@@ -316,9 +331,11 @@ class Conversation
             || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
             || ! current_user_can('manage_options')
         ) {
-            error_log('ThriveDesk: Unauthorized access attempt to helpdesk form');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: Unauthorized access attempt to helpdesk form');
+            }
             echo wp_json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-            die();
+            wp_die();
         }
         
         // Process data properly - handle arrays and strings separately
@@ -337,9 +354,21 @@ class Conversation
         }
 
         if (isset($data['td_helpdesk_api_key'])) {
+            $existing_settings = get_option('td_helpdesk_settings');
+
+            // The settings screen no longer renders the key into the DOM, so
+            // the field arrives empty on every save the admin did not
+            // deliberately re-key. That means "unchanged", never "disconnect" -
+            // otherwise toggling any unrelated setting would silently take the
+            // integration offline.
+            $submitted_api_key = trim($data['td_helpdesk_api_key']);
+            $api_key           = '' !== $submitted_api_key
+                ? $submitted_api_key
+                : (is_array($existing_settings) ? ($existing_settings['td_helpdesk_api_key'] ?? '') : '');
+
             // add option to database
             $td_helpdesk_settings = [
-                'td_helpdesk_api_key'                   => trim($data['td_helpdesk_api_key']),
+                'td_helpdesk_api_key'                   => $api_key,
                 'td_helpdesk_assistant_id'              => $data['td_helpdesk_assistant'] ?? '',
                 'td_helpdesk_inbox_id'                  => $data['td_helpdesk_inbox_id'] ?? '',
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
@@ -349,8 +378,6 @@ class Conversation
                 'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],
             ];
-            
-            $existing_settings = get_option('td_helpdesk_settings');
 
             if ($existing_settings) {
                 update_option('td_helpdesk_settings', $td_helpdesk_settings);
@@ -375,11 +402,11 @@ class Conversation
             wp_cache_delete('td_helpdesk_settings', 'options');
             
             echo wp_json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
-            die();
+            wp_die();
         }
 
         echo wp_json_encode(['status' => 'error', 'message' => 'Something went wrong']);
-        die();
+        wp_die();
     }
 
     /**

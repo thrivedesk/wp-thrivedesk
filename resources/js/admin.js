@@ -1,6 +1,23 @@
 import Swal from 'sweetalert2';
 import { __, sprintf } from '@wordpress/i18n';
 var assistants = [];
+// Was never declared. Under webpack's strict mode the assignment in
+// loadInboxes() threw a ReferenceError and aborted the callback, which is why
+// the inbox dropdown never populated.
+var inboxes = [];
+
+/**
+ * Build an <option> as a DOM node.
+ *
+ * Never concatenate API-supplied values into an HTML string for .append():
+ * jQuery parses the fragment and evaluates any script in it, so an assistant or
+ * inbox named with a payload on the ThriveDesk side would run in a
+ * manage_options session. Setting `value`/`text` on a node assigns them as
+ * data, so there is no markup to parse.
+ */
+function tdOption(value, text) {
+	return jQuery('<option>', { value: value == null ? '' : String(value), text: text == null ? '' : String(text) });
+}
 
 jQuery(document).ready(($) => {
 	// plugin connection 
@@ -494,16 +511,12 @@ jQuery(document).ready(($) => {
 
 					if (data?.assistants?.length > 0) {
 						assistants = data?.assistants;
-						assistantList.append('<option value="">' + __('Select Assistant', 'thrivedesk') + '</option>');
+						assistantList.append(tdOption('', __('Select Assistant', 'thrivedesk')));
 						data.assistants.forEach(function (item) {
-							assistantList.append(
-								'<option value="' + item.id + '">' + item.name + '</option>'
-							);
+							assistantList.append(tdOption(item.id, item.name));
 						});
 					}else {
-						assistantList.append(
-							'<option value="">' + __('No Assistant Found', 'thrivedesk') + '</option>'
-						);
+						assistantList.append(tdOption('', __('No Assistant Found', 'thrivedesk')));
 
 						assistantList.prop('disabled', true);
 
@@ -557,22 +570,18 @@ jQuery(document).ready(($) => {
 
                     if (data?.data?.length > 0) {
                         inboxes = data?.data;
-                        inboxList.append('<option value="">' + __('All inboxes', 'thrivedesk') + '</option>');
+                        inboxList.append(tdOption('', __('All inboxes', 'thrivedesk')));
                         data.data.forEach(function (item) {
                             let isSelected = (savedInboxId === item.id);
-                            inboxList.append(
-                                '<option value="' + item.id + '"' + (isSelected ? ' selected' : '') + '>' + item.name + '</option>'
-                            );
+                            inboxList.append(tdOption(item.id, item.name).prop('selected', isSelected));
                         });
-                        
+
                         // Restore the selected value
                         if (savedInboxId) {
                             inboxList.val(savedInboxId);
                         }
                     }else {
-                        inboxList.append(
-                            '<option value="">' + __('No Inbox Found', 'thrivedesk') + '</option>'
-                        );
+                        inboxList.append(tdOption('', __('No Inbox Found', 'thrivedesk')));
 
                         inboxList.prop('disabled', true);
                     }

@@ -16,10 +16,18 @@ $td_selected_post_sync       = (array) ($td_helpdesk_selected_option['td_helpdes
 $td_assistants               = Assistant::assistants();
 $td_inboxes                  = Inbox::inboxes();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();
-$td_api_key                  = isset($_GET['token']) ? sanitize_text_field($_GET['token']) : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+// A ?token= only counts when it came back from an authorization this site
+// started; see \ThriveDesk\Admin::connect_return_token(). Otherwise the key on
+// file is the key.
+$td_connect_token            = \ThriveDesk\Admin::connect_return_token();
+$td_api_key                  = '' !== $td_connect_token ? $td_connect_token : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = get_option('td_user_account_pages');
 $has_portal_access           = (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();
+
+// What the admin is shown in place of the key. Enough to recognise which key
+// is on file, not enough to use it.
+$td_api_key_preview  = '' === $td_api_key ? '' : substr($td_api_key, 0, 4) . str_repeat('*', 20);
 
 $show_api_key_alert  = empty($td_api_key) ? '' : 'hidden';
 $show_portal         = empty($has_portal_access) ? 'hidden' : '';
@@ -307,12 +315,19 @@ $current_user = wp_get_current_user();
                         <?php esc_html_e('here', 'thrivedesk'); ?>
                     </a>
                 </span>
+                <?php
+                // type="password" hides the key on screen and nowhere else: it
+                // is still in view-source, in the DOM, in password managers, on
+                // a screen share, and one selector away from any script on the
+                // page. Only a preview is rendered, and the editable field is
+                // left blank - submitting it empty means "unchanged".
+                ?>
                 <div class="flex items-center api-key-preview">
-                    <input class="truncate w-2/3 bg-gray-50" type="password" disabled value="<?php echo esc_attr($td_api_key); ?>" />
+                    <input class="truncate w-2/3 bg-gray-50" type="text" disabled value="<?php echo esc_attr($td_api_key_preview); ?>" />
                     <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
                 </div>
                 <div class="api-key-editable hidden">
-                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_api_key); ?>" class="block p-2.5 w-full text-sm" />
+                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_connect_token); ?>" placeholder="<?php echo esc_attr($td_api_key_preview); ?>" autocomplete="off" class="block p-2.5 w-full text-sm" />
 
                     <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
                         <?php esc_html_e('Verify', 'thrivedesk'); ?>

@@ -7,8 +7,11 @@
  * - clearing it because the request never reached ThriveDesk (DNS/SSL/timeout,
  *   e.g. while a new domain is still settling), which says nothing about the
  *   key and forces a pointless re-auth;
- * - keeping it after the admin submits a different key, which has never been
- *   verified and must not inherit the previous key's status.
+ * - clearing it because some *other* submitted key failed to verify, when the
+ *   key on file was never touched.
+ *
+ * The second only became possible to state this cleanly once the handler
+ * stopped writing the submitted key before checking it.
  *
  * @package ThriveDesk\Tests
  */
@@ -98,21 +101,65 @@ class ApiKeyVerificationStatusTest extends TD_Ajax_TestCase {
 		);
 	}
 
-	public function test_network_failure_on_a_newly_submitted_key_clears_verification() {
+	/**
+	 * The handler used to save the submitted key before checking it, so a key
+	 * that never authenticated - including one an attacker pre-filled into the
+	 * form via ?token= - was already the key on file by the time the check came
+	 * back. Nothing is written until verification succeeds.
+	 */
+	public function test_a_rejected_key_is_never_stored() {
 		$this->connected_with( 'KEY-A' );
 
-		// The handler saves the submitted key before checking it, so KEY-B is
-		// now the key on file while KEY-A is what the flag was earned by.
+		$this->verify(
+			'ATTACKER-KEY',
+			[
+				'response' => [ 'code' => 401 ],
+				'body'     => wp_json_encode( [ 'message' => 'Unauthenticated' ] ),
+			]
+		);
+
+		$this->assertSame(
+			'KEY-A',
+			get_option( 'td_helpdesk_settings' )['td_helpdesk_api_key'],
+			'a key the API rejected must never become the key on file'
+		);
+		$this->assertTrue(
+			\ThriveDesk\Admin::get_api_verification_status(),
+			'the working key on file is untouched, so its verified flag stands'
+		);
+	}
+
+	public function test_a_network_failure_on_some_other_key_does_not_disconnect_the_site() {
+		$this->connected_with( 'KEY-A' );
+
 		$this->verify( 'KEY-B', new WP_Error( 'http_request_failed', 'Could not resolve host' ) );
+
+		$this->assertSame(
+			'KEY-A',
+			get_option( 'td_helpdesk_settings' )['td_helpdesk_api_key'],
+			'an unverified key must not replace the stored one'
+		);
+		$this->assertTrue(
+			\ThriveDesk\Admin::get_api_verification_status(),
+			'KEY-A is still the key on file and still verified, so its flag must survive'
+		);
+	}
+
+	public function test_a_verified_key_becomes_the_key_on_file() {
+		$this->connected_with( 'KEY-A' );
+
+		$this->verify(
+			'KEY-B',
+			[
+				'response' => [ 'code' => 200 ],
+				'body'     => wp_json_encode( [ 'company' => [ 'id' => 'c1', 'name' => 'Acme' ] ] ),
+			]
+		);
 
 		$this->assertSame(
 			'KEY-B',
 			get_option( 'td_helpdesk_settings' )['td_helpdesk_api_key'],
-			'the submitted key replaces the stored one regardless of the outcome'
-		);
-		$this->assertFalse(
-			\ThriveDesk\Admin::get_api_verification_status(),
-			'a key that was never checked must not inherit the previous key\'s verified status'
+			'a key that authenticated is the one that gets saved'
 		);
 	}
 
