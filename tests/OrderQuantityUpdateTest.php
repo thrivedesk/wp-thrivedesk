@@ -15,8 +15,9 @@ class OrderQuantityUpdateTest extends TD_Ajax_TestCase {
 		$plugin_prop->setAccessible( true );
 		$plugin_prop->setValue( $api, \ThriveDesk\Plugins\WooCommerce::instance() );
 
-		// order 123 does not exist, so ownership resolves to not-found (not a
-		// mismatch) and the quantity guard is what answers.
+		// order 123 does not exist. The quantity is validated before the order is
+		// resolved (it is a property of the request, not of the store), so the
+		// quantity guard answers rather than the ownership guard's 404.
 		$body = $this->capture_json(
 			function () use ( $api ) {
 				$api->woocommerce_order_quantity_update( '123', '456', '0' );

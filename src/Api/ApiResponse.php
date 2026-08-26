@@ -45,12 +45,33 @@ class ApiResponse {
 	public $data = array();
 
 	/**
+	 * Whether send() has already handed a body to wp_send_json().
+	 *
+	 * @var bool
+	 */
+	private $sent = false;
+
+	/**
 	 * Construct Response class.
 	 *
 	 * @since 0.0.1
 	 * @access public
 	 */
 	public function __construct() {
+	}
+
+	/**
+	 * Whether a response has already left through send().
+	 *
+	 * wp_send_json() ends the request with wp_die(), which the WordPress test
+	 * suite turns into a throwable. A caller that catches broadly has to tell
+	 * that signal apart from a handler failure, or it answers a second time on
+	 * top of a response that is already on the wire.
+	 *
+	 * @return bool
+	 */
+	public function has_responded(): bool {
+		return $this->sent;
 	}
 
 	/**
@@ -130,6 +151,9 @@ class ApiResponse {
 		if ( true === $this->status && $this->data ) {
 			$response['data'] = $this->data;
 		}
+
+		// Set before the call: wp_send_json() does not return.
+		$this->sent = true;
 
 		wp_send_json( $response, $this->status_code );
 	}

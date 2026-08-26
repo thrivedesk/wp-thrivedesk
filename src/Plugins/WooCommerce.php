@@ -222,11 +222,15 @@ final class WooCommerce extends Plugin {
 	 *   3. Meta query against the common `_order_number` post meta key
 	 *      (WebToffee, Tyche, SkyVerge free, default WC since 7.x).
 	 *
+	 * Public because Api::guard_order_ownership() resolves the order once and
+	 * hands it to the mutator, instead of every mutator re-resolving it and
+	 * dereferencing `false` when it is missing.
+	 *
 	 * @param string|int $order_id_or_number
 	 *
 	 * @return \WC_Order|null
 	 */
-	private function get_order_by_number_or_id( $order_id_or_number ) {
+	public function get_order_by_number_or_id( $order_id_or_number ) {
 		if ( ! $order_id_or_number ) {
 			return null;
 		}
@@ -300,6 +304,8 @@ final class WooCommerce extends Plugin {
 				return $order;
 			}
 		}
+
+		return null;
 	}
 
 	/**

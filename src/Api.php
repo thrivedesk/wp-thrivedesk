@@ -128,6 +128,9 @@ final class Api {
 			return;
 		}
 
+		// Response state is per-request and this is the request entry point.
+		$this->apiResponse = new ApiResponse();
+
 		try {
 			// One array for the whole request: verify_token() hashes exactly
 			// this and every handler reads exactly this, so the payload that
@@ -224,7 +227,19 @@ final class Api {
 			} else {
 				$this->plugin_data_action_handler();
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
+			// \Throwable, not \Exception: dereferencing a missing order or
+			// handing a scalar to a method that declares `array` raises an
+			// \Error, which `catch (\Exception)` let escape as a white screen
+			// with no JSON body at all.
+			//
+			// wp_send_json() ends the request via wp_die(), which the WordPress
+			// test suite turns into a throwable. That is a finished response,
+			// not a failure — let it through rather than answering twice.
+			if ( $this->apiResponse->has_responded() ) {
+				throw $e;
+			}
+
 			$this->apiResponse->error( 500, 'Can\'t not prepare data' );
 		}
 
@@ -341,7 +356,7 @@ final class Api {
 	 * @return void
 	 */
 	public function wc_order_add_new_item( string $order_id, $item ) {
-		$this->guard_order_ownership( $order_id );
+		$order = $this->guard_order_ownership( $order_id );
 
 		$product = wc_get_product_object( 'line_item', $item );
 
@@ -352,12 +367,6 @@ final class Api {
 		$item->set_subtotal( $product->price ?? 0 );
 		$item->set_total( $product->price * $this->quantity ?? 0 );
 		
-		// if(is_plugin_active('wt-woocommerce-sequential-order-numbers-pro/wt-advanced-order-number-pro.php')) 
-		// {
-		// 	if customer use this type of plugin, wc doesn't have the same order number as the plugin.
-		// }
-
-		$order = wc_get_order( $order_id );
 		$order->add_item( $item );
 		$order->calculate_totals();
 
@@ -371,9 +380,7 @@ final class Api {
 	 * @return void
 	 */
 	public function wc_order_remove_item( string $order_id, string $product_id ) {
-		$this->guard_order_ownership( $order_id );
-
-		$order = wc_get_order( $order_id );
+		$order = $this->guard_order_ownership( $order_id );
 
 		foreach ( $order->get_items() as $item_id => $item ) {
 			if ( $item["product_id"] == $product_id ) {
@@ -458,13 +465,15 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
-		$this->guard_order_ownership( $order_id );
-
+		// Validate the request's own scalars before resolving the order: the
+		// guard now answers 404 for a missing order, and a bad quantity has to
+		// stay reported as a bad quantity. Nothing here observes the store.
 		if ( (int) $quantity <= 0 ) {
 			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
 		}
 
-		$order = wc_get_order( $order_id );
+		$order = $this->guard_order_ownership( $order_id );
+
 		foreach ( $order->get_items() as $item_id => $item ) {
 
 			if ( $item["product_id"] == (string) $product_id ) {
@@ -482,9 +491,7 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ) {
-		$this->guard_order_ownership( $order_id );
-
-		$order = wc_get_order( $order_id );
+		$order = $this->guard_order_ownership( $order_id );
 
 		if ( $coupon ) {
 			$res = $order->apply_coupon( $coupon );
@@ -591,9 +598,20 @@ final class Api {
 	 * Reject an inbound WooCommerce mutation whose signed customer email does
 	 * not match the target order's billing email. The SaaS signs `email` on
 	 * every mutator request, so this is a second factor on top of the HMAC.
+	 *
+	 * Returns the resolved order so the caller never has to look it up again.
+	 * The guard used to let "order not found" fall through for the mutator to
+	 * report, but four of the six then called wc_get_order() and dereferenced
+	 * `false` — an \Error, which the dispatcher's `catch (\Exception)` could not
+	 * catch. Resolving here answers the 404 once, in one place.
+	 *
+	 * @param string $order_id Customer-facing order number or post ID.
+	 *
+	 * @return \WC_Order
 	 */
-	private function guard_order_ownership( string $order_id ): void {
-		if ( ! method_exists( $this->plugin, 'order_belongs_to_customer' ) ) {
+	private function guard_order_ownership( string $order_id ) {
+		if ( ! method_exists( $this->plugin, 'order_belongs_to_customer' )
+			|| ! method_exists( $this->plugin, 'get_order_by_number_or_id' ) ) {
 			// Can't verify ownership without the WooCommerce resolver: fail closed.
 			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
 		}
@@ -601,11 +619,19 @@ final class Api {
 		$email = sanitize_email( $this->contract_string( 'email' ) );
 		$owns  = $this->plugin->order_belongs_to_customer( $order_id, $email );
 
-		// null = order not found; let the mutator emit its own 404 rather than a
-		// misleading ownership error. A definite false is a real mismatch.
+		// null = order not found, which is a 404 below rather than a misleading
+		// ownership error. A definite false is a real mismatch.
 		if ( false === $owns ) {
 			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
 		}
+
+		$order = $this->plugin->get_order_by_number_or_id( $order_id );
+
+		if ( ! $order ) {
+			$this->apiResponse->error( 404, 'Order not found.' );
+		}
+
+		return $order;
 	}
 
 	/**
