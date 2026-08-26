@@ -194,7 +194,7 @@ $current_user = wp_get_current_user();
         <div class="flex items-start gap-4 flex-wrap">
             <div class="flex-1 min-w-[16rem]">
                 <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
-                <p class="mt-1 m-0! text-gray-500"><?php esc_html_e('Show a chat widget on your site so visitors can start a conversation without leaving the page.', 'thrivedesk'); ?></p>
+                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('Show a chat widget on your site so visitors can start a conversation without leaving the page.', 'thrivedesk'); ?></p>
             </div>
             <a class="td-toolbar__cta shrink-0" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/chat/assistants'); ?>" target="_blank">
                 <span><?php esc_html_e('Manage assistants', 'thrivedesk'); ?></span>
@@ -205,8 +205,8 @@ $current_user = wp_get_current_user();
         <?php if (!empty($td_assistants)) : ?>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-5 border-t border-slate-200">
 
-                <div class="space-y-1.5">
-                    <label for="td-assistants" class="block text-sm font-semibold text-slate-700"><?php esc_html_e('Assistant', 'thrivedesk'); ?></label>
+                <div class="td-field">
+                    <label for="td-assistants"><?php esc_html_e('Assistant', 'thrivedesk'); ?></label>
                     <select id="td-assistants" class="w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php esc_html_e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
@@ -215,11 +215,11 @@ $current_user = wp_get_current_user();
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="m-0! text-[12px] text-gray-500"><?php esc_html_e('Which assistant this site loads.', 'thrivedesk'); ?></p>
+                    <p class="td-field-help"><?php esc_html_e('Which assistant this site loads.', 'thrivedesk'); ?></p>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label for="td-excluded-routes" class="block text-sm font-semibold text-slate-700"><?php esc_html_e('Hide on these pages', 'thrivedesk'); ?></label>
+                <div class="td-field">
+                    <label for="td-excluded-routes"><?php esc_html_e('Hide on these pages', 'thrivedesk'); ?></label>
                     <?php
                     /*
                      * Still a multiple <select>, and still the source of truth:
@@ -242,7 +242,7 @@ $current_user = wp_get_current_user();
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <p class="m-0! text-[12px] text-gray-500">
+                    <p class="td-field-help">
                         <?php esc_html_e('The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way. Leave empty to show it everywhere.', 'thrivedesk'); ?>
                     </p>
                 </div>

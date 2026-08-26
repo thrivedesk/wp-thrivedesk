@@ -73,6 +73,17 @@
 		/* Multi-select dropdown, built over a native <select multiple>. The
 		   source select is only hidden once JavaScript has replaced it, so a
 		   failed script leaves a usable list box rather than nothing. */
+		/* Help text under a form control.
+		   Both margins are forced. WordPress sets p margins from an ID selector so
+		   the bottom one has to be beaten, and using `m-0!` to do it - which is
+		   what this replaces - also killed the top margin and any space-y the
+		   parent was applying, collapsing the text onto the field above it. */
+		.td-field-help {
+			@apply mt-2! mb-0! text-[12px] text-gray-500;
+		}
+		.td-field > label {
+			@apply block mb-1.5! text-sm font-semibold text-slate-700;
+		}
 		.td-multiselect {
 			@apply relative;
 		}

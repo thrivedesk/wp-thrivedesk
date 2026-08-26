@@ -69,7 +69,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                 </button>
               </div>
-              <p class="mt-2 m-0! text-gray-500"><?php esc_html_e( "For a seamless integration, add these IP addresses to your server's firewall or security plugin.", 'thrivedesk' ); ?></p>
+              <p class="mt-2! mb-0! text-gray-500"><?php esc_html_e( "For a seamless integration, add these IP addresses to your server's firewall or security plugin.", 'thrivedesk' ); ?></p>
             </div>
 
             <ul class="m-0! p-0! list-none space-y-2">

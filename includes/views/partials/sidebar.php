@@ -67,7 +67,7 @@ $td_capability = [
         <?php if ( $td_summary['api'] ) : ?>
             <div class="pt-3 border-t border-slate-200">
                 <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'API access', 'thrivedesk' ); ?></div>
-                <ul class="m-0! p-0! list-none mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                <ul class="mt-2! mb-0! p-0! list-none grid grid-cols-2 gap-x-4 gap-y-1">
                     <?php foreach ( $td_capability as $td_key => $td_label ) : ?>
                         <?php
                         if ( ! isset( $td_summary['api'][ $td_key ] ) ) {
