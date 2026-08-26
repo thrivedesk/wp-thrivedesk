@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-26T10:23:07+00:00\n"
+"POT-Creation-Date: 2026-08-26T10:28:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -157,50 +157,43 @@ msgstr ""
 msgid "Need help?"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:18
+#: includes/views/pages/api-verify.php:20
 msgid "Just one last step!"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:19
+#: includes/views/pages/api-verify.php:21
 msgid "We are excited to have you on board. Put your API key here and complete the setup."
 msgstr ""
 
-#: includes/views/pages/api-verify.php:23
+#: includes/views/pages/api-verify.php:25
 #: includes/views/partials/settings.php:311
 msgid "API Key"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:25
+#: includes/views/pages/api-verify.php:27
 msgid "Enter your API Key"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:30
-#: resources/js/admin.js:324
+#: includes/views/pages/api-verify.php:32
+#: resources/js/admin.js:325
 msgid "Complete Setup"
 msgstr ""
 
-#. translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags
-#: includes/views/pages/api-verify.php:35
-#: includes/views/pages/welcome.php:37
-#, php-format
-msgid "By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s."
-msgstr ""
-
-#: includes/views/pages/api-verify.php:41
+#: includes/views/pages/api-verify.php:39
 msgid "Don't have a key yet?"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:48
+#: includes/views/pages/api-verify.php:46
 #: includes/views/pages/welcome.php:25
 msgid "Create New Account"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:52
+#: includes/views/pages/api-verify.php:50
 #: includes/views/pages/welcome.php:29
 msgid "Connect Existing Account"
 msgstr ""
 
-#: includes/views/pages/api-verify.php:62
+#: includes/views/pages/api-verify.php:61
 msgid "Allowlist our IP addresses"
 msgstr ""
 
@@ -209,16 +202,23 @@ msgid "For a seamless integration, add these IP addresses to your server's firew
 msgstr ""
 
 #. translators: %s: an IP address
-#: includes/views/pages/api-verify.php:77
-#: includes/views/pages/api-verify.php:81
+#: includes/views/pages/api-verify.php:76
+#: includes/views/pages/api-verify.php:80
 #, php-format
 msgid "Copy %s"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/pages/api-verify.php:96
+#: includes/views/pages/api-verify.php:95
 #, php-format
 msgid "Still stuck? Email us at %1$shelp@thrivedesk.com%2$s with your site URL and IP address."
+msgstr ""
+
+#. translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags
+#: includes/views/pages/api-verify.php:101
+#: includes/views/pages/welcome.php:37
+#, php-format
+msgid "By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s."
 msgstr ""
 
 #: includes/views/pages/welcome.php:17
@@ -294,7 +294,7 @@ msgid "Select Inbox"
 msgstr ""
 
 #: includes/views/partials/settings.php:85
-#: resources/js/admin.js:663
+#: resources/js/admin.js:664
 msgid "All inboxes"
 msgstr ""
 
@@ -315,7 +315,7 @@ msgid "Add live chat assistant to your website. To create your assistant click %
 msgstr ""
 
 #: includes/views/partials/settings.php:118
-#: resources/js/admin.js:604
+#: resources/js/admin.js:605
 msgid "Select Assistant"
 msgstr ""
 
@@ -463,7 +463,7 @@ msgid "Verify"
 msgstr ""
 
 #: includes/views/partials/settings.php:341
-#: resources/js/admin.js:392
+#: resources/js/admin.js:393
 msgid "Save"
 msgstr ""
 
@@ -774,126 +774,127 @@ msgstr ""
 msgid "Copy failed. Select the text and copy it manually."
 msgstr ""
 
-#: resources/js/admin.js:192
+#. translators: %s: an IP address.
+#: resources/js/admin.js:193
 #, js-format
 msgid "Copied %s"
 msgstr ""
 
-#: resources/js/admin.js:213
-#: resources/js/admin.js:240
-#: resources/js/admin.js:284
-#: resources/js/admin.js:295
-#: resources/js/admin.js:308
-#: resources/js/admin.js:317
-#: resources/js/admin.js:385
-#: resources/js/admin.js:398
-#: resources/js/admin.js:413
-#: resources/js/admin.js:491
-#: resources/js/admin.js:498
-#: resources/js/admin.js:512
-#: resources/js/admin.js:525
-#: resources/js/admin.js:534
-#: resources/js/admin.js:543
-#: resources/js/admin.js:551
-#: resources/js/admin.js:587
-#: resources/js/admin.js:594
-#: resources/js/admin.js:619
-#: resources/js/admin.js:643
-#: resources/js/admin.js:650
-#: resources/js/admin.js:691
-#: resources/js/admin.js:726
-#: resources/js/admin.js:750
+#: resources/js/admin.js:214
+#: resources/js/admin.js:241
+#: resources/js/admin.js:285
+#: resources/js/admin.js:296
+#: resources/js/admin.js:309
+#: resources/js/admin.js:318
+#: resources/js/admin.js:386
+#: resources/js/admin.js:399
+#: resources/js/admin.js:414
+#: resources/js/admin.js:492
+#: resources/js/admin.js:499
+#: resources/js/admin.js:513
+#: resources/js/admin.js:526
+#: resources/js/admin.js:535
+#: resources/js/admin.js:544
+#: resources/js/admin.js:552
+#: resources/js/admin.js:588
+#: resources/js/admin.js:595
+#: resources/js/admin.js:620
+#: resources/js/admin.js:644
+#: resources/js/admin.js:651
+#: resources/js/admin.js:692
+#: resources/js/admin.js:727
+#: resources/js/admin.js:751
 msgid "Error"
 msgstr ""
 
-#: resources/js/admin.js:214
+#: resources/js/admin.js:215
 msgid "ThriveDesk configuration not loaded. Please refresh the page."
 msgstr ""
 
-#: resources/js/admin.js:241
+#: resources/js/admin.js:242
 msgid "Invalid response from server"
 msgstr ""
 
-#: resources/js/admin.js:285
+#: resources/js/admin.js:286
 msgid "Invalid response from helpdesk form submission"
 msgstr ""
 
-#: resources/js/admin.js:295
-#: resources/js/admin.js:385
-#: resources/js/admin.js:470
-#: resources/js/admin.js:741
+#: resources/js/admin.js:296
+#: resources/js/admin.js:386
+#: resources/js/admin.js:471
+#: resources/js/admin.js:742
 msgid "Success"
 msgstr ""
 
-#: resources/js/admin.js:297
+#: resources/js/admin.js:298
 msgid "Continue to settings"
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:310
+#: resources/js/admin.js:311
 #, js-format
 msgid "Failed to save helpdesk form: %s"
 msgstr ""
 
-#: resources/js/admin.js:318
-#: resources/js/admin.js:499
-#: resources/js/admin.js:513
-#: resources/js/admin.js:552
-#: resources/js/admin.js:620
-#: resources/js/admin.js:681
-#: resources/js/admin.js:727
-#: resources/js/admin.js:751
+#: resources/js/admin.js:319
+#: resources/js/admin.js:500
+#: resources/js/admin.js:514
+#: resources/js/admin.js:553
+#: resources/js/admin.js:621
+#: resources/js/admin.js:682
+#: resources/js/admin.js:728
+#: resources/js/admin.js:752
 msgid "Something went wrong"
 msgstr ""
 
-#: resources/js/admin.js:375
+#: resources/js/admin.js:376
 msgid "Processing..."
 msgstr ""
 
-#: resources/js/admin.js:399
-#: resources/js/admin.js:492
+#: resources/js/admin.js:400
+#: resources/js/admin.js:493
 msgid "Form submition failed"
 msgstr ""
 
-#: resources/js/admin.js:414
+#: resources/js/admin.js:415
 msgid "API Key is required"
 msgstr ""
 
-#: resources/js/admin.js:459
+#: resources/js/admin.js:460
 msgid "Verified"
 msgstr ""
 
-#: resources/js/admin.js:535
-#: resources/js/admin.js:588
-#: resources/js/admin.js:644
+#: resources/js/admin.js:536
+#: resources/js/admin.js:589
+#: resources/js/admin.js:645
 msgid "Invalid API Key"
 msgstr ""
 
-#: resources/js/admin.js:544
-#: resources/js/admin.js:595
-#: resources/js/admin.js:651
+#: resources/js/admin.js:545
+#: resources/js/admin.js:596
+#: resources/js/admin.js:652
 msgid "Server Error"
 msgstr ""
 
-#: resources/js/admin.js:609
+#: resources/js/admin.js:610
 msgid "No Assistant Found"
 msgstr ""
 
-#: resources/js/admin.js:674
+#: resources/js/admin.js:675
 msgid "No Inbox Found"
 msgstr ""
 
-#: resources/js/admin.js:683
+#: resources/js/admin.js:684
 msgid "Request timed out. Please try again."
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:686
+#: resources/js/admin.js:687
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: resources/js/admin.js:742
+#: resources/js/admin.js:743
 msgid "Cache Cleared"
 msgstr ""
 

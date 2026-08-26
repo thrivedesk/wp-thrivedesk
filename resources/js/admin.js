@@ -189,6 +189,7 @@ jQuery(document).ready(($) => {
 			// one clear the tick early.
 			clearTimeout($button.data('td-copy-timer'));
 			$button.addClass('is-copied');
+			// translators: %s: an IP address.
 			$status.text(sprintf(__('Copied %s', 'thrivedesk'), value));
 
 			$button.data(
