@@ -29,3 +29,11 @@ jobs:
 
       - name: Run PHPCS
         run: vendor/bin/phpcs
+
+      # Security sniffs run from their own ruleset with no path exclusions.
+      # phpcs.xml excludes legacy paths while formatting is adopted
+      # incrementally, and a rule-scoped exclude there also suppresses
+      # WordPress.Security.* for those files - which are precisely the files
+      # that read request input. See phpcs-security.xml.
+      - name: Run PHPCS security sniffs
+        run: composer phpcs-security

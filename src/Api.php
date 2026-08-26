@@ -806,7 +806,7 @@ final class Api {
 			return false;
 		}
 
-		$signature = (string) ( $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '' );
+		$signature = (string) ( sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '' ) ) );
 		if (empty($signature)) {
 			return false;
 		}

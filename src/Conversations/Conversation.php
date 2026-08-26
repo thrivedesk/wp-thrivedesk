@@ -349,6 +349,7 @@ class Conversation
         }
         
         // Process data properly - handle arrays and strings separately
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- every element is sanitized in the loop below.
         $raw_data = isset($_POST['data']) ? wp_unslash($_POST['data']) : [];
         $data = [];
         
@@ -702,7 +703,8 @@ class Conversation
             wp_die();
         }
 
-        $conversation_id = self::sanitize_conversation_id($_POST['data']['conversation_id']);
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_conversation_id() is an allowlist validator returning '' for anything outside ^[A-Za-z0-9-]{1,64}$; WPCS cannot resolve it through the self:: call.
+        $conversation_id = self::sanitize_conversation_id( wp_unslash( $_POST['data']['conversation_id'] ) );
 
         if ('' === $conversation_id) {
             wp_die();
@@ -712,8 +714,21 @@ class Conversation
 
         $url      = THRIVEDESK_API_URL . self::TD_CONVERSATION_URL . $conversation_id . '/reply?customer_email=' . rawurlencode($current_user_email);
 
+        // A wp_editor() field, so markup is expected - allowlist it rather than
+        // strip it. stripslashes() only removes slashes; it sanitizes nothing,
+        // and the value is forwarded verbatim to the agent-facing console.
+        $reply_text = wp_kses_post( wp_unslash( $_POST['data']['reply_text'] ) );
+
+        if ( '' === trim( wp_strip_all_tags( $reply_text ) ) ) {
+            echo wp_json_encode( [
+                'status'  => 'error',
+                'message' => __( 'Reply text can not be empty.', 'thrivedesk' ),
+            ] );
+            wp_die();
+        }
+
         $data = [
-            'message' => stripslashes($_POST['data']['reply_text']),
+            'message' => $reply_text,
         ];
 
         header('Content-Type: application/json');

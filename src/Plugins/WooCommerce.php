@@ -267,7 +267,9 @@ final class WooCommerce extends Plugin {
 		// data — a value containing '%' would also corrupt the placeholders.
 		$types_sql = implode( ',', array_fill( 0, count( $order_types ), '%s' ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		// {$types_sql} is a generated "%s,%s,..." placeholder list, not data;
+		// every value is bound through prepare()'s argument list below.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$post_id = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT p.ID FROM {$wpdb->posts} p
@@ -279,6 +281,7 @@ final class WooCommerce extends Plugin {
 				array_merge( [ (string) $order_id_or_number ], $order_types )
 			)
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		// HPOS fallback: check the dedicated orders meta table. Only do this
 		// if the table exists — older WC installs don't have it.
@@ -289,7 +292,9 @@ final class WooCommerce extends Plugin {
 				$wpdb->prepare( "SHOW TABLES LIKE %s", $hpos_table )
 			);
 			if ( $table_exists ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				// {$hpos_table} is $wpdb->prefix plus a literal; a table
+				// identifier cannot be bound by prepare().
+				// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$post_id = (int) $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT order_id FROM {$hpos_table}
@@ -298,6 +303,7 @@ final class WooCommerce extends Plugin {
 						 LIMIT 1",
 						(string) $order_id_or_number
 					)
+					// phpcs:enable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				);
 			}
 		}

@@ -63,3 +63,7 @@ temp/
 
 # SVN directory (if present)
 /svn
+
+# Repo-only documentation
+/docs
+
