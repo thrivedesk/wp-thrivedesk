@@ -88,7 +88,9 @@ class Conversation
         $apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 
         if (empty($apiKey)) {
-            error_log('ThriveDesk: API Key is required for verification');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API Key is required for verification');
+            }
 
             echo wp_json_encode(['status' => 'false', 'data' => []]);
             wp_die();
@@ -206,7 +208,9 @@ class Conversation
 		$apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 
 		if ( empty( $apiKey ) ) {
-            error_log('ThriveDesk: API Key is required for verification');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API Key is required for verification');
+            }
 
             echo wp_json_encode( [
 				'code' => 422,
@@ -242,7 +246,9 @@ class Conversation
                 Admin::set_api_verification_status();
             }
 
-            error_log('ThriveDesk: API verification failed - ' . $data['message']);
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API verification failed - ' . $data['message']);
+            }
 
             echo wp_json_encode( [
                 'code' => 422,
@@ -261,7 +267,9 @@ class Conversation
                 Admin::set_api_verification_status();
             }
 
-            error_log('ThriveDesk: API verification failed - company data not found');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: API verification failed - company data not found');
+            }
 
             echo wp_json_encode( [
 				'code' => 401,
@@ -323,7 +331,9 @@ class Conversation
             || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'thrivedesk-nonce' )
             || ! current_user_can('manage_options')
         ) {
-            error_log('ThriveDesk: Unauthorized access attempt to helpdesk form');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: Unauthorized access attempt to helpdesk form');
+            }
             echo wp_json_encode(['status' => 'error', 'message' => 'Unauthorized']);
             wp_die();
         }

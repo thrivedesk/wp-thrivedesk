@@ -357,7 +357,9 @@ final class Admin
 
         // Essential logging only
         if (empty($td_api_key)) {
-            error_log('ThriveDesk: No API key found in settings');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: No API key found in settings');
+            }
         }
 
         // The second: a transient network failure while DNS/SSL settle on the
