@@ -170,6 +170,16 @@
 	}
 }
 
+/* SweetAlert2 renders into <body>, outside the .thrivedesk scope, so its
+   container is styled here rather than with the components above.
+   Its default z-index is 1060, which puts a top-end toast underneath both the
+   admin bar (99999) and the confetti canvas (100000). Padding clears the bar
+   so the toast is not sitting on top of it either. */
+.td-toast.swal2-container {
+	z-index: 100001;
+	padding-top: calc(var(--wp-admin--admin-bar--height, 0px) + 1rem);
+}
+
 /* Reset wp  */
 #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html {
 	@apply h-full!;

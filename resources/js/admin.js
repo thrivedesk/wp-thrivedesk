@@ -71,6 +71,144 @@ function tdCopyToClipboard(text) {
 	return Promise.resolve(tdLegacyCopy(text));
 }
 
+/**
+ * Set on the setup screen, read once on the page it redirects to.
+ */
+const TD_CONNECTED_FLAG = 'td_setup_just_completed';
+
+/**
+ * A short confetti burst over the viewport.
+ *
+ * Hand-rolled rather than pulled from npm. This is decoration on a single
+ * screen, and a dependency for it would be supply-chain surface the plugin
+ * does not otherwise carry - which is the wrong trade for something nobody
+ * sees twice.
+ *
+ * Two cannons fire inward from the lower corners so the streams cross over the
+ * middle of the screen, rather than raining down over the content the user has
+ * just arrived to read. Nothing runs at all under prefers-reduced-motion.
+ */
+function tdConfetti() {
+	if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		return;
+	}
+
+	const canvas = document.createElement('canvas');
+	canvas.setAttribute('aria-hidden', 'true');
+	canvas.style.cssText =
+		'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:100000';
+	document.body.appendChild(canvas);
+
+	const ctx = canvas.getContext('2d');
+	// Capped at 2: past that the extra pixels cost more than they show.
+	const dpr = Math.min(window.devicePixelRatio || 1, 2);
+	let w = 0;
+	let h = 0;
+
+	const size = () => {
+		w = window.innerWidth;
+		h = window.innerHeight;
+		canvas.width = Math.floor(w * dpr);
+		canvas.height = Math.floor(h * dpr);
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+	};
+	size();
+
+	const COLORS = ['#3858e9', '#2563eb', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6'];
+	const particles = [];
+
+	const cannon = (originX, angle) => {
+		for (let i = 0; i < 70; i++) {
+			const spread = (Math.random() - 0.5) * 0.9;
+			const speed = 14 + Math.random() * 16;
+
+			particles.push({
+				x: originX,
+				y: h + 8,
+				vx: Math.cos(angle + spread) * speed,
+				vy: Math.sin(angle + spread) * speed,
+				w: 6 + Math.random() * 6,
+				h: 4 + Math.random() * 5,
+				color: COLORS[Math.floor(Math.random() * COLORS.length)],
+				rot: Math.random() * Math.PI,
+				spin: (Math.random() - 0.5) * 0.3,
+				wobble: Math.random() * Math.PI * 2,
+				life: 0,
+				ttl: 150 + Math.random() * 70,
+			});
+		}
+	};
+
+	cannon(0, -Math.PI / 3);
+	cannon(w, (-Math.PI * 2) / 3);
+
+	const GRAVITY = 0.32;
+	const DRAG = 0.994;
+	let raf = 0;
+
+	const frame = () => {
+		ctx.clearRect(0, 0, w, h);
+		let alive = 0;
+
+		for (const p of particles) {
+			if (p.life > p.ttl) {
+				continue;
+			}
+
+			alive++;
+			p.life++;
+			p.vx *= DRAG;
+			p.vy = p.vy * DRAG + GRAVITY;
+			p.x += p.vx;
+			p.y += p.vy;
+			p.rot += p.spin;
+			p.wobble += 0.1;
+
+			// Anything that has fallen well clear of the viewport is finished,
+			// whatever its ttl says - otherwise the last frames animate nothing.
+			if (p.vy > 0 && p.y - h > 60) {
+				p.life = p.ttl + 1;
+				continue;
+			}
+
+			ctx.save();
+			ctx.globalAlpha = Math.max(0, Math.min(1, (p.ttl - p.life) / 40));
+			ctx.translate(p.x, p.y);
+			ctx.rotate(p.rot);
+			// Squashing the width on a sine reads as a ribbon turning over,
+			// rather than a flat rectangle sliding across the screen.
+			ctx.scale(Math.cos(p.wobble), 1);
+			ctx.fillStyle = p.color;
+			ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+			ctx.restore();
+		}
+
+		if (alive === 0) {
+			cancelAnimationFrame(raf);
+			window.removeEventListener('resize', size);
+			canvas.remove();
+			return;
+		}
+
+		raf = requestAnimationFrame(frame);
+	};
+
+	window.addEventListener('resize', size);
+	raf = requestAnimationFrame(frame);
+}
+
+/**
+ * The ThriveDesk settings screen, derived from ajax_url rather than assumed to
+ * live under /wp-admin/ - that path is configurable.
+ */
+function tdSettingsUrl() {
+	const ajax = (typeof thrivedesk !== 'undefined' && thrivedesk.ajax_url) || '';
+
+	return ajax.indexOf('admin-ajax.php') !== -1
+		? ajax.replace('admin-ajax.php', 'admin.php?page=thrivedesk')
+		: '/wp-admin/admin.php?page=thrivedesk';
+}
+
 jQuery(document).ready(($) => {
 	// plugin connection 
 	$('.thrivedesk button.connect').on('click', function (e) {
@@ -162,6 +300,43 @@ jQuery(document).ready(($) => {
 			element.click();
 		}
 	}
+
+	// Arriving from a completed setup. The flag is cleared before anything is
+	// shown, so a refresh does not replay the celebration.
+	(() => {
+		let justConnected = false;
+
+		try {
+			justConnected = window.sessionStorage.getItem(TD_CONNECTED_FLAG) === '1';
+			window.sessionStorage.removeItem(TD_CONNECTED_FLAG);
+		} catch (e) {
+			justConnected = false;
+		}
+
+		if (!justConnected) {
+			return;
+		}
+
+		Swal.fire({
+			toast: true,
+			position: 'top-end',
+			icon: 'success',
+			title: __('Connected to ThriveDesk', 'thrivedesk'),
+			text: __('Your site is set up and ready to take conversations.', 'thrivedesk'),
+			showConfirmButton: false,
+			timer: 5000,
+			timerProgressBar: true,
+			// Swal renders outside the plugin's own markup, so it needs its own
+			// hook to clear the admin bar and the confetti canvas.
+			customClass: { container: 'td-toast' },
+			didOpen: (toast) => {
+				toast.addEventListener('mouseenter', Swal.stopTimer);
+				toast.addEventListener('mouseleave', Swal.resumeTimer);
+			},
+		});
+
+		tdConfetti();
+	})();
 
 	// The setup screen's reference column: a 40px rail until it is asked for.
 	// The rail opens it, the chevron beside the panel heading puts it back.
@@ -303,18 +478,28 @@ jQuery(document).ready(($) => {
 						return;
 					}
 					
-					let icon;
 					if (parsedResponse) {
-						parsedResponse.status === 'success' ? (icon = 'success') : (icon = 'error');
-						Swal.fire({
-							icon: icon,
-							title: ( parsedResponse.status === 'success' ? __('Success', 'thrivedesk') : __('Error', 'thrivedesk') ),
-							text: parsedResponse.message,
-							confirmButtonText: __('Continue to settings', 'thrivedesk'),
-						}).then((result) => {
-							if (result.isConfirmed) {
-								window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+						if (parsedResponse.status === 'success') {
+							// Celebrate on the page being navigated to, not the
+							// one being left: a burst started here is cut off by
+							// the navigation a moment later. A failure still gets
+							// a modal - that one has to be read before anything
+							// else happens.
+							try {
+								window.sessionStorage.setItem(TD_CONNECTED_FLAG, '1');
+							} catch (e) {
+								// Private mode or storage disabled. Only the
+								// celebration is lost; the redirect still matters.
 							}
+
+							window.location.href = tdSettingsUrl();
+							return;
+						}
+
+						Swal.fire({
+							icon: 'error',
+							title: __('Error', 'thrivedesk'),
+							text: parsedResponse.message,
 						});
 					}
 				}).fail(function(xhr, status, error) {
