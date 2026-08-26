@@ -98,9 +98,11 @@ final class Admin
         global $wpdb;
         $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_%thrivedesk%'));
         $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_timeout_%thrivedesk%'));
-    
-        // Flush the server cache
-        wp_cache_flush();
+
+        // Deliberately no wp_cache_flush() here. On a site with a persistent
+        // object cache (Redis/Memcached) that empties the entire cache -
+        // core's and every other plugin's entries included - to clean up
+        // transients the two DELETEs above have already removed.
     }
 
 	public function remove_wp_footer_text() {
