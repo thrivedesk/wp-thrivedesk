@@ -439,7 +439,16 @@ final class Api {
 		// The panel sends the customer-facing order number, which on stores
 		// running sequential order numbering differs from the post ID. The
 		// plugin resolves it and reports a miss instead of a blind success.
-		if ( ! $this->plugin->update_order_status( $order_id, $orderStatus ) ) {
+		// It also refuses a status the store does not offer: WooCommerce
+		// silently coerces an unknown status to 'pending' and allows 'trash',
+		// so forwarding an arbitrary string was a way to reset or bin an order.
+		try {
+			$updated = $this->plugin->update_order_status( $order_id, $orderStatus );
+		} catch ( \InvalidArgumentException $e ) {
+			$this->apiResponse->error( 400, $e->getMessage() );
+		}
+
+		if ( ! $updated ) {
 			$this->apiResponse->error( 404, 'Order not found.' );
 		}
 

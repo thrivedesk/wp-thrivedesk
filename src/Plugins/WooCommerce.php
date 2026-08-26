@@ -341,6 +341,35 @@ final class WooCommerce extends Plugin {
 	}
 
 	/**
+	 * Whether a status is one this store actually offers.
+	 *
+	 * wc_get_order_statuses() is filterable, so stores that register their own
+	 * statuses keep working; everything else does not. WooCommerce itself is
+	 * permissive here — WC_Order::update_status() silently coerces an unknown
+	 * status to 'pending' and explicitly allows 'trash' — so an unvalidated
+	 * status string is a way to reset or bin an order.
+	 *
+	 * @param string $status Order status, with or without the 'wc-' prefix.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.6.0
+	 */
+	public function is_valid_order_status( string $status ): bool {
+		$status = strtolower( trim( $status ) );
+
+		if ( '' === $status ) {
+			return false;
+		}
+
+		if ( 0 !== strpos( $status, 'wc-' ) ) {
+			$status = 'wc-' . $status;
+		}
+
+		return in_array( $status, array_keys( wc_get_order_statuses() ), true );
+	}
+
+	/**
 	 * Update an order's status. Resolves the panel's customer-facing order
 	 * number to the real order, so stores running sequential order numbering
 	 * update the order the agent is actually looking at.
@@ -350,9 +379,15 @@ final class WooCommerce extends Plugin {
 	 *
 	 * @return bool false when no order matches.
 	 *
+	 * @throws \InvalidArgumentException When the status is not one this store offers.
+	 *
 	 * @since 2.5.0
 	 */
 	public function update_order_status( string $order_id, string $new_status ): bool {
+		if ( ! $this->is_valid_order_status( $new_status ) ) {
+			throw new \InvalidArgumentException( 'Invalid order_status.' );
+		}
+
 		$order = $this->get_order_by_number_or_id( $order_id );
 		if ( ! $order ) {
 			return false;
