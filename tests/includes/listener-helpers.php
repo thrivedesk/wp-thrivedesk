@@ -17,9 +17,10 @@ if ( ! function_exists( 'EDD' ) ) {
 if ( ! function_exists( 'td_test_sign_payload' ) ) {
 	/**
 	 * Reproduce ThriveDesk\Api::verify_token()'s signing exactly: coerce the
-	 * "true"/"false" strings to booleans, run each string through
-	 * sanitize_text_field(), then HMAC-SHA1 the wp_json_encode()d result.
-	 * That method is the source of truth; keep this helper in step with it.
+	 * "true"/"false" strings to booleans, then HMAC-SHA1 the wp_json_encode()d
+	 * result. Values are hashed raw — the SaaS signs what it sends, and the
+	 * plugin sanitizes only at the point of use, after verification. That method
+	 * is the source of truth; keep this helper in step with it.
 	 *
 	 * @param array  $payload The request payload ($_REQUEST equivalent).
 	 * @param string $token   The integration api_token used as the HMAC key.
@@ -37,13 +38,6 @@ if ( ! function_exists( 'td_test_sign_payload' ) ) {
 			}
 		}
 
-		$sanitized = array_map(
-			function ( $item ) {
-				return is_string( $item ) ? sanitize_text_field( $item ) : $item;
-			},
-			$payload
-		);
-
-		return hash_hmac( 'SHA1', wp_json_encode( $sanitized ), $token );
+		return hash_hmac( 'SHA1', wp_json_encode( $payload ), $token );
 	}
 }

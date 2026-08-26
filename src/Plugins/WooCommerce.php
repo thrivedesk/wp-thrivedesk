@@ -222,11 +222,15 @@ final class WooCommerce extends Plugin {
 	 *   3. Meta query against the common `_order_number` post meta key
 	 *      (WebToffee, Tyche, SkyVerge free, default WC since 7.x).
 	 *
+	 * Public because Api::guard_order_ownership() resolves the order once and
+	 * hands it to the mutator, instead of every mutator re-resolving it and
+	 * dereferencing `false` when it is missing.
+	 *
 	 * @param string|int $order_id_or_number
 	 *
 	 * @return \WC_Order|null
 	 */
-	private function get_order_by_number_or_id( $order_id_or_number ) {
+	public function get_order_by_number_or_id( $order_id_or_number ) {
 		if ( ! $order_id_or_number ) {
 			return null;
 		}
@@ -255,9 +259,13 @@ final class WooCommerce extends Plugin {
 		// both — otherwise the lookup silently returns nothing.
 		global $wpdb;
 		$order_types = wc_get_order_types( 'view-orders' );
-		$order_types = is_array( $order_types ) ? $order_types : [ 'shop_order' ];
-		$order_types = array_map( 'esc_sql', $order_types );
-		$types_sql   = "'" . implode( "','", $order_types ) . "'";
+		$order_types = is_array( $order_types ) && $order_types ? array_values( $order_types ) : [ 'shop_order' ];
+
+		// Placeholders, not an interpolated list. wc_get_order_types() is
+		// filterable, so the values are not ours to trust, and building them
+		// into prepare()'s format string means prepare() never sees them as
+		// data — a value containing '%' would also corrupt the placeholders.
+		$types_sql = implode( ',', array_fill( 0, count( $order_types ), '%s' ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$post_id = (int) $wpdb->get_var(
@@ -268,7 +276,7 @@ final class WooCommerce extends Plugin {
 				   AND pm.meta_value = %s
 				   AND p.post_type IN ({$types_sql})
 				 LIMIT 1",
-				(string) $order_id_or_number
+				array_merge( [ (string) $order_id_or_number ], $order_types )
 			)
 		);
 
@@ -300,6 +308,8 @@ final class WooCommerce extends Plugin {
 				return $order;
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -319,7 +329,12 @@ final class WooCommerce extends Plugin {
 			return [];
 		}
 
-		if ( strtolower( $order->get_billing_email() ) !== strtolower( $this->customer_email ) ) {
+		// An order with no billing email is not "owned by nobody": a request that
+		// supplies no email must not match it. Mirrors the guard in
+		// order_belongs_to_customer().
+		$email = (string) $this->customer_email;
+
+		if ( '' === $email || strtolower( $order->get_billing_email() ) !== strtolower( $email ) ) {
 			return [];
 		}
 
@@ -335,6 +350,35 @@ final class WooCommerce extends Plugin {
 	}
 
 	/**
+	 * Whether a status is one this store actually offers.
+	 *
+	 * wc_get_order_statuses() is filterable, so stores that register their own
+	 * statuses keep working; everything else does not. WooCommerce itself is
+	 * permissive here — WC_Order::update_status() silently coerces an unknown
+	 * status to 'pending' and explicitly allows 'trash' — so an unvalidated
+	 * status string is a way to reset or bin an order.
+	 *
+	 * @param string $status Order status, with or without the 'wc-' prefix.
+	 *
+	 * @return bool
+	 *
+	 * @since 2.6.0
+	 */
+	public function is_valid_order_status( string $status ): bool {
+		$status = strtolower( trim( $status ) );
+
+		if ( '' === $status ) {
+			return false;
+		}
+
+		if ( 0 !== strpos( $status, 'wc-' ) ) {
+			$status = 'wc-' . $status;
+		}
+
+		return in_array( $status, array_keys( wc_get_order_statuses() ), true );
+	}
+
+	/**
 	 * Update an order's status. Resolves the panel's customer-facing order
 	 * number to the real order, so stores running sequential order numbering
 	 * update the order the agent is actually looking at.
@@ -344,9 +388,15 @@ final class WooCommerce extends Plugin {
 	 *
 	 * @return bool false when no order matches.
 	 *
+	 * @throws \InvalidArgumentException When the status is not one this store offers.
+	 *
 	 * @since 2.5.0
 	 */
 	public function update_order_status( string $order_id, string $new_status ): bool {
+		if ( ! $this->is_valid_order_status( $new_status ) ) {
+			throw new \InvalidArgumentException( 'Invalid order_status.' );
+		}
+
 		$order = $this->get_order_by_number_or_id( $order_id );
 		if ( ! $order ) {
 			return false;
