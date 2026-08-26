@@ -108,6 +108,31 @@ if (!function_exists('td_conversation_status_label')) {
 	}
 }
 
+if (!function_exists('td_conversation_status')) {
+	/**
+	 * Constrain a conversation status to something that is actually a status.
+	 *
+	 * `status` crosses the SaaS trust boundary: sanitize_text_field() on write
+	 * strips tags but leaves quotes, ampersands and entities intact, and the
+	 * value is then re-emitted into markup.
+	 *
+	 * The vocabulary is the SaaS's to grow - the plugin's own UI already knows
+	 * active, open, pending, closed, resolved, on-hold and archived - so this
+	 * constrains the *shape* rather than pinning a value list that would
+	 * silently relabel a newly added status as "unknown". A bare status token
+	 * has no room for a quote, an angle bracket or an entity, which is the
+	 * whole injection surface.
+	 *
+	 * @param mixed $status Raw status value.
+	 * @return string
+	 */
+	function td_conversation_status($status): string {
+		$status = trim((string) $status);
+
+		return preg_match('/^[A-Za-z][A-Za-z0-9 _-]{0,29}$/', $status) ? $status : 'unknown';
+	}
+}
+
 if (!function_exists('td_paginator_label')) {
 	/**
 	 * Display label for a paginator link.

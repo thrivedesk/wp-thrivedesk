@@ -161,13 +161,17 @@ class RestRoute
 
 		$formattedTickets = [];
 
+		// Every field here came off the inbound sync payload, so it crosses the
+		// SaaS trust boundary. sanitize_text_field() on write strips tags but
+		// leaves quotes and entities, and the consumer renders these, so
+		// escape them all rather than only the id inside the URL.
 		foreach ($td_conversations as $td_conversation) {
 			$formattedTickets[] = [
-				'id'           => '#' . $td_conversation->ticket_id,
-				'title'        => $td_conversation->title,
-				'status'       => $td_conversation->status,
-				'submitted_at' => date($td_conversation->created_at),
-				'action'       => THRIVEDESK_APP_URL . '/conversations/' . $td_conversation->id,
+				'id'           => '#' . esc_html($td_conversation->ticket_id),
+				'title'        => esc_html($td_conversation->title),
+				'status'       => esc_html(td_conversation_status($td_conversation->status)),
+				'submitted_at' => esc_html($td_conversation->created_at),
+				'action'       => esc_url(THRIVEDESK_APP_URL . '/conversations/' . $td_conversation->id),
 			];
 		}
 
