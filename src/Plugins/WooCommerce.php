@@ -259,9 +259,13 @@ final class WooCommerce extends Plugin {
 		// both — otherwise the lookup silently returns nothing.
 		global $wpdb;
 		$order_types = wc_get_order_types( 'view-orders' );
-		$order_types = is_array( $order_types ) ? $order_types : [ 'shop_order' ];
-		$order_types = array_map( 'esc_sql', $order_types );
-		$types_sql   = "'" . implode( "','", $order_types ) . "'";
+		$order_types = is_array( $order_types ) && $order_types ? array_values( $order_types ) : [ 'shop_order' ];
+
+		// Placeholders, not an interpolated list. wc_get_order_types() is
+		// filterable, so the values are not ours to trust, and building them
+		// into prepare()'s format string means prepare() never sees them as
+		// data — a value containing '%' would also corrupt the placeholders.
+		$types_sql = implode( ',', array_fill( 0, count( $order_types ), '%s' ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		$post_id = (int) $wpdb->get_var(
@@ -272,7 +276,7 @@ final class WooCommerce extends Plugin {
 				   AND pm.meta_value = %s
 				   AND p.post_type IN ({$types_sql})
 				 LIMIT 1",
-				(string) $order_id_or_number
+				array_merge( [ (string) $order_id_or_number ], $order_types )
 			)
 		);
 

@@ -221,6 +221,30 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
     }
 
     /**
+     * The order-number meta lookup binds the post types wc_get_order_types()
+     * reports as prepare() placeholders rather than interpolating them into the
+     * format string. That list is filterable, so it has to keep resolving when a
+     * plugin adds to it.
+     */
+    public function test_order_number_lookup_survives_a_filtered_order_type_list() {
+        $filter = static function ( $types ) {
+            $types[] = 'shop_order_extra';
+
+            return $types;
+        };
+        add_filter( 'wc_order_types', $filter );
+
+        $this->create_order_with_sequential_number( self::LYNNE_EMAIL, 'TD-9001' );
+        $this->plugin->customer_email = self::LYNNE_EMAIL;
+
+        $result = $this->plugin->order_status( 'TD-9001' );
+
+        remove_filter( 'wc_order_types', $filter );
+
+        $this->assertNotEmpty( $result );
+    }
+
+    /**
      * Test that the API endpoint preserves custom order number characters.
      */
     public function test_order_status_endpoint_preserves_custom_order_number() {
