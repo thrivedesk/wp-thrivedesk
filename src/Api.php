@@ -262,7 +262,7 @@ final class Api {
 		$this->plugin->customer_email = sanitize_email( $this->contract_string( 'email' ) );
 
 		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_autonami( $syncType, $this->contract()['extra'] ?? [] );
+			$this->plugin->sync_conversation_with_autonami( $syncType, $this->contract_extra() );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
@@ -585,7 +585,7 @@ final class Api {
 		$this->plugin->customer_email = sanitize_email( $this->contract_string( 'email' ) );
 
 		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $this->contract()['extra'] ?? [] );
+			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $this->contract_extra() );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_fluentcrm_data' ) ) {
 				$this->apiResponse->error( 500, "Method 'prepare_fluentcrm_data' not exist in plugin" );
@@ -747,6 +747,26 @@ final class Api {
 		$value = $this->contract()[ $key ] ?? '';
 
 		return is_scalar( $value ) ? (string) $value : '';
+	}
+
+	/**
+	 * The `extra` conversation-sync payload, guaranteed to be an array.
+	 *
+	 * Both sync_conversation_with_*() methods declare `array $extra`, so a
+	 * signed scalar (`extra=1`) raised a TypeError — an \Error, which the
+	 * dispatcher could not catch. Answer 400 instead. The values inside are
+	 * still untrusted; ConversationSyncData::fromExtra() allowlists them.
+	 *
+	 * @return array
+	 */
+	private function contract_extra(): array {
+		$extra = $this->contract()['extra'] ?? [];
+
+		if ( ! is_array( $extra ) ) {
+			$this->apiResponse->error( 400, 'extra must be an object.' );
+		}
+
+		return $extra;
 	}
 
 	/**

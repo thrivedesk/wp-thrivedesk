@@ -77,6 +77,42 @@ class ListenerInputTest extends TD_Ajax_TestCase {
 		$this->assertSame( $expected, $plugin->shipping_param );
 	}
 
+	/**
+	 * FluentCRM::sync_conversation_with_fluentcrm() and its Autonami twin both
+	 * declare `array $extra`, so a signed scalar `extra=1` raised a TypeError —
+	 * an \Error, which the dispatcher could not catch, so the request died with
+	 * no body. It must answer instead.
+	 *
+	 * @dataProvider conversation_sync_handlers
+	 */
+	public function test_a_scalar_extra_is_rejected_instead_of_fataling( string $handler, string $plugin_class ) {
+		$api         = \ThriveDesk\Api::instance();
+		$plugin_prop = ( new \ReflectionClass( $api ) )->getProperty( 'plugin' );
+		$plugin_prop->setAccessible( true );
+		$plugin_prop->setValue( $api, $plugin_class::instance() );
+
+		$_REQUEST = array(
+			'sync_type' => 'create',
+			'email'     => 'customer@example.com',
+			'extra'     => '1',
+		);
+
+		$body = $this->capture_json(
+			function () use ( $api, $handler ) {
+				$api->$handler();
+			}
+		);
+
+		$this->assertSame( 'extra must be an object.', $body['message'] ?? null );
+	}
+
+	public static function conversation_sync_handlers(): array {
+		return array(
+			'fluentcrm' => array( 'fluentcrm_handler', \ThriveDesk\Plugins\FluentCRM::class ),
+			'autonami'  => array( 'autonami_handler', \ThriveDesk\Plugins\Autonami::class ),
+		);
+	}
+
 	public static function shipping_param_values(): array {
 		return array(
 			'literal false' => array( 'false', false ),
