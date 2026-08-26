@@ -171,7 +171,7 @@ final class ThriveDesk {
 		$this->define( 'THRIVEDESK_KB_API_ENDPOINT', 'https://thrivedeskdocs.com' );
 		$this->define( 'THRIVEDESK_ASSISTANT_URL', 'https://assistant.thrivedesk.com' );
 		$this->define( 'THRIVEDESK_DB_TABLE_CONVERSATION', 'td_conversations' );
-		$this->define( 'THRIVEDESK_DB_VERSION', 1.2 );
+		$this->define( 'THRIVEDESK_DB_VERSION', '1.2' );
 		$this->define( 'OPTION_THRIVEDESK_DB_VERSION', 'td_db_version' );
 	}
 

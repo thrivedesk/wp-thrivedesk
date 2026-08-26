@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+?>
 <div class="sidebar space-y-6">
     <!-- cloudflare  -->
     <div class="td-card bg-orange-50 border border-orange-400 space-y-2">

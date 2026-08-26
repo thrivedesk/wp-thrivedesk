@@ -19,6 +19,10 @@ composer.lock
 .gitignore
 .gitattributes
 .distignore
+.editorconfig
+.prettierrc.json
+composer.json
+phpcs.xml
 
 # IDE and editor files
 .vscode
