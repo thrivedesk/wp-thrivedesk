@@ -1,19 +1,17 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly ?>
 <div class="thrivedesk">
-  <div class="flex flex-col min-h-screen relative p-10">
+  <?php // One centred stack - the logo sits directly over the card, so the card
+        // stays the only thing on the screen to look at. ?>
+  <div class="flex flex-col min-h-screen items-center justify-center gap-6 relative p-10">
 
-    <div class="flex items-center w-full">
-      <a href="https://www.thrivedesk.com/" target="_blank">
-        <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk logo" class="w-32">
-      </a>
-      <a href="https://help.thrivedesk.com/en/wpportal" target="_blank" class="ml-auto text-brand-light inline-block mr-5"><?php esc_html_e( 'Need help?', 'thrivedesk' ); ?></a>
-    </div>
+    <a href="https://www.thrivedesk.com/" target="_blank">
+      <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk logo" class="w-32">
+    </a>
 
-    <div class="flex flex-1 items-center justify-center py-10">
-      <?php // The card is the split itself: `is-open` lands here, so the same class
-            // that opens the rail also widens the card. p-0 so the right column's
-            // tint reaches the rounded edge. ?>
-      <div id="td-setup-split" class="td-card td-split p-0! overflow-hidden">
+    <?php // The card is the split itself: `is-open` lands here, so the same class
+          // that opens the rail also widens the card. p-0 so the right column's
+          // tint reaches the rounded edge. ?>
+    <div id="td-setup-split" class="td-card td-split p-0! overflow-hidden">
 
           <div class="p-8 space-y-5">
 
@@ -115,7 +113,6 @@
 
           </aside>
 
-      </div>
     </div>
   </div>
 </div>
