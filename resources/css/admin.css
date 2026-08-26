@@ -70,6 +70,24 @@
 		   it to 46px below 783px, so read it rather than hardcoding either.
 		   min-height, not height: content taller than the viewport must still
 		   scroll rather than be clipped. */
+		.td-toolbar {
+			@apply flex items-center flex-wrap gap-x-3 gap-y-2 bg-white border-b border-slate-200 py-4 px-8;
+		}
+		/* Colours forced: WordPress styles admin links from an ID selector
+		   (#3858E9) that outranks any plain class here, and these are chrome
+		   rather than links to follow. */
+		.td-toolbar__link {
+			@apply inline-flex items-center rounded px-2.5 py-1.5 text-sm border-0 bg-transparent cursor-pointer transition no-underline;
+			@apply text-slate-600! hover:bg-slate-100 hover:text-slate-900!;
+		}
+		.td-toolbar__cta {
+			@apply inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium border border-slate-300 bg-white transition no-underline;
+			@apply text-slate-700! hover:bg-slate-50 hover:text-slate-900!;
+		}
+		.td-toolbar__link:focus-visible,
+		.td-toolbar__cta:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
 		.td-fullscreen {
 			min-height: calc(100vh - var(--wp-admin--admin-bar--height, 0px));
 		}

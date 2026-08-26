@@ -353,6 +353,24 @@ jQuery(document).ready(($) => {
 		$split.find('.td-aside-toggle').attr('aria-expanded', open ? 'true' : 'false');
 	});
 
+	// Toolbar "Support": opens the ThriveDesk assistant widget rather than
+	// navigating anywhere. Bound here instead of an inline onclick so a missing
+	// widget is a no-op with an explanation rather than a ReferenceError - the
+	// script that defines Assistant() is loaded separately and may not be there.
+	$(document).on('click', '[data-td-assistant]', function (e) {
+		e.preventDefault();
+
+		if (typeof window.Assistant !== 'function') {
+			console.warn('ThriveDesk: the assistant widget has not loaded on this page.');
+			return;
+		}
+
+		window.Assistant($(this).attr('data-td-assistant'), {
+			subject: __('Issue/Feedback from WP Plugin', 'thrivedesk'),
+			body: __('Write your issue/feedback details here...', 'thrivedesk'),
+		});
+	});
+
 	// Copy-to-clipboard buttons (the ThriveDesk IP list on the setup screen).
 	// Delegated from document so the buttons work wherever they are rendered.
 	$(document).on('click', '.td-copy', function (e) {
