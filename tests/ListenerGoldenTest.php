@@ -10,11 +10,12 @@
  * is_plugin_active() only checks function_exists('EDD')) and sign the request
  * with the production algorithm (see tests/includes/listener-helpers.php).
  *
- * NOTE: some captured behaviors are the *current* ones. Phase 1 moves token
- * verification ahead of plugin introspection, so the "inactive plugin" body
- * changes from the "isn't installed or active" leak to the generic
- * "Request unauthorized"; the affected golden is then regenerated on purpose
- * (TD_UPDATE_GOLDEN=1).
+ * NOTE: Phase 1 landed. Token verification now runs ahead of every check that
+ * introspects the store, so all pre-auth outcomes answer with the same generic
+ * "Request unauthorized": the "isn't installed or active" body (which let four
+ * unauthenticated requests enumerate the store's commerce/CRM stack) and the
+ * "Plugin is invalid or not available now." body are both gone, and their
+ * goldens were regenerated on purpose (TD_UPDATE_GOLDEN=1).
  *
  * @package ThriveDesk\Tests
  */
@@ -53,7 +54,10 @@ class ListenerGoldenTest extends TD_Ajax_TestCase {
 		$this->assertSame( $expected, $actual, "Listener golden '{$name}' changed." );
 	}
 
-	public function test_invalid_plugin() {
+	public function test_invalid_plugin_is_indistinguishable_from_unauthorized() {
+		// An unknown plugin key can't be verified at all (there is no
+		// integration to read an api_token from), so it answers with the same
+		// 401 as everything else that fails before authentication.
 		$this->golden(
 			'invalid-plugin',
 			[
@@ -63,10 +67,11 @@ class ListenerGoldenTest extends TD_Ajax_TestCase {
 		);
 	}
 
-	public function test_inactive_plugin_currently_leaks_before_auth() {
+	public function test_inactive_plugin_does_not_leak_before_auth() {
 		// FluentCRM's is_plugin_active() reads the active_plugins option, which
 		// the test suite never populates, so it is inactive in every environment.
 		// (WooCommerce would flip active/inactive with the CI provisioning.)
+		// Unsigned, so the answer must not reveal that FluentCRM is absent.
 		$this->golden(
 			'inactive-plugin',
 			[

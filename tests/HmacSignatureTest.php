@@ -227,6 +227,31 @@ class HmacSignatureTest extends TD_Ajax_TestCase {
 		$this->assertSame( 'Site connected successfully', $body['message'] );
 	}
 
+	public function test_plugin_activation_is_not_observable_without_a_signature() {
+		// is_plugin_active() used to run before verify_token(), so four
+		// unauthenticated requests (?plugin=edd, woocommerce, fluentcrm,
+		// autonami) told an anonymous caller which commerce/CRM stack the store
+		// runs. EDD is active here (the stubbed EDD() function), FluentCRM never
+		// is, and 'doesnotexist' is not an integration at all — unsigned, all
+		// three must be indistinguishable.
+		$probe = function ( string $plugin ): array {
+			return $this->dispatch(
+				[
+					'listener' => 'thrivedesk',
+					'plugin'   => $plugin,
+					'action'   => 'connect',
+				],
+				''
+			);
+		};
+
+		$active = $probe( 'edd' );
+
+		$this->assertSame( [ 'message' => 'Request unauthorized' ], $active );
+		$this->assertSame( $active, $probe( 'fluentcrm' ), 'an inactive integration must not be distinguishable' );
+		$this->assertSame( $active, $probe( 'doesnotexist' ), 'an unknown plugin key must not be distinguishable' );
+	}
+
 	public function test_data_action_requires_connected_integration() {
 		// After the admin starts connect the token exists but 'connected' stays
 		// false until the SaaS calls back. In that window only connect/disconnect

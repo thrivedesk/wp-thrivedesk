@@ -152,30 +152,35 @@ final class Api {
 			$this->subscription_status = sanitize_text_field( $this->contract_string( 'subscription_status' ) );
 			$this->order_types         = sanitize_text_field( $this->contract_string( 'order_types' ) );
 
-			// Plugin invalid response
-			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
-				$this->apiResponse->error( 401, 'Plugin is invalid or not available now.' );
+			// Everything before verify_token() answers the same way. The
+			// activation check used to run first, so four unauthenticated
+			// requests (?plugin=woocommerce, edd, fluentcrm, autonami) told an
+			// anonymous caller exactly which commerce and CRM stack the store
+			// runs. An unknown plugin key is folded into the same answer.
+			$plugin_name       = $this->_available_plugins()[ $plugin ] ?? null;
+			$plugin_class_name = null !== $plugin_name ? 'ThriveDesk\\Plugins\\' . $plugin_name : null;
+
+			if ( null === $plugin_class_name || ! class_exists( $plugin_class_name ) ) {
+				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
-			$plugin_name       = $this->_available_plugins()[ $plugin ] ?? 'EDD';
-			$plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
-
-			if ( ! class_exists( $plugin_class_name ) ) {
-				$this->apiResponse->error( 500, "Class not found for the '{$plugin_name}' plugin" );
-			}
-
+			// Constructing the singleton has to happen first — verify_token()
+			// needs get_plugin_data('api_token') — but every integration's
+			// constructor is a no-op, so this introspects nothing.
 			$this->plugin = $plugin_class_name::instance();
 
+			if ( ! $this->verify_token( $contract ) ) {
+				$this->apiResponse->error( 401, 'Request unauthorized' );
+			}
+
+			// Past this point the caller holds the integration's shared secret,
+			// so a specific diagnosis is no longer a disclosure.
 			if ( ! method_exists( $this->plugin, 'is_plugin_active' ) ) {
-				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'" );
+				$this->apiResponse->error( 500, "Method 'is_plugin_active' not exist in class '{$plugin_class_name}'" );
 			}
 
 			if ( ! $this->plugin->is_plugin_active() ) {
 				$this->apiResponse->error( 500, "The plugin '{$plugin_name}' isn't installed or active." );
-			}
-
-			if ( ! $this->verify_token( $contract ) ) {
-				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
 			// Only connect/disconnect may run before the integration is
