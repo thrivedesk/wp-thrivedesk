@@ -279,6 +279,17 @@ function tdEnhanceMultiselect( container ) {
 		const text = document.createElement( 'span' );
 		text.textContent = option.text.trim();
 
+		// The path, when the markup carries one, so two pages sharing a title
+		// are still tellable apart.
+		const path = option.getAttribute( 'data-td-path' ) || '';
+		let hint = null;
+
+		if ( path ) {
+			hint = document.createElement( 'span' );
+			hint.className = 'td-multiselect__path';
+			hint.textContent = path;
+		}
+
 		box.addEventListener( 'change', () => {
 			option.selected = box.checked;
 			// Anything else watching the select - now or later - should hear
@@ -288,10 +299,15 @@ function tdEnhanceMultiselect( container ) {
 		} );
 
 		label.append( box, text );
+
+		if ( hint ) {
+			label.appendChild( hint );
+		}
+
 		row.appendChild( label );
 		list.appendChild( row );
 
-		return { row, box, option };
+		return { row, box, option, path };
 	} );
 
 	panel.append( list, empty );
@@ -358,8 +374,10 @@ function tdEnhanceMultiselect( container ) {
 		const needle = search.value.trim().toLowerCase();
 		let shown = 0;
 
-		rows.forEach( ( { row, option } ) => {
-			const match = ! needle || option.text.toLowerCase().includes( needle );
+		rows.forEach( ( { row, option, path } ) => {
+			// Searches the path too: people look for /cart/ as readily as "Cart".
+			const haystack = ( option.text + ' ' + path ).toLowerCase();
+			const match = ! needle || haystack.includes( needle );
 			row.hidden = ! match;
 			shown += match ? 1 : 0;
 		} );

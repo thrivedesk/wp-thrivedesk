@@ -235,9 +235,25 @@ $current_user = wp_get_current_user();
                         <select name="td_excluded_routes[]" id="td-excluded-routes" size="6" multiple class="td-multiselect__source w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5">
                             <?php
                             $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
-                            foreach ($routes as $route) : ?>
-                                <option value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
-                                    <?php echo esc_html($route); ?>
+
+                            /*
+                             * The value stays the permalink: Assistant::should_render()
+                             * compares it against the current URL, so changing it would
+                             * stop every saved exclusion matching. Only the label changes.
+                             *
+                             * The path rides along in a data attribute because two pages
+                             * can share a title, and "Support" twice with nothing to tell
+                             * them apart is worse than the URLs were.
+                             */
+                            foreach ($routes as $route_id => $route) :
+                                $route_title = get_the_title($route_id);
+                                $route_path  = wp_parse_url($route, PHP_URL_PATH);
+                                ?>
+                                <option
+                                    value="<?php echo esc_attr($route); ?>"
+                                    data-td-path="<?php echo esc_attr($route_path ? $route_path : $route); ?>"
+                                    <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html('' !== $route_title ? $route_title : $route); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
