@@ -135,21 +135,47 @@ class HmacSignatureTest extends TD_Ajax_TestCase {
 		$this->assertSame( 'Request unauthorized', $body['message'] );
 	}
 
-	public function test_raw_signed_value_that_sanitization_alters_is_rejected_today() {
-		// The sender signs the *raw* value, but verify_token() hashes the
-		// sanitized value, so anything sanitize_text_field() rewrites fails to
-		// verify. This documents the Phase 1 bug: a legitimately raw-signed
-		// request whose content collapses under sanitization is rejected.
-		// Phase 1 (hash raw, sanitize after) is expected to flip this to accept.
+	public function test_raw_signed_value_that_sanitization_alters_is_accepted() {
+		// The sender signs the *raw* value. verify_token() used to hash the
+		// sanitize_text_field()'d value instead, so any legitimate request whose
+		// content collapses under sanitization ('multiple    spaces' becomes
+		// 'multiple spaces') was rejected — while the handlers went on to use
+		// sanitize_key()/sanitize_email(), which rewrite the value differently
+		// again, so the hashed value and the executed value could diverge.
+		// Phase 1 landed: the raw payload is hashed and sanitization happens at
+		// the point of use, so this now verifies.
+		//
+		// `reason` rather than an arbitrary key because only SIGNED_PARAMS are
+		// hashed; a foreign key would be dropped before the HMAC.
 		$payload = [
 			'listener' => 'thrivedesk',
 			'plugin'   => 'edd',
 			'action'   => 'connect',
-			'note'     => 'multiple    spaces',
+			'reason'   => 'multiple    spaces',
 		];
 
 		$raw_signature = hash_hmac( 'SHA1', wp_json_encode( $payload ), self::TOKEN );
 		$body          = $this->dispatch( $payload, $raw_signature );
+
+		$this->assertSame( 'Site connected successfully', $body['message'] );
+	}
+
+	public function test_sanitized_signature_is_no_longer_accepted() {
+		// The mirror of the above: a signature over the sanitized value is not
+		// what the SaaS produces and must not verify, or both spellings of the
+		// payload would authorize and the "signed == executed" property is gone.
+		$payload = [
+			'listener' => 'thrivedesk',
+			'plugin'   => 'edd',
+			'action'   => 'connect',
+			'reason'   => 'multiple    spaces',
+		];
+
+		$sanitized              = $payload;
+		$sanitized['reason']    = sanitize_text_field( $payload['reason'] );
+		$this->assertNotSame( $payload['reason'], $sanitized['reason'], 'fixture must actually collapse' );
+
+		$body = $this->dispatch( $payload, hash_hmac( 'SHA1', wp_json_encode( $sanitized ), self::TOKEN ) );
 
 		$this->assertSame( 'Request unauthorized', $body['message'] );
 	}

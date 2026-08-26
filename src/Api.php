@@ -679,14 +679,22 @@ final class Api {
 			return false;
 		}
 
-		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '';
+		$signature = (string) ( $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '' );
 		if (empty($signature)) {
 			return false;
 		}
 
-		$sanitized_payload = array_map(function($item) {
-			return is_string($item) ? sanitize_text_field($item) : $item;
-		}, $payload);
-		return hash_equals( $signature, hash_hmac( 'SHA1', wp_json_encode( $sanitized_payload ), $api_token ) );
+		// Hash the raw values. The SaaS signs what it sends, so running the
+		// payload through sanitize_text_field() first hashed a value the sender
+		// never signed and 401'd legitimate requests; worse, the handlers below
+		// sanitize with sanitize_key()/sanitize_email() instead, so the value
+		// that was hashed and the value that ran could differ ('%20123' hashes
+		// as '123' but executes as '20123'). Sanitizing happens at the point of
+		// use, after the signature has been checked.
+		$expected = hash_hmac( 'SHA1', wp_json_encode( $payload ), $api_token );
+
+		// Computed digest first: hash_equals()'s timing guarantee is on the
+		// length of the first argument, which must be the known-good value.
+		return hash_equals( $expected, $signature );
 	}
 }
