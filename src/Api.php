@@ -211,7 +211,8 @@ final class Api {
 			} elseif ( isset( $action ) && 'handle_autonami' === $action ) {
 				$this->autonami_handler();
 			} elseif ( isset( $action ) && 'get_wppostsync_data' === $action ) {
-				$remote_query_string = strtolower( $this->contract_string( 'query' ) );
+				// The one contract param that used to reach a handler unsanitized.
+				$remote_query_string = strtolower( sanitize_text_field( $this->contract_string( 'query' ) ) );
 				$this->wp_postsync_data_handler( $remote_query_string );
 			} elseif ( isset( $action ) && 'get_woocommerce_product_list' === $action ) {
 				$this->get_woocommerce_product_list();
