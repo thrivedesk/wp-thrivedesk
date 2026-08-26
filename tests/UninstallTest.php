@@ -45,4 +45,49 @@ class UninstallTest extends WP_UnitTestCase {
 		}
 		$this->assertTrue( $dropped, 'uninstall must issue a DROP TABLE for td_conversations' );
 	}
+
+	/**
+	 * WordPress runs uninstall.php once for the whole network, but every site
+	 * has its own options table and its own conversations table. Sweeping only
+	 * the current site left every other subsite's stored API key behind.
+	 *
+	 * @group ms-required
+	 */
+	public function test_uninstall_sweeps_every_site_on_multisite() {
+		if ( ! is_multisite() ) {
+			$this->markTestSkipped( 'Multisite-only behaviour.' );
+		}
+
+		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+			define( 'WP_UNINSTALL_PLUGIN', 'thrivedesk/thrivedesk.php' );
+		}
+
+		$second = self::factory()->blog->create();
+
+		switch_to_blog( $second );
+		update_option( 'td_helpdesk_settings', array( 'td_helpdesk_api_key' => 'secret' ) );
+		restore_current_blog();
+
+		update_option( 'td_helpdesk_settings', array( 'td_helpdesk_api_key' => 'secret' ) );
+
+		require THRIVEDESK_DIR . '/uninstall.php';
+
+		switch_to_blog( $second );
+		$leftover = get_option( 'td_helpdesk_settings' );
+		restore_current_blog();
+
+		$this->assertFalse( $leftover, 'the other subsite must not keep its stored API key' );
+	}
+
+	/**
+	 * The single-site path must stay a plain sweep of the current site.
+	 */
+	public function test_the_sweep_helper_is_defined_for_reuse_per_site() {
+		require_once THRIVEDESK_DIR . '/uninstall.php';
+
+		$this->assertTrue(
+			function_exists( 'thrivedesk_uninstall_current_site' ),
+			'the per-site sweep must be callable once per blog'
+		);
+	}
 }
