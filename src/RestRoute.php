@@ -18,13 +18,22 @@ class RestRoute
 	private static $instance;
 
 	/**
+	 * REST namespace for every route this plugin registers.
+	 *
+	 * A bare top-level namespace with no vendor prefix and no version (the doc
+	 * search used to register under `td-search-query`) is a wordpress.org
+	 * review flag and collides freely with other plugins.
+	 */
+	public const REST_NAMESPACE = 'thrivedesk/v1';
+
+	/**
 	 * define post limit when searching
 	 */
 	public const POST_TITLE_LIMIT = 20;
 
 	/**
-	 * Cap the public doc-search result set so the anonymous endpoint can't be
-	 * driven into an unbounded query on stores with a large posts_per_page.
+	 * Cap the doc-search result set so the endpoint can't be driven into an
+	 * unbounded query on stores with a large posts_per_page.
 	 */
 	public const SEARCH_RESULT_LIMIT = 20;
 
@@ -53,7 +62,7 @@ class RestRoute
 	 */
 	public function td_routes()
 	{
-		register_rest_route('thrivedesk/v1', '/conversations/contact/(?P<id>\d+)', array(
+		register_rest_route(self::REST_NAMESPACE, '/conversations/contact/(?P<id>\d+)', array(
 			'methods'             => 'get',
 			'callback'            => array($this, 'get_thrivedesk_conversations'),
 			'permission_callback' => function () {
@@ -61,13 +70,29 @@ class RestRoute
 			}
 		));
 
-		// doc search result route
-		register_rest_route('td-search-query', '/docs', array(
-			'methods'             => 'post',
+		// Doc search for the portal ticket modal.
+		//
+		// The modal only ever renders for a logged-in customer, so this route
+		// has no anonymous consumer. Leaving it open handed the world an
+		// unauthenticated, unthrottled, uncached LIKE '%...%' scan over the
+		// posts table.
+		//
+		// The caller must send X-WP-Nonce: without it WordPress's
+		// rest_cookie_check_errors() calls wp_set_current_user(0) on a
+		// cookie-authenticated REST request, and is_user_logged_in() below
+		// would then be false even for a signed-in customer.
+		register_rest_route(self::REST_NAMESPACE, '/docs', array(
+			'methods'             => \WP_REST_Server::CREATABLE,
 			'callback'            => array($this, 'get_search_data'),
-			'permission_callback' => function () {
-				return true;
-			}
+			'permission_callback' => 'is_user_logged_in',
+			'args'                => array(
+				'query_string' => array(
+					'type'              => 'string',
+					'required'          => false,
+					'default'           => '',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+			),
 		));
 	}
 
@@ -156,14 +181,11 @@ class RestRoute
 	 * @return array
 	 */
 	public function get_search_data( $request ): array {
-		// get_param() picks up the query whether the body came in as
-		// JSON, form-encoded, or a query string. $_POST would miss
-		// the JSON case so we don't rely on it as a primary read.
-		$query_string = $request->get_param( 'query_string' );
-		if ( null === $query_string || '' === $query_string ) {
-			$query_string = $_POST['query_string'] ?? '';
-		}
-		$query_string = sanitize_text_field( (string) $query_string );
+		// get_param() picks up the query whether the body came in as JSON,
+		// form-encoded, or a query string, and the route's registered args
+		// have already run it through sanitize_text_field. Sanitizing again
+		// here keeps the callback safe when it is invoked directly.
+		$query_string = sanitize_text_field( (string) $request->get_param( 'query_string' ) );
 
 		$settings = get_option( 'td_helpdesk_settings', [] );
 		$select_post_types = $settings['td_helpdesk_post_types'] ?? '';

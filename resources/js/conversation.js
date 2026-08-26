@@ -277,7 +277,17 @@ jQuery(document).ready(($) => {
                 // route just gets appended. the ?rest_route= form works
                 // whether or not pretty permalinks are on, which the
                 // /wp-json/ path form doesn't.
-                url: td_objects.wp_json_url + "/td-search-query/docs",
+                url: td_objects.wp_json_url + "/thrivedesk/v1/docs",
+                // the route is logged-in only now. without this header
+                // wordpress's rest_cookie_check_errors() calls
+                // wp_set_current_user(0) on a cookie-authed rest request,
+                // and the permission callback sees an anonymous visitor
+                // even though the customer is signed in.
+                beforeSend: function (xhr) {
+                    if (td_objects.rest_nonce) {
+                        xhr.setRequestHeader('X-WP-Nonce', td_objects.rest_nonce);
+                    }
+                },
                 data: {
                     query_string: search_query,
                     action: 'td_search_query_docs',
