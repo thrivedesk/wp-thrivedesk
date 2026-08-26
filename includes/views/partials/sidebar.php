@@ -23,11 +23,6 @@ $td_capability = [
             <div class="text-lg font-semibold text-slate-800 mt-1">
                 <?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?>
             </div>
-            <?php if ( $td_workspace['slug'] || $td_workspace['timezone'] ) : ?>
-                <div class="text-[12px] text-gray-500 mt-0.5">
-                    <?php echo esc_html( implode( ' · ', array_filter( [ $td_workspace['slug'], $td_workspace['timezone'] ] ) ) ); ?>
-                </div>
-            <?php endif; ?>
         </div>
 
         <?php if ( $td_plan ) : ?>

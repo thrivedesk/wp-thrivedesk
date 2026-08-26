@@ -98,14 +98,12 @@ class WorkspaceSummaryTest extends WP_UnitTestCase {
 		];
 	}
 
-	public function test_workspace_identity_comes_from_stored_info_without_a_request() {
+	public function test_workspace_name_comes_from_stored_info_without_a_request() {
 		$this->all_reachable();
 
 		$summary = WorkspaceService::summary( true );
 
-		$this->assertSame( 'Woo Demo', $summary['workspace']['name'] );
-		$this->assertSame( 'monster', $summary['workspace']['slug'] );
-		$this->assertSame( 'UTC', $summary['workspace']['timezone'] );
+		$this->assertSame( [ 'name' => 'Woo Demo' ], $summary['workspace'] );
 	}
 
 	public function test_a_refused_endpoint_reports_its_status_rather_than_looking_empty() {

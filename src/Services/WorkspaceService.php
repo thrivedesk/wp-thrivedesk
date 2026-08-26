@@ -172,9 +172,7 @@ class WorkspaceService {
 		$info = is_array( $info ) ? $info : [];
 
 		return [
-			'name'     => (string) ( $info['company'] ?? '' ),
-			'slug'     => (string) ( $info['slug'] ?? '' ),
-			'timezone' => (string) ( $info['options']['timezone'] ?? '' ),
+			'name' => (string) ( $info['company'] ?? '' ),
 		];
 	}
 
