@@ -18,35 +18,33 @@ $td_capability = [
 <div class="sidebar space-y-6">
     <!-- workspace  -->
     <div class="td-card space-y-4">
-        <div>
-            <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Workspace', 'thrivedesk' ); ?></div>
-            <div class="text-lg font-semibold text-slate-800 mt-1">
-                <?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?>
+        <div class="space-y-1.5">
+            <div class="text-sm">
+                <span class="font-semibold text-slate-700"><?php esc_html_e( 'Workspace:', 'thrivedesk' ); ?></span>
+                <span class="text-slate-800"><?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?></span>
             </div>
-        </div>
 
-        <?php if ( $td_plan ) : ?>
-            <div class="pt-3 border-t border-slate-200">
-                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Plan', 'thrivedesk' ); ?></div>
-                <div class="flex items-center gap-2 mt-1">
-                    <span class="font-medium text-slate-800"><?php echo esc_html( $td_plan['label'] ); ?></span>
+            <?php if ( $td_plan ) : ?>
+                <div class="text-sm">
+                    <span class="font-semibold text-slate-700"><?php esc_html_e( 'Plan:', 'thrivedesk' ); ?></span>
+                    <span class="text-slate-800"><?php echo esc_html( $td_plan['label'] ); ?></span>
                     <?php if ( $td_plan['billing_type'] ) : ?>
-                        <span class="py-0.5 px-2 bg-slate-100 text-slate-600 text-[11px] rounded-full"><?php echo esc_html( $td_plan['billing_type'] ); ?></span>
+                        <span class="text-gray-400">(<?php echo esc_html( $td_plan['billing_type'] ); ?>)</span>
                     <?php endif; ?>
                 </div>
 
                 <?php if ( $td_plan['expired'] ) : ?>
-                    <div class="text-[12px] text-rose-600 mt-1"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></div>
+                    <div class="text-[12px] text-rose-600"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></div>
                 <?php endif; ?>
 
                 <?php // Answers up front what the Portal tab would otherwise only reveal by being empty. ?>
-                <div class="text-[12px] mt-1 <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
+                <div class="text-[12px] <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
                     <?php echo $td_plan['portal']
                         ? esc_html__( 'Portal included', 'thrivedesk' )
                         : esc_html__( 'Portal not included on this plan', 'thrivedesk' ); ?>
                 </div>
-            </div>
-        <?php endif; ?>
+            <?php endif; ?>
+        </div>
 
         <?php if ( $td_summary['api'] ) : ?>
             <div class="pt-3 border-t border-slate-200">
