@@ -34,6 +34,7 @@ $td_options = array(
 	'wp_thrivedesk_activation_redirect',
 	'td_flush_rewrite_needed',
 	'thrivedesk_post_type_sync_option',
+	'td_workspace_summary',
 );
 
 if ( ! function_exists( 'thrivedesk_uninstall_current_site' ) ) {
@@ -54,6 +55,7 @@ if ( ! function_exists( 'thrivedesk_uninstall_current_site' ) ) {
 		// cleanup cron hook is named literally here; it must match
 		// includes/helper.php. Cron is per site on multisite.
 		wp_clear_scheduled_hook( 'thrivedesk_cleanup_expired_transients' );
+		wp_clear_scheduled_hook( 'thrivedesk_refresh_workspace_summary' );
 
 		// Remove ThriveDesk transients.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery

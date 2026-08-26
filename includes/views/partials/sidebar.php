@@ -3,7 +3,89 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 ?>
+<?php
+$td_summary    = \ThriveDesk\Services\WorkspaceService::summary();
+$td_workspace  = $td_summary['workspace'];
+$td_plan       = $td_summary['plan'];
+$td_capability = [
+	'account'       => __( 'Account', 'thrivedesk' ),
+	'billing'       => __( 'Billing', 'thrivedesk' ),
+	'assistants'    => __( 'Assistants', 'thrivedesk' ),
+	'inboxes'       => __( 'Inboxes', 'thrivedesk' ),
+	'knowledgebase' => __( 'Knowledge base', 'thrivedesk' ),
+];
+?>
 <div class="sidebar space-y-6">
+    <!-- workspace  -->
+    <div class="td-card space-y-4">
+        <div>
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Workspace', 'thrivedesk' ); ?></div>
+            <div class="text-lg font-semibold text-slate-800 mt-1">
+                <?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?>
+            </div>
+            <?php if ( $td_workspace['slug'] || $td_workspace['timezone'] ) : ?>
+                <div class="text-[12px] text-gray-500 mt-0.5">
+                    <?php echo esc_html( implode( ' · ', array_filter( [ $td_workspace['slug'], $td_workspace['timezone'] ] ) ) ); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <?php if ( $td_plan ) : ?>
+            <div class="pt-3 border-t border-slate-200">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Plan', 'thrivedesk' ); ?></div>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="font-medium text-slate-800"><?php echo esc_html( $td_plan['label'] ); ?></span>
+                    <?php if ( $td_plan['billing_type'] ) : ?>
+                        <span class="py-0.5 px-2 bg-slate-100 text-slate-600 text-[11px] rounded-full"><?php echo esc_html( $td_plan['billing_type'] ); ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <?php if ( $td_plan['expired'] ) : ?>
+                    <div class="text-[12px] text-rose-600 mt-1"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></div>
+                <?php endif; ?>
+
+                <?php // Answers up front what the Portal tab would otherwise only reveal by being empty. ?>
+                <div class="text-[12px] mt-1 <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
+                    <?php echo $td_plan['portal']
+                        ? esc_html__( 'Portal included', 'thrivedesk' )
+                        : esc_html__( 'Portal not included on this plan', 'thrivedesk' ); ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ( $td_summary['api'] ) : ?>
+            <div class="pt-3 border-t border-slate-200">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'API access', 'thrivedesk' ); ?></div>
+                <ul class="m-0! p-0! list-none mt-2 space-y-1">
+                    <?php foreach ( $td_capability as $td_key => $td_label ) : ?>
+                        <?php
+                        if ( ! isset( $td_summary['api'][ $td_key ] ) ) {
+                            continue;
+                        }
+
+                        $td_state = $td_summary['api'][ $td_key ];
+                        ?>
+                        <li class="flex items-center gap-2 text-[13px]">
+                            <span class="<?php echo $td_state['ok'] ? 'text-green-600' : 'text-rose-500'; ?>" aria-hidden="true">
+                                <?php echo $td_state['ok'] ? '&#10003;' : '&#10005;'; ?>
+                            </span>
+                            <span class="text-slate-700"><?php echo esc_html( $td_label ); ?></span>
+                            <?php if ( ! $td_state['ok'] ) : ?>
+                                <span class="ml-auto text-[11px] text-gray-400">
+                                    <?php
+                                    // A status beats a word here: 403 is a permission the key lacks,
+                                    // 0 is never having reached ThriveDesk at all.
+                                    echo esc_html( $td_state['status'] ? (string) $td_state['status'] : __( 'unreachable', 'thrivedesk' ) );
+                                    ?>
+                                </span>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <!-- cloudflare  -->
     <div class="td-card bg-orange-50 border border-orange-400 space-y-2">
         <img class="w-36 ml-auto" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"); ?>">

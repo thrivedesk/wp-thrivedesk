@@ -138,7 +138,20 @@ class PortalService {
 	private function plan_grants_access( $plan ): bool {
 		return is_array( $plan )
 			&& isset( $plan['overview']['slug'] )
-			&& in_array( $plan['overview']['slug'], $this->plans, true );
+			&& $this->is_portal_plan( (string) $plan['overview']['slug'] );
+	}
+
+	/**
+	 * Does this plan slug entitle the store to the portal?
+	 *
+	 * Public so the settings screen can say so up front rather than letting the
+	 * feature turn out to be missing. Kept as the one place the allowlist is
+	 * read, so the card and the gate can never disagree.
+	 *
+	 * @param string $slug Plan slug from the billing payload.
+	 */
+	public function is_portal_plan( string $slug ): bool {
+		return in_array( $slug, $this->plans, true );
 	}
 
 	/**

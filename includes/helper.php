@@ -418,6 +418,17 @@ if (!function_exists('thrivedesk_delete_expired_transients')) {
 	}
 }
 
+/*
+ * The workspace card caches what ThriveDesk says about this site for six hours.
+ * A new API key can point the plugin at a different workspace on a different
+ * plan, so the cached answer has to go when the settings change - otherwise the
+ * sidebar keeps describing the account you just disconnected from.
+ */
+add_action('update_option_td_helpdesk_settings', ['ThriveDesk\\Services\\WorkspaceService', 'flush']);
+add_action('add_option_td_helpdesk_settings', ['ThriveDesk\\Services\\WorkspaceService', 'flush']);
+add_action('delete_option_td_helpdesk_settings', ['ThriveDesk\\Services\\WorkspaceService', 'flush']);
+add_action(\ThriveDesk\Services\WorkspaceService::REFRESH_HOOK, ['ThriveDesk\\Services\\WorkspaceService', 'refresh']);
+
 add_action(THRIVEDESK_CLEANUP_CRON_HOOK, 'thrivedesk_delete_expired_transients');
 
 if (!function_exists('thrivedesk_schedule_cleanup_cron')) {
