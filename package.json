@@ -39,6 +39,6 @@
 		"sweetalert2": "^11.4.8"
 	},
 	"overrides": {
-		"webpack": "~5.88.0"
+		"webpack": "~5.106.2"
 	}
 }
