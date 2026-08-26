@@ -108,7 +108,7 @@ class TDApiService {
     public function clearAllTransients()
     {
         delete_transient('thrivedesk_assistants');
-        delete_transient('thrivedesk_portal_access');
+        delete_transient(PortalService::PORTAL_ACCESS_TRANSIENT);
     }
 
 	public function setApiKey( $apiKey ): void {
