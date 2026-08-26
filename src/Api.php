@@ -4,7 +4,6 @@ namespace ThriveDesk;
 
 use ThriveDesk\Api\ApiResponse;
 use WC_Product_Query;
-use WC_Order_Item_Product;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -358,24 +357,46 @@ final class Api {
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $item
+	 * Add a product to an existing order as a new line item.
+	 *
+	 * @param string $order_id
+	 * @param string $item     Product (or variation) id to add.
 	 *
 	 * @return void
 	 */
 	public function wc_order_add_new_item( string $order_id, $item ) {
+		// The quantity is a property of the request, so it is checked before the
+		// store is touched. sanitize_key() keeps '-', so quantity=-10 used to
+		// arrive intact and produce a negative line total that drove the order
+		// total *down* — a discount anyone holding a signature could mint.
+		$quantity = (int) $this->quantity;
+
+		if ( $quantity <= 0 ) {
+			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
+		}
+
+		if ( $quantity > self::MAX_ITEM_QUANTITY ) {
+			$this->apiResponse->error( 400, 'Quantity must not exceed ' . self::MAX_ITEM_QUANTITY . '.' );
+		}
+
 		$order = $this->guard_order_ownership( $order_id );
 
-		$product = wc_get_product_object( 'line_item', $item );
+		// wc_get_product_object( 'line_item', … ) has no 'line_item' product
+		// type, so it silently handed back a blank WC_Product_Simple for any id
+		// — including ids that are not products at all. wc_get_product() returns
+		// false instead, which is checkable.
+		$product = wc_get_product( absint( $item ) );
 
-		$item = new WC_Order_Item_Product();
-		$item->set_name( $product->name );
-		$item->set_quantity( $this->quantity );
-		$item->set_product_id( $product->id );
-		$item->set_subtotal( $product->price ?? 0 );
-		$item->set_total( $product->price * $this->quantity ?? 0 );
-		
-		$order->add_item( $item );
+		if ( ! $product || ! $product->is_purchasable() ) {
+			$this->apiResponse->error( 400, 'Product is not available for purchase.' );
+		}
+
+		// WC_Order::add_product() is the API for this. The hand-built
+		// WC_Order_Item_Product passed the *unit* price to set_subtotal() while
+		// set_total() got the line price, so every added line looked
+		// pre-discounted by (quantity - 1) units; it also skipped the tax class
+		// and the variation's attributes.
+		$order->add_product( $product, $quantity );
 		$order->calculate_totals();
 
 		$this->apiResponse->success( 200, [], 'Success' );
