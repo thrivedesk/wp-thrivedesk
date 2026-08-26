@@ -119,6 +119,21 @@ final class Admin
 	 */
 	public function redirect_to_getting_started_page(): void {
 
+		// admin_init also fires on admin-ajax.php, on cron and on REST
+		// requests. Without these guards an unauthenticated visitor hitting any
+		// nopriv endpoint consumes the one-shot activation flag - so the admin
+		// who just activated never gets the welcome screen - and receives a 302
+		// where the caller expected JSON.
+		if ( wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return;
+		}
+
+		// The welcome screen is a manage_options page; nobody else has any
+		// business consuming the flag on the way to it.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		if (isset($_GET['activate-multi']) || is_network_admin()) {
 			return;
 		}
