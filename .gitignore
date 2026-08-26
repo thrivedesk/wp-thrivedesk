@@ -82,3 +82,8 @@ svn
 playwright-report/
 test-results/
 e2e/.auth/
+
+# Local development bench
+/docker/.env
+/docker/compose.override.yml
+/plugins/

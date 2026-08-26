@@ -1,0 +1,15 @@
+# Copy to compose.override.yml (which is not tracked) to put extra plugins in the
+# bench — EDD, FluentCRM, Autonami, or a third-party plugin you need to test an
+# integration against. Clone them into plugins/, which is not tracked either.
+#
+#   git clone git@github.com:you/their-plugin.git plugins/their-plugin
+#   cp docker/compose.override.example.yml docker/compose.override.yml
+#   ./td up
+#
+# For anything on wordpress.org there is no need for any of this:
+#
+#   ./td cli plugin install easy-digital-downloads --activate
+services:
+  wordpress:
+    volumes:
+      - ../plugins/their-plugin:/var/www/html/wp-content/plugins/their-plugin

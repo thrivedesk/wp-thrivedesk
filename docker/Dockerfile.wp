@@ -1,0 +1,26 @@
+# The bench's WordPress, built on the official image so Apache and permalinks
+# work out of the box. Everything added here is a development tool: the site
+# itself is stock WordPress.
+ARG WORDPRESS_IMAGE=wordpress:php8.3-apache
+FROM ${WORDPRESS_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_HOME=/tmp/composer
+
+# mariadb-client is for looking at the database when a test leaves it in a state
+# no amount of reading the code explains.
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates curl git unzip less mariadb-client; \
+    rm -rf /var/lib/apt/lists/*
+
+RUN set -eux; \
+    curl -sSLo /usr/local/bin/wp \
+        https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar; \
+    chmod +x /usr/local/bin/wp; \
+    wp --allow-root --version
+
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY php/zz-thrivedesk.ini /usr/local/etc/php/conf.d/zz-thrivedesk.ini
