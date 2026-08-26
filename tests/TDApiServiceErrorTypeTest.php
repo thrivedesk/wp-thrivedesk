@@ -17,6 +17,94 @@ class TDApiServiceErrorTypeTest extends WP_UnitTestCase {
 		parent::tear_down();
 	}
 
+	/* ---------------------------------------------------------------------
+	 * postRequest(): used to return json_decode() of whatever came back, with
+	 * no is_wp_error() and no response-code check at all. A customer's support
+	 * reply that never left the site was reported to them as sent.
+	 * ------------------------------------------------------------------- */
+
+	public function test_post_connection_failure_is_reported_as_network() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return new WP_Error( 'http_request_failed', 'Could not resolve host' );
+			}
+		);
+
+		$result = ( new \ThriveDesk\Services\TDApiService() )->postRequest( 'https://api.example.test/v1/reply', [ 'message' => 'hi' ] );
+
+		$this->assertTrue( $result['wp_error'], 'a POST that never reached the API must not look like a success' );
+		$this->assertSame( 'network', $result['error_type'] );
+	}
+
+	public function test_post_401_is_reported_as_auth() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return [
+					'response' => [ 'code' => 401 ],
+					'body'     => wp_json_encode( [ 'message' => 'Unauthenticated' ] ),
+				];
+			}
+		);
+
+		$result = ( new \ThriveDesk\Services\TDApiService() )->postRequest( 'https://api.example.test/v1/reply' );
+
+		$this->assertTrue( $result['wp_error'] );
+		$this->assertSame( 'auth', $result['error_type'] );
+	}
+
+	public function test_post_5xx_is_reported_as_server() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return [
+					'response' => [ 'code' => 500 ],
+					'body'     => wp_json_encode( [ 'message' => 'Internal Server Error' ] ),
+				];
+			}
+		);
+
+		$result = ( new \ThriveDesk\Services\TDApiService() )->postRequest( 'https://api.example.test/v1/reply' );
+
+		$this->assertTrue( $result['wp_error'] );
+		$this->assertSame( 'server', $result['error_type'] );
+		$this->assertStringContainsString( '500', $result['message'] );
+	}
+
+	public function test_post_success_still_returns_the_decoded_body() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return [
+					'response' => [ 'code' => 200 ],
+					'body'     => wp_json_encode( [ 'message' => 'Reply sent' ] ),
+				];
+			}
+		);
+
+		$result = ( new \ThriveDesk\Services\TDApiService() )->postRequest( 'https://api.example.test/v1/reply' );
+
+		$this->assertArrayNotHasKey( 'wp_error', $result );
+		$this->assertSame( 'Reply sent', $result['message'] );
+	}
+
+	public function test_post_body_that_is_not_a_json_object_is_survivable() {
+		add_filter(
+			'pre_http_request',
+			static function () {
+				return [
+					'response' => [ 'code' => 200 ],
+					'body'     => 'not json at all',
+				];
+			}
+		);
+
+		$result = ( new \ThriveDesk\Services\TDApiService() )->postRequest( 'https://api.example.test/v1/reply' );
+
+		$this->assertSame( [], $result );
+	}
+
 	public function test_connection_failure_is_reported_as_network() {
 		add_filter(
 			'pre_http_request',
