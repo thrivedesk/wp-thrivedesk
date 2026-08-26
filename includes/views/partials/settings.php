@@ -189,19 +189,25 @@ $current_user = wp_get_current_user();
     </div>
 
     <div id="td-panel-livechat" hidden>
-    <!-- assistant  -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php
-                /* translators: %1$s: opening link tag, %2$s: closing link tag */
-                printf(esc_html__('Add live chat assistant to your website. To create your assistant click %1$shere%2$s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
+    <div class="td-card space-y-6">
+
+        <div class="flex items-start gap-4 flex-wrap">
+            <div class="flex-1 min-w-[16rem]">
+                <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
+                <p class="mt-1 m-0! text-gray-500"><?php esc_html_e('Show a chat widget on your site so visitors can start a conversation without leaving the page.', 'thrivedesk'); ?></p>
+            </div>
+            <a class="td-toolbar__cta shrink-0" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/chat/assistants'); ?>" target="_blank">
+                <span><?php esc_html_e('Manage assistants', 'thrivedesk'); ?></span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M11.099 3c-3.65.007-5.56.096-6.781 1.318C3 5.636 3 7.757 3 12c0 4.242 0 6.364 1.318 7.682C5.636 21 7.757 21 11.998 21c4.243 0 6.364 0 7.682-1.318 1.22-1.221 1.31-3.133 1.317-6.782M20.556 3.496 11.05 13.06m9.507-9.563c-.494-.494-3.822-.448-4.525-.438m4.525.438c.494.495.448 3.827.438 4.531" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
         </div>
-        <div class="td-card space-y-2">
-            <?php if (!empty($td_assistants)) : ?>
-                <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Assistant', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
+
+        <?php if (!empty($td_assistants)) : ?>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-5 border-t border-slate-200">
+
+                <div class="space-y-1.5">
+                    <label for="td-assistants" class="block text-sm font-semibold text-slate-700"><?php esc_html_e('Assistant', 'thrivedesk'); ?></label>
+                    <select id="td-assistants" class="w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php esc_html_e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
                             <option value="<?php echo esc_attr($assistant['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
@@ -209,40 +215,51 @@ $current_user = wp_get_current_user();
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="m-0! text-[12px] text-gray-500"><?php esc_html_e('Which assistant this site loads.', 'thrivedesk'); ?></p>
                 </div>
 
-                <div class="space-y-2">
-                        <label class="font-medium text-black text-sm"><?php esc_html_e('Exclude Pages', 'thrivedesk'); ?></label>
-                        <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
-                            <?php
-                            $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
-                            foreach ($routes as $route) : ?>
-                                <option class="hover:text-blue-700" value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
-                                    <?php echo esc_html($route); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                <div class="space-y-1.5">
+                    <label for="td-excluded-routes" class="block text-sm font-semibold text-slate-700"><?php esc_html_e('Hide on these pages', 'thrivedesk'); ?></label>
+                    <?php
+                    /*
+                     * Stays a multiple <select>: the save handler reads
+                     * $('#td-excluded-routes').val() and relies on getting an
+                     * array back. size=6 only stops it rendering as a one-line
+                     * box you have to scroll blindly.
+                     */
+                    ?>
+                    <select name="td_excluded_routes[]" id="td-excluded-routes" size="6" multiple class="w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5">
+                        <?php
+                        $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
+                        foreach ($routes as $route) : ?>
+                            <option value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
+                                <?php echo esc_html($route); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="m-0! text-[12px] text-gray-500">
+                        <?php echo wp_kses_post(__('Hold <strong>Ctrl</strong> (<strong>Cmd</strong> on Mac) to pick more than one. Leave empty to show the widget everywhere.', 'thrivedesk')); ?>
+                    </p>
+                </div>
 
-                    <!-- Guidance for selecting multiple options -->
-                    <small class="text-gray-600 block mt-1">
-                        <?php echo wp_kses_post(__('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk')); ?>
-                    </small>
-                
-            <?php else : ?>
-                <p class="text-lg flex flex-col items-center">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
-                            <path opacity=".4" d="M2 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M2 17h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg></span>
-                    <span><?php
-                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
-                        printf(esc_html__('No Assistant found. Please %1$screate a new Assistant%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></span>
-                </p>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php else : ?>
+            <?php // An empty state with the way out of it, rather than a sentence explaining that nothing is here. ?>
+            <div class="flex flex-col items-center text-center gap-3 py-10 border-t border-slate-200">
+                <span class="text-slate-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" fill="none" aria-hidden="true">
+                        <path d="M12 21c4.97 0 9-3.582 9-8s-4.03-8-9-8-9 3.582-9 8c0 1.6.53 3.09 1.44 4.34L3.5 21l4.03-1.2A10.2 10.2 0 0 0 12 21Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <div class="text-base font-semibold text-slate-700"><?php esc_html_e('No assistant yet', 'thrivedesk'); ?></div>
+                <p class="m-0! text-gray-500 max-w-sm"><?php esc_html_e('Create one in ThriveDesk, then come back here to choose which assistant this site loads.', 'thrivedesk'); ?></p>
+                <a class="btn btn-primary text-white! mt-1" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/chat/assistants'); ?>" target="_blank">
+                    <?php esc_html_e('Create an assistant', 'thrivedesk'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+
     </div>
     </div>
 

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-26T18:37:07+00:00\n"
+"POT-Creation-Date: 2026-08-26T18:42:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -318,7 +318,7 @@ msgid "Login to ThriveDesk app and get your API key from "
 msgstr ""
 
 #: includes/views/partials/settings.php:165
-#: includes/views/partials/settings.php:275
+#: includes/views/partials/settings.php:292
 msgid "here"
 msgstr ""
 
@@ -330,125 +330,137 @@ msgstr ""
 msgid "Verify"
 msgstr ""
 
-#: includes/views/partials/settings.php:195
+#: includes/views/partials/settings.php:196
 msgid "Live Chat Assistant"
 msgstr ""
 
-#. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/settings.php:198
-#, php-format
-msgid "Add live chat assistant to your website. To create your assistant click %1$shere%2$s. And you can choose the routes where the assistant should not be visible."
+#: includes/views/partials/settings.php:197
+msgid "Show a chat widget on your site so visitors can start a conversation without leaving the page."
 msgstr ""
 
-#: includes/views/partials/settings.php:203
-#: resources/js/admin.js:823
-msgid "Select Assistant"
+#: includes/views/partials/settings.php:200
+msgid "Manage assistants"
 msgstr ""
 
-#: includes/views/partials/settings.php:205
+#: includes/views/partials/settings.php:209
+#: includes/views/partials/sidebar.php:109
+msgid "Assistant"
+msgstr ""
+
+#: includes/views/partials/settings.php:211
 msgid "Select an assistant"
 msgstr ""
 
-#: includes/views/partials/settings.php:215
-msgid "Exclude Pages"
+#: includes/views/partials/settings.php:218
+msgid "Which assistant this site loads."
 msgstr ""
 
-#: includes/views/partials/settings.php:229
-msgid "Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes."
+#: includes/views/partials/settings.php:222
+msgid "Hide on these pages"
 msgstr ""
 
-#. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/settings.php:242
-#, php-format
-msgid "No Assistant found. Please %1$screate a new Assistant%2$s and return at a later time."
+#: includes/views/partials/settings.php:241
+msgid "Hold <strong>Ctrl</strong> (<strong>Cmd</strong> on Mac) to pick more than one. Leave empty to show the widget everywhere."
 msgstr ""
 
-#: includes/views/partials/settings.php:254
+#: includes/views/partials/settings.php:255
+msgid "No assistant yet"
+msgstr ""
+
+#: includes/views/partials/settings.php:256
+msgid "Create one in ThriveDesk, then come back here to choose which assistant this site loads."
+msgstr ""
+
+#: includes/views/partials/settings.php:258
+msgid "Create an assistant"
+msgstr ""
+
+#: includes/views/partials/settings.php:271
 #: resources/js/wp-scripts/admin-app/App.js:12
 msgid "Portal"
 msgstr ""
 
-#: includes/views/partials/settings.php:255
+#: includes/views/partials/settings.php:272
 msgid "Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more."
 msgstr ""
 
-#: includes/views/partials/settings.php:264
+#: includes/views/partials/settings.php:281
 msgid "Clear portal cache"
 msgstr ""
 
-#: includes/views/partials/settings.php:270
+#: includes/views/partials/settings.php:287
 msgid "Please insert or verify your ThriveDesk API key to use the Portal feature."
 msgstr ""
 
-#: includes/views/partials/settings.php:274
+#: includes/views/partials/settings.php:291
 msgid "Portal feature is available for Plus and upper plan. For plans details click"
 msgstr ""
 
-#: includes/views/partials/settings.php:283
+#: includes/views/partials/settings.php:300
 msgid "Ticket Submission Form Page"
 msgstr ""
 
-#: includes/views/partials/settings.php:284
+#: includes/views/partials/settings.php:301
 msgid "Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href=\"https://help.thrivedesk.com/en/wpportal#create-ticket-page\" target=\"_blank\">here</a>."
 msgstr ""
 
-#: includes/views/partials/settings.php:285
+#: includes/views/partials/settings.php:302
 msgid "Select the page that contains the embedded ticket form visitors will submit."
 msgstr ""
 
-#: includes/views/partials/settings.php:287
+#: includes/views/partials/settings.php:304
 msgid "Select the page with your ticket form"
 msgstr ""
 
-#: includes/views/partials/settings.php:297
+#: includes/views/partials/settings.php:314
 msgid "Search Provider"
 msgstr ""
 
-#: includes/views/partials/settings.php:298
+#: includes/views/partials/settings.php:315
 msgid "When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both."
 msgstr ""
 
-#: includes/views/partials/settings.php:299
+#: includes/views/partials/settings.php:316
 msgid "Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive."
 msgstr ""
 
-#: includes/views/partials/settings.php:302
+#: includes/views/partials/settings.php:319
 msgid "Knowledge Base "
 msgstr ""
 
-#: includes/views/partials/settings.php:304
+#: includes/views/partials/settings.php:321
 msgid "Select knowledgebase"
 msgstr ""
 
-#: includes/views/partials/settings.php:314
+#: includes/views/partials/settings.php:331
 msgid "WordPress Post Types "
 msgstr ""
 
-#: includes/views/partials/settings.php:328
+#: includes/views/partials/settings.php:345
 msgid "Add Support Tab"
 msgstr ""
 
-#: includes/views/partials/settings.php:329
+#: includes/views/partials/settings.php:346
 msgid "You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin"
 msgstr ""
 
-#: includes/views/partials/settings.php:332
+#: includes/views/partials/settings.php:349
 msgid "You must install and activate WooCommerce plugin to use this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:343
+#: includes/views/partials/settings.php:360
 msgid "Portal Shortcode"
 msgstr ""
 
-#: includes/views/partials/settings.php:345
+#: includes/views/partials/settings.php:362
 msgid "Utilize this shortcode on any page to transform it into a help center."
 msgstr ""
 
-#: includes/views/partials/settings.php:346
+#: includes/views/partials/settings.php:363
 msgid "The portal is accessible only to logged-in users."
 msgstr ""
 
-#: includes/views/partials/settings.php:357
+#: includes/views/partials/settings.php:374
 #: resources/js/admin.js:611
 msgid "Save"
 msgstr ""
@@ -521,10 +533,6 @@ msgstr ""
 #: includes/views/partials/sidebar.php:112
 #: includes/views/partials/sidebar.php:119
 msgid "Learn more"
-msgstr ""
-
-#: includes/views/partials/sidebar.php:109
-msgid "Assistant"
 msgstr ""
 
 #: includes/views/partials/sidebar.php:110
@@ -923,6 +931,10 @@ msgstr ""
 #: resources/js/admin.js:814
 #: resources/js/admin.js:870
 msgid "Server Error"
+msgstr ""
+
+#: resources/js/admin.js:823
+msgid "Select Assistant"
 msgstr ""
 
 #: resources/js/admin.js:828
