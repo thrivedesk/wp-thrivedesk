@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-26T17:16:20+00:00\n"
+"POT-Creation-Date: 2026-08-26T17:31:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -46,103 +46,123 @@ msgstr ""
 msgid "Support Tickets by ThriveDesk"
 msgstr ""
 
-#: includes/helper.php:76
+#: includes/helper.php:89
+msgid "WooCommerce"
+msgstr ""
+
+#: includes/helper.php:90
+msgid "Easy Digital Downloads"
+msgstr ""
+
+#: includes/helper.php:91
+msgid "FluentCRM"
+msgstr ""
+
+#: includes/helper.php:92
+msgid "WordPress Post Sync"
+msgstr ""
+
+#: includes/helper.php:93
+msgid "FunnelKit"
+msgstr ""
+
+#: includes/helper.php:137
 msgid "Unknown time"
 msgstr ""
 
-#: includes/helper.php:88
+#: includes/helper.php:149
 #, php-format
 msgid "%d year"
 msgid_plural "%d years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:89
+#: includes/helper.php:150
 #, php-format
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:90
+#: includes/helper.php:151
 #, php-format
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:91
+#: includes/helper.php:152
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:92
+#: includes/helper.php:153
 #, php-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:93
+#: includes/helper.php:154
 #, php-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:94
+#: includes/helper.php:155
 #, php-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:99
+#: includes/helper.php:160
 msgid "just now"
 msgstr ""
 
 #. translators: %s: human-readable time difference, e.g. "3 months"
-#: includes/helper.php:103
+#: includes/helper.php:164
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: includes/helper.php:119
+#: includes/helper.php:180
 #: includes/views/shortcode/conversations.php:106
 msgid "Active"
 msgstr ""
 
-#: includes/helper.php:121
+#: includes/helper.php:182
 #: includes/views/shortcode/conversations.php:110
 msgid "Pending"
 msgstr ""
 
-#: includes/helper.php:123
+#: includes/helper.php:184
 #: includes/views/shortcode/conversations.php:114
 msgid "Closed"
 msgstr ""
 
-#: includes/helper.php:126
+#: includes/helper.php:187
 msgid "Unknown"
 msgstr ""
 
-#: includes/helper.php:173
+#: includes/helper.php:234
 msgid "Previous"
 msgstr ""
 
-#: includes/helper.php:173
+#: includes/helper.php:234
 msgid "Next"
 msgstr ""
 
-#: includes/helper.php:426
+#: includes/helper.php:487
 msgid "Invalid nonce"
 msgstr ""
 
-#: includes/helper.php:430
-#: src/Admin.php:539
-#: src/Admin.php:580
+#: includes/helper.php:491
+#: src/Admin.php:596
+#: src/Admin.php:637
 #: src/Assistants/Assistant.php:28
 #: src/Conversations/Conversation.php:82
 #: src/Conversations/Conversation.php:118
@@ -240,48 +260,6 @@ msgstr ""
 #: includes/views/pages/welcome.php:34
 #, php-format
 msgid "Already have API key? %1$sAdd here%2$s"
-msgstr ""
-
-#: includes/views/partials/integrations.php:16
-msgid "WooCommerce"
-msgstr ""
-
-#: includes/views/partials/integrations.php:24
-msgid "Easy Digital Downloads"
-msgstr ""
-
-#: includes/views/partials/integrations.php:32
-msgid "FluentCRM"
-msgstr ""
-
-#: includes/views/partials/integrations.php:40
-msgid "WordPress Post Sync"
-msgstr ""
-
-#: includes/views/partials/integrations.php:48
-msgid "FunnelKit"
-msgstr ""
-
-#: includes/views/partials/integrations.php:65
-msgid "Integrations"
-msgstr ""
-
-#: includes/views/partials/integrations.php:85
-msgid "Disconnect"
-msgstr ""
-
-#: includes/views/partials/integrations.php:91
-#: includes/views/partials/integrations.php:126
-#: includes/views/partials/integrations.php:141
-msgid "Connect"
-msgstr ""
-
-#: includes/views/partials/integrations.php:95
-msgid "Not installed"
-msgstr ""
-
-#: includes/views/partials/integrations.php:104
-msgid "Connected"
 msgstr ""
 
 #: includes/views/partials/settings.php:51
@@ -940,4 +918,41 @@ msgstr ""
 
 #: resources/js/conversation.js:476
 msgid "Reply sent"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/App.js:24
+msgid "Integrations"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/App.js:25
+msgid "Settings"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:39
+msgid "ThriveDesk could not start the connection. Make sure this plugin is running on a live site."
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:80
+#: resources/js/wp-scripts/admin-app/Integrations.js:101
+msgid "Connect"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:86
+msgid "Disconnect"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:98
+msgid "Install and activate this plugin first"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:109
+msgid "Not installed"
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:123
+msgid "No integrations are available."
+msgstr ""
+
+#: resources/js/wp-scripts/admin-app/request.js:36
+msgid "Something went wrong. Please try again."
 msgstr ""

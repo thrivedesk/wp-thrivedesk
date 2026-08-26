@@ -54,12 +54,29 @@ if($api_key && !$systemInfo) {
     </div>
 
     <!-- body  -->
-    <div class="p-10 grid grid-cols-1 md:grid-cols-4 gap-12">        
+    <div class="p-10 grid grid-cols-1 md:grid-cols-4 gap-12">
         <div class="col-span-3 space-y-6">
-            <?php thrivedesk_view( 'partials/integrations' ); ?>
+            <?php
+            /*
+             * The React app mounts here and owns the tabs. Integrations is
+             * rendered entirely by it; the settings form below is still server
+             * rendered and gets adopted into the Settings tab on mount.
+             *
+             * `hidden` matters: without it the form paints unstyled in the page
+             * flow for a frame before React moves it. It is cleared by
+             * HostedPanel once the node is in place, so a JavaScript failure
+             * leaves the form reachable rather than invisible.
+             */
+            ?>
+            <div id="td-admin-app"></div>
 
-            <!-- include the settings page -->
-            <?php thrivedesk_view( 'partials/settings' ); ?>
+            <div id="td-settings-panel" hidden>
+                <?php thrivedesk_view( 'partials/settings' ); ?>
+            </div>
+
+            <noscript>
+                <style>#td-settings-panel { display: block !important; }</style>
+            </noscript>
         </div>
         <div class="col-span-1">
             <!-- include the sidebar -->

@@ -324,6 +324,8 @@ final class Admin
                     'kb_url' => $knowledgebase_url,
                 )
             );
+
+            $this->enqueue_admin_app();
         }
 
         if (class_exists('BWF_Contacts')) {
@@ -331,6 +333,61 @@ final class Admin
 
             wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-autonami-tab.js', $asset_file['dependencies'], $asset_file['version'] ?? THRIVEDESK_VERSION);
         }
+    }
+
+    /**
+     * The React settings screen, built with @wordpress/components.
+     *
+     * wp-components arrives as a WordPress-provided script and style, so the
+     * design system costs no npm dependency - the build lists it as an
+     * external and WordPress serves it. The generated .asset.php is the
+     * authority on which handles this build actually needs; hardcoding them
+     * here would drift the first time an import changes.
+     *
+     * Everything the app paints on first load is passed in rather than fetched,
+     * so the tabs do not flash empty while a request is in flight.
+     *
+     * @return void
+     */
+    private function enqueue_admin_app(): void
+    {
+        $asset_path = THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-admin-app.asset.php';
+
+        if (! file_exists($asset_path)) {
+            return;
+        }
+
+        $asset = include $asset_path;
+
+        wp_enqueue_style('wp-components');
+        wp_enqueue_style(
+            'thrivedesk-admin-app',
+            THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/style-thrivedesk-admin-app.css',
+            ['wp-components'],
+            $asset['version'] ?? THRIVEDESK_VERSION
+        );
+
+        wp_enqueue_script(
+            'thrivedesk-admin-app',
+            THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-admin-app.js',
+            $asset['dependencies'] ?? [],
+            $asset['version'] ?? THRIVEDESK_VERSION,
+            true
+        );
+
+        wp_set_script_translations('thrivedesk-admin-app', 'thrivedesk');
+
+        wp_localize_script(
+            'thrivedesk-admin-app',
+            'thrivedeskAdmin',
+            [
+                'ajaxUrl'           => admin_url('admin-ajax.php'),
+                // The same nonce action the connect and disconnect handlers
+                // verify against; see ajax_connect_plugin().
+                'pluginActionNonce' => wp_create_nonce('thrivedesk-plugin-action'),
+                'integrations'      => thrivedesk_integrations(),
+            ]
+        );
     }
 
     public function load_pages(){

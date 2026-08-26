@@ -66,6 +66,67 @@ if (!function_exists('thrivedesk_service_ips')) {
     }
 }
 
+if (!function_exists('thrivedesk_integrations')) {
+    /**
+     * The integrations shown on the settings screen.
+     *
+     * Plain data, not markup: the same list feeds the React admin app and can
+     * be asserted in tests without parsing HTML. Image paths are resolved to
+     * URLs here because no caller should need to know the assets layout.
+     *
+     * `installed` is whether the partner plugin is active on this site;
+     * `connected` is whether ThriveDesk holds a token for it. A row with an
+     * `external` URL is handed off to the ThriveDesk app instead of being
+     * connected from here - SureCart and Freemius authorize on their side.
+     *
+     * @since 2.6.0
+     * @access public
+     * @return array<int,array<string,mixed>>
+     */
+    function thrivedesk_integrations(): array
+    {
+        $plugins = [
+            ['slug' => 'woocommerce', 'name' => __('WooCommerce', 'thrivedesk'),           'category' => 'ecommerce', 'image' => 'woocommerce.png', 'class' => \ThriveDesk\Plugins\WooCommerce::class],
+            ['slug' => 'edd',         'name' => __('Easy Digital Downloads', 'thrivedesk'), 'category' => 'ecommerce', 'image' => 'edd.png',         'class' => \ThriveDesk\Plugins\EDD::class],
+            ['slug' => 'fluentcrm',   'name' => __('FluentCRM', 'thrivedesk'),              'category' => 'crm',       'image' => 'fluentcrm.png',   'class' => \ThriveDesk\Plugins\FluentCRM::class],
+            ['slug' => 'wppostsync',  'name' => __('WordPress Post Sync', 'thrivedesk'),    'category' => 'core',      'image' => 'wppostsync.png',  'class' => \ThriveDesk\Plugins\WPPostSync::class],
+            ['slug' => 'autonami',    'name' => __('FunnelKit', 'thrivedesk'),              'category' => 'crm',       'image' => 'autonami.png',    'class' => \ThriveDesk\Plugins\Autonami::class],
+        ];
+
+        $integrations = [];
+
+        foreach ($plugins as $plugin) {
+            $instance = call_user_func([$plugin['class'], 'instance']);
+
+            $integrations[] = [
+                'slug'      => $plugin['slug'],
+                'name'      => $plugin['name'],
+                'category'  => $plugin['category'],
+                'image'     => THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name($plugin['image']),
+                'installed' => (bool) $instance->is_plugin_active(),
+                'connected' => (bool) $instance->get_plugin_data('connected'),
+                'external'  => null,
+            ];
+        }
+
+        foreach ([['surecart', 'SureCart'], ['freemius', 'Freemius']] as $partner) {
+            list($slug, $name) = $partner;
+
+            $integrations[] = [
+                'slug'      => $slug,
+                'name'      => $name,
+                'category'  => 'ecommerce',
+                'image'     => THRIVEDESK_PLUGIN_ASSETS . '/images/' . $slug . '.png',
+                'installed' => true,
+                'connected' => false,
+                'external'  => THRIVEDESK_APP_URL . '/apps/' . $slug,
+            ];
+        }
+
+        return $integrations;
+    }
+}
+
 if (!function_exists('diff_for_humans')) {
 	/**
 	 * format timestamp for the conversation

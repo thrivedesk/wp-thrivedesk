@@ -1,0 +1,40 @@
+/**
+ * Layout only. Colour, type and spacing come from @wordpress/components and the
+ * wp-components stylesheet, so this file deliberately sets none of them - the
+ * point of the port was to stop this screen carrying its own design language.
+ */
+.td-tabs {
+	max-width: 1200px;
+	margin: 0 auto;
+
+	.components-tab-panel__tabs {
+		border-bottom: 1px solid #e0e0e0;
+	}
+
+	.components-tab-panel__tab-content {
+		padding-top: 24px;
+	}
+}
+
+.td-integrations__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 16px;
+}
+
+.td-integration__logo {
+	display: block;
+	width: 40px;
+	height: 40px;
+	border-radius: 4px;
+	object-fit: contain;
+}
+
+.td-integration__name {
+	margin: 0 0 2px;
+}
+
+.td-integration__hint {
+	display: block;
+	margin-top: 8px;
+}
