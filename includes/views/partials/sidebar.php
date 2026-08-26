@@ -22,7 +22,7 @@ $td_capability = [
         // Uppercasing is a CSS class, never baked into the string: plenty of
         // languages have no case at all, and the ones that do do not all
         // uppercase the way English does.
-        $td_label = 'text-sm font-semibold uppercase text-slate-400 whitespace-nowrap';
+        $td_label = 'text-[11px] font-semibold uppercase text-slate-400 whitespace-nowrap';
         ?>
         <?php
         /*
