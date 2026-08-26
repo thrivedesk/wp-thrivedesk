@@ -82,7 +82,10 @@ class Conversation
             wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
         }
 
-        $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+        // Same form as td_verify_helpdesk_api_key(): unslashed and sanitized on
+        // read. It was going into an 'Authorization: Bearer ' concatenation
+        // untouched, which an array turns into a PHP 8 fatal.
+        $apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 
         if (empty($apiKey)) {
             error_log('ThriveDesk: API Key is required for verification');
