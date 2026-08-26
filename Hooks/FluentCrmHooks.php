@@ -69,8 +69,10 @@ class FluentCrmHooks {
 						global $wpdb;
 						$table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
+						// $wpdb->prefix can contain an underscore, a LIKE wildcard,
+						// so the pattern needs escaping as well as preparing.
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-						$row = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+						$row = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
 
 						if ( ! $row ) {
 							return array();
@@ -138,11 +140,15 @@ class FluentCrmHooks {
 		$conversation_url = esc_url( THRIVEDESK_APP_URL . '/conversations/' . $conversation->id );
 		$action_html      = '<a target="_blank" href="' . $conversation_url . '">View conversation</a>';
 
+		// title, status and created_at come off the inbound sync payload the
+		// same way id does. sanitize_text_field() on write strips tags but
+		// leaves quotes and entities, and FluentCRM renders these as markup,
+		// so escape all of them rather than only the one inside the href.
 		return array(
-			'id'           => '#' . $conversation->ticket_id,
-			'title'        => $conversation->title,
-			'status'       => $conversation->status,
-			'Submitted at' => $conversation->created_at,
+			'id'           => '#' . esc_html( $conversation->ticket_id ),
+			'title'        => esc_html( $conversation->title ),
+			'status'       => esc_html( td_conversation_status( $conversation->status ) ),
+			'Submitted at' => esc_html( $conversation->created_at ),
 			'action'       => $action_html,
 		);
 	}

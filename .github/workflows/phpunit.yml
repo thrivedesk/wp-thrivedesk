@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ develop ]
 
+# This job only reads the checkout, don't inherit the repo's default token scope.
+permissions:
+  contents: read
+
 concurrency:
   group: phpunit-${{ github.ref }}
   cancel-in-progress: true

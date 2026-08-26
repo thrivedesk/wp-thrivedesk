@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<ruleset name="ThriveDesk Security">
+    <description>
+        Security sniffs, enforced across ALL source with no path exclusions.
+
+        This is a separate ruleset, not a rule block inside phpcs.xml, and that
+        is deliberate. phpcs.xml excludes legacy paths from the `WordPress` ref
+        while formatting is adopted incrementally, and PHPCS keys a rule-scoped
+        exclude pattern by its ref string: File::addMessage() tests every
+        ancestor of a sniff code, so the `WordPress` exclusion is consulted for
+        WordPress.Security.* and wins. An include-pattern cannot override it.
+        Running the security sniffs under their own standard is the only way to
+        apply them to the files that actually read input — which is every file
+        the exclude list covers. Same pattern as `composer phpcompat`.
+
+        Run with: composer phpcs-security
+    </description>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/assets/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+
+    <!-- Errors fail the build; warnings stay visible in the log without
+         blocking it. NonceVerification.Recommended fires on request reads that
+         structurally cannot carry a nonce - the HMAC-authenticated ?listener=
+         endpoint is server-to-server, and the rest are read-only $_GET reads
+         for pagination and menu routing. Those are design, not debt, so they
+         must not gate CI; a real gap shows up as an error from
+         ValidatedSanitizedInput or PreparedSQL. -->
+    <config name="ignore_warnings_on_exit" value="1"/>
+
+    <rule ref="WordPress.Security"/>
+    <rule ref="WordPress.DB.PreparedSQL"/>
+    <rule ref="WordPress.DB.PreparedSQLPlaceholders"/>
+
+    <rule ref="WordPress.Security.ValidatedSanitizedInput">
+        <properties>
+            <!-- Allowlist validator, not an escaper: it returns '' for anything
+                 outside ^[A-Za-z0-9-]{1,64}$, so a value that survives it is
+                 safe by construction. See Conversation::sanitize_conversation_id(). -->
+            <property name="customSanitizingFunctions" type="array">
+                <element value="sanitize_conversation_id"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

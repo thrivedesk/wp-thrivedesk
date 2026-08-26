@@ -27,7 +27,7 @@ class Inbox {
             wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
         }
 
-        $apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+        $apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 
         if (empty($apiKey)) {
             echo wp_json_encode(['status' => 'false', 'data' => []]);

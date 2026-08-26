@@ -18,7 +18,10 @@ if (!function_exists('thrivedesk_view')) {
 
         if (file_exists($file)) {
             if (is_array($data)) {
-                extract($data);
+                // EXTR_SKIP so an extracted key can never clobber $file, the
+                // path about to be required. No caller passes $data today -
+                // this is hygiene, not a live hole.
+                extract($data, EXTR_SKIP);
             }
 
             require_once $file;
@@ -105,6 +108,31 @@ if (!function_exists('td_conversation_status_label')) {
 			default:
 				return ucfirst((string) $status);
 		}
+	}
+}
+
+if (!function_exists('td_conversation_status')) {
+	/**
+	 * Constrain a conversation status to something that is actually a status.
+	 *
+	 * `status` crosses the SaaS trust boundary: sanitize_text_field() on write
+	 * strips tags but leaves quotes, ampersands and entities intact, and the
+	 * value is then re-emitted into markup.
+	 *
+	 * The vocabulary is the SaaS's to grow - the plugin's own UI already knows
+	 * active, open, pending, closed, resolved, on-hold and archived - so this
+	 * constrains the *shape* rather than pinning a value list that would
+	 * silently relabel a newly added status as "unknown". A bare status token
+	 * has no room for a quote, an angle bracket or an entity, which is the
+	 * whole injection surface.
+	 *
+	 * @param mixed $status Raw status value.
+	 * @return string
+	 */
+	function td_conversation_status($status): string {
+		$status = trim((string) $status);
+
+		return preg_match('/^[A-Za-z][A-Za-z0-9 _-]{0,29}$/', $status) ? $status : 'unknown';
 	}
 }
 
@@ -271,6 +299,103 @@ if (!function_exists('remove_thrivedesk_all_cache')) {
 		$wpdb->query($wpdb->prepare(
 			"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
 			'_transient_thrivedesk_%', '_transient_timeout_thrivedesk_%'));
+	}
+}
+
+/**
+ * Name of the daily cleanup event.
+ */
+if (!defined('THRIVEDESK_CLEANUP_CRON_HOOK')) {
+	define('THRIVEDESK_CLEANUP_CRON_HOOK', 'thrivedesk_cleanup_expired_transients');
+}
+
+if (!function_exists('thrivedesk_delete_expired_transients')) {
+	/**
+	 * Delete ThriveDesk transients whose timeout has already passed.
+	 *
+	 * This is a self-joined DELETE over wp_options, the hottest table in
+	 * WordPress. It has no business running per page view; WordPress core
+	 * does the equivalent sweep once a day, so this one runs on cron too.
+	 *
+	 * @return void
+	 */
+	function thrivedesk_delete_expired_transients() {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE a, b FROM {$wpdb->options} a, {$wpdb->options} b
+				WHERE a.option_name LIKE %s
+				AND a.option_name NOT LIKE %s
+				AND b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )
+				AND b.option_value < %d",
+				$wpdb->esc_like('_transient_thrivedesk_') . '%',
+				$wpdb->esc_like('_transient_timeout_') . '%',
+				time()
+			)
+		);
+	}
+}
+
+add_action(THRIVEDESK_CLEANUP_CRON_HOOK, 'thrivedesk_delete_expired_transients');
+
+if (!function_exists('thrivedesk_schedule_cleanup_cron')) {
+	/**
+	 * Ensure the daily sweep is scheduled.
+	 *
+	 * Hooked to init rather than to the activation hook so stores that update
+	 * the plugin without ever re-activating it also get the event.
+	 * wp_next_scheduled() reads the already-autoloaded `cron` option, so the
+	 * guard costs nothing once the event exists.
+	 *
+	 * @return void
+	 */
+	function thrivedesk_schedule_cleanup_cron() {
+		if (!wp_next_scheduled(THRIVEDESK_CLEANUP_CRON_HOOK)) {
+			wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', THRIVEDESK_CLEANUP_CRON_HOOK);
+		}
+	}
+}
+
+add_action('init', 'thrivedesk_schedule_cleanup_cron');
+
+if (!function_exists('td_user_action_throttled')) {
+	/**
+	 * Per-user rate gate for portal actions that cost an upstream API call.
+	 *
+	 * The portal AJAX actions are open to every logged-in user, a bare
+	 * Subscriber included, and some of them drop a cache before re-fetching -
+	 * so each click is a guaranteed outbound request holding a PHP worker.
+	 * Without a gate, one account can pin the pool.
+	 *
+	 * Returns true when this user already ran the action inside the window and
+	 * should be refused.
+	 *
+	 * @param string $action Action slug, unique per handler.
+	 * @param int    $window Seconds a caller must wait between calls.
+	 * @return bool
+	 */
+	function td_user_action_throttled(string $action, int $window = 10): bool {
+		$user_id = get_current_user_id();
+
+		// Nothing to key a per-user gate on. Handlers using this are
+		// logged-in-only anyway and reject the request before reaching here.
+		if (!$user_id) {
+			return false;
+		}
+
+		$key = 'td_throttle_' . $action . '_' . $user_id;
+
+		if (false !== get_transient($key)) {
+			return true;
+		}
+
+		// The transient *is* the gate: it exists for $window seconds and its
+		// value is never read.
+		set_transient($key, 1, $window);
+
+		return false;
 	}
 }
 

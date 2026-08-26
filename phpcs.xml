@@ -34,6 +34,12 @@
 
     <rule ref="WordPress"/>
 
+    <!-- Security sniffs run repo-wide from their own ruleset, because a
+         rule-scoped exclude on the `WordPress` ref above also suppresses
+         WordPress.Security.* for those paths. See phpcs-security.xml and
+         `composer phpcs-security`. -->
+
+
     <!-- PSR-4 (composer) autoloading uses CamelCase class filenames, which the
          WP hyphenated-lowercase file-name sniff cannot accommodate plugin-wide. -->
     <rule ref="WordPress.Files.FileName">

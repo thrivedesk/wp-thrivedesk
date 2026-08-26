@@ -155,6 +155,22 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
     }
 
     /**
+     * Both emails empty compared equal, so an order with no billing email
+     * (phone orders, some POS and manual entries) handed its full detail — total,
+     * shipping address, line items — to a request that supplied no email at all.
+     */
+    public function test_order_status_does_not_match_an_order_with_no_billing_email() {
+        $order = wc_create_order();
+        $order->set_billing_email( '' );
+        $order->set_status( 'completed' );
+        $order->save();
+
+        $this->plugin->customer_email = '';
+
+        $this->assertSame( [], $this->plugin->order_status( (string) $order->get_id() ) );
+    }
+
+    /**
      * Email comparison is case-insensitive (WooCommerce doesn't guarantee
      * stored casing). Make sure the ownership check tolerates both.
      */
@@ -202,6 +218,30 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
             $result,
             'Order status should resolve for invoice-style order numbers.'
         );
+    }
+
+    /**
+     * The order-number meta lookup binds the post types wc_get_order_types()
+     * reports as prepare() placeholders rather than interpolating them into the
+     * format string. That list is filterable, so it has to keep resolving when a
+     * plugin adds to it.
+     */
+    public function test_order_number_lookup_survives_a_filtered_order_type_list() {
+        $filter = static function ( $types ) {
+            $types[] = 'shop_order_extra';
+
+            return $types;
+        };
+        add_filter( 'wc_order_types', $filter );
+
+        $this->create_order_with_sequential_number( self::LYNNE_EMAIL, 'TD-9001' );
+        $this->plugin->customer_email = self::LYNNE_EMAIL;
+
+        $result = $this->plugin->order_status( 'TD-9001' );
+
+        remove_filter( 'wc_order_types', $filter );
+
+        $this->assertNotEmpty( $result );
     }
 
     /**
@@ -297,6 +337,61 @@ class TD_Order_Status_Test extends WP_UnitTestCase {
             has_action( 'init', array( $api, 'api_listener' ) ),
             'api_listener must not be hooked to init.'
         );
+    }
+
+    /**
+     * WooCommerce is permissive: WC_Order::update_status() silently coerces an
+     * unknown status to 'pending' and explicitly allows 'trash'. Forwarding the
+     * panel's string unchecked therefore let a signed request reset an order's
+     * status or bin the order outright. Validate against the store's own
+     * statuses instead.
+     */
+    public function test_order_status_update_rejects_a_status_the_store_does_not_offer() {
+        $order_id = $this->create_order_with_sequential_number( self::LYNNE_EMAIL, 'ord_7' );
+
+        $response = $this->dispatch_order_status_update( 'ord_7', 'not-a-real-status' );
+
+        $this->assertSame( 'Invalid order_status.', $response['message'] ?? null );
+        $this->assertSame(
+            'completed',
+            wc_get_order( $order_id )->get_status(),
+            'an unknown status must not be coerced to pending'
+        );
+    }
+
+    public function test_order_status_update_rejects_trash() {
+        $order_id = $this->create_order_with_sequential_number( self::LYNNE_EMAIL, 'ord_8' );
+
+        $response = $this->dispatch_order_status_update( 'ord_8', 'trash' );
+
+        $this->assertSame( 'Invalid order_status.', $response['message'] ?? null );
+        $this->assertSame( 'completed', wc_get_order( $order_id )->get_status() );
+    }
+
+    /**
+     * The allowlist reads wc_get_order_statuses(), which is filterable, so a
+     * store that registers its own status keeps working.
+     */
+    public function test_order_status_update_accepts_a_custom_registered_status() {
+        register_post_status( 'wc-awaiting-stock', [ 'public' => false ] );
+        $filter = static function ( $statuses ) {
+            $statuses['wc-awaiting-stock'] = 'Awaiting stock';
+
+            return $statuses;
+        };
+        add_filter( 'wc_order_statuses', $filter );
+
+        $order_id = $this->create_order_with_sequential_number( self::LYNNE_EMAIL, 'ord_9' );
+
+        $response = $this->dispatch_order_status_update( 'ord_9', 'awaiting-stock' );
+
+        remove_filter( 'wc_order_statuses', $filter );
+        // register_post_status() writes to a global the test case does not
+        // restore, so put it back rather than leaking into later tests.
+        unset( $GLOBALS['wp_post_statuses']['wc-awaiting-stock'] );
+
+        $this->assertSame( 'Success', $response['message'] ?? null );
+        $this->assertSame( 'awaiting-stock', wc_get_order( $order_id )->get_status() );
     }
 
     public function test_order_status_update_returns_404_for_unknown_order() {

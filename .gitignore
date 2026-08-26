@@ -71,6 +71,11 @@ assets/img/.DS_Store
 releases
 svn
 
+# Claude Code #
+##########
+# git worktrees live under here
+.claude/
+
 # Testing #
 ##########
 .phpunit.result.cache
