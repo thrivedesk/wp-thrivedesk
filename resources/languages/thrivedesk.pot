@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-26T18:26:06+00:00\n"
+"POT-Creation-Date: 2026-08-26T18:27:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -473,69 +473,73 @@ msgstr ""
 msgid "Knowledge base"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:23
+#: includes/views/partials/sidebar.php:29
 msgid "Workspace:"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:24
+#: includes/views/partials/sidebar.php:31
 msgid "Not connected"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:29
+#: includes/views/partials/sidebar.php:37
 msgid "Plan:"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:37
+#: includes/views/partials/sidebar.php:50
+msgid "Portal:"
+msgstr ""
+
+#: includes/views/partials/sidebar.php:53
+msgid "Included"
+msgstr ""
+
+#: includes/views/partials/sidebar.php:54
+msgid "Not included"
+msgstr ""
+
+#: includes/views/partials/sidebar.php:59
 msgid "Subscription expired"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:43
-msgid "Portal included"
-msgstr ""
-
-#: includes/views/partials/sidebar.php:44
-msgid "Portal not included on this plan"
-msgstr ""
-
-#: includes/views/partials/sidebar.php:51
+#: includes/views/partials/sidebar.php:66
 msgid "API access"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:71
+#: includes/views/partials/sidebar.php:86
 msgid "unreachable"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:85
+#: includes/views/partials/sidebar.php:100
 msgid "Using Cloudflare?"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:86
+#: includes/views/partials/sidebar.php:101
 msgid "To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly."
 msgstr ""
 
-#: includes/views/partials/sidebar.php:87
-#: includes/views/partials/sidebar.php:94
-#: includes/views/partials/sidebar.php:101
+#: includes/views/partials/sidebar.php:102
+#: includes/views/partials/sidebar.php:109
+#: includes/views/partials/sidebar.php:116
 msgid "Learn more"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:91
+#: includes/views/partials/sidebar.php:106
 msgid "Assistant"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:92
+#: includes/views/partials/sidebar.php:107
 msgid "What is Assistant?"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:93
+#: includes/views/partials/sidebar.php:108
 msgid "Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant."
 msgstr ""
 
-#: includes/views/partials/sidebar.php:99
+#: includes/views/partials/sidebar.php:114
 msgid "What is Portal?"
 msgstr ""
 
-#: includes/views/partials/sidebar.php:100
+#: includes/views/partials/sidebar.php:115
 msgid "Embed Help Center into your site that won’t make any database calls, no extra plugins dependency."
 msgstr ""
 

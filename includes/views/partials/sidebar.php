@@ -18,31 +18,46 @@ $td_capability = [
 <div class="sidebar space-y-6">
     <!-- workspace  -->
     <div class="td-card space-y-4">
-        <div class="space-y-1.5">
-            <div class="text-sm">
-                <span class="font-semibold text-slate-700"><?php esc_html_e( 'Workspace:', 'thrivedesk' ); ?></span>
-                <span class="text-slate-800"><?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?></span>
+        <?php
+        // Uppercasing is a CSS class, never baked into the string: plenty of
+        // languages have no case at all, and the ones that do do not all
+        // uppercase the way English does.
+        $td_label = 'text-[11px] font-semibold uppercase tracking-wider text-slate-400 shrink-0';
+        ?>
+        <div class="space-y-2">
+            <div class="flex items-baseline justify-between gap-3">
+                <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Workspace:', 'thrivedesk' ); ?></span>
+                <span class="text-sm text-slate-800 text-right">
+                    <?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?>
+                </span>
             </div>
 
             <?php if ( $td_plan ) : ?>
-                <div class="text-sm">
-                    <span class="font-semibold text-slate-700"><?php esc_html_e( 'Plan:', 'thrivedesk' ); ?></span>
-                    <span class="text-slate-800"><?php echo esc_html( $td_plan['label'] ); ?></span>
-                    <?php if ( $td_plan['billing_type'] ) : ?>
-                        <span class="text-gray-400">(<?php echo esc_html( $td_plan['billing_type'] ); ?>)</span>
-                    <?php endif; ?>
+                <div class="flex items-center justify-between gap-3">
+                    <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Plan:', 'thrivedesk' ); ?></span>
+                    <span class="flex items-center justify-end flex-wrap gap-2 text-sm text-slate-800 text-right">
+                        <?php echo esc_html( $td_plan['label'] ); ?>
+                        <?php if ( $td_plan['billing_type'] ) : ?>
+                            <span class="py-0.5 px-2 bg-slate-100 text-slate-600 text-[11px] rounded-full whitespace-nowrap">
+                                <?php echo esc_html( $td_plan['billing_type'] ); ?>
+                            </span>
+                        <?php endif; ?>
+                    </span>
+                </div>
+
+                <?php // Answers up front what the Portal tab would otherwise only reveal by being empty. ?>
+                <div class="flex items-baseline justify-between gap-3">
+                    <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Portal:', 'thrivedesk' ); ?></span>
+                    <span class="text-sm text-right <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
+                        <?php echo $td_plan['portal']
+                            ? esc_html__( 'Included', 'thrivedesk' )
+                            : esc_html__( 'Not included', 'thrivedesk' ); ?>
+                    </span>
                 </div>
 
                 <?php if ( $td_plan['expired'] ) : ?>
-                    <div class="text-[12px] text-rose-600"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></div>
+                    <div class="text-[12px] text-rose-600 text-right"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></div>
                 <?php endif; ?>
-
-                <?php // Answers up front what the Portal tab would otherwise only reveal by being empty. ?>
-                <div class="text-[12px] <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
-                    <?php echo $td_plan['portal']
-                        ? esc_html__( 'Portal included', 'thrivedesk' )
-                        : esc_html__( 'Portal not included on this plan', 'thrivedesk' ); ?>
-                </div>
             <?php endif; ?>
         </div>
 
