@@ -215,13 +215,11 @@ class Conversation
 			wp_die();
 		}
 
-        // reset_td_settings() replaces the stored key with whatever was just
-        // submitted, so the current verification status only describes the key
-        // on file for as long as the two are the same.
+        // Nothing is written until the key has actually authenticated. Saving
+        // first meant a key that failed verification - including one an
+        // attacker pre-filled into the form via ?token= - was already the key
+        // on file by the time the check came back.
         $is_same_key = $apiKey === ( get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '' );
-
-        // save the api key to the database
-        $this->reset_td_settings($apiKey);
 
 		$apiService = new TDApiService();
 		$apiService->setApiKey( $apiKey );
@@ -230,14 +228,14 @@ class Conversation
 
         if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 
-            // Only a genuine auth rejection (401/403 from the API) means the
-            // key itself is bad. A network-level failure (DNS/SSL/timeout -
-            // e.g. right after a domain migration while things are still
-            // settling) says nothing about the key, so an already-verified key
-            // keeps its status over what may well be a transient blip. A key
-            // that was just changed has never been verified, so it must not
-            // inherit the previous key's status.
-            if ( ! $is_same_key || ( $data['error_type'] ?? '' ) === 'auth' ) {
+            // The stored key is untouched on this path, so the flag still has
+            // to describe *that* key. A failure while checking some other
+            // submitted key says nothing about it. And even for the same key,
+            // only a genuine auth rejection (401/403) means the key is bad - a
+            // network-level failure (DNS/SSL/timeout, e.g. right after a domain
+            // migration while things are still settling) is a transient blip
+            // that must not cost the site its connection.
+            if ( $is_same_key && ( $data['error_type'] ?? '' ) === 'auth' ) {
                 Admin::set_api_verification_status();
             }
 
@@ -255,7 +253,10 @@ class Conversation
 
         if(!isset($data['company'])){
 
-            Admin::set_api_verification_status();
+            // Same reasoning as above: only the key on file can lose its flag.
+            if ( $is_same_key ) {
+                Admin::set_api_verification_status();
+            }
 
             error_log('ThriveDesk: API verification failed - company data not found');
 
@@ -269,6 +270,9 @@ class Conversation
 
 			wp_die();
         }
+
+        // Verified: only now does this key become the key on file.
+        $this->reset_td_settings($apiKey);
 
         Admin::set_api_verification_status(true);
 
