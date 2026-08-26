@@ -69,8 +69,10 @@ class FluentCrmHooks {
 						global $wpdb;
 						$table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
+						// $wpdb->prefix can contain an underscore, a LIKE wildcard,
+						// so the pattern needs escaping as well as preparing.
 						// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-						$row = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+						$row = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
 
 						if ( ! $row ) {
 							return array();

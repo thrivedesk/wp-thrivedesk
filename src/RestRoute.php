@@ -127,7 +127,10 @@ class RestRoute
 		global $wpdb;
 		$table_name = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
-		$row = $wpdb->get_var("SHOW TABLES LIKE '$table_name'");
+		// $wpdb->prefix can contain an underscore, which is a LIKE wildcard, so
+		// the pattern has to be escaped as well as prepared.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$row = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) );
 
 		if (!$row) {
 			return [];

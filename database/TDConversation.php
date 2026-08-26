@@ -25,8 +25,11 @@ class TDConversation {
 		$table_name      = $wpdb->prefix . THRIVEDESK_DB_TABLE_CONVERSATION;
 
 		// Direct, uncached DDL against our own table is the point of this migration.
+		// $wpdb->prefix can contain an underscore, a LIKE wildcard, so the
+		// pattern is escaped as well as prepared. The row that comes back is
+		// still the real table name, so the comparison below is unaffected.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) !== $table_name ) {
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) ) ) !== $table_name ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
 			$sql = "CREATE TABLE $table_name (
                 `id` varchar(50) NOT NULL UNIQUE,
