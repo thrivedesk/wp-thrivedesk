@@ -83,12 +83,20 @@
 			.td-split.is-open {
 				grid-template-columns: 3fr 2fr;
 			}
+			/* flex, so the rail stretches to the column without a percentage
+			   height. `height: 100%` here resolved against the stretched grid row
+			   while also being one of the things sizing that row, and the card
+			   ended up tracking the viewport instead of its own content. */
 			.td-aside {
-				@apply border-t-0 border-l;
+				@apply flex border-t-0 border-l;
+			}
+			/* The panel lays itself out; the flex rail would size it to content. */
+			.td-split.is-open .td-aside {
+				@apply block;
 			}
 			.td-aside-toggle {
 				writing-mode: vertical-rl;
-				@apply h-full w-10 p-0 whitespace-nowrap;
+				@apply w-10 p-0 whitespace-nowrap;
 			}
 		}
 		.td-ip-row {
