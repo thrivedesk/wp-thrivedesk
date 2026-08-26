@@ -124,6 +124,16 @@ class Conversation
             die();
         }
 
+        // Open to every logged-in user and passes force_refresh = true, which
+        // drops the cache before fetching - so each click is a guaranteed
+        // outbound API call holding a PHP worker.
+        if ( td_user_action_throttled( 'reload_tickets', 10 ) ) {
+            wp_send_json_error(
+                [ 'message' => __( 'Please wait a moment before reloading again.', 'thrivedesk' ) ],
+                429
+            );
+        }
+
         try {
             // Only the caller's own cached list is dropped. This runs for any
             // logged-in portal user, so it must not evict other customers.
@@ -468,6 +478,7 @@ class Conversation
                 'ajax_url'           => admin_url('admin-ajax.php'),
                 'kb_url'             => $this->getKnowledgeBaseUrl(),
                 'nonce'              => wp_create_nonce('thrivedesk-nonce'),
+                'rest_nonce'         => wp_create_nonce('wp_rest'),
                 'wp_search_enabled'  => $wp_search_enabled,
             ]
         );
@@ -556,7 +567,6 @@ class Conversation
 	 */
 	public static function get_conversations(bool $force_refresh = false, ?int $page = null)
 	{
-        self::delete_thrivedesk_expired_transients();
 		$page               = max(1, $page ?? absint($_GET['cv_page'] ?? 1));
 		$current_user_email = wp_get_current_user()->user_email;
 		$inbox_id           = get_option('td_helpdesk_settings')['td_helpdesk_inbox_id'] ?? '';
@@ -711,13 +721,23 @@ class Conversation
         try {
             $response_body =( new TDApiService() )->postRequest($url, $data);
 
+            if ( ! empty( $response_body['wp_error'] ) ) {
+                // The reply never left the site - don't tell the customer it did,
+                // and don't drop their cached copy of the conversation.
+                echo wp_json_encode( [
+                    'status'  => 'error',
+                    'message' => __( 'Your reply could not be sent. Please try again.', 'thrivedesk' ),
+                ] );
+                wp_die();
+            }
+
             // The reply invalidates this customer's view of this conversation
             // and nothing else. Anyone else's cached copy is theirs to keep.
             delete_transient(self::conversation_cache_key($conversation_id));
 
             echo wp_json_encode([
                 'status'  => 'success',
-                'message' => $response_body['message'],
+                'message' => $response_body['message'] ?? '',
             ]);
         }catch (\Exception $e) {
             echo wp_json_encode(['status' => 'error', 'message' => $e->getMessage()]);
