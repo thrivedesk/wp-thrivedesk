@@ -252,15 +252,11 @@ function tdEnhanceMultiselect( container ) {
 	panel.className = 'td-multiselect__panel';
 	panel.hidden = true;
 
-	// Only worth a filter when the list is long enough to hunt through.
-	let search = null;
-	if ( options.length > 8 ) {
-		search = document.createElement( 'input' );
-		search.type = 'search';
-		search.className = 'td-multiselect__search';
-		search.placeholder = __( 'Search pages', 'thrivedesk' );
-		panel.appendChild( search );
-	}
+	const search = document.createElement( 'input' );
+	search.type = 'search';
+	search.className = 'td-multiselect__search';
+	search.placeholder = __( 'Search pages', 'thrivedesk' );
+	panel.appendChild( search );
 
 	const list = document.createElement( 'ul' );
 	list.className = 'td-multiselect__list';
@@ -351,27 +347,25 @@ function tdEnhanceMultiselect( container ) {
 		panel.hidden = ! isOpen;
 		toggle.setAttribute( 'aria-expanded', isOpen ? 'true' : 'false' );
 
-		if ( isOpen && search ) {
+		if ( isOpen ) {
 			search.focus();
 		}
 	}
 
 	toggle.addEventListener( 'click', () => open( panel.hidden ) );
 
-	if ( search ) {
-		search.addEventListener( 'input', () => {
-			const needle = search.value.trim().toLowerCase();
-			let shown = 0;
+	search.addEventListener( 'input', () => {
+		const needle = search.value.trim().toLowerCase();
+		let shown = 0;
 
-			rows.forEach( ( { row, option } ) => {
-				const match = ! needle || option.text.toLowerCase().includes( needle );
-				row.hidden = ! match;
-				shown += match ? 1 : 0;
-			} );
-
-			empty.hidden = shown > 0;
+		rows.forEach( ( { row, option } ) => {
+			const match = ! needle || option.text.toLowerCase().includes( needle );
+			row.hidden = ! match;
+			shown += match ? 1 : 0;
 		} );
-	}
+
+		empty.hidden = shown > 0;
+	} );
 
 	// Escape closes and returns focus to the control that opened it, rather
 	// than leaving the caret somewhere inside a panel that is now gone.

@@ -220,9 +220,6 @@ $current_user = wp_get_current_user();
 
                 <div class="space-y-1.5">
                     <label for="td-excluded-routes" class="block text-sm font-semibold text-slate-700"><?php esc_html_e('Hide on these pages', 'thrivedesk'); ?></label>
-                    <p class="m-0! text-[12px] text-gray-500">
-                        <?php esc_html_e('The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way.', 'thrivedesk'); ?>
-                    </p>
                     <?php
                     /*
                      * Still a multiple <select>, and still the source of truth:
@@ -245,7 +242,9 @@ $current_user = wp_get_current_user();
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <p class="m-0! text-[12px] text-gray-500"><?php esc_html_e('Leave empty to show the widget everywhere.', 'thrivedesk'); ?></p>
+                    <p class="m-0! text-[12px] text-gray-500">
+                        <?php esc_html_e('The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way. Leave empty to show it everywhere.', 'thrivedesk'); ?>
+                    </p>
                 </div>
 
             </div>
