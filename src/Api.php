@@ -45,6 +45,14 @@ final class Api {
 	];
 
 	/**
+	 * Upper bound on a line item's quantity for the inbound add-item and
+	 * quantity-update actions. An agent is correcting an order from the panel,
+	 * not placing a wholesale one, so a four-figure quantity is a mistake or an
+	 * abuse of a leaked signature rather than a real request.
+	 */
+	private const MAX_ITEM_QUANTITY = 999;
+
+	/**
 	 * The single instance of this class
 	 */
 	private static $instance = null;
@@ -458,29 +466,55 @@ final class Api {
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $product_id
-	 * @param $quantity
+	 * Change the quantity of one line item on an order, keeping the line's
+	 * money in step with it.
+	 *
+	 * @param string $order_id
+	 * @param string $product_id
+	 * @param string $quantity
 	 *
 	 * @return void
 	 */
 	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
 		// Validate the request's own scalars before resolving the order: the
-		// guard now answers 404 for a missing order, and a bad quantity has to
-		// stay reported as a bad quantity. Nothing here observes the store.
-		if ( (int) $quantity <= 0 ) {
+		// guard answers 404 for a missing order, and a bad quantity has to stay
+		// reported as a bad quantity. Nothing here observes the store.
+		$quantity = (int) $quantity;
+
+		if ( $quantity <= 0 ) {
 			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
+		}
+
+		if ( $quantity > self::MAX_ITEM_QUANTITY ) {
+			$this->apiResponse->error( 400, 'Quantity must not exceed ' . self::MAX_ITEM_QUANTITY . '.' );
 		}
 
 		$order = $this->guard_order_ownership( $order_id );
 
-		foreach ( $order->get_items() as $item_id => $item ) {
-
-			if ( $item["product_id"] == (string) $product_id ) {
-				wc_update_order_item_meta( $item_id, '_qty', $quantity );
-				$order->calculate_totals();
+		foreach ( $order->get_items() as $item ) {
+			if ( (string) $item->get_product_id() !== (string) $product_id ) {
+				continue;
 			}
+
+			// Write through the item API, not wc_update_order_item_meta( '_qty' ).
+			// That wrote the quantity straight to meta and left _line_subtotal /
+			// _line_total untouched, so calculate_totals() re-summed the stale
+			// line money: an order bumped to 1000 units still charged for one.
+			//
+			// Scale from the line's own unit price so the customer keeps the
+			// price they originally paid rather than today's catalogue price.
+			$old_quantity = max( 1, (int) $item->get_quantity() );
+			$unit_subtotal = (float) $item->get_subtotal() / $old_quantity;
+			$unit_total    = (float) $item->get_total() / $old_quantity;
+
+			$item->set_quantity( $quantity );
+			$item->set_subtotal( $unit_subtotal * $quantity );
+			$item->set_total( $unit_total * $quantity );
+			$item->save();
 		}
+
+		$order->calculate_totals();
+
 		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
