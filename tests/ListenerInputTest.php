@@ -49,4 +49,42 @@ class ListenerInputTest extends TD_Ajax_TestCase {
 
 		$this->assertSame( 'Success', $body['message'] ?? null );
 	}
+
+	/**
+	 * `isset($_REQUEST['shipping_param']) == 1` is true for any value the key
+	 * holds, so a signed shipping_param=false still switched the (expensive,
+	 * per-order) shipping lookups on. The value has to decide.
+	 *
+	 * @dataProvider shipping_param_values
+	 */
+	public function test_shipping_param_value_is_honoured( $sent, bool $expected ) {
+		$plugin                 = \ThriveDesk\Plugins\WPPostSync::instance();
+		$plugin->shipping_param = 'not-yet-set';
+
+		$payload = array(
+			'listener' => 'thrivedesk',
+			'plugin'   => 'wppostsync',
+			'action'   => 'get_plugin_data',
+			'email'    => 'customer@example.com',
+		);
+
+		if ( null !== $sent ) {
+			$payload['shipping_param'] = $sent;
+		}
+
+		$this->dispatch( $payload );
+
+		$this->assertSame( $expected, $plugin->shipping_param );
+	}
+
+	public static function shipping_param_values(): array {
+		return array(
+			'literal false' => array( 'false', false ),
+			'zero'          => array( '0', false ),
+			'empty'         => array( '', false ),
+			'literal true'  => array( 'true', true ),
+			'one'           => array( '1', true ),
+			'absent'        => array( null, false ),
+		);
+	}
 }

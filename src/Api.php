@@ -640,8 +640,14 @@ final class Api {
 	 */
 	public function plugin_data_action_handler() {
 
-		$email          = sanitize_email( $this->contract_string( 'email' ) );
-		$enableShipping = isset( $this->contract()['shipping_param'] ) == 1 ? true : false;
+		$email = sanitize_email( $this->contract_string( 'email' ) );
+
+		// isset() == 1 is true for *any* value the key holds, so a signed
+		// shipping_param=false still switched shipping lookups on. Read the
+		// value. wp_validate_boolean() takes 'false' and '0' as false, which is
+		// what the SaaS sends, and verify_token() has already coerced a literal
+		// "true"/"false" for hashing.
+		$enableShipping = wp_validate_boolean( $this->contract()['shipping_param'] ?? false );
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 			$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
