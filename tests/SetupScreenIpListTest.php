@@ -67,6 +67,57 @@ class SetupScreenIpListTest extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * The reference column is nested markup now - a rail, a panel, and the
+	 * allowlist inside it - and a stray tag there silently reflows the whole
+	 * card. libxml is stricter about this than a browser is.
+	 */
+	public function test_rendered_markup_is_well_formed() {
+		$html = $this->render_setup_screen();
+
+		$previous = libxml_use_internal_errors( true );
+		libxml_clear_errors();
+
+		$doc = new DOMDocument();
+		$doc->loadHTML( '<!DOCTYPE html><html><body>' . $html . '</body></html>' );
+
+		$structural = array_filter(
+			libxml_get_errors(),
+			static function ( $error ) {
+				return false !== stripos( $error->message, 'mismatch' )
+					|| false !== stripos( $error->message, 'Unexpected end tag' )
+					|| false !== stripos( $error->message, 'Premature end of data' );
+			}
+		);
+
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
+
+		$this->assertSame(
+			[],
+			array_map( static function ( $error ) { return trim( $error->message ); }, $structural )
+		);
+	}
+
+	/**
+	 * The rail is the only way into the panel, so its aria wiring has to point
+	 * at the thing it opens.
+	 */
+	public function test_the_reference_column_collapses_to_a_labelled_rail() {
+		$html = $this->render_setup_screen();
+
+		$this->assertStringContainsString( 'Additional Info - click to expand', $html );
+		$this->assertStringContainsString( 'aria-controls="td-setup-aside-panel"', $html );
+		$this->assertStringContainsString( 'id="td-setup-aside-panel"', $html );
+
+		// Collapsed is the initial state, and the panel is not open in the markup.
+		$this->assertStringContainsString( 'aria-expanded="false"', $html );
+		$this->assertStringNotContainsString( 'td-split is-open', $html );
+
+		// With the rail hidden once open, the close control is the way back.
+		$this->assertStringContainsString( 'td-aside-close', $html );
+	}
+
 	public function test_support_address_is_the_help_inbox() {
 		$html = $this->render_setup_screen();
 

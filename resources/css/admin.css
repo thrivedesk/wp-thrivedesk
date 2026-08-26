@@ -49,6 +49,48 @@
 		.alert-danger {
 			@apply bg-rose-50 border-rose-300 text-rose-600;
 		}
+		/* The setup screen's two columns. The reference column is a 40px rail
+		   until it is asked for; opening it takes the split to 60/40. Below md
+		   there is one column and the rail becomes an ordinary horizontal bar,
+		   because a vertical strip has nothing to be tall against. */
+		.td-split {
+			@apply grid grid-cols-1;
+		}
+		.td-aside {
+			@apply bg-slate-50 border-t border-slate-200;
+		}
+		.td-aside-toggle {
+			@apply flex items-center justify-center gap-2 w-full p-3 border-0 bg-transparent cursor-pointer transition;
+			@apply text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:text-blue-600;
+		}
+		.td-aside-panel {
+			@apply hidden;
+		}
+		.td-aside-close {
+			@apply inline-flex items-center shrink-0 p-0 border-0 bg-transparent text-slate-400 cursor-pointer transition;
+			@apply hover:text-blue-600;
+		}
+		.td-split.is-open .td-aside-toggle {
+			@apply hidden;
+		}
+		.td-split.is-open .td-aside-panel {
+			@apply flex flex-col gap-4 p-8;
+		}
+		@media (width >= 48rem) {
+			.td-split {
+				grid-template-columns: 1fr 40px;
+			}
+			.td-split.is-open {
+				grid-template-columns: 3fr 2fr;
+			}
+			.td-aside {
+				@apply border-t-0 border-l;
+			}
+			.td-aside-toggle {
+				writing-mode: vertical-rl;
+				@apply h-full w-10 p-0 whitespace-nowrap;
+			}
+		}
 		.td-ip-row {
 			@apply flex items-center gap-1.5;
 		}

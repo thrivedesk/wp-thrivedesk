@@ -12,7 +12,8 @@
     <div class="flex flex-1 items-center justify-center py-10">
       <?php // p-0 on the card so the right column's tint reaches its rounded edge. ?>
       <div class="w-full max-w-4xl td-card p-0! overflow-hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2">
+        <?php // Collapsed to a 40px rail; opening it takes the split to 60/40. ?>
+        <div id="td-setup-split" class="td-split">
 
           <div class="p-8 space-y-5">
 
@@ -53,12 +54,22 @@
 
           </div>
 
-          <div class="flex flex-col gap-4 p-8 bg-slate-50 border-t border-slate-200 md:border-t-0 md:border-l">
+          <aside class="td-aside">
+
+            <button type="button" class="td-aside-toggle" aria-expanded="false" aria-controls="td-setup-aside-panel">
+              <span><?php esc_html_e( 'Additional Info - click to expand', 'thrivedesk' ); ?></span>
+            </button>
+
+            <div id="td-setup-aside-panel" class="td-aside-panel">
 
             <div>
               <div class="flex items-center gap-2">
                 <span class="text-blue-600 shrink-0"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9.25" stroke="currentColor" stroke-width="1.5"/><path d="M12 16.5v-5M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
                 <div class="text-sm font-semibold text-slate-700"><?php esc_html_e( 'Allowlist our IP addresses', 'thrivedesk' ); ?></div>
+                <?php // The rail is gone once the panel is open, so the way back lives here. ?>
+                <button type="button" class="td-aside-close ml-auto" aria-label="<?php esc_attr_e( 'Collapse additional info', 'thrivedesk' ); ?>" title="<?php esc_attr_e( 'Collapse additional info', 'thrivedesk' ); ?>">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
               </div>
               <p class="mt-2 m-0! text-gray-500"><?php esc_html_e( "For a seamless integration, add these IP addresses to your server's firewall or security plugin.", 'thrivedesk' ); ?></p>
             </div>
@@ -100,7 +111,9 @@
               /* translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags */
               printf( esc_html__( 'By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s.', 'thrivedesk' ), '<a href="https://www.thrivedesk.com/our/terms/" target="_blank" class="underline">', '</a>', '<a href="https://www.thrivedesk.com/our/privacy/" target="_blank" class="underline">', '</a>' ); ?></div>
 
-          </div>
+            </div>
+
+          </aside>
 
         </div>
       </div>

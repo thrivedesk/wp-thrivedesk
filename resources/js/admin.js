@@ -163,6 +163,21 @@ jQuery(document).ready(($) => {
 		}
 	}
 
+	// The setup screen's reference column: a 40px rail until it is asked for.
+	// The rail opens it, the chevron beside the panel heading puts it back.
+	$(document).on('click', '.td-aside-toggle, .td-aside-close', function (e) {
+		e.preventDefault();
+
+		const $split = $(this).closest('.td-split');
+		const open = !$split.hasClass('is-open');
+
+		$split.toggleClass('is-open', open);
+		// The panel is display:none when closed, so it leaves the accessibility
+		// tree on its own; aria-expanded is what tells a screen reader what the
+		// rail will do before it is pressed.
+		$split.find('.td-aside-toggle').attr('aria-expanded', open ? 'true' : 'false');
+	});
+
 	// Copy-to-clipboard buttons (the ThriveDesk IP list on the setup screen).
 	// Delegated from document so the buttons work wherever they are rendered.
 	$(document).on('click', '.td-copy', function (e) {
