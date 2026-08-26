@@ -54,7 +54,17 @@
 		   there is one column and the rail becomes an ordinary horizontal bar,
 		   because a vertical strip has nothing to be tall against. */
 		.td-split {
-			@apply grid grid-cols-1;
+			@apply grid grid-cols-1 w-full;
+			max-width: 35rem;
+			transition: max-width .25s ease;
+		}
+		.td-split.is-open {
+			max-width: 54rem;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.td-split {
+				transition: none;
+			}
 		}
 		.td-aside {
 			@apply bg-slate-50 border-t border-slate-200;

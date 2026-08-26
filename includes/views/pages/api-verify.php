@@ -10,10 +10,10 @@
     </div>
 
     <div class="flex flex-1 items-center justify-center py-10">
-      <?php // p-0 on the card so the right column's tint reaches its rounded edge. ?>
-      <div class="w-full max-w-4xl td-card p-0! overflow-hidden">
-        <?php // Collapsed to a 40px rail; opening it takes the split to 60/40. ?>
-        <div id="td-setup-split" class="td-split">
+      <?php // The card is the split itself: `is-open` lands here, so the same class
+            // that opens the rail also widens the card. p-0 so the right column's
+            // tint reaches the rounded edge. ?>
+      <div id="td-setup-split" class="td-card td-split p-0! overflow-hidden">
 
           <div class="p-8 space-y-5">
 
@@ -115,7 +115,6 @@
 
           </aside>
 
-        </div>
       </div>
     </div>
   </div>
