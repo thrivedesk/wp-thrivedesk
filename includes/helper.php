@@ -47,6 +47,25 @@ if (!function_exists('thrivedesk_options')) {
     }
 }
 
+if (!function_exists('thrivedesk_service_ips')) {
+    /**
+     * The IP addresses ThriveDesk calls this site from.
+     *
+     * One list, two readers: the setup screen prints them for the site owner to
+     * allowlist, and TDApiService repeats them when a request never lands. They
+     * used to be typed out separately in each place, so a change on the
+     * ThriveDesk side could leave the two telling the user different things.
+     *
+     * @since 2.6.0
+     * @access public
+     * @return string[]
+     */
+    function thrivedesk_service_ips(): array
+    {
+        return ['20.68.187.32', '20.68.186.235', '20.117.184.59'];
+    }
+}
+
 if (!function_exists('diff_for_humans')) {
 	/**
 	 * format timestamp for the conversation

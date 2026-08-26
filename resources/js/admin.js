@@ -19,6 +19,58 @@ function tdOption(value, text) {
 	return jQuery('<option>', { value: value == null ? '' : String(value), text: text == null ? '' : String(text) });
 }
 
+/**
+ * Copy `text` using the pre-Clipboard-API route, synchronously.
+ *
+ * The textarea is positioned off-screen rather than hidden because a
+ * display:none element cannot be selected.
+ *
+ * @return {boolean} whether the copy landed.
+ */
+function tdLegacyCopy(text) {
+	const area = document.createElement('textarea');
+	area.value = text;
+	area.setAttribute('readonly', '');
+	area.style.position = 'fixed';
+	area.style.top = '-1000px';
+	area.style.opacity = '0';
+	document.body.appendChild(area);
+
+	let copied = false;
+	try {
+		area.select();
+		copied = document.execCommand('copy');
+	} catch (e) {
+		copied = false;
+	}
+
+	document.body.removeChild(area);
+
+	return copied;
+}
+
+/**
+ * Put `text` on the clipboard, resolving to whether it landed there.
+ *
+ * navigator.clipboard exists only in a secure context, and plenty of WordPress
+ * admins are still served over plain http, so the legacy route is the one that
+ * actually runs on those sites rather than a museum piece. It is also the
+ * fallback when writeText() rejects, which a secure context does not rule out:
+ * an embedded webview or a hardened browser profile can deny clipboard-write
+ * outright, and reporting failure while a working path is still untried would
+ * leave the button dead on exactly those setups.
+ */
+function tdCopyToClipboard(text) {
+	if (navigator.clipboard && window.isSecureContext) {
+		return navigator.clipboard.writeText(text).then(
+			() => true,
+			() => tdLegacyCopy(text)
+		);
+	}
+
+	return Promise.resolve(tdLegacyCopy(text));
+}
+
 jQuery(document).ready(($) => {
 	// plugin connection 
 	$('.thrivedesk button.connect').on('click', function (e) {
@@ -110,6 +162,44 @@ jQuery(document).ready(($) => {
 			element.click();
 		}
 	}
+
+	// Copy-to-clipboard buttons (the ThriveDesk IP list on the setup screen).
+	// Delegated from document so the buttons work wherever they are rendered.
+	$(document).on('click', '.td-copy', function (e) {
+		e.preventDefault();
+
+		const $button = $(this);
+		// .attr(), not .data(): jQuery coerces data values, and an IP address is
+		// a string even when it looks numeric.
+		const value = $button.attr('data-td-copy');
+
+		if (!value) {
+			return;
+		}
+
+		tdCopyToClipboard(value).then((copied) => {
+			const $status = $('#td-copy-status');
+
+			if (!copied) {
+				$status.text(__('Copy failed. Select the text and copy it manually.', 'thrivedesk'));
+				return;
+			}
+
+			// Restart the timer on a repeat click rather than letting the first
+			// one clear the tick early.
+			clearTimeout($button.data('td-copy-timer'));
+			$button.addClass('is-copied');
+			$status.text(sprintf(__('Copied %s', 'thrivedesk'), value));
+
+			$button.data(
+				'td-copy-timer',
+				setTimeout(() => {
+					$button.removeClass('is-copied');
+					$status.text('');
+				}, 2000)
+			);
+		});
+	});
 
 	// on click complete setup button to verify API key
 	$('#submit-btn').on('click', function (e) {
