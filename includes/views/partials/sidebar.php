@@ -22,41 +22,44 @@ $td_capability = [
         // Uppercasing is a CSS class, never baked into the string: plenty of
         // languages have no case at all, and the ones that do do not all
         // uppercase the way English does.
-        $td_label = 'text-[11px] font-semibold uppercase tracking-wider text-slate-400 shrink-0';
+        $td_label = 'text-sm font-semibold uppercase text-slate-400 whitespace-nowrap';
         ?>
-        <div class="space-y-2">
-            <div class="flex items-baseline justify-between gap-3">
-                <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Workspace:', 'thrivedesk' ); ?></span>
-                <span class="text-sm text-slate-800 text-right">
-                    <?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?>
-                </span>
-            </div>
+        <?php
+        /*
+         * A two-column grid rather than a fixed label width. `auto` sizes the
+         * first column to the widest label there actually is, so every value
+         * lines up without a magic number that a longer translation would
+         * overflow. The spans are direct children on purpose - wrapping a row
+         * in a div would take it out of the grid.
+         */
+        ?>
+        <div class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 items-baseline">
+            <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Workspace:', 'thrivedesk' ); ?></span>
+            <span class="text-sm text-slate-800">
+                <?php echo esc_html( $td_workspace['name'] ? $td_workspace['name'] : __( 'Not connected', 'thrivedesk' ) ); ?>
+            </span>
 
             <?php if ( $td_plan ) : ?>
-                <div class="flex items-center justify-between gap-3">
-                    <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Plan:', 'thrivedesk' ); ?></span>
-                    <span class="flex items-center justify-end flex-wrap gap-2 text-sm text-slate-800 text-right">
-                        <?php echo esc_html( $td_plan['label'] ); ?>
-                        <?php if ( $td_plan['billing_type'] ) : ?>
-                            <span class="py-0.5 px-2 bg-slate-100 text-slate-600 text-[11px] rounded-full whitespace-nowrap">
-                                <?php echo esc_html( $td_plan['billing_type'] ); ?>
-                            </span>
-                        <?php endif; ?>
-                    </span>
-                </div>
+                <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Plan:', 'thrivedesk' ); ?></span>
+                <span class="flex items-center flex-wrap gap-2 text-sm text-slate-800">
+                    <?php echo esc_html( $td_plan['label'] ); ?>
+                    <?php if ( $td_plan['billing_type'] ) : ?>
+                        <span class="py-0.5 px-2 bg-slate-100 text-slate-600 text-[11px] rounded-full whitespace-nowrap">
+                            <?php echo esc_html( $td_plan['billing_type'] ); ?>
+                        </span>
+                    <?php endif; ?>
+                </span>
 
                 <?php // Answers up front what the Portal tab would otherwise only reveal by being empty. ?>
-                <div class="flex items-baseline justify-between gap-3">
-                    <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Portal:', 'thrivedesk' ); ?></span>
-                    <span class="text-sm text-right <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
-                        <?php echo $td_plan['portal']
-                            ? esc_html__( 'Included', 'thrivedesk' )
-                            : esc_html__( 'Not included', 'thrivedesk' ); ?>
-                    </span>
-                </div>
+                <span class="<?php echo esc_attr( $td_label ); ?>"><?php esc_html_e( 'Portal:', 'thrivedesk' ); ?></span>
+                <span class="text-sm <?php echo $td_plan['portal'] ? 'text-green-600' : 'text-gray-500'; ?>">
+                    <?php echo $td_plan['portal']
+                        ? esc_html__( 'Included', 'thrivedesk' )
+                        : esc_html__( 'Not included', 'thrivedesk' ); ?>
+                </span>
 
                 <?php if ( $td_plan['expired'] ) : ?>
-                    <div class="text-[12px] text-rose-600 text-right"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></div>
+                    <span class="col-span-2 text-[12px] text-rose-600"><?php esc_html_e( 'Subscription expired', 'thrivedesk' ); ?></span>
                 <?php endif; ?>
             <?php endif; ?>
         </div>
@@ -64,7 +67,7 @@ $td_capability = [
         <?php if ( $td_summary['api'] ) : ?>
             <div class="pt-3 border-t border-slate-200">
                 <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'API access', 'thrivedesk' ); ?></div>
-                <ul class="m-0! p-0! list-none mt-2 space-y-1">
+                <ul class="m-0! p-0! list-none mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
                     <?php foreach ( $td_capability as $td_key => $td_label ) : ?>
                         <?php
                         if ( ! isset( $td_summary['api'][ $td_key ] ) ) {
