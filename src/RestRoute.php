@@ -151,8 +151,10 @@ class RestRoute
 		$td_conversations = wp_cache_get($cache_key, 'thrivedesk');
 		
 		if (false === $td_conversations) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$td_conversations = $wpdb->get_results(
 				$wpdb->prepare(
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table_name is $wpdb->prefix plus a plugin constant, and a table identifier cannot be bound via prepare().
 					"SELECT * FROM $table_name WHERE contact = %s AND deleted_at IS NULL",
 					$contact_email
 				)

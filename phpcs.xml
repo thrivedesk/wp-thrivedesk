@@ -34,6 +34,51 @@
 
     <rule ref="WordPress"/>
 
+    <!--
+        TODO(security): run the security sniffs repo-wide.
+
+        The exclude-pattern list above covers every file that reads a
+        superglobal or touches $wpdb, so WordPress.Security and
+        WordPress.DB.PreparedSQL currently protect almost nothing and CI stays
+        green regardless. Left commented out because turning it on today fails
+        the build on 24 pre-existing errors owned by in-flight branches:
+
+            src/Api.php                          13  unslashed $_GET/$_REQUEST/$_SERVER
+            src/Conversations/Conversation.php    7  unslashed+unsanitized $_POST['data']
+            src/Plugins/WooCommerce.php           2  interpolated $types_sql / $hpos_table
+            includes/views/pages/api-verify.php   1  unslashed $_GET['token']
+            includes/views/partials/settings.php  1  unslashed $_GET['token']
+
+        Reproduce that list at any time by running vendor/bin/phpcs with the
+        long options "n", "standard=WordPress", "extensions=php" and a
+        "sniffs=" list of WordPress.Security.EscapeOutput,
+        WordPress.Security.NonceVerification,
+        WordPress.Security.ValidatedSanitizedInput,
+        WordPress.Security.SafeRedirect, WordPress.Security.PluginMenuSlug,
+        WordPress.DB.PreparedSQL and WordPress.DB.PreparedSQLPlaceholders,
+        over: src includes Hooks database thrivedesk.php uninstall.php
+
+        NOTE, the non-obvious part: uncommenting the two rule blocks below is
+        NOT sufficient on its own, and neither is moving the exclude-pattern
+        list inside the WordPress rule. Both were tried and measured
+        ineffective. PHPCS keys a rule-scoped exclude pattern by the ref string
+        ("WordPress"), and File::addMessage() tests every ancestor of a sniff
+        code, so "WordPress" is consulted for
+        WordPress.Security.EscapeOutput.OutputNotEscaped and the exclusion
+        still wins. A matching exclude returns immediately, and an
+        include-pattern cannot override it.
+
+        Enabling this for real therefore means either dropping the path
+        excludes from the WordPress ref altogether, or running the security
+        sniffs as a separate invocation with its own standard/sniffs options,
+        the way the existing "composer phpcompat" script already does for
+        PHPCompatibilityWP. The separate script is the smaller change and
+        keeps formatting adoption incremental.
+
+    <rule ref="WordPress.Security"/>
+    <rule ref="WordPress.DB.PreparedSQL"/>
+    -->
+
     <!-- PSR-4 (composer) autoloading uses CamelCase class filenames, which the
          WP hyphenated-lowercase file-name sniff cannot accommodate plugin-wide. -->
     <rule ref="WordPress.Files.FileName">
