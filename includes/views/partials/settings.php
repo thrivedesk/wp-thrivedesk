@@ -220,26 +220,32 @@ $current_user = wp_get_current_user();
 
                 <div class="space-y-1.5">
                     <label for="td-excluded-routes" class="block text-sm font-semibold text-slate-700"><?php esc_html_e('Hide on these pages', 'thrivedesk'); ?></label>
+                    <p class="m-0! text-[12px] text-gray-500">
+                        <?php esc_html_e('The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way.', 'thrivedesk'); ?>
+                    </p>
                     <?php
                     /*
-                     * Stays a multiple <select>: the save handler reads
-                     * $('#td-excluded-routes').val() and relies on getting an
-                     * array back. size=6 only stops it rendering as a one-line
-                     * box you have to scroll blindly.
+                     * Still a multiple <select>, and still the source of truth:
+                     * the save handler reads $('#td-excluded-routes').val() and
+                     * relies on getting an array back. admin.js builds a
+                     * dropdown over it and writes selections straight onto these
+                     * options, so the contract never changes - and if that script
+                     * fails to run, what is left is a working list box rather
+                     * than a control with no UI.
                      */
                     ?>
-                    <select name="td_excluded_routes[]" id="td-excluded-routes" size="6" multiple class="w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5">
-                        <?php
-                        $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
-                        foreach ($routes as $route) : ?>
-                            <option value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
-                                <?php echo esc_html($route); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <p class="m-0! text-[12px] text-gray-500">
-                        <?php echo wp_kses_post(__('Hold <strong>Ctrl</strong> (<strong>Cmd</strong> on Mac) to pick more than one. Leave empty to show the widget everywhere.', 'thrivedesk')); ?>
-                    </p>
+                    <div class="td-multiselect" data-td-multiselect>
+                        <select name="td_excluded_routes[]" id="td-excluded-routes" size="6" multiple class="td-multiselect__source w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5">
+                            <?php
+                            $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
+                            foreach ($routes as $route) : ?>
+                                <option value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($route); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <p class="m-0! text-[12px] text-gray-500"><?php esc_html_e('Leave empty to show the widget everywhere.', 'thrivedesk'); ?></p>
                 </div>
 
             </div>

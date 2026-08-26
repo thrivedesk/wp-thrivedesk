@@ -70,6 +70,54 @@
 		   it to 46px below 783px, so read it rather than hardcoding either.
 		   min-height, not height: content taller than the viewport must still
 		   scroll rather than be clipped. */
+		/* Multi-select dropdown, built over a native <select multiple>. The
+		   source select is only hidden once JavaScript has replaced it, so a
+		   failed script leaves a usable list box rather than nothing. */
+		.td-multiselect {
+			@apply relative;
+		}
+		.td-multiselect.is-enhanced .td-multiselect__source {
+			@apply hidden;
+		}
+		.td-multiselect__toggle {
+			@apply flex items-center justify-between gap-2 w-full text-left rounded border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-800 cursor-pointer transition;
+			@apply hover:border-slate-400;
+		}
+		.td-multiselect__toggle[aria-expanded="true"] {
+			@apply border-blue-500;
+		}
+		.td-multiselect__toggle:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+		.td-multiselect__caret {
+			@apply shrink-0 text-slate-400 transition;
+		}
+		.td-multiselect__toggle[aria-expanded="true"] .td-multiselect__caret {
+			@apply rotate-180;
+		}
+		.td-multiselect__panel {
+			@apply absolute z-100 mt-1 w-full rounded border border-slate-300 bg-white shadow-lg;
+		}
+		.td-multiselect__search {
+			@apply block w-full border-0 border-b border-slate-200! rounded-none px-3 py-2 text-sm;
+		}
+		.td-multiselect__list {
+			@apply m-0! p-0! list-none max-h-56 overflow-y-auto;
+		}
+		.td-multiselect__option {
+			@apply flex items-center gap-2 px-3 py-1.5 text-sm text-slate-700 cursor-pointer;
+			@apply hover:bg-slate-50;
+		}
+		.td-multiselect__empty {
+			@apply px-3 py-3 text-sm text-gray-400;
+		}
+		.td-multiselect__footer {
+			@apply flex items-center justify-between gap-2 border-t border-slate-200 px-3 py-2;
+		}
+		.td-multiselect__clear {
+			@apply border-0 bg-transparent p-0 text-[12px] text-blue-600 cursor-pointer;
+			@apply hover:underline disabled:text-slate-300 disabled:cursor-default disabled:no-underline;
+		}
 		.td-toolbar {
 			@apply flex items-center flex-wrap gap-x-3 gap-y-2 bg-white border-b border-slate-200 py-4 px-8;
 		}

@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 var assistants = [];
 // Was never declared. Under webpack's strict mode the assignment in
 // loadInboxes() threw a ReferenceError and aborted the callback, which is why
@@ -209,6 +209,198 @@ function tdSettingsUrl() {
 		: '/wp-admin/admin.php?page=thrivedesk';
 }
 
+/**
+ * Turn a `<select multiple>` into a dropdown of checkboxes.
+ *
+ * Progressive enhancement, not replacement: the original select stays in the
+ * DOM and stays the source of truth. Ticking a box sets `option.selected` on
+ * it, so `$(el).val()` keeps returning an array and the save handler never
+ * learns that anything changed. If this function never runs - a script error,
+ * a blocked bundle - what is left on the page is a working list box.
+ *
+ * A native `<select multiple>` cannot render as a dropdown, and asking people
+ * to ctrl-click rows in a scrolling box is the part of this screen that most
+ * needed replacing.
+ */
+function tdEnhanceMultiselect( container ) {
+	const select = container.querySelector( '.td-multiselect__source' );
+
+	if ( ! select || container.classList.contains( 'is-enhanced' ) ) {
+		return;
+	}
+
+	const options = Array.from( select.options );
+
+	const toggle = document.createElement( 'button' );
+	toggle.type = 'button';
+	toggle.className = 'td-multiselect__toggle';
+	toggle.id = select.id + '-toggle';
+	toggle.setAttribute( 'aria-expanded', 'false' );
+
+	const value = document.createElement( 'span' );
+	value.className = 'td-multiselect__value';
+
+	const caret = document.createElement( 'span' );
+	caret.className = 'td-multiselect__caret';
+	caret.setAttribute( 'aria-hidden', 'true' );
+	caret.innerHTML =
+		'<svg viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+	toggle.append( value, caret );
+
+	const panel = document.createElement( 'div' );
+	panel.className = 'td-multiselect__panel';
+	panel.hidden = true;
+
+	// Only worth a filter when the list is long enough to hunt through.
+	let search = null;
+	if ( options.length > 8 ) {
+		search = document.createElement( 'input' );
+		search.type = 'search';
+		search.className = 'td-multiselect__search';
+		search.placeholder = __( 'Search pages', 'thrivedesk' );
+		panel.appendChild( search );
+	}
+
+	const list = document.createElement( 'ul' );
+	list.className = 'td-multiselect__list';
+
+	const empty = document.createElement( 'div' );
+	empty.className = 'td-multiselect__empty';
+	empty.textContent = __( 'Nothing matches that.', 'thrivedesk' );
+	empty.hidden = true;
+
+	const rows = options.map( ( option ) => {
+		const row = document.createElement( 'li' );
+
+		const label = document.createElement( 'label' );
+		label.className = 'td-multiselect__option';
+
+		const box = document.createElement( 'input' );
+		box.type = 'checkbox';
+		box.checked = option.selected;
+
+		const text = document.createElement( 'span' );
+		text.textContent = option.text.trim();
+
+		box.addEventListener( 'change', () => {
+			option.selected = box.checked;
+			// Anything else watching the select - now or later - should hear
+			// about this the same way it would hear about a real interaction.
+			select.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+			render();
+		} );
+
+		label.append( box, text );
+		row.appendChild( label );
+		list.appendChild( row );
+
+		return { row, box, option };
+	} );
+
+	panel.append( list, empty );
+
+	const footer = document.createElement( 'div' );
+	footer.className = 'td-multiselect__footer';
+
+	const count = document.createElement( 'span' );
+	count.className = 'text-[12px] text-gray-400';
+
+	const clear = document.createElement( 'button' );
+	clear.type = 'button';
+	clear.className = 'td-multiselect__clear';
+	clear.textContent = __( 'Clear', 'thrivedesk' );
+	clear.addEventListener( 'click', () => {
+		rows.forEach( ( { box, option } ) => {
+			box.checked = false;
+			option.selected = false;
+		} );
+		select.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+		render();
+	} );
+
+	footer.append( count, clear );
+	panel.appendChild( footer );
+
+	function render() {
+		const chosen = rows.filter( ( { option } ) => option.selected );
+
+		if ( ! chosen.length ) {
+			value.textContent = __( 'Shown on every page', 'thrivedesk' );
+		} else if ( 1 === chosen.length ) {
+			value.textContent = chosen[ 0 ].option.text.trim();
+		} else {
+			value.textContent = sprintf(
+				/* translators: %d: how many pages the widget is hidden on. */
+				_n( '%d page hidden', '%d pages hidden', chosen.length, 'thrivedesk' ),
+				chosen.length
+			);
+		}
+
+		count.textContent = sprintf(
+			/* translators: %1$d: chosen count, %2$d: total available. */
+			__( '%1$d of %2$d selected', 'thrivedesk' ),
+			chosen.length,
+			rows.length
+		);
+
+		clear.disabled = ! chosen.length;
+	}
+
+	function open( isOpen ) {
+		panel.hidden = ! isOpen;
+		toggle.setAttribute( 'aria-expanded', isOpen ? 'true' : 'false' );
+
+		if ( isOpen && search ) {
+			search.focus();
+		}
+	}
+
+	toggle.addEventListener( 'click', () => open( panel.hidden ) );
+
+	if ( search ) {
+		search.addEventListener( 'input', () => {
+			const needle = search.value.trim().toLowerCase();
+			let shown = 0;
+
+			rows.forEach( ( { row, option } ) => {
+				const match = ! needle || option.text.toLowerCase().includes( needle );
+				row.hidden = ! match;
+				shown += match ? 1 : 0;
+			} );
+
+			empty.hidden = shown > 0;
+		} );
+	}
+
+	// Escape closes and returns focus to the control that opened it, rather
+	// than leaving the caret somewhere inside a panel that is now gone.
+	container.addEventListener( 'keydown', ( e ) => {
+		if ( 'Escape' === e.key && ! panel.hidden ) {
+			open( false );
+			toggle.focus();
+		}
+	} );
+
+	document.addEventListener( 'click', ( e ) => {
+		if ( ! panel.hidden && ! container.contains( e.target ) ) {
+			open( false );
+		}
+	} );
+
+	container.append( toggle, panel );
+	container.classList.add( 'is-enhanced' );
+
+	// The label points at the select, which is hidden now; send it to the
+	// control that actually takes the click.
+	const label = document.querySelector( 'label[for="' + select.id + '"]' );
+	if ( label ) {
+		label.setAttribute( 'for', toggle.id );
+	}
+
+	render();
+}
+
 jQuery(document).ready(($) => {
 	// plugin connection 
 	$('.thrivedesk button.connect').on('click', function (e) {
@@ -352,6 +544,8 @@ jQuery(document).ready(($) => {
 		// rail will do before it is pressed.
 		$split.find('.td-aside-toggle').attr('aria-expanded', open ? 'true' : 'false');
 	});
+
+	document.querySelectorAll( '[data-td-multiselect]' ).forEach( tdEnhanceMultiselect );
 
 	// Toolbar "Support": opens the ThriveDesk assistant widget rather than
 	// navigating anywhere. Bound here instead of an inline onclick so a missing
