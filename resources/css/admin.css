@@ -37,6 +37,9 @@
 		.btn-secondary {
 			@apply bg-white hover:bg-blue-100;
 		}
+		.btn-dark {
+			@apply bg-slate-900 hover:bg-slate-800 text-white hover:text-white;
+		}
 		.alert {
 			@apply p-4 border rounded bg-neutral-100 text-sm;
 		}
@@ -47,7 +50,7 @@
 			@apply bg-rose-50 border-rose-300 text-rose-600;
 		}
 		.td-ip-row {
-			@apply flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-slate-50 pl-3 pr-1.5 py-1;
+			@apply flex items-center gap-1.5;
 		}
 		/* WP admin styles <code> from an #id selector, which outranks a utility
 		   class, so the reset lives here rather than on the element. */
@@ -55,11 +58,12 @@
 			@apply bg-transparent! p-0! text-slate-700;
 		}
 		.td-copy {
-			@apply inline-flex items-center justify-center shrink-0 rounded p-1.5 border-0 bg-transparent text-slate-400 cursor-pointer transition;
-			@apply hover:bg-white hover:text-blue-600 hover:shadow-sm;
+			@apply inline-flex items-center shrink-0 p-0 border-0 bg-transparent text-slate-400 cursor-pointer transition;
+			@apply hover:text-blue-600;
 		}
+		/* No hover chrome, but a keyboard user still needs to see where they are. */
 		.td-copy:focus-visible {
-			@apply outline-2 outline-offset-2 outline-blue-500;
+			@apply outline-2 outline-offset-2 outline-blue-500 rounded-xs;
 		}
 		.td-copy .td-copy-done,
 		.td-copy.is-copied .td-copy-idle {
