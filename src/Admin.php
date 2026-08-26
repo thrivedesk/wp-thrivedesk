@@ -33,6 +33,12 @@ final class Admin
     private const CONNECT_STATE_TTL = 900;
 
     /**
+     * Id of the support portal page this plugin created, so it is never
+     * re-created and never confused with an unrelated page of the same title.
+     */
+    public const PORTAL_PAGE_OPTION = 'thrivedesk_portal_page_id';
+
+    /**
      * The single instance of this class
      */
     private static $instance = null;
@@ -65,7 +71,7 @@ final class Admin
     {
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
-        add_action('activated_plugin', [$this, 'create_portal_page'], 10);
+        add_action('activated_plugin', [$this, 'create_portal_page'], 10, 1);
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
@@ -199,7 +205,11 @@ final class Admin
         $args  = array(
             'title'                  => $page_title,
             'post_type'              => $post_type,
-            'post_status'            => get_post_status(),
+            // Was get_post_status() with no argument, which reads the global
+            // $post - absent here, so it returned false and the filter never
+            // did what it reads as. 'any' is what core's own get_page_by_title()
+            // effectively used.
+            'post_status'            => 'any',
             'posts_per_page'         => 1,
             'update_post_term_cache' => false,
             'update_post_meta_cache' => false,
@@ -217,19 +227,65 @@ final class Admin
         return get_post( $pages[0], $output );
     }
 
-    public function create_portal_page()
+    /**
+     * Create the support portal page on activation.
+     *
+     * 'activated_plugin' fires for EVERY plugin activation on the site, and
+     * this ignored the $plugin argument entirely, so activating anything at
+     * all could publish a ThriveDesk page.
+     *
+     * @param string $plugin Plugin file of the plugin that was just activated.
+     *
+     * @return void
+     */
+    public function create_portal_page($plugin = '')
     {
+        if (plugin_basename(THRIVEDESK_FILE) !== $plugin) {
+            return;
+        }
+
+        // Publishing a page is a privileged action; activation normally runs
+        // as an admin, but the hook is reachable from anywhere that activates
+        // a plugin programmatically.
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
         $title = "Thrivedesk Support Portal";
-        $my_post = array(
+
+        // The created page is tracked by id rather than by title. Matching on
+        // the title meant an unrelated page that happened to share it was
+        // silently adopted, and renaming the real one produced a duplicate on
+        // the next activation.
+        $existing = (int) get_option(self::PORTAL_PAGE_OPTION);
+
+        if ($existing && ($post = get_post($existing)) && 'trash' !== $post->post_status) {
+            return;
+        }
+
+        if (!$existing) {
+            // Installs from before the id was recorded still have the page the
+            // old title match created; adopt it instead of making a second one.
+            $legacy = $this->get_page_by_title($title);
+
+            if ($legacy instanceof \WP_Post) {
+                update_option(self::PORTAL_PAGE_OPTION, $legacy->ID);
+
+                return;
+            }
+        }
+
+        $page_id = wp_insert_post(array(
             'post_type'     => 'page',
             'post_title'    => $title,
             'post_content'  => '[thrivedesk_portal]',
             'post_status'   => 'publish',
-            'post_author'   => 1
-        );
+            // post_author => 1 assumes user 1 exists and is the right owner.
+            'post_author'   => get_current_user_id(),
+        ));
 
-        if($this->get_page_by_title($title) == null){
-            wp_insert_post( $my_post );
+        if ($page_id && !is_wp_error($page_id)) {
+            update_option(self::PORTAL_PAGE_OPTION, $page_id);
         }
     }
 
