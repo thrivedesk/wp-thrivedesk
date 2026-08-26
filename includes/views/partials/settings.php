@@ -16,7 +16,11 @@ $td_selected_post_sync       = (array) ($td_helpdesk_selected_option['td_helpdes
 $td_assistants               = Assistant::assistants();
 $td_inboxes                  = Inbox::inboxes();
 $td_knowledgebase            = KnowledgeBase::knowledgebase();
-$td_api_key                  = isset($_GET['token']) ? sanitize_text_field($_GET['token']) : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+// A ?token= only counts when it came back from an authorization this site
+// started; see \ThriveDesk\Admin::connect_return_token(). Otherwise the key on
+// file is the key.
+$td_connect_token            = \ThriveDesk\Admin::connect_return_token();
+$td_api_key                  = '' !== $td_connect_token ? $td_connect_token : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = get_option('td_user_account_pages');
 $has_portal_access           = (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();

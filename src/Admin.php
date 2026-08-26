@@ -19,9 +19,41 @@ final class Admin
     private const REVERIFY_TIMEOUT = 10;
 
     /**
+     * Transient holding the one-time state value for an authorization round
+     * trip this site started. Its presence is what makes a returning ?token=
+     * believable.
+     */
+    private const CONNECT_STATE_TRANSIENT = 'thrivedesk_connect_state';
+
+    /**
+     * 15 minutes. The round trip through app.thrivedesk.com is a handful of
+     * clicks, not a session, and a long-lived state is a long-lived window in
+     * which a planted ?token= link would be honoured.
+     */
+    private const CONNECT_STATE_TTL = 900;
+
+    /**
      * The single instance of this class
      */
     private static $instance = null;
+
+    /**
+     * State issued during this request, so the two connect buttons on a page
+     * both carry the value the transient actually holds.
+     *
+     * @var string|null
+     */
+    private static $issued_connect_state = null;
+
+    /**
+     * Memoised result of connect_return_token(). The pending state is consumed
+     * on the first read, so every later caller in the same request - the view
+     * that pre-fills the field, load_pages() choosing which view to render -
+     * has to be told the same answer.
+     *
+     * @var string|null
+     */
+    private static $connect_return_token = null;
 
     /**
      * Construct Admin class.
@@ -271,7 +303,7 @@ final class Admin
         if($td_api_key && $api_status){
             thrivedesk_view('setting');
         }
-        elseif($td_api_key == '' || isset($_GET['token'])){
+        elseif($td_api_key == '' || '' !== self::connect_return_token()){
             thrivedesk_view('pages/api-verify');
         }
         else{
@@ -281,6 +313,113 @@ final class Admin
 
     public function verification_page(){
                     thrivedesk_view('pages/api-verify');
+    }
+
+    /**
+     * Start an authorization round trip: mint a one-time state, remember it,
+     * and hand it to the caller to put on the return URL.
+     *
+     * Memoised per request so the "Create New Account" and "Connect Existing
+     * Account" buttons rendered on the same screen both carry the value the
+     * transient actually holds.
+     */
+    public static function issue_connect_state(): string
+    {
+        if (null === self::$issued_connect_state) {
+            self::$issued_connect_state = wp_generate_password(32, false);
+
+            set_transient(self::CONNECT_STATE_TRANSIENT, self::$issued_connect_state, self::CONNECT_STATE_TTL);
+        }
+
+        return self::$issued_connect_state;
+    }
+
+    /**
+     * Build the app.thrivedesk.com URL one of the connect buttons points at.
+     *
+     * auth_return_url carries a query string of its own, so it has to be
+     * rawurlencode()d. Un-encoded, `page` and `auth_platform` detach and
+     * arrive at app.thrivedesk.com as top-level parameters instead of as part
+     * of the URL the user is supposed to be sent back to.
+     *
+     * @param string $path '/auth/authorize' or '/auth/register'.
+     */
+    public static function connect_url(string $path): string
+    {
+        $return_url = add_query_arg(
+            [
+                'page'          => 'thrivedesk',
+                'auth_platform' => 'WordPress',
+                'state'         => self::issue_connect_state(),
+            ],
+            admin_url('admin.php')
+        );
+
+        return THRIVEDESK_APP_URL . $path . '?auth_return_url=' . rawurlencode($return_url);
+    }
+
+    /**
+     * The API key handed back by an authorization round trip, or '' when there
+     * isn't a believable one.
+     *
+     * A bare ?token= in the URL is attacker-suppliable: anyone could mail an
+     * admin `admin.php?page=td-api&token=<their own key>` and a single click on
+     * "Complete Setup" would repoint the whole helpdesk - every portal
+     * visitor's email and ticket body - at their ThriveDesk tenant. So a token
+     * is only honoured when this site actually started the round trip, proven
+     * by the one-time state issue_connect_state() left behind.
+     *
+     * Two shapes are accepted for this release:
+     *
+     *  - `?token=...&state=...` where the state matches. This is the target
+     *    shape and the only one that survives the next release.
+     *  - `?token=...` on its own, accepted only while a connect this site
+     *    started is still pending. DEPRECATED: it exists solely because
+     *    app.thrivedesk.com does not echo `state` back yet, and it must be
+     *    dropped - along with this whole branch - once it does. Until then a
+     *    planted link still needs the admin to be mid-connect, which is a far
+     *    cry from "any admin, any time".
+     *
+     * The pending state is consumed either way, so a token is good for exactly
+     * one connect.
+     */
+    public static function connect_return_token(): string
+    {
+        if (null !== self::$connect_return_token) {
+            return self::$connect_return_token;
+        }
+
+        self::$connect_return_token = '';
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- the
+        // state below is what authenticates this redirect; a nonce cannot make
+        // the round trip through app.thrivedesk.com.
+        $token = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
+
+        if ('' === $token) {
+            return self::$connect_return_token;
+        }
+
+        $expected = get_transient(self::CONNECT_STATE_TRANSIENT);
+
+        // Nothing on this site asked for a token, so this is somebody else's
+        // link. Ignore it entirely and fall through to the key on file.
+        if (!is_string($expected) || '' === $expected) {
+            return self::$connect_return_token;
+        }
+
+        delete_transient(self::CONNECT_STATE_TRANSIENT);
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- see above.
+        $state = isset($_GET['state']) ? sanitize_text_field(wp_unslash($_GET['state'])) : '';
+
+        if ('' !== $state && !hash_equals($expected, $state)) {
+            return self::$connect_return_token;
+        }
+
+        self::$connect_return_token = $token;
+
+        return self::$connect_return_token;
     }
 
     private static function stored_api_key(): string
