@@ -1,32 +1,45 @@
 import { useEffect, useRef } from '@wordpress/element';
 
 /**
+ * Nodes already adopted, keyed by the id they were adopted from.
+ *
+ * Without this a panel is adoptable exactly once: React removing the host div
+ * takes the adopted node out of the document with it, and getElementById can
+ * no longer find it. Holding the reference means a re-mount can put the same
+ * node back, with its jQuery listeners and any in-progress state intact.
+ */
+const adopted = new Map();
+
+/**
  * Hosts a server-rendered panel inside a React tab.
  *
- * A staging device, not a permanent one. The settings form is still PHP with
- * jQuery bound to its ids, so it is moved into the tab rather than re-created:
- * re-rendering it in React would mean re-implementing nine save paths at the
- * same time as introducing the tabs, and a mistake in either would be hard to
- * tell apart from a mistake in the other.
+ * A staging device, not a permanent one. These panels are still PHP with
+ * jQuery bound to their ids, so they are moved into their tab rather than
+ * re-created - re-implementing the save paths at the same time as introducing
+ * the tabs would make a fault in either hard to attribute.
  *
  * React never renders children into this container, so there is nothing for
- * reconciliation to fight over. The node is moved once and left alone, which is
- * also why the jQuery handlers bound at page load keep working - moving a node
- * does not detach its listeners.
+ * reconciliation to fight over. Moving a node does not detach its listeners,
+ * which is what keeps the existing handlers working.
  */
-export default function HostedPanel( { sourceId } ) {
+export default function HostedPanel( { sourceId, hidden } ) {
 	const host = useRef( null );
 
 	useEffect( () => {
-		const source = document.getElementById( sourceId );
+		const source = adopted.get( sourceId ) || document.getElementById( sourceId );
 
-		if ( ! source || ! host.current || source.parentElement === host.current ) {
+		if ( ! source || ! host.current ) {
 			return;
 		}
 
+		adopted.set( sourceId, source );
+
+		if ( source.parentElement !== host.current ) {
+			host.current.appendChild( source );
+		}
+
 		source.hidden = false;
-		host.current.appendChild( source );
 	}, [ sourceId ] );
 
-	return <div ref={ host } className="td-hosted-panel" />;
+	return <div ref={ host } className="td-hosted-panel" hidden={ hidden } />;
 }

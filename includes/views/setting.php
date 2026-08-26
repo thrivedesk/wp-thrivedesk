@@ -70,12 +70,10 @@ if($api_key && !$systemInfo) {
             ?>
             <div id="td-admin-app"></div>
 
-            <div id="td-settings-panel" hidden>
-                <?php thrivedesk_view( 'partials/settings' ); ?>
-            </div>
+            <?php thrivedesk_view( 'partials/settings' ); ?>
 
             <noscript>
-                <style>#td-settings-panel { display: block !important; }</style>
+                <style>[id^="td-panel-"] { display: block !important; }</style>
             </noscript>
         </div>
         <div class="col-span-1">
