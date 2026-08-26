@@ -37,6 +37,10 @@ foreach ( $td_options as $td_option ) {
 	delete_option( $td_option );
 }
 
+// The plugin's constants are not loaded during uninstall, so the cleanup cron
+// hook is named literally here; it must match includes/helper.php.
+wp_clear_scheduled_hook( 'thrivedesk_cleanup_expired_transients' );
+
 // Remove ThriveDesk transients.
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 $wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_%thrivedesk%' ) );
