@@ -72,7 +72,7 @@ class PortalService {
 			wp_send_json_error( [ 'message' => __( 'Unauthorized', 'thrivedesk' ) ], 403 );
 		}
 
-		$apiKey = $_POST['data']['td_helpdesk_api_key'] ?? '';
+		$apiKey = sanitize_text_field( wp_unslash( $_POST['data']['td_helpdesk_api_key'] ?? '' ) );
 		if (empty( $apiKey ) ) {
 			echo wp_json_encode( [
 				'code' => 422,
@@ -124,7 +124,7 @@ class PortalService {
 	public function get_plan( $apiKey = '', int $timeout = TDApiService::DEFAULT_TIMEOUT ) {
 		$apiService = new TDApiService();
 		if (!empty( $apiKey )) {
-			$apiService->setApiKey( sanitize_text_field( wp_unslash( $apiKey ) ) );
+			$apiService->setApiKey( sanitize_text_field( (string) $apiKey ) );
 		}
 
 		return $apiService->getRequest( THRIVEDESK_API_URL . '/v1/billing/plans/current', $timeout );

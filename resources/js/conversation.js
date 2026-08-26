@@ -139,6 +139,14 @@ jQuery(document).ready(($) => {
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
+    // result links come from the kb api and the wp rest route, so they're
+    // only ever navigable http(s) urls (or a site-root path). anything else -
+    // javascript:, data: - gets dropped rather than rendered as an href.
+    const safeHref = (url) => {
+        const raw = String(url == null ? '' : url).trim();
+        return (/^https?:\/\//i.test(raw) || /^\/(?!\/)/.test(raw)) ? raw : '#';
+    };
+
     const buildSearchItem = (item, index, source) => {
         const link = source === 'kb'
             ? (item.links && item.links.getLink) || '#'
@@ -147,7 +155,7 @@ jQuery(document).ready(($) => {
             ? item.categories.map(c => c && c.name).filter(Boolean).join(', ')
             : '';
         return `<li class="td-search-item" id="td-search-item-${source}-${index}">
-            <a target="_blank" rel="noopener" href="${escAttr(link)}">
+            <a target="_blank" rel="noopener" href="${escAttr(safeHref(link))}">
                 <span class="td-search-tag">${escAttr(cats)}</span>
                 <span class="td-search-title">${escAttr(item.title || '')}</span>
                 <span class="td-search-excerpt">${escAttr(item.excerpt || '')}</span>

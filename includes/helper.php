@@ -18,7 +18,10 @@ if (!function_exists('thrivedesk_view')) {
 
         if (file_exists($file)) {
             if (is_array($data)) {
-                extract($data);
+                // EXTR_SKIP so an extracted key can never clobber $file, the
+                // path about to be required. No caller passes $data today -
+                // this is hygiene, not a live hole.
+                extract($data, EXTR_SKIP);
             }
 
             require_once $file;

@@ -174,7 +174,8 @@ $updated_human  = diff_for_humans($conversation['updated_at'] ?? '');
                             </div>
 
                             <form action="" id="td_conversation_reply" method="POST">
-                                <input type="hidden" id="td_reply_nonce" value="<?php echo esc_attr($td_reply_nonce); ?>">
+                                <?php // Emits id="td_reply_nonce", so the existing JS selector still resolves. ?>
+                                <?php wp_nonce_field('td-reply-conversation-action', 'td_reply_nonce'); ?>
                                 <input type="hidden" id="td_conversation_id" value="<?php echo esc_attr($conversation_id); ?>">
 
                                 <label for="td_conversation_editor" class="td-reply-label">
