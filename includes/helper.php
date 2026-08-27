@@ -24,7 +24,15 @@ if (!function_exists('thrivedesk_view')) {
                 extract($data, EXTR_SKIP);
             }
 
-            require_once $file;
+            /*
+             * require, not require_once. A view is a template, and a template
+             * has to be renderable more than once per request - the same
+             * partial in a loop, or a view that renders another view, which
+             * silently produced nothing the second time. No view declares a
+             * function or class, so there is nothing double-inclusion can
+             * collide with.
+             */
+            require $file;
         } else {
             wp_die('View not found');
         }
