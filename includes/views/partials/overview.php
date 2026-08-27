@@ -151,7 +151,7 @@ if ( ! $td_summary['connected'] ) {
             <?php endif; ?>
         </div>
         <?php if ( $td_summary['api'] ) : ?>
-            <div class="pt-3 border-t border-slate-200">
+            <div class="mt-4 pt-3 border-t border-slate-200">
                 <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'API access', 'thrivedesk' ); ?></div>
                 <ul class="mt-2! mb-0! p-0! list-none grid grid-cols-2 gap-x-4 gap-y-1">
                     <?php foreach ( $td_capability as $td_key => $td_label ) : ?>
