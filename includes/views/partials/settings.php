@@ -25,6 +25,12 @@ $td_selected_post_sync       = (array) ($td_helpdesk_selected_option['td_helpdes
  */
 $td_connected                = thrivedesk_is_connected();
 
+// Everything on the search card describes what happens on the way to a ticket
+// form, so none of it means anything until there is one. See the
+// #td-search-card gate in admin.js, which keeps this in step as the select
+// changes without a save.
+$td_has_ticket_page          = !empty($td_helpdesk_selected_option['td_helpdesk_page_id']);
+
 $td_assistants               = $td_connected ? Assistant::assistants() : [];
 $td_inboxes                  = $td_connected ? Inbox::inboxes() : [];
 $td_knowledgebase            = $td_connected ? KnowledgeBase::knowledgebase() : [];
@@ -470,26 +476,37 @@ $current_user = wp_get_current_user();
         </div>
 
         <?php // What the portal searches before it lets anyone open a ticket. ?>
-        <div class="td-card space-y-6">
+        <div class="td-card space-y-6 td-gated<?php echo $td_has_ticket_page ? '' : ' is-locked'; ?>" id="td-search-card">
 
             <div>
-                <div class="text-base font-bold"><?php esc_html_e('Search before ticket', 'thrivedesk'); ?></div>
-                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('Anyone opening a ticket is asked to search first. The better this is stocked, the fewer tickets reach you.', 'thrivedesk'); ?></p>
+                <div class="text-base font-bold"><?php esc_html_e('Connect with Help Center', 'thrivedesk'); ?></div>
+                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('Anyone opening a ticket is asked to search first. The better your Help Center is stocked, the fewer tickets reach you.', 'thrivedesk'); ?></p>
             </div>
+
+            <?php
+            /*
+             * Said once, at the top, rather than as a tooltip on each control
+             * someone has already tried to use. Hidden rather than absent so
+             * the gate can be opened without a reload - see admin.js.
+             */
+            ?>
+            <p class="td-gated__hint"<?php echo $td_has_ticket_page ? ' hidden' : ''; ?>>
+                <?php esc_html_e('Select a ticket creation form above to set this up.', 'thrivedesk'); ?>
+            </p>
 
             <div class="space-y-5 pt-5 border-t border-slate-200">
 
                 <div class="td-field">
-                    <label for="td_knowledgebase_slug"><?php esc_html_e('Knowledge base', 'thrivedesk'); ?></label>
-                    <select id="td_knowledgebase_slug" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5">
-                        <option value=""><?php esc_html_e('Do not search a knowledge base', 'thrivedesk'); ?></option>
+                    <label for="td_knowledgebase_slug"><?php esc_html_e('Help Center', 'thrivedesk'); ?></label>
+                    <select id="td_knowledgebase_slug" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
+                        <option value=""><?php esc_html_e('Do not search a Help Center', 'thrivedesk'); ?></option>
                         <?php foreach ($td_knowledgebase as $value) : ?>
                             <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
                                 <?php echo esc_html($value['name']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="td-field-help"><?php esc_html_e('Which ThriveDesk knowledge base the portal searches.', 'thrivedesk'); ?></p>
+                    <p class="td-field-help"><?php esc_html_e('Which ThriveDesk Help Center the portal searches.', 'thrivedesk'); ?></p>
                 </div>
 
                 <div class="td-field">
@@ -498,12 +515,12 @@ $current_user = wp_get_current_user();
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                         <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
                             <label class="td-check" for="td-search-<?php echo esc_attr($post_type); ?>">
-                                <input class="td_helpdesk_post_types" type="checkbox" id="td-search-<?php echo esc_attr($post_type); ?>" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" <?php echo in_array($post_type, $td_selected_post_types) ? 'checked' : ''; ?>>
+                                <input class="td_helpdesk_post_types" type="checkbox" id="td-search-<?php echo esc_attr($post_type); ?>" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" <?php echo in_array($post_type, $td_selected_post_types) ? 'checked' : ''; ?> <?php disabled(!$td_has_ticket_page); ?>>
                                 <span><?php echo esc_html(ucfirst($post_type)); ?></span>
                             </label>
                         <?php endforeach; ?>
                     </div>
-                    <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the knowledge base.', 'thrivedesk'); ?></p>
+                    <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center.', 'thrivedesk'); ?></p>
                 </div>
 
             </div>

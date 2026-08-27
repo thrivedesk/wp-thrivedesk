@@ -714,6 +714,43 @@ jQuery(document).ready(($) => {
 		}
 	});
 
+	/*
+	 * The search settings describe what happens on the way to a ticket form, so
+	 * they stay shut until one is chosen.
+	 *
+	 * The server renders the same state, and this keeps it honest as the select
+	 * changes - without it the card would stay locked until the page was
+	 * reloaded, right after the user did the one thing that unlocks it.
+	 *
+	 * `disabled`, not just dimmed: an opacity that still takes tab focus and
+	 * still saves is a worse lie than no dimming at all. Disabled controls are
+	 * still read by the save handler, which goes by id, so nothing already
+	 * chosen is lost while the gate is shut.
+	 */
+	function tdSyncSearchGate() {
+		const card = document.getElementById('td-search-card');
+
+		if (!card) {
+			return;
+		}
+
+		const page = document.getElementById('td_helpdesk_page_id');
+		const locked = !page || '' === page.value;
+		const hint = card.querySelector('.td-gated__hint');
+
+		card.classList.toggle('is-locked', locked);
+		card.querySelectorAll('select, input').forEach((el) => {
+			el.disabled = locked;
+		});
+
+		if (hint) {
+			hint.hidden = !locked;
+		}
+	}
+
+	$(document).on('change', '#td_helpdesk_page_id', tdSyncSearchGate);
+	tdSyncSearchGate();
+
 	document.querySelectorAll( '[data-td-multiselect]' ).forEach( tdEnhanceMultiselect );
 
 	// Video posters. The iframe is created when the dialog opens and its src is
@@ -1139,9 +1176,17 @@ jQuery(document).ready(($) => {
 	 * and persisting it on every keystroke would disconnect the site halfway
 	 * through typing a new one.
 	 */
-	const TD_AUTOSAVE_FIELDS = [
-		'#td-assistants',
-		'#td-excluded-routes',
+	/*
+	 * The fields that decide what the portal serves. Changing any of them makes
+	 * whatever is cached for it wrong - the ticket page, the searched content,
+	 * the account pages - so the cache is dropped as part of the save rather
+	 * than left for someone to notice and clear by hand.
+	 *
+	 * The Live Chat fields are deliberately absent: the widget is not served
+	 * from this cache, and clearing it on every assistant change would be a
+	 * round trip for nothing.
+	 */
+	const TD_PORTAL_FIELDS = [
 		'#td-inboxes',
 		'#td_helpdesk_page_id',
 		'#td_knowledgebase_slug',
@@ -1150,9 +1195,36 @@ jQuery(document).ready(($) => {
 		'.td_helpdesk_post_sync',
 	].join( ',' );
 
+	const TD_AUTOSAVE_FIELDS = [ '#td-assistants', '#td-excluded-routes', TD_PORTAL_FIELDS ].join( ',' );
+
 	let tdSaveTimer = null;
 	let tdSaving = false;
 	let tdChangedWhileSaving = false;
+	let tdPortalChanged = false;
+
+	/**
+	 * Drop the cached portal.
+	 *
+	 * Resolves either way. A save that worked followed by a cache that did not
+	 * clear is worth a line in the console, not an error thrown at someone who
+	 * has just changed a setting and been told it saved.
+	 */
+	function tdClearPortalCache() {
+		return jQuery
+			.get( thrivedesk.ajax_url, {
+				action: 'thrivedesk_clear_cache',
+				nonce: thrivedesk.nonce,
+			} )
+			.then(
+				() => true,
+				() => {
+					// eslint-disable-next-line no-console
+					console.warn( 'ThriveDesk: the portal cache could not be cleared.' );
+
+					return false;
+				}
+			);
+	}
 
 	function tdSaveToast( options ) {
 		return Swal.fire(
@@ -1188,8 +1260,26 @@ jQuery(document).ready(($) => {
 		handleThriveDeskMainForm()
 			.then( ( response ) => {
 				if ( response && 'success' === response.status ) {
-					tdSaveToast( { icon: 'success', title: __( 'Changes saved', 'thrivedesk' ), timer: 2000 } );
-					return;
+					// Cleared after the save, not before: clearing first would
+					// refill the cache from the settings that are about to
+					// change.
+					if ( ! tdPortalChanged ) {
+						tdSaveToast( { icon: 'success', title: __( 'Changes saved', 'thrivedesk' ), timer: 2000 } );
+						return;
+					}
+
+					tdPortalChanged = false;
+
+					return tdClearPortalCache().then( ( cleared ) => {
+						tdSaveToast( {
+							icon: 'success',
+							title: __( 'Changes saved', 'thrivedesk' ),
+							text: cleared
+								? __( 'Portal cache cleared.', 'thrivedesk' )
+								: __( 'The portal cache could not be cleared.', 'thrivedesk' ),
+							timer: 2500,
+						} );
+					} );
 				}
 
 				// The old Save button showed nothing at all on a non-success
@@ -1223,6 +1313,12 @@ jQuery(document).ready(($) => {
 	}
 
 	$( document ).on( 'change', TD_AUTOSAVE_FIELDS, function () {
+		// Remembered rather than acted on: the save is debounced, so this has to
+		// survive until whichever save eventually runs.
+		if ( $( this ).is( TD_PORTAL_FIELDS ) ) {
+			tdPortalChanged = true;
+		}
+
 		// Debounced: ticking four post types is one save, not four.
 		clearTimeout( tdSaveTimer );
 		tdSaveTimer = setTimeout( tdSaveNow, 700 );
@@ -1576,28 +1672,30 @@ jQuery(document).ready(($) => {
 			});
 	}
 	// clear cache
-	$('#thrivedesk_clear_cache_btn').on('click', function (e) {
-		jQuery
-			.get(thrivedesk.ajax_url, {
-				action: 'thrivedesk_clear_cache',
-				nonce: thrivedesk.nonce,
+	/*
+	 * The same toast the saves use, rather than a modal with an OK button and a
+	 * page reload behind it. Clearing a cache changes nothing on this screen, so
+	 * there was nothing for the reload to show and nothing to acknowledge.
+	 */
+	$(document).on('click', '#thrivedesk_clear_cache_btn', function (e) {
+		e.preventDefault();
+
+		const $btn = $(this).prop('disabled', true);
+
+		tdClearPortalCache()
+			.then((cleared) => {
+				tdSaveToast(
+					cleared
+						? { icon: 'success', title: __('Portal cache cleared', 'thrivedesk'), timer: 2000 }
+						: {
+								icon: 'error',
+								title: __('Could not clear the cache', 'thrivedesk'),
+								text: __('Check your connection and try again.', 'thrivedesk'),
+								timer: 6000,
+						  }
+				);
 			})
-			.success(function (response) {
-				Swal.fire({
-					icon: 'success',
-					title: __('Success', 'thrivedesk'),
-					text: __('Cache Cleared', 'thrivedesk'),
-				}).then((result) => {
-					location.reload();
-				});
-			})
-			.error(function () {
-				Swal.fire({
-					icon: 'error',
-					title: __('Error', 'thrivedesk'),
-					text: __('Something went wrong', 'thrivedesk'),
-				});
-			});
+			.then(() => $btn.prop('disabled', false));
 	});
 });
 

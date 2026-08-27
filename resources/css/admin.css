@@ -109,6 +109,16 @@
 			@apply bg-slate-50! px-2! py-1! rounded border border-slate-200;
 			@apply font-mono text-[13px]! text-slate-700 tracking-wide;
 		}
+		/* A card whose settings do not mean anything yet. The controls carry a
+		   real disabled attribute as well - dimming alone still leaves them
+		   reachable by keyboard, which is a worse lie than not dimming at
+		   all. */
+		.td-gated.is-locked .td-field {
+			@apply opacity-55;
+		}
+		.td-gated__hint {
+			@apply flex items-start gap-2 mt-0! mb-0! rounded-md border border-amber-300 bg-amber-50 p-3 text-[13px]! text-amber-900;
+		}
 		.td-field-help {
 			@apply mt-2! mb-0! text-[12px] text-gray-500;
 		}
