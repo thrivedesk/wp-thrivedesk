@@ -59,9 +59,12 @@
 	object-fit: contain;
 }
 
+/* center, not flex-start: the name is 13px on a 1.3 line and the chip is a
+   10px pill with its own padding, so aligning their box tops leaves the two
+   texts visibly off from each other. A nudged margin was papering over it. */
 .td-integration__title {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	flex-wrap: wrap;
 	gap: 4px 8px;
 	margin-top: 12px;
@@ -74,7 +77,6 @@
 
 .td-integration__category {
 	flex-shrink: 0;
-	margin-top: 1px;
 	padding: 2px 8px;
 	border-radius: 999px;
 	background: #f0f0f1;
@@ -91,14 +93,26 @@
 	margin-top: 8px;
 }
 
+/* The action leads. It is the one thing on the card anyone came to press, and
+   space-between put it at the far edge with whatever status text there was
+   holding the near one. */
 .td-integration__footer {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	gap: 8px;
 	margin-top: 16px;
 	padding-top: 12px;
 	border-top: 1px solid #f0f0f1;
+
+	/* The button is last in the markup, because the status it describes should
+	   be read first. `order` moves it without changing that. */
+	.components-button {
+		order: -1;
+	}
+}
+/* Pushed to the far side, so the row reads action first, state second. */
+.td-integration__state {
+	margin-left: auto;
 }
 
 .td-integration__badge {
