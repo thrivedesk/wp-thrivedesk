@@ -99,7 +99,7 @@ class PortalSearchGateTest extends WP_UnitTestCase {
 			$card,
 			'a dimmed control that still takes focus and still saves is worse than no dimming'
 		);
-		$this->assertMatchesRegularExpression( '/class="td_helpdesk_post_types"[^>]*\bdisabled\b/', $card );
+		$this->assertMatchesRegularExpression( '/<select name="td_helpdesk_post_types\[\]"[^>]*\bdisabled\b/', $card );
 	}
 
 	public function test_choosing_a_ticket_form_opens_it() {

@@ -25,7 +25,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		'#td-inboxes'             => 'id="td-inboxes"',
 		'#td_helpdesk_page_id'    => 'id="td_helpdesk_page_id"',
 		'#td_knowledgebase_slug'  => 'id="td_knowledgebase_slug"',
-		'.td_helpdesk_post_types' => 'class="td_helpdesk_post_types"',
+		'#td_helpdesk_post_types' => 'id="td_helpdesk_post_types"',
 		'.td_user_account_pages'  => 'class="td_user_account_pages"',
 	];
 

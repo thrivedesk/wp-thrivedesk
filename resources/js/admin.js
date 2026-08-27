@@ -739,7 +739,11 @@ jQuery(document).ready(($) => {
 		const hint = card.querySelector('.td-gated__hint');
 
 		card.classList.toggle('is-locked', locked);
-		card.querySelectorAll('select, input').forEach((el) => {
+
+		// The toggle too: admin.js builds a dropdown over the multiple
+		// <select>, and a live toggle over a disabled select would let someone
+		// tick boxes that go nowhere.
+		card.querySelectorAll('select, input, .td-multiselect__toggle').forEach((el) => {
 			el.disabled = locked;
 		});
 
@@ -1133,9 +1137,10 @@ jQuery(document).ready(($) => {
 		let td_assistant_route_list = $('#td-excluded-routes').val() || [];
 		let td_helpdesk_page_id = $('#td_helpdesk_page_id').val();
 		let td_knowledgebase_slug = $('#td_knowledgebase_slug').val();
-		let td_helpdesk_post_types = $('.td_helpdesk_post_types:checked')
-			.map((i, item) => item.value)
-			.get();
+		// A multiple <select>, like the excluded routes above: .val() is already
+		// the array this wants, so there is nothing to map.
+		let td_helpdesk_post_types = $('#td_helpdesk_post_types').val() || [];
+
 		let td_helpdesk_post_sync = $('.td_helpdesk_post_sync:checked')
 			.map((i, item) => item.value)
 			.get();
@@ -1190,7 +1195,7 @@ jQuery(document).ready(($) => {
 		'#td-inboxes',
 		'#td_helpdesk_page_id',
 		'#td_knowledgebase_slug',
-		'.td_helpdesk_post_types',
+		'#td_helpdesk_post_types',
 		'.td_user_account_pages',
 		'.td_helpdesk_post_sync',
 	].join( ',' );

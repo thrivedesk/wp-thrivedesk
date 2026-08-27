@@ -510,17 +510,35 @@ $current_user = wp_get_current_user();
                 </div>
 
                 <div class="td-field">
-                    <span class="td-field__label"><?php esc_html_e('WordPress content', 'thrivedesk'); ?></span>
-                    <?php // Two columns: these are short labels, and a single file of them wastes the card. ?>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
-                        <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
-                            <label class="td-check" for="td-search-<?php echo esc_attr($post_type); ?>">
-                                <input class="td_helpdesk_post_types" type="checkbox" id="td-search-<?php echo esc_attr($post_type); ?>" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" <?php echo in_array($post_type, $td_selected_post_types) ? 'checked' : ''; ?> <?php disabled(!$td_has_ticket_page); ?>>
-                                <span><?php echo esc_html(ucfirst($post_type)); ?></span>
-                            </label>
-                        <?php endforeach; ?>
+                    <label for="td_helpdesk_post_types"><?php esc_html_e('WordPress content', 'thrivedesk'); ?></label>
+                    <?php
+                    /*
+                     * Same shape as "Hide on these pages": a real multiple <select> that
+                     * stays the source of truth, with admin.js building a dropdown over
+                     * it. The save handler reads $('#td_helpdesk_post_types').val() and
+                     * relies on getting an array back, so the contract never changes -
+                     * and if that script fails to run, what is left is a working list box
+                     * rather than a control with no UI.
+                     */
+                    ?>
+                    <div class="td-multiselect" data-td-multiselect>
+                        <select name="td_helpdesk_post_types[]" id="td_helpdesk_post_types" size="6" multiple class="td-multiselect__source w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
+                            <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
+                                <?php
+                                // The label the site itself uses - "Posts", "Products" -
+                                // rather than the slug with a capital letter on it.
+                                $td_type_object = get_post_type_object($post_type);
+                                $td_type_label  = $td_type_object && !empty($td_type_object->labels->name)
+                                    ? $td_type_object->labels->name
+                                    : ucfirst($post_type);
+                                ?>
+                                <option value="<?php echo esc_attr($post_type); ?>" <?php selected(in_array($post_type, $td_selected_post_types, true)); ?>>
+                                    <?php echo esc_html($td_type_label); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                    <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center.', 'thrivedesk'); ?></p>
+                    <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only.', 'thrivedesk'); ?></p>
                 </div>
 
             </div>
