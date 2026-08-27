@@ -243,6 +243,17 @@
 			@apply inline-flex items-center gap-1.5 rounded border px-4 py-2 text-sm font-semibold transition no-underline;
 			@apply border-slate-900 bg-slate-900 text-white! hover:border-slate-800 hover:bg-slate-800 hover:text-white!;
 		}
+		/* A modifier for either button, for where one sits in a row with a name
+		   rather than at the foot of a card. The icon comes from a shared
+		   partial at a fixed 14px, so it is scaled here rather than by giving
+		   the partial a size argument nothing else would use. */
+		.btn-sm {
+			@apply gap-1 px-2.5 py-1 text-[12px];
+		}
+		.btn-sm svg {
+			width: 12px;
+			height: 12px;
+		}
 		.btn-solid:focus-visible {
 			@apply outline-2 outline-offset-2 outline-slate-900;
 		}

@@ -348,7 +348,7 @@ $current_user = wp_get_current_user();
                                 </div>
             
                                 <?php if (!$td_form_plugin['active']) : ?>
-                                    <a class="btn-ghost shrink-0" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
+                                    <a class="btn-ghost btn-sm shrink-0" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
                                         <?php esc_html_e('Activate', 'thrivedesk'); ?>
                                     </a>
                                 <?php elseif ($td_form_plugin['new_form_url']) : ?>
@@ -361,7 +361,7 @@ $current_user = wp_get_current_user();
                                      * on this screen carries.
                                      */
                                     ?>
-                                    <a class="btn-solid shrink-0" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>" target="_blank" rel="noopener">
+                                    <a class="btn-solid btn-sm shrink-0" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>" target="_blank" rel="noopener">
                                         <span><?php esc_html_e('Create a form', 'thrivedesk'); ?></span>
                                         <?php thrivedesk_view('icons/external'); ?>
                                     </a>
