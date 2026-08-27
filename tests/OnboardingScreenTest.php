@@ -124,6 +124,49 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A promotion for something you already have is not a promotion, it is
+	 * furniture - and furniture that never changes stops being read at all.
+	 */
+	public function test_the_woocommerce_promotion_stops_once_it_is_connected() {
+		$this->connect();
+
+		$this->assertStringContainsString( 'td-promo--woo', $this->render_screen() );
+
+		update_option( 'thrivedesk_options', [ 'woocommerce' => [ 'api_token' => 't', 'connected' => true ] ] );
+
+		$html = $this->render_screen();
+
+		delete_option( 'thrivedesk_options' );
+
+		$this->assertStringNotContainsString( 'td-promo--woo', $html );
+	}
+
+	/**
+	 * It leads the tab once there is a key, and waits its turn before then.
+	 * Nothing on that screen matters until the key is in, and a promotion that
+	 * pushes the only working control below the fold is one nobody reaches.
+	 */
+	public function test_the_promotion_never_outranks_the_connect_card() {
+		$html = $this->render_screen();
+
+		$this->assertLessThan(
+			strpos( $html, 'td-promo--woo' ),
+			strpos( $html, 'id="td-setup-split"' ),
+			'the ask comes first while there is no account'
+		);
+
+		$this->connect();
+
+		$connected = $this->render_screen();
+
+		$this->assertLessThan(
+			strpos( $connected, 'Overview of WPPortal' ),
+			strpos( $connected, 'td-promo--woo' ),
+			'and leads the tab once there is one'
+		);
+	}
+
+	/**
 	 * The Assistant card is rendered from one partial in two branches, so the
 	 * thing to guard is that exactly one branch runs.
 	 */

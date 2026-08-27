@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T16:28:05+00:00\n"
+"POT-Creation-Date: 2026-08-27T16:37:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -154,7 +154,7 @@ msgstr ""
 #. translators: %s: human-readable time difference, e.g. "3 months"
 #. translators: %s: a length of time, e.g. "2 hours"
 #: includes/helper.php:459
-#: includes/views/partials/overview.php:148
+#: includes/views/partials/overview.php:160
 #, php-format
 msgid "%s ago"
 msgstr ""
@@ -214,7 +214,7 @@ msgstr ""
 
 #: includes/views/partials/card-assistant.php:21
 #: includes/views/partials/card-portal.php:37
-#: includes/views/partials/overview.php:197
+#: includes/views/partials/overview.php:209
 msgid "Learn more"
 msgstr ""
 
@@ -230,6 +230,38 @@ msgstr ""
 #: includes/views/partials/card-portal.php:57
 #: includes/views/partials/card-portal.php:58
 msgid "Watch the 40 second tour"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:22
+msgid "A chatbot that answers from your own catalogue"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:23
+msgid "Refunds, order edits and shipping without leaving the chat"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:24
+msgid "Agentic AI with real control over the store, not just replies"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:25
+msgid "Subscriptions and order history beside every conversation"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:40
+msgid "WooCommerce integration"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:42
+msgid "Run your store from the conversation"
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:45
+msgid "Connect your store and every conversation arrives with the customer already known - what they bought, what they are paying for, and what is on its way."
+msgstr ""
+
+#: includes/views/partials/card-woo-promo.php:61
+msgid "Connect WooCommerce"
 msgstr ""
 
 #: includes/views/partials/connect-accounts.php:16
@@ -326,64 +358,64 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: includes/views/partials/overview.php:91
+#: includes/views/partials/overview.php:103
 msgid "Connection details"
 msgstr ""
 
-#: includes/views/partials/overview.php:92
+#: includes/views/partials/overview.php:104
 msgid "The API key that links this site to ThriveDesk."
 msgstr ""
 
-#: includes/views/partials/overview.php:114
+#: includes/views/partials/overview.php:126
 msgid "Disconnect this site from ThriveDesk"
 msgstr ""
 
-#: includes/views/partials/overview.php:121
+#: includes/views/partials/overview.php:133
 #: resources/js/admin.js:700
 #: resources/js/wp-scripts/admin-app/Integrations.js:122
 msgid "Disconnect"
 msgstr ""
 
-#: includes/views/partials/overview.php:136
+#: includes/views/partials/overview.php:148
 msgid "API key"
 msgstr ""
 
-#: includes/views/partials/overview.php:139
+#: includes/views/partials/overview.php:151
 msgid "Replace"
 msgstr ""
 
-#: includes/views/partials/overview.php:143
+#: includes/views/partials/overview.php:155
 msgid "Last checked"
 msgstr ""
 
-#: includes/views/partials/overview.php:157
+#: includes/views/partials/overview.php:169
 msgid "New API key"
 msgstr ""
 
-#: includes/views/partials/overview.php:158
+#: includes/views/partials/overview.php:170
 msgid "Paste your API key"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/overview.php:163
+#: includes/views/partials/overview.php:175
 #, php-format
 msgid "Find it in ThriveDesk under Settings, Company, API key. %1$sOpen ThriveDesk%2$s"
 msgstr ""
 
-#: includes/views/partials/overview.php:172
+#: includes/views/partials/overview.php:184
 msgid "Verify and save"
 msgstr ""
 
-#: includes/views/partials/overview.php:175
+#: includes/views/partials/overview.php:187
 #: resources/js/admin.js:701
 msgid "Cancel"
 msgstr ""
 
-#: includes/views/partials/overview.php:194
+#: includes/views/partials/overview.php:206
 msgid "Using Cloudflare?"
 msgstr ""
 
-#: includes/views/partials/overview.php:195
+#: includes/views/partials/overview.php:207
 msgid "Add the ThriveDesk IP addresses to your Cloudflare allowlist. Without them, WooCommerce and the other integrations may not be reachable."
 msgstr ""
 

@@ -155,6 +155,61 @@
 		.td-info__icon {
 			@apply inline-flex shrink-0 text-blue-600;
 		}
+		/* A promotion, so it is allowed to be the loudest thing in the row -
+		   but only in its own colour, and only while there is something left
+		   to sell. */
+		.td-promo {
+			@apply relative overflow-hidden rounded-md border p-6;
+		}
+		.td-promo--woo {
+			border-color: color-mix(in srgb, #7f54b3 25%, transparent);
+			background-image: linear-gradient(135deg, color-mix(in srgb, #7f54b3 12%, #fff) 0%, #fff 62%);
+		}
+		/* Bleeds off the right edge; the container clips it. Behind the words
+		   rather than beside them, so the copy keeps the full width on a narrow
+		   screen instead of being squeezed into a column. */
+		.td-promo__art {
+			@apply absolute pointer-events-none select-none;
+			right: -3.5rem;
+			top: 50%;
+			width: 20rem;
+			height: 20rem;
+			transform: translateY(-50%) rotate(-8deg);
+			opacity: 0.10;
+		}
+		.td-promo__body {
+			@apply relative z-10 max-w-2xl;
+		}
+		.td-promo__eyebrow {
+			@apply block text-[11px] font-semibold uppercase tracking-wider;
+			color: #7f54b3;
+		}
+		.td-promo__title {
+			@apply mt-1! mb-0! text-lg font-bold text-slate-900;
+		}
+		.td-promo__lede {
+			@apply mt-2! mb-0! text-gray-600;
+		}
+		.td-promo__features {
+			@apply mt-4! mb-0! p-0! list-none grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2;
+		}
+		.td-promo__features li {
+			@apply flex items-start gap-2 text-[13px] text-slate-700;
+		}
+		.td-promo__tick {
+			@apply inline-flex shrink-0 mt-0.5;
+			color: #7f54b3;
+		}
+		.td-promo__cta {
+			@apply mt-5;
+		}
+		/* The mark would sit under the words at this width; the gradient alone
+		   carries the brand. */
+		@media (width < 48rem) {
+			.td-promo__art {
+				@apply hidden;
+			}
+		}
 		/* WooCommerce's own purple, kept light: this is a setting about
 		   WooCommerce sitting among settings that are not, and the logo alone
 		   is too small to say so at a glance. */

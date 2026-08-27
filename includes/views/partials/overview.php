@@ -62,7 +62,19 @@ if ( ! $td_summary['connected'] ) {
 			</div>
 		</div>
 
+		<?php
+		/*
+		 * Under the connect card, not above it. It is the first row once there
+		 * is a key - see the other branch - but nothing on this screen matters
+		 * until there is one, and a promotion that pushes the only working
+		 * control below the fold is a promotion nobody reaches.
+		 */
+		?>
+		<?php thrivedesk_view( 'partials/card-woo-promo' ); ?>
+
 	<?php else : ?>
+
+		<?php thrivedesk_view( 'partials/card-woo-promo' ); ?>
 
 		<?php // Portal leads at two thirds; the workspace facts sit beside it as a reference column. ?>
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
