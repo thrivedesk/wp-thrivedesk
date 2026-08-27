@@ -114,8 +114,11 @@ jQuery(document).ready(($) => {
     const tdFooterNote = $('#td-modal-footer-note');
     const tdEmptyCtaSlot = $('#td-search-empty-cta');
     const tdModalFooter = $('.td-modal-footer');
-    // Set in modal.php from td_helpdesk_search_required.
-    const tdSearchRequired = $('#tdConversationModal').data('td-search-required') == 1;
+    // Set in modal.php from td_helpdesk_search_required. Read as an attribute
+    // rather than through .data(), which coerces types and caches the first
+    // value it saw.
+    const tdSearchRequired =
+        '1' === ($('#tdConversationModal').attr('data-td-search-required') || '0');
 
     // tracks which overlay is currently shown in the body
     let currentModalState = 'initial';
@@ -152,6 +155,16 @@ jQuery(document).ready(($) => {
         tdTicketCta.prop('hidden', tdSearchRequired && !searched);
         tdFooterNote.prop('hidden', state !== 'results');
     };
+
+    /*
+     * Apply it once at load.
+     *
+     * Everything else goes through setModalState(), which nothing calls until a
+     * search runs - so the button sat there in its server-rendered place until
+     * the first keystroke, which is exactly the moment the rule was supposed to
+     * be enforced before.
+     */
+    placeTicketCta(currentModalState);
 
     const updateModalClearBtn = () => {
         if (!tdModalSearchClearBtn.length) return;

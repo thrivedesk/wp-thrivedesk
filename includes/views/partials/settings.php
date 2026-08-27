@@ -156,7 +156,15 @@ $current_user = wp_get_current_user();
                      * than a control with no UI.
                      */
                     ?>
-                    <div class="td-multiselect" data-td-multiselect>
+                    <div
+                        class="td-multiselect"
+                        data-td-multiselect
+                        data-td-empty="<?php esc_attr_e( 'Shown on every page', 'thrivedesk' ); ?>"
+                        data-td-many="<?php
+                            /* translators: %d: how many pages the widget is hidden on. */
+                            esc_attr_e( '%d pages hidden', 'thrivedesk' );
+                        ?>"
+                    >
                         <select name="td_excluded_routes[]" id="td-excluded-routes" size="6" multiple class="td-multiselect__source w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5">
                             <?php
                             $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
@@ -523,7 +531,15 @@ $current_user = wp_get_current_user();
                          * rather than a control with no UI.
                          */
                         ?>
-                        <div class="td-multiselect max-w-md" data-td-multiselect>
+                        <div
+                            class="td-multiselect max-w-md"
+                            data-td-multiselect
+                            data-td-empty="<?php esc_attr_e( 'Help Center only', 'thrivedesk' ); ?>"
+                            data-td-many="<?php
+                                /* translators: %d: how many post types are searched alongside the Help Center. */
+                                esc_attr_e( '%d content types', 'thrivedesk' );
+                            ?>"
+                        >
                             <select name="td_helpdesk_post_types[]" id="td_helpdesk_post_types" size="6" multiple class="td-multiselect__source w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
                                 <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
                                     <?php

@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 var assistants = [];
 // Was never declared. Under webpack's strict mode the assignment in
 // loadInboxes() threw a ReferenceError and aborted the callback, which is why
@@ -310,7 +310,9 @@ function tdEnhanceMultiselect( container ) {
 	const search = document.createElement( 'input' );
 	search.type = 'search';
 	search.className = 'td-multiselect__search';
-	search.placeholder = __( 'Search pages', 'thrivedesk' );
+	// Neutral, because the component is used for pages and for post types.
+	// The field's own label says what is being searched.
+	search.placeholder = __( 'Filter', 'thrivedesk' );
 	panel.appendChild( search );
 
 	const list = document.createElement( 'ul' );
@@ -389,19 +391,31 @@ function tdEnhanceMultiselect( container ) {
 	footer.append( count, clear );
 	panel.appendChild( footer );
 
+	/*
+	 * What the closed control says, supplied by whoever is using it.
+	 *
+	 * This used to be hardcoded to the excluded-routes field - "Shown on every
+	 * page", "2 pages hidden" - which was true of the only field that had one.
+	 * The second field to use this component selects content to search, so the
+	 * same words made it read as the opposite of what it does. The strings come
+	 * from PHP so they stay translatable.
+	 */
+	const summary = {
+		empty: container.dataset.tdEmpty || __( 'Nothing selected', 'thrivedesk' ),
+		many: container.dataset.tdMany || __( '%d selected', 'thrivedesk' ),
+	};
+
 	function render() {
 		const chosen = rows.filter( ( { option } ) => option.selected );
 
 		if ( ! chosen.length ) {
-			value.textContent = __( 'Shown on every page', 'thrivedesk' );
+			value.textContent = summary.empty;
 		} else if ( 1 === chosen.length ) {
+			// The thing itself, when there is only one of it: "Checkout" says
+			// more than "1 page hidden" ever could.
 			value.textContent = chosen[ 0 ].option.text.trim();
 		} else {
-			value.textContent = sprintf(
-				/* translators: %d: how many pages the widget is hidden on. */
-				_n( '%d page hidden', '%d pages hidden', chosen.length, 'thrivedesk' ),
-				chosen.length
-			);
+			value.textContent = summary.many.replace( '%d', chosen.length );
 		}
 
 		count.textContent = sprintf(
