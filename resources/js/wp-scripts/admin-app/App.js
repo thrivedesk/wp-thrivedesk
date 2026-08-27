@@ -11,7 +11,6 @@ const TABS = [
 	{ name: 'integrations', title: __( 'Integrations', 'thrivedesk' ) },
 	{ name: 'livechat', title: __( 'Live Chat', 'thrivedesk' ), panel: 'td-panel-livechat' },
 	{ name: 'portal', title: __( 'Portal', 'thrivedesk' ), panel: 'td-panel-portal' },
-	{ name: 'settings', title: __( 'Settings', 'thrivedesk' ), panel: 'td-panel-settings' },
 ];
 
 /**

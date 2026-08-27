@@ -82,115 +82,10 @@ $current_user = wp_get_current_user();
     ?>
     <?php // Overview leads: what this site is connected to, and the key that connects it. ?>
     <div id="td-panel-overview" hidden>
-        <?php thrivedesk_view( 'partials/overview' ); ?>
-    <!-- connection  -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Connection Details', 'thrivedesk'); ?></div>
-            <p><?php esc_html_e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card">
-            <div class="space-y-2">
-                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
-                <span>
-                    <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
-                    <a class="text-blue-500" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/api-key'); ?>" target="_blank">
-                        <?php esc_html_e('here', 'thrivedesk'); ?>
-                    </a>
-                </span>
-                <?php
-                // type="password" hides the key on screen and nowhere else: it
-                // is still in view-source, in the DOM, in password managers, on
-                // a screen share, and one selector away from any script on the
-                // page. Only a preview is rendered, and the editable field is
-                // left blank - submitting it empty means "unchanged".
-                ?>
-                <div class="flex items-center api-key-preview">
-                    <input class="truncate w-2/3 bg-gray-50" type="text" disabled value="<?php echo esc_attr($td_api_key_preview); ?>" />
-                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
-                </div>
-                <div class="api-key-editable hidden">
-                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_connect_token); ?>" placeholder="<?php echo esc_attr($td_api_key_preview); ?>" autocomplete="off" class="block p-2.5 w-full text-sm" />
-
-                    <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
-                        <?php esc_html_e('Verify', 'thrivedesk'); ?>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-
-    <div id="td-panel-settings" hidden>
-    <!-- inbox selection -->
-    <div class="space-y-1" style="display:none;">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Select your inbox', 'thrivedesk'); ?></div>
-            <p><?php esc_html_e('Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card space-y-2">
-            <?php if (!empty($td_inboxes)) : 
-                //dd($td_inboxes, $td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? 'X');
-                ?>
-                <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Inbox', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
-                        <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
-                        <?php foreach ($td_inboxes as $inbox) : ?>
-                            <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
-                                <?php echo esc_html($inbox['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            <?php else : ?>
-                <p class="text-lg flex flex-col items-center">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
-                            <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg></span>
-                    <span><?php
-                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
-                        printf(esc_html__('No inboxes found. Please %1$screate a new inbox%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
-                </p>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-        <!-- WP Post Sync  -->
-        <div class="space-y-1">
-            <div class="td-card-heading">
-                <div class="text-base font-bold"><?php esc_html_e('WP Post Sync', 'thrivedesk'); ?></div>
-                <p><?php esc_html_e('Sync your WordPress posts with ThriveDesk for faster support', 'thrivedesk'); ?></p>
-            </div>
-            <div class="td-card">
-                <div class="flex space-x-4" id="td_post_sync">
-                    <div class="flex-1">
-                        <div class="space-y-2">
-                            <div class="flex items-center space-x-2">
-                                <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-                                    <?php foreach ($wp_post_sync_types as $post_sync) : ?>
-                                        <div>
-                                            <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array($post_sync, $td_selected_post_sync) ? 'checked' : ''; ?>>
-                                            <label for="<?php echo esc_attr($post_sync); ?>"> <?php echo esc_html(ucfirst($post_sync)); ?> </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else : ?>
-                                    <div class="w-full text-center text-base tab-link">
-                                        <?php esc_html_e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
-                                        <?php $nonce = wp_create_nonce('thrivedesk-plugin-action'); ?>
-                                        <a data-target="tab-integrations" href="#integrations" class="inline-block py-1 px-3 btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">
-                                            <?php esc_html_e('Connect Now', 'thrivedesk'); ?>
-                                        </a>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
+        <?php thrivedesk_view( 'partials/overview', [
+            'td_api_key_preview' => $td_api_key_preview,
+            'td_connect_token'   => $td_connect_token,
+        ] ); ?>
     </div>
 
 
@@ -291,7 +186,76 @@ $current_user = wp_get_current_user();
     </div>
 
     <div id="td-panel-portal" hidden>
-    <!-- portal  -->
+    <?php // The inbox select is hidden but must stay in the DOM: the save handler reads it by id. ?>
+    <!-- inbox selection -->
+    <div class="space-y-1" style="display:none;">
+        <div class="td-card-heading">
+            <div class="text-base font-bold"><?php esc_html_e('Select your inbox', 'thrivedesk'); ?></div>
+            <p><?php esc_html_e('Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox.', 'thrivedesk'); ?></p>
+        </div>
+        <div class="td-card space-y-2">
+            <?php if (!empty($td_inboxes)) : 
+                //dd($td_inboxes, $td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? 'X');
+                ?>
+                <div class="space-y-2">
+                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Inbox', 'thrivedesk'); ?></label>
+                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
+                        <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
+                        <?php foreach ($td_inboxes as $inbox) : ?>
+                            <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
+                                <?php echo esc_html($inbox['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php else : ?>
+                <p class="text-lg flex flex-col items-center">
+                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
+                            <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg></span>
+                    <span><?php
+                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
+                        printf(esc_html__('No inboxes found. Please %1$screate a new inbox%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
+                </p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
+        <!-- WP Post Sync  -->
+        <div class="space-y-1">
+            <div class="td-card-heading">
+                <div class="text-base font-bold"><?php esc_html_e('WP Post Sync', 'thrivedesk'); ?></div>
+                <p><?php esc_html_e('Sync your WordPress posts with ThriveDesk for faster support', 'thrivedesk'); ?></p>
+            </div>
+            <div class="td-card">
+                <div class="flex space-x-4" id="td_post_sync">
+                    <div class="flex-1">
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
+                                    <?php foreach ($wp_post_sync_types as $post_sync) : ?>
+                                        <div>
+                                            <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array($post_sync, $td_selected_post_sync) ? 'checked' : ''; ?>>
+                                            <label for="<?php echo esc_attr($post_sync); ?>"> <?php echo esc_html(ucfirst($post_sync)); ?> </label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <div class="w-full text-center text-base tab-link">
+                                        <?php esc_html_e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
+                                        <?php $nonce = wp_create_nonce('thrivedesk-plugin-action'); ?>
+                                        <a data-target="tab-integrations" href="#integrations" class="inline-block py-1 px-3 btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">
+                                            <?php esc_html_e('Connect Now', 'thrivedesk'); ?>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
     <div class="space-y-1">
         <div class="td-card-heading flex items-center">
             <div class="flex-1 pr-4">

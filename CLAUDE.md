@@ -92,7 +92,7 @@ WordPress provides `wp-components` as a script and style, so it is a build
 external and costs no npm dependency — `Admin::enqueue_admin_app()` reads the
 generated `.asset.php` for the handles rather than hardcoding them.
 
-`TabPanel` owns the page: Overview, Integrations, Live Chat, Portal, Settings. Integrations
+`TabPanel` owns the page: Overview, Integrations, Live Chat, Portal. Integrations
 is fully ported and renders from `thrivedesk_integrations()`, bootstrapped into
 `window.thrivedeskAdmin`. The other four are still server-rendered PHP in
 `includes/views/partials/overview.php` and
