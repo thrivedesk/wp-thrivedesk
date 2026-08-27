@@ -419,7 +419,7 @@
 		   the embed host's thumbnail URL is not something to guess at, and a
 		   broken image is worse than no photograph. */
 		.td-video {
-			@apply relative flex items-center justify-center w-full aspect-video overflow-hidden rounded-lg border-0 cursor-pointer p-0;
+			@apply relative flex items-center justify-center w-full aspect-video overflow-hidden rounded-md border-0 cursor-pointer p-0;
 			background: linear-gradient(135deg, #1e3a8a 0%, #3858e9 60%, #6366f1 100%);
 		}
 		.td-video__mockup {
@@ -464,7 +464,7 @@
 		/* A box for the frame. Nothing here touches the assistant itself - it
 		   renders inside the frame exactly as it does on the front end. */
 		.td-assistant-preview {
-			@apply relative w-full overflow-hidden rounded-lg border border-slate-200;
+			@apply relative w-full overflow-hidden rounded-md border border-slate-200;
 			height: 680px;
 			background-color: var(--color-slate-100);
 			/* A dot grid, so an empty preview reads as a surface waiting for

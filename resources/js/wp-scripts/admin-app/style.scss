@@ -41,13 +41,17 @@
 
 /* A column, so the footer can be pushed to the bottom edge of the card and
    line up with its neighbours whatever the description costs. */
+/* The same corner as every other card on the screen. This bundle is compiled
+   by sass and cannot see Tailwind's tokens, but admin.css declares --radius-md
+   on :root and both stylesheets load together - so the value is shared rather
+   than copied, and the fallback covers the case where it is not. */
 .td-integration {
 	display: flex;
 	flex-direction: column;
 	margin: 0;
 	padding: 16px;
 	border: 1px solid #e0e0e0;
-	border-radius: 4px;
+	border-radius: var(--radius-md, 0.375rem);
 	background: #fff;
 }
 
