@@ -196,8 +196,9 @@ $current_user = wp_get_current_user();
          * inside the box rather than floating over the whole screen.
          */
         ?>
-        <?php // 1px so the preview surface sits flush inside the card border. ?>
-        <div class="td-card p-px!">
+        <?php // Not a card: the preview is a surface, and a white box with a shadow
+              // around it was one frame too many. ?>
+        <div>
 
             <div
                 class="td-assistant-preview"

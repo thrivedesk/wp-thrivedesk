@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T09:32:02+00:00\n"
+"POT-Creation-Date: 2026-08-27T09:34:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -364,7 +364,7 @@ msgid "Login to ThriveDesk app and get your API key from "
 msgstr ""
 
 #: includes/views/partials/overview.php:206
-#: includes/views/partials/settings.php:311
+#: includes/views/partials/settings.php:312
 msgid "here"
 msgstr ""
 
@@ -440,135 +440,135 @@ msgstr ""
 msgid "Create an assistant"
 msgstr ""
 
-#: includes/views/partials/settings.php:209
+#: includes/views/partials/settings.php:210
 msgid "Preview"
 msgstr ""
 
-#: includes/views/partials/settings.php:210
+#: includes/views/partials/settings.php:211
 msgid "Choose an assistant to preview it."
 msgstr ""
 
-#: includes/views/partials/settings.php:221
+#: includes/views/partials/settings.php:222
 msgid "Select your inbox"
 msgstr ""
 
-#: includes/views/partials/settings.php:222
+#: includes/views/partials/settings.php:223
 msgid "Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox."
 msgstr ""
 
-#: includes/views/partials/settings.php:229
+#: includes/views/partials/settings.php:230
 msgid "Select Inbox"
 msgstr ""
 
-#: includes/views/partials/settings.php:231
+#: includes/views/partials/settings.php:232
 #: resources/js/admin.js:1297
 msgid "All inboxes"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/settings.php:247
+#: includes/views/partials/settings.php:248
 #, php-format
 msgid "No inboxes found. Please %1$screate a new inbox%2$s and return at a later time."
 msgstr ""
 
-#: includes/views/partials/settings.php:256
+#: includes/views/partials/settings.php:257
 msgid "WP Post Sync"
 msgstr ""
 
-#: includes/views/partials/settings.php:257
+#: includes/views/partials/settings.php:258
 msgid "Sync your WordPress posts with ThriveDesk for faster support"
 msgstr ""
 
-#: includes/views/partials/settings.php:273
+#: includes/views/partials/settings.php:274
 msgid "You need to install WordPress Post Sync app to get this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:276
+#: includes/views/partials/settings.php:277
 msgid "Connect Now"
 msgstr ""
 
-#: includes/views/partials/settings.php:290
+#: includes/views/partials/settings.php:291
 #: resources/js/wp-scripts/admin-app/App.js:13
 msgid "Portal"
 msgstr ""
 
-#: includes/views/partials/settings.php:291
+#: includes/views/partials/settings.php:292
 msgid "Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more."
 msgstr ""
 
-#: includes/views/partials/settings.php:300
+#: includes/views/partials/settings.php:301
 msgid "Clear portal cache"
 msgstr ""
 
-#: includes/views/partials/settings.php:306
+#: includes/views/partials/settings.php:307
 msgid "Please insert or verify your ThriveDesk API key to use the Portal feature."
 msgstr ""
 
-#: includes/views/partials/settings.php:310
+#: includes/views/partials/settings.php:311
 msgid "Portal feature is available for Plus and upper plan. For plans details click"
 msgstr ""
 
-#: includes/views/partials/settings.php:319
+#: includes/views/partials/settings.php:320
 msgid "Ticket Submission Form Page"
 msgstr ""
 
-#: includes/views/partials/settings.php:320
+#: includes/views/partials/settings.php:321
 msgid "Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href=\"https://help.thrivedesk.com/en/wpportal#create-ticket-page\" target=\"_blank\">here</a>."
 msgstr ""
 
-#: includes/views/partials/settings.php:321
+#: includes/views/partials/settings.php:322
 msgid "Select the page that contains the embedded ticket form visitors will submit."
 msgstr ""
 
-#: includes/views/partials/settings.php:323
+#: includes/views/partials/settings.php:324
 msgid "Select the page with your ticket form"
 msgstr ""
 
-#: includes/views/partials/settings.php:333
+#: includes/views/partials/settings.php:334
 msgid "Search Provider"
 msgstr ""
 
-#: includes/views/partials/settings.php:334
+#: includes/views/partials/settings.php:335
 msgid "When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both."
 msgstr ""
 
-#: includes/views/partials/settings.php:335
+#: includes/views/partials/settings.php:336
 msgid "Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive."
 msgstr ""
 
-#: includes/views/partials/settings.php:338
+#: includes/views/partials/settings.php:339
 msgid "Knowledge Base "
 msgstr ""
 
-#: includes/views/partials/settings.php:340
+#: includes/views/partials/settings.php:341
 msgid "Select knowledgebase"
 msgstr ""
 
-#: includes/views/partials/settings.php:350
+#: includes/views/partials/settings.php:351
 msgid "WordPress Post Types "
 msgstr ""
 
-#: includes/views/partials/settings.php:364
+#: includes/views/partials/settings.php:365
 msgid "Add Support Tab"
 msgstr ""
 
-#: includes/views/partials/settings.php:365
+#: includes/views/partials/settings.php:366
 msgid "You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin"
 msgstr ""
 
-#: includes/views/partials/settings.php:368
+#: includes/views/partials/settings.php:369
 msgid "You must install and activate WooCommerce plugin to use this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:379
+#: includes/views/partials/settings.php:380
 msgid "Portal Shortcode"
 msgstr ""
 
-#: includes/views/partials/settings.php:381
+#: includes/views/partials/settings.php:382
 msgid "Utilize this shortcode on any page to transform it into a help center."
 msgstr ""
 
-#: includes/views/partials/settings.php:382
+#: includes/views/partials/settings.php:383
 msgid "The portal is accessible only to logged-in users."
 msgstr ""
 

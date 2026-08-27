@@ -175,8 +175,8 @@
 		   renders inside the frame exactly as it does on the front end. */
 		.td-assistant-preview {
 			@apply relative w-full overflow-hidden rounded-lg border border-slate-200;
-			height: 520px;
-			background-color: var(--color-slate-50);
+			height: 680px;
+			background-color: var(--color-slate-100);
 			/* A dot grid, so an empty preview reads as a surface waiting for
 			   something rather than as a blank panel that failed to load. */
 			background-image: radial-gradient(var(--color-slate-300) 1px, transparent 1px);
