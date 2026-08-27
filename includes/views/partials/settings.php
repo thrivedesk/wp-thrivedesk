@@ -494,52 +494,78 @@ $current_user = wp_get_current_user();
                 <?php esc_html_e('Select a ticket creation form above to set this up.', 'thrivedesk'); ?>
             </p>
 
-            <div class="space-y-5 pt-5 border-t border-slate-200">
+            <?php // The two selects on the left, what they add up to on the right. ?>
+            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-6 items-start pt-5 border-t border-slate-200">
 
-                <div class="td-field">
-                    <label for="td_knowledgebase_slug"><?php esc_html_e('Help Center', 'thrivedesk'); ?></label>
-                    <select id="td_knowledgebase_slug" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
-                        <option value=""><?php esc_html_e('Do not search a Help Center', 'thrivedesk'); ?></option>
-                        <?php foreach ($td_knowledgebase as $value) : ?>
-                            <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
-                                <?php echo esc_html($value['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <p class="td-field-help"><?php esc_html_e('Which ThriveDesk Help Center the portal searches.', 'thrivedesk'); ?></p>
-                </div>
-
-                <div class="td-field">
-                    <label for="td_helpdesk_post_types"><?php esc_html_e('WordPress content', 'thrivedesk'); ?></label>
-                    <?php
-                    /*
-                     * Same shape as "Hide on these pages": a real multiple <select> that
-                     * stays the source of truth, with admin.js building a dropdown over
-                     * it. The save handler reads $('#td_helpdesk_post_types').val() and
-                     * relies on getting an array back, so the contract never changes -
-                     * and if that script fails to run, what is left is a working list box
-                     * rather than a control with no UI.
-                     */
-                    ?>
-                    <div class="td-multiselect" data-td-multiselect>
-                        <select name="td_helpdesk_post_types[]" id="td_helpdesk_post_types" size="6" multiple class="td-multiselect__source w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
-                            <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
-                                <?php
-                                // The label the site itself uses - "Posts", "Products" -
-                                // rather than the slug with a capital letter on it.
-                                $td_type_object = get_post_type_object($post_type);
-                                $td_type_label  = $td_type_object && !empty($td_type_object->labels->name)
-                                    ? $td_type_object->labels->name
-                                    : ucfirst($post_type);
-                                ?>
-                                <option value="<?php echo esc_attr($post_type); ?>" <?php selected(in_array($post_type, $td_selected_post_types, true)); ?>>
-                                    <?php echo esc_html($td_type_label); ?>
+                <div class="space-y-5">
+                    <div class="td-field">
+                        <label for="td_knowledgebase_slug"><?php esc_html_e('Help Center', 'thrivedesk'); ?></label>
+                        <select id="td_knowledgebase_slug" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
+                            <option value=""><?php esc_html_e('Do not search a Help Center', 'thrivedesk'); ?></option>
+                            <?php foreach ($td_knowledgebase as $value) : ?>
+                                <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($value['name']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <p class="td-field-help"><?php esc_html_e('Which ThriveDesk Help Center the portal searches.', 'thrivedesk'); ?></p>
                     </div>
-                    <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only.', 'thrivedesk'); ?></p>
+
+                    <div class="td-field">
+                        <label for="td_helpdesk_post_types"><?php esc_html_e('WordPress content', 'thrivedesk'); ?></label>
+                        <?php
+                        /*
+                         * Same shape as "Hide on these pages": a real multiple <select> that
+                         * stays the source of truth, with admin.js building a dropdown over
+                         * it. The save handler reads $('#td_helpdesk_post_types').val() and
+                         * relies on getting an array back, so the contract never changes -
+                         * and if that script fails to run, what is left is a working list box
+                         * rather than a control with no UI.
+                         */
+                        ?>
+                        <div class="td-multiselect" data-td-multiselect>
+                            <select name="td_helpdesk_post_types[]" id="td_helpdesk_post_types" size="6" multiple class="td-multiselect__source w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
+                                <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
+                                    <?php
+                                    // The label the site itself uses - "Posts", "Products" -
+                                    // rather than the slug with a capital letter on it.
+                                    $td_type_object = get_post_type_object($post_type);
+                                    $td_type_label  = $td_type_object && !empty($td_type_object->labels->name)
+                                        ? $td_type_object->labels->name
+                                        : ucfirst($post_type);
+                                    ?>
+                                    <option value="<?php echo esc_attr($post_type); ?>" <?php selected(in_array($post_type, $td_selected_post_types, true)); ?>>
+                                        <?php echo esc_html($td_type_label); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only.', 'thrivedesk'); ?></p>
+                    </div>
                 </div>
+
+                <?php
+                /*
+                 * Deliberately not a .td-field, so the gate does not dim it:
+                 * while this card is locked the explanation is the only part
+                 * of it still worth reading.
+                 */
+                ?>
+                <aside class="td-info">
+                    <div class="td-info__title">
+                        <span class="td-info__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9.25" stroke="currentColor" stroke-width="1.5"/><path d="M12 16.5v-5M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <?php esc_html_e('What this does', 'thrivedesk'); ?>
+                    </div>
+
+                    <p class="mt-3! mb-0! text-[12px] text-slate-600">
+                        <?php esc_html_e('With a Help Center and some post types chosen, anyone opening a ticket on the portal is asked to search first, and ThriveDesk shows the answer if it is already published in either place.', 'thrivedesk'); ?>
+                    </p>
+                    <p class="mt-2! mb-0! text-[12px] text-slate-600">
+                        <?php esc_html_e('The ones who find it never open the ticket, which is the point: fewer of the same question, asked and answered again.', 'thrivedesk'); ?>
+                    </p>
+                </aside>
 
             </div>
         </div>
