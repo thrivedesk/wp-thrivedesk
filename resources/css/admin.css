@@ -112,8 +112,36 @@
 		.td-field-help {
 			@apply mt-2! mb-0! text-[12px] text-gray-500;
 		}
-		.td-field > label {
+		/* A group of checkboxes has no single control to point at, so its
+		   heading is a span. Same treatment either way - the label is doing the
+		   same job for the reader. */
+		.td-field > label,
+		.td-field__label {
 			@apply block mb-1.5! text-sm font-semibold text-slate-700;
+		}
+		/* The whole row is the hit target, not the 13px box. WP admin sets
+		   checkbox margins from an ID selector, which outranks a utility, so
+		   the gap has to come from the flex container and the margin has to be
+		   forced off. */
+		.td-check {
+			@apply inline-flex items-center gap-2 text-sm text-slate-700 cursor-pointer;
+		}
+		.td-check input {
+			@apply m-0! shrink-0;
+		}
+		.td-check.is-disabled {
+			@apply opacity-60 cursor-not-allowed;
+		}
+		/* Said once, at the top, rather than repeated beside every control it
+		   applies to. */
+		.td-notice {
+			@apply flex items-start gap-3 rounded-md border p-4 text-sm;
+		}
+		.td-notice--warn {
+			@apply border-amber-300 bg-amber-50 text-amber-900;
+		}
+		.td-notice__icon {
+			@apply shrink-0 mt-0.5 text-amber-500;
 		}
 		.td-multiselect {
 			@apply relative;

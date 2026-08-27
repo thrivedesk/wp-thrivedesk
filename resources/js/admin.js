@@ -1254,9 +1254,6 @@ jQuery(document).ready(($) => {
 				// remove the disabled attribute from the id td-assistants and td-inboxes
 				$('#td-assistants').prop('disabled', false);
 				$('#td-inboxes').prop('disabled', false);
-				// add hidden class to the id td-api-verification-btn
-				$('#api_key_alert').addClass('hidden');
-
 				Swal.fire({
 					icon: 'success',
 					title: __('Success', 'thrivedesk'),
@@ -1519,7 +1516,6 @@ jQuery(document).ready(($) => {
 					let parsedResponse = JSON.parse(response);
 					let data = parsedResponse?.data;
 					if (data === true) {
-						$('#api_key_alert').addClass('hidden');
 						$('#td_portal').removeClass('hidden');
 
 					}
