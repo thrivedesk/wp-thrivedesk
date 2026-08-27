@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T09:34:46+00:00\n"
+"POT-Creation-Date: 2026-08-27T09:35:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -46,121 +46,149 @@ msgstr ""
 msgid "Support Tickets by ThriveDesk"
 msgstr ""
 
-#: includes/helper.php:97
+#: includes/helper.php:103
 msgid "WooCommerce"
 msgstr ""
 
-#: includes/helper.php:98
+#: includes/helper.php:105
+msgid "Show orders, subscriptions and shipping details beside every conversation."
+msgstr ""
+
+#: includes/helper.php:111
 msgid "Easy Digital Downloads"
 msgstr ""
 
-#: includes/helper.php:99
+#: includes/helper.php:113
+msgid "Pull up a customer’s purchases, licenses and order history while you reply."
+msgstr ""
+
+#: includes/helper.php:119
 msgid "FluentCRM"
 msgstr ""
 
-#: includes/helper.php:100
+#: includes/helper.php:121
+msgid "See the contact’s lists, tags and lifetime value without leaving the inbox."
+msgstr ""
+
+#: includes/helper.php:127
 msgid "WordPress Post Sync"
 msgstr ""
 
-#: includes/helper.php:101
+#: includes/helper.php:129
+msgid "Search your published posts and drop a link to one straight into a reply."
+msgstr ""
+
+#: includes/helper.php:135
 msgid "FunnelKit"
 msgstr ""
 
-#: includes/helper.php:145
+#: includes/helper.php:137
+msgid "Bring FunnelKit Automations contacts, lists and tags into the conversation sidebar."
+msgstr ""
+
+#: includes/helper.php:161
+msgid "View SureCart orders, subscriptions and refunds against the customer you are helping."
+msgstr ""
+
+#: includes/helper.php:162
+msgid "Look up Freemius licenses, payments and plan changes right from a ticket."
+msgstr ""
+
+#: includes/helper.php:191
 msgid "Unknown time"
 msgstr ""
 
-#: includes/helper.php:157
+#: includes/helper.php:203
 #, php-format
 msgid "%d year"
 msgid_plural "%d years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:158
+#: includes/helper.php:204
 #, php-format
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:159
+#: includes/helper.php:205
 #, php-format
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:160
+#: includes/helper.php:206
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:161
+#: includes/helper.php:207
 #, php-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:162
+#: includes/helper.php:208
 #, php-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:163
+#: includes/helper.php:209
 #, php-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:168
+#: includes/helper.php:214
 msgid "just now"
 msgstr ""
 
 #. translators: %s: human-readable time difference, e.g. "3 months"
-#: includes/helper.php:172
+#: includes/helper.php:218
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: includes/helper.php:188
+#: includes/helper.php:234
 #: includes/views/shortcode/conversations.php:106
 msgid "Active"
 msgstr ""
 
-#: includes/helper.php:190
+#: includes/helper.php:236
 #: includes/views/shortcode/conversations.php:110
 msgid "Pending"
 msgstr ""
 
-#: includes/helper.php:192
+#: includes/helper.php:238
 #: includes/views/shortcode/conversations.php:114
 msgid "Closed"
 msgstr ""
 
-#: includes/helper.php:195
+#: includes/helper.php:241
 msgid "Unknown"
 msgstr ""
 
-#: includes/helper.php:242
+#: includes/helper.php:288
 msgid "Previous"
 msgstr ""
 
-#: includes/helper.php:242
+#: includes/helper.php:288
 msgid "Next"
 msgstr ""
 
-#: includes/helper.php:506
+#: includes/helper.php:552
 msgid "Invalid nonce"
 msgstr ""
 
-#: includes/helper.php:510
+#: includes/helper.php:556
 #: src/Admin.php:596
 #: src/Admin.php:637
 #: src/Assistants/Assistant.php:28
@@ -292,7 +320,7 @@ msgid "Connected, with limits"
 msgstr ""
 
 #: includes/views/partials/overview.php:33
-#: resources/js/wp-scripts/admin-app/Integrations.js:74
+#: resources/js/wp-scripts/admin-app/Integrations.js:77
 msgid "Connected"
 msgstr ""
 
@@ -1064,28 +1092,28 @@ msgstr ""
 msgid "Live Chat"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:37
+#: resources/js/wp-scripts/admin-app/Integrations.js:36
 msgid "ThriveDesk could not start the connection. Make sure this plugin is running on a live site."
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:78
+#: resources/js/wp-scripts/admin-app/Integrations.js:81
 msgid "Not installed"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:85
-#: resources/js/wp-scripts/admin-app/Integrations.js:106
+#: resources/js/wp-scripts/admin-app/Integrations.js:88
+#: resources/js/wp-scripts/admin-app/Integrations.js:109
 msgid "Connect"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:91
+#: resources/js/wp-scripts/admin-app/Integrations.js:94
 msgid "Disconnect"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:103
+#: resources/js/wp-scripts/admin-app/Integrations.js:106
 msgid "Install and activate this plugin first"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:121
+#: resources/js/wp-scripts/admin-app/Integrations.js:123
 msgid "No integrations are available."
 msgstr ""
 

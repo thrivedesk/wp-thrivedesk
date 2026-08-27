@@ -23,7 +23,7 @@ class IntegrationsPayloadTest extends WP_UnitTestCase {
 	public function test_every_entry_has_the_shape_the_app_renders_from() {
 		foreach ( thrivedesk_integrations() as $integration ) {
 			$this->assertSame(
-				[ 'slug', 'name', 'category', 'image', 'installed', 'connected', 'external' ],
+				[ 'slug', 'name', 'category', 'description', 'image', 'installed', 'connected', 'external' ],
 				array_keys( $integration ),
 				'the React component destructures these by name'
 			);
@@ -65,6 +65,20 @@ class IntegrationsPayloadTest extends WP_UnitTestCase {
 			],
 			$external
 		);
+	}
+
+	/**
+	 * The card gives the description a line of its own, so an empty one leaves
+	 * a visible hole rather than degrading to a shorter card.
+	 */
+	public function test_every_entry_describes_itself() {
+		foreach ( thrivedesk_integrations() as $integration ) {
+			$this->assertNotSame(
+				'',
+				trim( (string) $integration['description'] ),
+				sprintf( '%s renders a card with an empty description', $integration['slug'] )
+			);
+		}
 	}
 
 	public function test_connected_reflects_stored_integration_state() {
