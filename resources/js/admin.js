@@ -871,6 +871,23 @@ jQuery(document).ready(($) => {
 
 	// Copy-to-clipboard buttons (the ThriveDesk IP list on the setup screen).
 	// Delegated from document so the buttons work wherever they are rendered.
+	/*
+	 * A plugin icon that does not load, removed so the lettermark underneath it
+	 * shows. Bound with a capturing listener rather than through jQuery: `error`
+	 * does not bubble, so a delegated handler never sees it.
+	 */
+	document.addEventListener(
+		'error',
+		(event) => {
+			const img = event.target;
+
+			if (img instanceof HTMLImageElement && img.classList.contains('td-plugin__icon')) {
+				img.remove();
+			}
+		},
+		true
+	);
+
 	$(document).on('click', '.td-copy', function (e) {
 		e.preventDefault();
 

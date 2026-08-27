@@ -74,6 +74,170 @@ if (!function_exists('thrivedesk_service_ips')) {
     }
 }
 
+if (!function_exists('thrivedesk_data')) {
+    /**
+     * Read one of the generated data tables under includes/data/.
+     *
+     * Guarded rather than required outright. These are generated files, and a
+     * release built from a bad manifest that dropped one should cost the Portal
+     * tab a card, not the whole admin screen.
+     *
+     * @since 2.6.0
+     * @access public
+     *
+     * @param string $name File name without the extension.
+     *
+     * @return array
+     */
+    function thrivedesk_data(string $name): array
+    {
+        static $loaded = [];
+
+        if (isset($loaded[$name])) {
+            return $loaded[$name];
+        }
+
+        $file = THRIVEDESK_DIR . '/includes/data/' . $name . '.php';
+        $data = is_readable($file) ? require $file : [];
+
+        $loaded[$name] = is_array($data) ? $data : [];
+
+        return $loaded[$name];
+    }
+}
+
+if (!function_exists('thrivedesk_form_plugins')) {
+    /**
+     * Every form plugin this site might already have, slug => name.
+     *
+     * Ordered by how many sites run them, which is what makes "the first match
+     * wins" a sensible rule rather than an arbitrary one.
+     *
+     * @since 2.6.0
+     * @access public
+     * @return array<string,string>
+     */
+    function thrivedesk_form_plugins(): array
+    {
+        /**
+         * The catalogue the Portal tab matches this site's plugins against.
+         *
+         * Filterable because the generated list cannot be complete: a form
+         * plugin that is premium-only, or newer than the last time the table
+         * was regenerated, is not on wordpress.org to be found. Adding a slug
+         * here is enough to have it recognised.
+         *
+         * @since 2.6.0
+         *
+         * @param array<string,string> $plugins Plugin directory name => display name.
+         */
+        return (array) apply_filters('thrivedesk_form_plugins', thrivedesk_data('form-plugins'));
+    }
+}
+
+if (!function_exists('thrivedesk_form_plugin_actions')) {
+    /**
+     * Where each form plugin's "create a new form" screen lives.
+     *
+     * @since 2.6.0
+     * @access public
+     * @return array<string,string> Plugin directory name => URL for admin_url().
+     */
+    function thrivedesk_form_plugin_actions(): array
+    {
+        /**
+         * Builder URLs, keyed by plugin directory name.
+         *
+         * A plugin missing from this table still gets recognised and named -
+         * it just gets a sentence instead of a button, because a button that
+         * lands somewhere approximate is worse than none.
+         *
+         * @since 2.6.0
+         *
+         * @param array<string,string> $actions Plugin directory name => relative admin URL.
+         */
+        return (array) apply_filters('thrivedesk_form_plugin_actions', thrivedesk_data('form-plugin-actions'));
+    }
+}
+
+if (!function_exists('thrivedesk_detected_form_plugin')) {
+    /**
+     * The form plugin this site would build its ticket page with.
+     *
+     * The Portal tab tells people to make a page with a form plugin and point
+     * it at a ThriveDesk inbox. Most of them already have one - so rather than
+     * describe the step in the abstract, this finds it and the tab offers to
+     * open it.
+     *
+     * Walked in catalogue order, not in the order WordPress happens to list
+     * plugins on disk: the catalogue is sorted by install count, so on a site
+     * with two form plugins the answer is the one more people would mean. An
+     * active plugin wins outright over any inactive one, however popular -
+     * an inactive plugin cannot build anything.
+     *
+     * @since 2.6.0
+     * @access public
+     *
+     * @return array Empty when nothing matched. Otherwise slug, file, name,
+     *               active, icon and new_form_url (which may be '').
+     */
+    function thrivedesk_detected_form_plugin(): array
+    {
+        $catalogue = thrivedesk_form_plugins();
+
+        if (!$catalogue) {
+            return [];
+        }
+
+        if (!function_exists('get_plugins')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        // Keyed by directory name, which is what a wordpress.org slug is.
+        // Single-file plugins have no directory and cannot be matched.
+        $installed = [];
+
+        foreach (array_keys(get_plugins()) as $file) {
+            $slug = dirname($file);
+
+            if ('.' !== $slug && !isset($installed[$slug])) {
+                $installed[$slug] = $file;
+            }
+        }
+
+        $actions  = thrivedesk_form_plugin_actions();
+        $inactive = [];
+
+        foreach ($catalogue as $slug => $name) {
+            if (!isset($installed[$slug])) {
+                continue;
+            }
+
+            $found = [
+                'slug'         => $slug,
+                'file'         => $installed[$slug],
+                'name'         => $name,
+                'active'       => is_plugin_active($installed[$slug]),
+                // Served by wordpress.org, so nothing is bundled and nothing is
+                // fetched server-side. A slug with no icon there simply fails to
+                // load and the lettermark behind it stays - see .td-plugin__logo.
+                'icon'         => 'https://ps.w.org/' . $slug . '/assets/icon-128x128.png',
+                'new_form_url' => (string) ($actions[$slug] ?? ''),
+            ];
+
+            if ($found['active']) {
+                return $found;
+            }
+
+            if (!$inactive) {
+                $inactive = $found;
+            }
+        }
+
+        return $inactive;
+    }
+}
+
 if (!function_exists('thrivedesk_inbox_address')) {
     /**
      * The address mail reaches a ThriveDesk inbox on.

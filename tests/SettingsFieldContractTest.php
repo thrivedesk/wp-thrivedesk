@@ -141,6 +141,50 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		$this->assertSame( 1, substr_count( $html, 'id="td-copy-status"' ) );
 	}
 
+	/**
+	 * The step above says "use your existing form plugin". When there is one,
+	 * the tab names it and offers to open it rather than leaving that as an
+	 * instruction. See thrivedesk_detected_form_plugin().
+	 */
+	public function test_a_detected_form_plugin_is_offered_on_the_portal_tab() {
+		add_filter( 'thrivedesk_form_plugins', static fn() => [ 'contact-form-7' => 'Contact Form 7' ] );
+		add_filter( 'thrivedesk_form_plugin_actions', static fn() => [ 'contact-form-7' => 'admin.php?page=wpcf7-new' ] );
+
+		wp_cache_set( 'plugins', [ '' => [ 'contact-form-7/wp-contact-form-7.php' => [ 'Name' => 'Contact Form 7' ] ] ], 'plugins' );
+		$restore = (array) get_option( 'active_plugins', [] );
+		update_option( 'active_plugins', [ 'contact-form-7/wp-contact-form-7.php' ] );
+
+		$html = $this->render();
+
+		wp_cache_delete( 'plugins', 'plugins' );
+		update_option( 'active_plugins', $restore );
+		remove_all_filters( 'thrivedesk_form_plugins' );
+		remove_all_filters( 'thrivedesk_form_plugin_actions' );
+
+		$this->assertStringContainsString( 'Form plugin found', $html );
+		$this->assertStringContainsString( 'Contact Form 7', $html );
+		$this->assertStringContainsString( 'https://ps.w.org/contact-form-7/assets/icon-128x128.png', $html );
+		$this->assertStringContainsString( admin_url( 'admin.php?page=wpcf7-new' ), $html );
+
+		// The letter behind the icon, for when wordpress.org cannot be reached.
+		$this->assertStringContainsString( 'data-letter="C"', $html );
+	}
+
+	public function test_a_site_with_no_form_plugin_is_not_told_about_one() {
+		add_filter( 'thrivedesk_form_plugins', static fn() => [ 'contact-form-7' => 'Contact Form 7' ] );
+		wp_cache_set( 'plugins', [ '' => [ 'akismet/akismet.php' => [ 'Name' => 'Akismet' ] ] ], 'plugins' );
+
+		$html = $this->render();
+
+		wp_cache_delete( 'plugins', 'plugins' );
+		remove_all_filters( 'thrivedesk_form_plugins' );
+
+		$this->assertStringNotContainsString( 'Form plugin found', $html );
+
+		// And the tab is otherwise intact.
+		$this->assertStringContainsString( 'Ticket creation form', $html );
+	}
+
 	public function test_the_hidden_inbox_select_survives() {
 		$html = $this->render();
 
