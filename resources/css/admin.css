@@ -248,6 +248,13 @@
 		.td-split.is-open {
 			max-width: 54rem;
 		}
+		/* In a grid column rather than alone on a screen: the column is the
+		   width constraint, and a card capped at 35rem inside a wider one
+		   leaves a gap that reads as a layout fault. */
+		.td-split.is-inline,
+		.td-split.is-inline.is-open {
+			max-width: none;
+		}
 		@media (prefers-reduced-motion: reduce) {
 			.td-split {
 				transition: none;

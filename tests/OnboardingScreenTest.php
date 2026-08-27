@@ -124,6 +124,34 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The Assistant card is rendered from one partial in two branches, so the
+	 * thing to guard is that exactly one branch runs.
+	 */
+	public function test_what_the_product_is_sits_beside_the_ask() {
+		$html = $this->render_screen();
+
+		$this->assertSame( 1, substr_count( $html, 'What is Assistant?' ) );
+		$this->assertLessThan(
+			strpos( $html, 'What is Assistant?' ),
+			strpos( $html, 'id="td-setup-split"' ),
+			'the connect card leads, and what it buys you sits to its right'
+		);
+	}
+
+	public function test_the_assistant_card_stays_in_the_tips_row_once_connected() {
+		$this->connect();
+
+		$html = $this->render_screen();
+
+		$this->assertSame( 1, substr_count( $html, 'What is Assistant?' ) );
+		$this->assertLessThan(
+			strpos( $html, 'What is Assistant?' ),
+			strpos( $html, 'Using Cloudflare?' ),
+			'connected, it is the second card of the bottom row again'
+		);
+	}
+
+	/**
 	 * There is nothing to detail until something is connected, and the card
 	 * carries a second field with the same id as the connect card's.
 	 */

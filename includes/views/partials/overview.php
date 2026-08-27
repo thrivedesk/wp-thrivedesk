@@ -34,14 +34,18 @@ if ( ! $td_summary['connected'] ) {
 	<?php if ( ! $td_connected ) : ?>
 		<?php
 		/*
-		 * The first thing on the page until there is a key, because nothing
-		 * below it does anything without one. Centred rather than stretched:
-		 * this is the same card as the setup screen, and it widens on its own
-		 * when the reference rail is opened.
+		 * The first row until there is a key, because nothing below it does
+		 * anything without one - and paired with what the product is, because
+		 * "why would I sign up" is the question being asked at this point and
+		 * the answer was three rows down.
+		 *
+		 * is-inline lifts the width cap the setup screen needs: there the card
+		 * is alone on the page and centred, here it has a column to fill.
 		 */
 		?>
-		<div class="flex justify-center">
-			<?php thrivedesk_view( 'partials/connect-card' ); ?>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+			<?php thrivedesk_view( 'partials/connect-card', [ 'td_connect_class' => 'is-inline' ] ); ?>
+			<?php thrivedesk_view( 'partials/card-assistant' ); ?>
 		</div>
 	<?php endif; ?>
 
@@ -203,7 +207,10 @@ if ( ! $td_summary['connected'] ) {
 	<?php endif; ?>
 
     <?php // Image left, content right - the same shape as the Portal card above. ?>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+    <?php // One column while the Assistant card is up in the first row; a lone
+          // half-width card with a hole beside it reads as something failing to
+          // load. ?>
+    <div class="grid grid-cols-1 <?php echo $td_connected ? 'md:grid-cols-2' : ''; ?> gap-6 items-start">
         <div class="td-card bg-orange-50 border border-orange-400">
             <div class="flex items-start gap-4">
                 <img class="w-24 shrink-0 mt-1" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/cloudflare-logo.svg' ); ?>" alt="Cloudflare">
@@ -218,18 +225,8 @@ if ( ! $td_summary['connected'] ) {
             </div>
         </div>
 
-        <div class="td-card">
-            <div class="flex items-start gap-4">
-                <img class="w-24 h-20 shrink-0 rounded object-cover mt-1" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/livechat-hero.jpg' ); ?>" alt="">
-                <div>
-                    <h3 class="text-base font-semibold m-0!"><?php esc_html_e( 'What is Assistant?', 'thrivedesk' ); ?></h3>
-                    <p class="mt-2! mb-0! text-gray-500"><?php esc_html_e( 'Live chat, knowledge base and a contact form in one widget, shown on the pages you choose.', 'thrivedesk' ); ?></p>
-                    <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/live-chat/" target="_blank">
-                        <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
-                        <?php thrivedesk_view( 'icons/external' ); ?>
-                    </a>
-                </div>
-            </div>
-        </div>
+        <?php if ( $td_connected ) : ?>
+            <?php thrivedesk_view( 'partials/card-assistant' ); ?>
+        <?php endif; ?>
     </div>
 </div>

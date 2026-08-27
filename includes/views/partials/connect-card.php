@@ -13,9 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * `is-open` on the wrapper is what both widens the card and opens the right
  * rail - see the .td-split rules and the .td-aside-toggle handler.
+ *
+ * @var string $td_connect_class Extra classes for the wrapper. `is-inline`
+ *                               drops the width cap for a card in a column.
  */
 ?>
-<div id="td-setup-split" class="td-card td-split p-0! overflow-hidden">
+<div id="td-setup-split" class="td-card td-split p-0! overflow-hidden <?php echo esc_attr( isset( $td_connect_class ) ? $td_connect_class : '' ); ?>">
 
       <div class="p-8 space-y-5">
 
