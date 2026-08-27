@@ -87,6 +87,10 @@ if (!function_exists('thrivedesk_integrations')) {
      * `external` URL is handed off to the ThriveDesk app instead of being
      * connected from here - SureCart and Freemius authorize on their side.
      *
+     * `description` is one sentence on what the integration puts in front of an
+     * agent, not on what the partner plugin does - the reader already runs the
+     * store and is deciding whether this is worth connecting.
+     *
      * @since 2.6.0
      * @access public
      * @return array<int,array<string,mixed>>
@@ -94,11 +98,46 @@ if (!function_exists('thrivedesk_integrations')) {
     function thrivedesk_integrations(): array
     {
         $plugins = [
-            ['slug' => 'woocommerce', 'name' => __('WooCommerce', 'thrivedesk'),           'category' => 'ecommerce', 'image' => 'woocommerce.png', 'class' => \ThriveDesk\Plugins\WooCommerce::class],
-            ['slug' => 'edd',         'name' => __('Easy Digital Downloads', 'thrivedesk'), 'category' => 'ecommerce', 'image' => 'edd.png',         'class' => \ThriveDesk\Plugins\EDD::class],
-            ['slug' => 'fluentcrm',   'name' => __('FluentCRM', 'thrivedesk'),              'category' => 'crm',       'image' => 'fluentcrm.png',   'class' => \ThriveDesk\Plugins\FluentCRM::class],
-            ['slug' => 'wppostsync',  'name' => __('WordPress Post Sync', 'thrivedesk'),    'category' => 'core',      'image' => 'wppostsync.png',  'class' => \ThriveDesk\Plugins\WPPostSync::class],
-            ['slug' => 'autonami',    'name' => __('FunnelKit', 'thrivedesk'),              'category' => 'crm',       'image' => 'autonami.png',    'class' => \ThriveDesk\Plugins\Autonami::class],
+            [
+                'slug'        => 'woocommerce',
+                'name'        => __('WooCommerce', 'thrivedesk'),
+                'category'    => 'ecommerce',
+                'description' => __('Show orders, subscriptions and shipping details beside every conversation.', 'thrivedesk'),
+                'image'       => 'woo.svg',
+                'class'       => \ThriveDesk\Plugins\WooCommerce::class,
+            ],
+            [
+                'slug'        => 'edd',
+                'name'        => __('Easy Digital Downloads', 'thrivedesk'),
+                'category'    => 'ecommerce',
+                'description' => __('Pull up a customer’s purchases, licenses and order history while you reply.', 'thrivedesk'),
+                'image'       => 'edd.png',
+                'class'       => \ThriveDesk\Plugins\EDD::class,
+            ],
+            [
+                'slug'        => 'fluentcrm',
+                'name'        => __('FluentCRM', 'thrivedesk'),
+                'category'    => 'crm',
+                'description' => __('See the contact’s lists, tags and lifetime value without leaving the inbox.', 'thrivedesk'),
+                'image'       => 'fluentcrm.png',
+                'class'       => \ThriveDesk\Plugins\FluentCRM::class,
+            ],
+            [
+                'slug'        => 'wppostsync',
+                'name'        => __('WordPress Post Sync', 'thrivedesk'),
+                'category'    => 'core',
+                'description' => __('Search your published posts and drop a link to one straight into a reply.', 'thrivedesk'),
+                'image'       => 'wppostsync.png',
+                'class'       => \ThriveDesk\Plugins\WPPostSync::class,
+            ],
+            [
+                'slug'        => 'autonami',
+                'name'        => __('FunnelKit', 'thrivedesk'),
+                'category'    => 'crm',
+                'description' => __('Bring FunnelKit Automations contacts, lists and tags into the conversation sidebar.', 'thrivedesk'),
+                'image'       => 'autonami.png',
+                'class'       => \ThriveDesk\Plugins\Autonami::class,
+            ],
         ];
 
         $integrations = [];
@@ -107,27 +146,34 @@ if (!function_exists('thrivedesk_integrations')) {
             $instance = call_user_func([$plugin['class'], 'instance']);
 
             $integrations[] = [
-                'slug'      => $plugin['slug'],
-                'name'      => $plugin['name'],
-                'category'  => $plugin['category'],
-                'image'     => THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name($plugin['image']),
-                'installed' => (bool) $instance->is_plugin_active(),
-                'connected' => (bool) $instance->get_plugin_data('connected'),
-                'external'  => null,
+                'slug'        => $plugin['slug'],
+                'name'        => $plugin['name'],
+                'category'    => $plugin['category'],
+                'description' => $plugin['description'],
+                'image'       => THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name($plugin['image']),
+                'installed'   => (bool) $instance->is_plugin_active(),
+                'connected'   => (bool) $instance->get_plugin_data('connected'),
+                'external'    => null,
             ];
         }
 
-        foreach ([['surecart', 'SureCart'], ['freemius', 'Freemius']] as $partner) {
-            list($slug, $name) = $partner;
+        $partners = [
+            ['surecart', 'SureCart', __('View SureCart orders, subscriptions and refunds against the customer you are helping.', 'thrivedesk')],
+            ['freemius', 'Freemius', __('Look up Freemius licenses, payments and plan changes right from a ticket.', 'thrivedesk')],
+        ];
+
+        foreach ($partners as $partner) {
+            list($slug, $name, $description) = $partner;
 
             $integrations[] = [
-                'slug'      => $slug,
-                'name'      => $name,
-                'category'  => 'ecommerce',
-                'image'     => THRIVEDESK_PLUGIN_ASSETS . '/images/' . $slug . '.png',
-                'installed' => true,
-                'connected' => false,
-                'external'  => THRIVEDESK_APP_URL . '/apps/' . $slug,
+                'slug'        => $slug,
+                'name'        => $name,
+                'category'    => 'ecommerce',
+                'description' => $description,
+                'image'       => THRIVEDESK_PLUGIN_ASSETS . '/images/' . $slug . '.png',
+                'installed'   => true,
+                'connected'   => false,
+                'external'    => THRIVEDESK_APP_URL . '/apps/' . $slug,
             ];
         }
 
