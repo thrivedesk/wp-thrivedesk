@@ -440,14 +440,17 @@
 		.td-assistant-preview__empty {
 			@apply absolute inset-0 m-0! flex items-center justify-center px-6 text-center text-gray-400;
 		}
-		/* The bar spans the screen; its contents do not. The inner padding
-		   matches the p-10 on the panel wrapper below, so the logo starts on
-		   the same line as the tabs rather than 8px inside them. */
+		/* The bar spans the screen; its contents line up with the tabs.
+		   .td-tabs is max-width 1200px centred inside a p-10 wrapper, so the
+		   same content box is 1200px of content plus that 40px of padding -
+		   1280px, centred - which lands identically at every width, including
+		   the narrow ones where neither is capped at all. */
 		.td-toolbar {
 			@apply bg-white border-b border-slate-200;
 		}
 		.td-toolbar__inner {
-			@apply flex items-center flex-wrap gap-x-3 gap-y-2 py-4 px-10;
+			@apply flex items-center flex-wrap gap-x-3 gap-y-2 mx-auto py-4 px-10;
+			max-width: 1280px;
 		}
 		/* Colours forced: WordPress styles admin links from an ID selector
 		   (#3858E9) that outranks any plain class here, and these are chrome
