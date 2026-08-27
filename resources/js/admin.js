@@ -75,6 +75,33 @@ function tdCopyToClipboard(text) {
  * Set on the setup screen, read once on the page it redirects to.
  */
 const TD_CONNECTED_FLAG = 'td_setup_just_completed';
+const TD_DISCONNECTED_FLAG = 'td_setup_just_disconnected';
+
+/**
+ * Read a one-shot flag left for the next page load, and clear it.
+ *
+ * Cleared before the caller acts on it, so a refresh does not replay whatever
+ * it announces. Storage can be unavailable - private mode, or a browser set to
+ * block it - and a missing celebration is not worth an exception.
+ */
+function tdTakeFlag(name) {
+	try {
+		const found = window.sessionStorage.getItem(name) === '1';
+		window.sessionStorage.removeItem(name);
+
+		return found;
+	} catch (e) {
+		return false;
+	}
+}
+
+function tdSetFlag(name) {
+	try {
+		window.sessionStorage.setItem(name, '1');
+	} catch (e) {
+		// Nothing to do about it, and nothing that matters is lost.
+	}
+}
 
 /**
  * A short confetti burst over the viewport.
@@ -605,19 +632,26 @@ jQuery(document).ready(($) => {
 		}
 	}
 
-	// Arriving from a completed setup. The flag is cleared before anything is
-	// shown, so a refresh does not replay the celebration.
+	// Arriving from a disconnect. Says what happened, because the screen
+	// changing back to "add your API key" reads the same as never having
+	// connected at all.
+	if (tdTakeFlag(TD_DISCONNECTED_FLAG)) {
+		Swal.fire({
+			toast: true,
+			position: 'top-end',
+			icon: 'success',
+			title: __('Disconnected from ThriveDesk', 'thrivedesk'),
+			text: __('Your settings for this site were kept. Add a key to connect again.', 'thrivedesk'),
+			showConfirmButton: false,
+			timer: 6000,
+			timerProgressBar: true,
+			customClass: { container: 'td-toast' },
+		});
+	}
+
+	// Arriving from a completed setup on the standalone screen.
 	(() => {
-		let justConnected = false;
-
-		try {
-			justConnected = window.sessionStorage.getItem(TD_CONNECTED_FLAG) === '1';
-			window.sessionStorage.removeItem(TD_CONNECTED_FLAG);
-		} catch (e) {
-			justConnected = false;
-		}
-
-		if (!justConnected) {
+		if (!tdTakeFlag(TD_CONNECTED_FLAG)) {
 			return;
 		}
 
@@ -678,6 +712,61 @@ jQuery(document).ready(($) => {
 		const url = new URL(window.location.href);
 		url.searchParams.set('td_tab', name);
 		window.location.href = url.toString();
+	});
+
+	/*
+	 * Disconnecting cannot be undone from this screen - the key has to be typed
+	 * back in - and one of its effects is invisible from here, so the
+	 * consequences are written out before it happens rather than reported
+	 * after. The revoked integrations are the part nobody expects.
+	 */
+	$(document).on('click', '#td-disconnect-account', async function (e) {
+		e.preventDefault();
+
+		const answer = await Swal.fire({
+			icon: 'warning',
+			title: __('Disconnect this site?', 'thrivedesk'),
+			html:
+				'<ul style="text-align:left;margin:0;padding-left:1.1em;line-height:1.7">' +
+				'<li>' + __('This site stops sending conversations to ThriveDesk.', 'thrivedesk') + '</li>' +
+				'<li>' + __('The chat widget stops appearing on your site.', 'thrivedesk') + '</li>' +
+				'<li>' + __('Connected integrations are revoked and have to be reconnected.', 'thrivedesk') + '</li>' +
+				'<li>' + __('Nothing is deleted in your ThriveDesk account.', 'thrivedesk') + '</li>' +
+				'</ul>',
+			showCancelButton: true,
+			// The safe answer is the one under the cursor and the one Enter
+			// takes, because this dialog is destructive by default.
+			focusCancel: true,
+			reverseButtons: true,
+			confirmButtonText: __('Disconnect', 'thrivedesk'),
+			cancelButtonText: __('Cancel', 'thrivedesk'),
+			confirmButtonColor: '#e11d48',
+		});
+
+		if (!answer.isConfirmed) {
+			return;
+		}
+
+		const $btn = $(this);
+		$btn.prop('disabled', true);
+
+		try {
+			await jQuery.post(thrivedesk.ajax_url, {
+				action: 'thrivedesk_disconnect_account',
+				data: { nonce: (window.thrivedeskAdmin || {}).pluginActionNonce || '' },
+			});
+
+			tdSetFlag(TD_DISCONNECTED_FLAG);
+			window.location.reload();
+		} catch (error) {
+			$btn.prop('disabled', false);
+
+			Swal.fire({
+				icon: 'error',
+				title: __('Could not disconnect', 'thrivedesk'),
+				text: __('Something went wrong. Reload the page and try again.', 'thrivedesk'),
+			});
+		}
 	});
 
 	document.querySelectorAll( '[data-td-multiselect]' ).forEach( tdEnhanceMultiselect );
@@ -974,12 +1063,7 @@ jQuery(document).ready(($) => {
 							// celebrate on. Hand the flag to the page it is
 							// about to open: a burst started here is cut off by
 							// the navigation a moment later.
-							try {
-								window.sessionStorage.setItem(TD_CONNECTED_FLAG, '1');
-							} catch (e) {
-								// Private mode or storage disabled. Only the
-								// celebration is lost; the redirect still matters.
-							}
+							tdSetFlag(TD_CONNECTED_FLAG);
 
 							window.location.href = tdSettingsUrl();
 							return;

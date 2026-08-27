@@ -83,6 +83,8 @@ final class Admin
 
         add_action('wp_ajax_thrivedesk_workspace_card', [$this, 'ajax_workspace_card']);
 
+        add_action('wp_ajax_thrivedesk_disconnect_account', [$this, 'ajax_disconnect_account']);
+
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
         // menu icon style 
@@ -663,6 +665,90 @@ final class Admin
         thrivedesk_view('partials/workspace-card');
 
         wp_die();
+    }
+
+    /**
+     * Forget the ThriveDesk account this site is connected to.
+     *
+     * @return void
+     */
+    public function ajax_disconnect_account(): void
+    {
+        if (
+            ! current_user_can('manage_options')
+            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
+        ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
+        }
+
+        self::forget_account();
+
+        wp_send_json_success(['message' => __('Disconnected from ThriveDesk.', 'thrivedesk')]);
+    }
+
+    /**
+     * Undo everything connecting did, and nothing else.
+     *
+     * Two halves, and the second is the one that is easy to miss. Clearing the
+     * API key stops *this site* from calling ThriveDesk - but each connected
+     * integration holds its own `api_token`, issued to the org id in
+     * td_helpdesk_system_info, and Api::api_listener() honours that token on
+     * its own without ever consulting the helpdesk key. A disconnect that left
+     * them in place would still be answering the old workspace's requests for
+     * orders, subscriptions, contacts and posts. So they are revoked here, and
+     * the confirmation says so before anyone agrees to it.
+     *
+     * What survives is what describes this site rather than the workspace:
+     * which page hosts the portal, which post types sync, which routes hide
+     * the widget. All of it is still true after reconnecting, and none of it
+     * is worth making someone set up twice.
+     *
+     * @return void
+     */
+    public static function forget_account(): void
+    {
+        $settings = get_option('td_helpdesk_settings');
+        $settings = is_array($settings) ? $settings : [];
+        $api_key  = (string) ($settings['td_helpdesk_api_key'] ?? '');
+
+        foreach (['td_helpdesk_api_key', 'td_helpdesk_assistant_id', 'td_helpdesk_inbox_id', 'td_knowledgebase_slug'] as $key) {
+            unset($settings[$key]);
+        }
+
+        update_option('td_helpdesk_settings', $settings);
+
+        self::set_api_verification_status(false);
+        delete_option('td_helpdesk_system_info');
+
+        $integrations = get_option('thrivedesk_options', []);
+
+        if (is_array($integrations)) {
+            foreach ($integrations as $slug => $integration) {
+                if (! is_array($integration)) {
+                    continue;
+                }
+
+                $integrations[$slug] = ['api_token' => '', 'connected' => false];
+            }
+
+            update_option('thrivedesk_options', $integrations);
+        }
+
+        // Both are stale the moment the key is gone, and they are stored
+        // differently: the summary is an option, so the transient sweep below
+        // does not reach it.
+        \ThriveDesk\Services\WorkspaceService::flush();
+
+        // By name first. The sweep below reads the options table, and under an
+        // external object cache transients never go there - these two are keyed
+        // by the departing API key, so this is the only moment they can be
+        // named at all.
+        if ('' !== $api_key) {
+            delete_transient('thrivedesk_assistants_' . md5($api_key));
+            delete_transient('thrivedesk_inboxes_' . md5($api_key));
+        }
+
+        remove_thrivedesk_all_cache();
     }
 
     public function ajax_disconnect_plugin(): void

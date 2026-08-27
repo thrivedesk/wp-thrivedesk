@@ -135,10 +135,37 @@ if ( ! $td_summary['connected'] ) {
 	                <div class="text-base font-bold"><?php esc_html_e( 'Connection details', 'thrivedesk' ); ?></div>
 	                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e( 'The API key that links this site to ThriveDesk.', 'thrivedesk' ); ?></p>
 	            </div>
-	            <span class="inline-flex items-center gap-2 text-sm font-medium <?php echo esc_attr( $td_status['text'] ); ?>">
-	                <span class="w-2 h-2 rounded-full <?php echo esc_attr( $td_status['dot'] ); ?>" aria-hidden="true"></span>
-	                <?php echo esc_html( $td_status['label'] ); ?>
-	            </span>
+	            <div class="flex items-center gap-3">
+	                <span class="inline-flex items-center gap-2 text-sm font-medium <?php echo esc_attr( $td_status['text'] ); ?>">
+	                    <span class="w-2 h-2 rounded-full <?php echo esc_attr( $td_status['dot'] ); ?>" aria-hidden="true"></span>
+	                    <?php echo esc_html( $td_status['label'] ); ?>
+	                </span>
+
+	                <?php
+	                /*
+	                 * Beside the status it undoes, and an icon rather than a
+	                 * word because it sits where a word would compete with the
+	                 * status itself. What it costs is spelled out in the
+	                 * confirmation, which is where anyone is going to read it -
+	                 * see the #td-disconnect-account handler in admin.js.
+	                 *
+	                 * The label is on the button, not only in the title: a title
+	                 * attribute is a hover affordance and reaches neither a
+	                 * keyboard nor a screen reader reliably.
+	                 */
+	                ?>
+	                <button
+	                    type="button"
+	                    class="td-disconnect"
+	                    id="td-disconnect-account"
+	                    title="<?php esc_attr_e( 'Disconnect this site from ThriveDesk', 'thrivedesk' ); ?>"
+	                    aria-label="<?php esc_attr_e( 'Disconnect this site from ThriveDesk', 'thrivedesk' ); ?>"
+	                >
+	                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+	                        <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+	                    </svg>
+	                </button>
+	            </div>
 	        </div>
 
 	        <div class="pt-4 border-t border-slate-200">
@@ -170,6 +197,7 @@ if ( ! $td_summary['connected'] ) {
 	                </div>
 	            </div>
 	        </div>
+
 	    </div>
 	<?php endif; ?>
 

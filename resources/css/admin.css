@@ -43,6 +43,21 @@
 		.btn-dark {
 			@apply bg-slate-900 hover:bg-slate-800 text-white hover:text-white;
 		}
+		/* Sits next to the connection status, so it is sized against a line of
+		   text rather than against the buttons elsewhere on the page. Red at
+		   rest because it is the only destructive control on this screen and
+		   the icon alone does not say so. */
+		.td-disconnect {
+			@apply inline-flex items-center justify-center w-6 h-6 shrink-0 p-0 rounded-full;
+			@apply border-0 bg-transparent text-rose-500 cursor-pointer transition;
+			@apply hover:bg-rose-50 hover:text-rose-700;
+		}
+		.td-disconnect:focus-visible {
+			@apply outline-2 outline-offset-2 outline-rose-500;
+		}
+		.td-disconnect[disabled] {
+			@apply opacity-50 cursor-not-allowed;
+		}
 		/* A link sitting inside a sentence, reading as part of it rather than as
 		   a control. Both properties need forcing: WordPress sets admin link
 		   colour and size from ID selectors that outrank utilities. */

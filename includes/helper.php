@@ -451,11 +451,36 @@ if (!function_exists('remove_thrivedesk_cache_by_key')) {
 }
 
 if (!function_exists('remove_thrivedesk_all_cache')) {
+	/**
+	 * Drop every cached ThriveDesk response.
+	 *
+	 * Names are read out of the options table, then handed to delete_transient()
+	 * one at a time. Deleting the rows directly - which is what this used to do -
+	 * leaves the object cache still holding every value it had already read, so
+	 * the "cleared" transients keep being served: for the rest of the request
+	 * under WordPress's own in-memory cache, and indefinitely under a persistent
+	 * one. The extra queries are the price of the deletion actually taking.
+	 *
+	 * The timeout rows do not need selecting; deleting a transient removes its
+	 * own. Nor do they match the prefix - `_transient_timeout_thrivedesk_` does
+	 * not begin with `_transient_thrivedesk_`.
+	 *
+	 * Under an external object cache transients never reach the options table at
+	 * all, so this finds nothing. Callers that know which keys they are
+	 * invalidating should delete those by name as well.
+	 */
 	function remove_thrivedesk_all_cache() {
 		global $wpdb;
-		$wpdb->query($wpdb->prepare(
-			"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
-			'_transient_thrivedesk_%', '_transient_timeout_thrivedesk_%'));
+
+		$prefix = '_transient_';
+		$names  = $wpdb->get_col($wpdb->prepare(
+			"SELECT option_name FROM $wpdb->options WHERE option_name LIKE %s",
+			$wpdb->esc_like($prefix . 'thrivedesk_') . '%'
+		));
+
+		foreach ($names as $name) {
+			delete_transient(substr($name, strlen($prefix)));
+		}
 	}
 }
 
