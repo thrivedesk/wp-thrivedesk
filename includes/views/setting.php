@@ -31,9 +31,6 @@ if ( $api_key && ! get_option('td_helpdesk_system_info') ) {
             <a class="td-toolbar__link" href="https://help.thrivedesk.com/en" target="_blank"><?php esc_html_e( 'Help Center', 'thrivedesk' ); ?></a>
             <a class="td-toolbar__link" href="https://status.thrivedesk.com/" target="_blank"><?php esc_html_e( 'System Status', 'thrivedesk' ); ?></a>
 
-            <?php // A button, not an <a href="#"> with an inline onclick: this opens a widget rather than going anywhere, and the handler lives in admin.js so it can check the widget actually loaded. ?>
-            <button type="button" class="td-toolbar__link" data-td-assistant="contact"><?php esc_html_e( 'Support', 'thrivedesk' ); ?></button>
-
             <a class="td-toolbar__cta" href="https://www.thrivedesk.com/wordpress/" target="_blank">
                 <span><?php esc_html_e( 'Visit ThriveDesk', 'thrivedesk' ); ?></span>
                 <?php thrivedesk_view( 'icons/external' ); ?>
