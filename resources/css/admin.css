@@ -161,44 +161,52 @@
 		.td-promo {
 			@apply relative overflow-hidden rounded-md border p-6;
 		}
+		/* #873EFF is the purple from WooCommerce's brand guidelines, and the
+		   same one inside the wordmark. */
 		.td-promo--woo {
-			border-color: color-mix(in srgb, #7f54b3 25%, transparent);
-			background-image: linear-gradient(135deg, color-mix(in srgb, #7f54b3 12%, #fff) 0%, #fff 62%);
+			border-color: color-mix(in srgb, #873EFF 25%, transparent);
+			background-image: linear-gradient(135deg, color-mix(in srgb, #873EFF 12%, #fff) 0%, #fff 62%);
 		}
 		/* Bleeds off the right edge; the container clips it. Behind the words
 		   rather than beside them, so the copy keeps the full width on a narrow
-		   screen instead of being squeezed into a column. */
+		   screen instead of being squeezed into a column. A wordmark, so its
+		   height follows its width rather than being squared off. */
 		.td-promo__art {
 			@apply absolute pointer-events-none select-none;
-			right: -3.5rem;
+			right: -2.5rem;
 			top: 50%;
-			width: 20rem;
-			height: 20rem;
-			transform: translateY(-50%) rotate(-8deg);
-			opacity: 0.10;
+			width: 22rem;
+			height: auto;
+			transform: translateY(-50%);
+			opacity: 0.12;
 		}
+		/* Wide enough for a feature to fit on one line; the prose inside is
+		   capped separately, because a paragraph this wide is hard to read
+		   even when a list of four short lines is not. */
 		.td-promo__body {
-			@apply relative z-10 max-w-2xl;
+			@apply relative z-10 max-w-4xl;
 		}
 		.td-promo__eyebrow {
 			@apply block text-[11px] font-semibold uppercase tracking-wider;
-			color: #7f54b3;
+			color: #873EFF;
 		}
 		.td-promo__title {
-			@apply mt-1! mb-0! text-lg font-bold text-slate-900;
+			@apply mt-1! mb-0! max-w-2xl text-lg font-bold text-slate-900;
 		}
 		.td-promo__lede {
-			@apply mt-2! mb-0! text-gray-600;
+			@apply mt-2! mb-0! max-w-2xl text-gray-600;
 		}
 		.td-promo__features {
 			@apply mt-4! mb-0! p-0! list-none grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2;
 		}
+		/* One line each. These are short claims, and a claim that wraps reads
+		   as two half-claims. */
 		.td-promo__features li {
-			@apply flex items-start gap-2 text-[13px] text-slate-700;
+			@apply flex items-center gap-2 text-[13px] text-slate-700;
 		}
 		.td-promo__tick {
-			@apply inline-flex shrink-0 mt-0.5;
-			color: #7f54b3;
+			@apply inline-flex shrink-0;
+			color: #873EFF;
 		}
 		.td-promo__cta {
 			@apply mt-5;

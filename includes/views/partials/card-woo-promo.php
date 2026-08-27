@@ -29,12 +29,14 @@ $td_woo_features = [
 
 	<?php
 	/*
+	 * The wordmark from WooCommerce's own brand guidelines, in their purple.
+	 *
 	 * Decoration, so it is aria-hidden and carries no alt text - the heading
 	 * below already says which product this is about. It bleeds off the right
 	 * edge on purpose; the container clips it.
 	 */
 	?>
-	<img class="td-promo__art" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/woo.svg' ); ?>" alt="" aria-hidden="true" width="360" height="360">
+	<img class="td-promo__art" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/woo-logo.svg' ); ?>" alt="" aria-hidden="true" width="475" height="130">
 
 	<div class="td-promo__body">
 		<span class="td-promo__eyebrow"><?php esc_html_e( 'WooCommerce integration', 'thrivedesk' ); ?></span>

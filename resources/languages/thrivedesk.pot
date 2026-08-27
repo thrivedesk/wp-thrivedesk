@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T16:37:56+00:00\n"
+"POT-Creation-Date: 2026-08-27T16:40:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -248,19 +248,19 @@ msgstr ""
 msgid "Subscriptions and order history beside every conversation"
 msgstr ""
 
-#: includes/views/partials/card-woo-promo.php:40
+#: includes/views/partials/card-woo-promo.php:42
 msgid "WooCommerce integration"
 msgstr ""
 
-#: includes/views/partials/card-woo-promo.php:42
+#: includes/views/partials/card-woo-promo.php:44
 msgid "Run your store from the conversation"
 msgstr ""
 
-#: includes/views/partials/card-woo-promo.php:45
+#: includes/views/partials/card-woo-promo.php:47
 msgid "Connect your store and every conversation arrives with the customer already known - what they bought, what they are paying for, and what is on its way."
 msgstr ""
 
-#: includes/views/partials/card-woo-promo.php:61
+#: includes/views/partials/card-woo-promo.php:63
 msgid "Connect WooCommerce"
 msgstr ""
 
