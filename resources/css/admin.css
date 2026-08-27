@@ -132,6 +132,56 @@
 			@apply border-0 bg-transparent p-0 text-[12px] text-blue-600 cursor-pointer;
 			@apply hover:underline disabled:text-slate-300 disabled:cursor-default disabled:no-underline;
 		}
+		/* Outline action: present without competing with a primary button. */
+		.btn-ghost {
+			@apply inline-flex items-center gap-1.5 rounded border border-slate-300 bg-transparent px-4 py-2 text-sm font-medium transition no-underline;
+			@apply text-slate-700! hover:bg-slate-50 hover:border-slate-400 hover:text-slate-900!;
+		}
+		.btn-ghost:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+
+		/* Video poster. Built from brand assets rather than a remote thumbnail:
+		   the embed host's thumbnail URL is not something to guess at, and a
+		   broken image is worse than no photograph. */
+		.td-video {
+			@apply relative flex items-center justify-center w-full aspect-video overflow-hidden rounded-lg border-0 cursor-pointer p-0;
+			background: linear-gradient(135deg, #1e3a8a 0%, #3858e9 60%, #6366f1 100%);
+		}
+		.td-video:hover .td-video__play {
+			@apply scale-110;
+		}
+		.td-video:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+		.td-video__mark {
+			@apply absolute right-4 bottom-3 w-10 opacity-30;
+		}
+		.td-video__play {
+			@apply flex items-center justify-center w-14 h-14 rounded-full bg-white text-blue-700 shadow-lg transition;
+			/* nudged right: an optical centre, since the glyph's mass sits left */
+			padding-left: 4px;
+		}
+		.td-video__label {
+			@apply absolute left-4 bottom-3 text-white text-[12px] font-medium;
+		}
+
+		.td-video-modal {
+			@apply w-[min(90vw,960px)] max-w-none border-0 rounded-lg p-0 bg-black overflow-hidden;
+		}
+		.td-video-modal::backdrop {
+			background: rgb(0 0 0 / 0.7);
+		}
+		.td-video-modal__frame {
+			@apply block w-full aspect-video border-0;
+		}
+		.td-video-modal__close {
+			@apply absolute right-2 top-2 flex items-center justify-center w-9 h-9 rounded-full border-0 cursor-pointer text-white;
+			background: rgb(0 0 0 / 0.5);
+		}
+		.td-video-modal__close:hover {
+			background: rgb(0 0 0 / 0.75);
+		}
 		.td-toolbar {
 			@apply flex items-center flex-wrap gap-x-3 gap-y-2 bg-white border-b border-slate-200 py-4 px-8;
 		}

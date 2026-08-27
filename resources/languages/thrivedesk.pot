@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T08:19:54+00:00\n"
+"POT-Creation-Date: 2026-08-27T08:24:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -181,7 +181,7 @@ msgid "Add your API key to connect this site to ThriveDesk."
 msgstr ""
 
 #: includes/views/pages/api-verify.php:24
-#: includes/views/partials/overview.php:144
+#: includes/views/partials/overview.php:176
 msgid "API Key"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgid "Enter your API Key"
 msgstr ""
 
 #: includes/views/pages/api-verify.php:31
-#: resources/js/admin.js:749
+#: resources/js/admin.js:820
 msgid "Complete Setup"
 msgstr ""
 
@@ -283,7 +283,7 @@ msgid "Knowledge base"
 msgstr ""
 
 #: includes/views/partials/overview.php:29
-#: includes/views/partials/overview.php:68
+#: includes/views/partials/overview.php:100
 msgid "Not connected"
 msgstr ""
 
@@ -297,98 +297,107 @@ msgid "Connected"
 msgstr ""
 
 #: includes/views/partials/overview.php:43
+#: includes/views/partials/overview.php:69
 msgid "What is Portal?"
 msgstr ""
 
-#: includes/views/partials/overview.php:44
-msgid "Embed Help Center into your site that won’t make any database calls, no extra plugins dependency."
+#: includes/views/partials/overview.php:45
+msgid "Portal puts a help centre on your own site: customers sign in with the account they already have, read your knowledge base, open a ticket and follow it to a reply - without leaving your domain."
 msgstr ""
 
-#: includes/views/partials/overview.php:45
-#: includes/views/partials/overview.php:178
-#: includes/views/partials/overview.php:184
+#: includes/views/partials/overview.php:48
+msgid "It runs on a shortcode and makes no database calls of its own, so there are no extra tables to maintain and nothing new to keep in sync."
+msgstr ""
+
+#: includes/views/partials/overview.php:51
+#: includes/views/partials/overview.php:210
+#: includes/views/partials/overview.php:216
 msgid "Learn more"
 msgstr ""
 
-#: includes/views/partials/overview.php:49
+#: includes/views/partials/overview.php:75
+msgid "Watch the 40 second tour"
+msgstr ""
+
+#: includes/views/partials/overview.php:81
 msgid "Workspace"
 msgstr ""
 
-#: includes/views/partials/overview.php:66
+#: includes/views/partials/overview.php:98
 msgid "Workspace:"
 msgstr ""
 
-#: includes/views/partials/overview.php:72
+#: includes/views/partials/overview.php:104
 msgid "Plan:"
 msgstr ""
 
-#: includes/views/partials/overview.php:83
+#: includes/views/partials/overview.php:115
 msgid "Portal:"
 msgstr ""
 
-#: includes/views/partials/overview.php:86
+#: includes/views/partials/overview.php:118
 msgid "Included"
 msgstr ""
 
-#: includes/views/partials/overview.php:87
+#: includes/views/partials/overview.php:119
 msgid "Not included"
 msgstr ""
 
-#: includes/views/partials/overview.php:91
+#: includes/views/partials/overview.php:123
 msgid "Subscription expired"
 msgstr ""
 
-#: includes/views/partials/overview.php:97
+#: includes/views/partials/overview.php:129
 msgid "API access"
 msgstr ""
 
-#: includes/views/partials/overview.php:117
+#: includes/views/partials/overview.php:149
 msgid "unreachable"
 msgstr ""
 
-#: includes/views/partials/overview.php:133
+#: includes/views/partials/overview.php:165
 msgid "Connection details"
 msgstr ""
 
-#: includes/views/partials/overview.php:134
+#: includes/views/partials/overview.php:166
 msgid "The API key that links this site to ThriveDesk."
 msgstr ""
 
-#: includes/views/partials/overview.php:146
+#: includes/views/partials/overview.php:178
 msgid "Login to ThriveDesk app and get your API key from "
 msgstr ""
 
-#: includes/views/partials/overview.php:148
+#: includes/views/partials/overview.php:180
 #: includes/views/partials/settings.php:283
 msgid "here"
 msgstr ""
 
-#: includes/views/partials/overview.php:160
+#: includes/views/partials/overview.php:192
 msgid "Update"
 msgstr ""
 
-#: includes/views/partials/overview.php:166
+#: includes/views/partials/overview.php:198
 msgid "Verify"
 msgstr ""
 
-#: includes/views/partials/overview.php:176
+#: includes/views/partials/overview.php:208
 msgid "Using Cloudflare?"
 msgstr ""
 
-#: includes/views/partials/overview.php:177
+#: includes/views/partials/overview.php:209
 msgid "To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly."
 msgstr ""
 
-#: includes/views/partials/overview.php:181
+#: includes/views/partials/overview.php:213
 #: includes/views/partials/settings.php:110
 msgid "Assistant"
 msgstr ""
 
-#: includes/views/partials/overview.php:182
+#: includes/views/partials/overview.php:214
 msgid "What is Assistant?"
 msgstr ""
 
-#: includes/views/partials/overview.php:183
+#: includes/views/partials/overview.php:215
 msgid "Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant."
 msgstr ""
 
@@ -449,7 +458,7 @@ msgid "Select Inbox"
 msgstr ""
 
 #: includes/views/partials/settings.php:203
-#: resources/js/admin.js:1088
+#: resources/js/admin.js:1159
 msgid "All inboxes"
 msgstr ""
 
@@ -561,7 +570,7 @@ msgid "The portal is accessible only to logged-in users."
 msgstr ""
 
 #: includes/views/partials/settings.php:365
-#: resources/js/admin.js:817
+#: resources/js/admin.js:888
 msgid "Save"
 msgstr ""
 
@@ -868,138 +877,142 @@ msgstr ""
 msgid "Your site is set up and ready to take conversations."
 msgstr ""
 
-#: resources/js/admin.js:575
+#: resources/js/admin.js:586
+msgid "Close video"
+msgstr ""
+
+#: resources/js/admin.js:646
 msgid "Issue/Feedback from WP Plugin"
 msgstr ""
 
-#: resources/js/admin.js:576
+#: resources/js/admin.js:647
 msgid "Write your issue/feedback details here..."
 msgstr ""
 
-#: resources/js/admin.js:598
+#: resources/js/admin.js:669
 msgid "Copy failed. Select the text and copy it manually."
 msgstr ""
 
 #. translators: %s: an IP address.
-#: resources/js/admin.js:607
+#: resources/js/admin.js:678
 #, js-format
 msgid "Copied %s"
 msgstr ""
 
-#: resources/js/admin.js:628
-#: resources/js/admin.js:655
 #: resources/js/admin.js:699
-#: resources/js/admin.js:725
-#: resources/js/admin.js:733
-#: resources/js/admin.js:742
-#: resources/js/admin.js:810
-#: resources/js/admin.js:823
-#: resources/js/admin.js:838
-#: resources/js/admin.js:916
-#: resources/js/admin.js:923
-#: resources/js/admin.js:937
-#: resources/js/admin.js:950
-#: resources/js/admin.js:959
-#: resources/js/admin.js:968
-#: resources/js/admin.js:976
-#: resources/js/admin.js:1012
-#: resources/js/admin.js:1019
-#: resources/js/admin.js:1044
-#: resources/js/admin.js:1068
-#: resources/js/admin.js:1075
-#: resources/js/admin.js:1116
-#: resources/js/admin.js:1151
-#: resources/js/admin.js:1175
+#: resources/js/admin.js:726
+#: resources/js/admin.js:770
+#: resources/js/admin.js:796
+#: resources/js/admin.js:804
+#: resources/js/admin.js:813
+#: resources/js/admin.js:881
+#: resources/js/admin.js:894
+#: resources/js/admin.js:909
+#: resources/js/admin.js:987
+#: resources/js/admin.js:994
+#: resources/js/admin.js:1008
+#: resources/js/admin.js:1021
+#: resources/js/admin.js:1030
+#: resources/js/admin.js:1039
+#: resources/js/admin.js:1047
+#: resources/js/admin.js:1083
+#: resources/js/admin.js:1090
+#: resources/js/admin.js:1115
+#: resources/js/admin.js:1139
+#: resources/js/admin.js:1146
+#: resources/js/admin.js:1187
+#: resources/js/admin.js:1222
+#: resources/js/admin.js:1246
 msgid "Error"
 msgstr ""
 
-#: resources/js/admin.js:629
+#: resources/js/admin.js:700
 msgid "ThriveDesk configuration not loaded. Please refresh the page."
 msgstr ""
 
-#: resources/js/admin.js:656
+#: resources/js/admin.js:727
 msgid "Invalid response from server"
 msgstr ""
 
-#: resources/js/admin.js:700
+#: resources/js/admin.js:771
 msgid "Invalid response from helpdesk form submission"
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:735
+#: resources/js/admin.js:806
 #, js-format
 msgid "Failed to save helpdesk form: %s"
 msgstr ""
 
-#: resources/js/admin.js:743
-#: resources/js/admin.js:924
-#: resources/js/admin.js:938
-#: resources/js/admin.js:977
-#: resources/js/admin.js:1045
-#: resources/js/admin.js:1106
-#: resources/js/admin.js:1152
-#: resources/js/admin.js:1176
+#: resources/js/admin.js:814
+#: resources/js/admin.js:995
+#: resources/js/admin.js:1009
+#: resources/js/admin.js:1048
+#: resources/js/admin.js:1116
+#: resources/js/admin.js:1177
+#: resources/js/admin.js:1223
+#: resources/js/admin.js:1247
 msgid "Something went wrong"
 msgstr ""
 
-#: resources/js/admin.js:800
+#: resources/js/admin.js:871
 msgid "Processing..."
 msgstr ""
 
-#: resources/js/admin.js:810
-#: resources/js/admin.js:895
-#: resources/js/admin.js:1166
+#: resources/js/admin.js:881
+#: resources/js/admin.js:966
+#: resources/js/admin.js:1237
 msgid "Success"
 msgstr ""
 
-#: resources/js/admin.js:824
-#: resources/js/admin.js:917
+#: resources/js/admin.js:895
+#: resources/js/admin.js:988
 msgid "Form submition failed"
 msgstr ""
 
-#: resources/js/admin.js:839
+#: resources/js/admin.js:910
 msgid "API Key is required"
 msgstr ""
 
-#: resources/js/admin.js:884
+#: resources/js/admin.js:955
 msgid "Verified"
 msgstr ""
 
-#: resources/js/admin.js:960
-#: resources/js/admin.js:1013
-#: resources/js/admin.js:1069
+#: resources/js/admin.js:1031
+#: resources/js/admin.js:1084
+#: resources/js/admin.js:1140
 msgid "Invalid API Key"
 msgstr ""
 
-#: resources/js/admin.js:969
-#: resources/js/admin.js:1020
-#: resources/js/admin.js:1076
+#: resources/js/admin.js:1040
+#: resources/js/admin.js:1091
+#: resources/js/admin.js:1147
 msgid "Server Error"
 msgstr ""
 
-#: resources/js/admin.js:1029
+#: resources/js/admin.js:1100
 msgid "Select Assistant"
 msgstr ""
 
-#: resources/js/admin.js:1034
+#: resources/js/admin.js:1105
 msgid "No Assistant Found"
 msgstr ""
 
-#: resources/js/admin.js:1099
+#: resources/js/admin.js:1170
 msgid "No Inbox Found"
 msgstr ""
 
-#: resources/js/admin.js:1108
+#: resources/js/admin.js:1179
 msgid "Request timed out. Please try again."
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:1111
+#: resources/js/admin.js:1182
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: resources/js/admin.js:1167
+#: resources/js/admin.js:1238
 msgid "Cache Cleared"
 msgstr ""
 

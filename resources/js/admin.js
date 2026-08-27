@@ -559,6 +559,77 @@ jQuery(document).ready(($) => {
 
 	document.querySelectorAll( '[data-td-multiselect]' ).forEach( tdEnhanceMultiselect );
 
+	// Video posters. The iframe is created when the dialog opens and its src is
+	// cleared when it closes - an embed left in the DOM keeps playing behind a
+	// closed dialog, and clearing the src is what actually stops it.
+	$( document ).on( 'click', '[data-td-video]', function () {
+		const src = $( this ).attr( 'data-td-video' );
+		const title = $( this ).attr( 'data-td-video-title' ) || '';
+
+		if ( ! src ) {
+			return;
+		}
+
+		const dialog = document.createElement( 'dialog' );
+		dialog.className = 'td-video-modal';
+		dialog.setAttribute( 'aria-label', title );
+
+		const frame = document.createElement( 'iframe' );
+		frame.className = 'td-video-modal__frame';
+		frame.setAttribute( 'allow', 'autoplay; fullscreen; picture-in-picture' );
+		frame.setAttribute( 'allowfullscreen', 'true' );
+		frame.src = src;
+
+		const close = document.createElement( 'button' );
+		close.type = 'button';
+		close.className = 'td-video-modal__close';
+		close.setAttribute( 'aria-label', __( 'Close video', 'thrivedesk' ) );
+		close.innerHTML =
+			'<svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
+		/*
+		 * Cleanup is called from every dismissal path, not just the `close`
+		 * event. That event is documented to fire and does not always - measured
+		 * on the bench, close() left the dialog and its loaded embed in the DOM -
+		 * and an iframe that is still there is an iframe that may still be
+		 * playing. Idempotent, so being called twice costs nothing.
+		 */
+		const dismiss = () => {
+			frame.src = '';
+			dialog.remove();
+		};
+
+		close.addEventListener( 'click', () => {
+			dialog.close();
+			dismiss();
+		} );
+
+		dialog.append( frame, close );
+		document.body.appendChild( dialog );
+
+		// A click on the backdrop lands on the dialog itself, never on its
+		// children, which is what tells the two apart.
+		dialog.addEventListener( 'click', ( e ) => {
+			if ( e.target === dialog ) {
+				dialog.close();
+				dismiss();
+			}
+		} );
+
+		// `cancel` is the Escape key, and is the only hook for it - nothing of
+		// ours runs on that path otherwise.
+		dialog.addEventListener( 'cancel', dismiss );
+		dialog.addEventListener( 'close', dismiss );
+
+		if ( typeof dialog.showModal === 'function' ) {
+			dialog.showModal();
+		} else {
+			// No <dialog> support: send them to the video rather than opening a
+			// box that cannot be dismissed.
+			dialog.remove();
+			window.open( src, '_blank', 'noopener' );
+		}
+	} );
+
 	// Toolbar "Support": opens the ThriveDesk assistant widget rather than
 	// navigating anywhere. Bound here instead of an inline onclick so a missing
 	// widget is a no-op with an explanation rather than a ReferenceError - the

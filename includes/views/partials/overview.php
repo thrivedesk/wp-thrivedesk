@@ -38,11 +38,43 @@ if ( ! $td_summary['connected'] ) {
     <?php // Portal leads at two thirds; the workspace facts sit beside it as a reference column. ?>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div class="td-card lg:col-span-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <h3 class="text-lg font-semibold m-0!"><?php esc_html_e( 'What is Portal?', 'thrivedesk' ); ?></h3>
+                    <p class="mt-2! mb-0! text-gray-500">
+                        <?php esc_html_e( 'Portal puts a help centre on your own site: customers sign in with the account they already have, read your knowledge base, open a ticket and follow it to a reply - without leaving your domain.', 'thrivedesk' ); ?>
+                    </p>
+                    <p class="mt-2! mb-0! text-gray-500">
+                        <?php esc_html_e( 'It runs on a shortcode and makes no database calls of its own, so there are no extra tables to maintain and nothing new to keep in sync.', 'thrivedesk' ); ?>
+                    </p>
+                    <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/wordpress/" target="_blank">
+                        <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M11.099 3c-3.65.007-5.56.096-6.781 1.318C3 5.636 3 7.757 3 12c0 4.242 0 6.364 1.318 7.682C5.636 21 7.757 21 11.998 21c4.243 0 6.364 0 7.682-1.318 1.22-1.221 1.31-3.133 1.317-6.782M20.556 3.496 11.05 13.06m9.507-9.563c-.494-.494-3.822-.448-4.525-.438m4.525.438c.494.495.448 3.827.438 4.531" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </div>
 
-        <div style="position:relative;padding-top:56.25%;"><iframe src="https://iframe.mediadelivery.net/embed/10114/9f38fded-ddd9-44ba-bdfe-7d362235d40c?autoplay=false&loop=true&muted=true&preload=true&responsive=true" loading="lazy" style="border:0;position:absolute;top:0;height:100%;width:100%;" allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;" allowfullscreen="true"></iframe></div>
-        <h3 class="text-lg font-medium my-4"><?php esc_html_e('What is Portal?', 'thrivedesk'); ?></h3>
-        <p><?php esc_html_e('Embed Help Center into your site that won’t make any database calls, no extra plugins dependency.', 'thrivedesk'); ?></p>
-        <a href="https://www.thrivedesk.com/wordpress/" target="_blank" class="mt-2 inline-block"><?php esc_html_e('Learn more', 'thrivedesk'); ?></a>
+                <?php
+                /*
+                 * A button, not a thumbnail with a click handler: this opens
+                 * something, so it should be reachable by keyboard and announce
+                 * itself. The embed URL rides on a data attribute and is only
+                 * given to an iframe when the dialog opens, so the page does not
+                 * pull a video player it may never need.
+                 */
+                ?>
+                <button
+                    type="button"
+                    class="td-video"
+                    data-td-video="<?php echo esc_url( 'https://iframe.mediadelivery.net/embed/10114/9f38fded-ddd9-44ba-bdfe-7d362235d40c?autoplay=true&responsive=true' ); ?>"
+                    data-td-video-title="<?php esc_attr_e( 'What is Portal?', 'thrivedesk' ); ?>"
+                >
+                    <img class="td-video__mark" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/td-icon.svg' ); ?>" alt="" aria-hidden="true">
+                    <span class="td-video__play" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l11-6.5-11-6.5Z" fill="currentColor"/></svg>
+                    </span>
+                    <span class="td-video__label"><?php esc_html_e( 'Watch the 40 second tour', 'thrivedesk' ); ?></span>
+                </button>
+            </div>
         </div>
 
         <div class="td-card">
