@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /*
  * The wrapper, separate from the body it holds.
  *
- * The id is on the wrapper because that is what the celebration glows, and the
- * body is what gets replaced when a key is accepted - see tdCelebrateConnection
- * in admin.js and Admin::ajax_workspace_card().
+ * The id is on the wrapper because that is what glows on the first load after
+ * connecting; the body is what the rows reveal inside. See the
+ * TD_CONNECTED_FLAG block in admin.js.
  */
 ?>
 <div class="td-card" id="td-workspace-card">

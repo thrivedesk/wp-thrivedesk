@@ -40,6 +40,9 @@ if ( ! $td_summary['connected'] ) {
 		 * what the widget is were three rows down before, under the fold, behind
 		 * the card asking for a key.
 		 *
+		 * No workspace card here. It had nothing to report and said so, which is
+		 * a card's worth of screen saying "later" next to one saying "now".
+		 *
 		 * is-inline lifts the width cap the setup screen needs - there the card is
 		 * alone on the page and centred, here it has a column to fill.
 		 */
@@ -50,7 +53,6 @@ if ( ! $td_summary['connected'] ) {
 			<div class="space-y-6">
 				<?php thrivedesk_view( 'partials/card-assistant' ); ?>
 				<?php thrivedesk_view( 'partials/card-portal', [ 'td_portal_narrow' => true ] ); ?>
-				<?php thrivedesk_view( 'partials/card-workspace' ); ?>
 			</div>
 		</div>
 

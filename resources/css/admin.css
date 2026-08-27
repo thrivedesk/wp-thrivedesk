@@ -188,9 +188,25 @@
 			/* nudged right: an optical centre, since the glyph's mass sits left */
 			padding-left: 4px;
 		}
-		.td-video__label {
-			@apply absolute left-4 bottom-3 z-10 text-white text-[12px] font-medium;
-			text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
+		/* Stacked beside the other cards in the narrow column, it matches them
+		   rather than the row it came from: the same 96x80 block their images
+		   use, on the left, with the words to its right. */
+		.td-video.is-thumb {
+			@apply w-24 h-20 shrink-0 mt-1 aspect-auto rounded;
+		}
+		.td-video.is-thumb .td-video__play {
+			@apply w-7 h-7 shadow-md;
+			padding-left: 2px;
+		}
+		.td-video.is-thumb .td-video__play svg {
+			width: 13px;
+			height: 13px;
+		}
+		/* The drawn mockup is mud at this size, and reads as dirt on the
+		   gradient rather than as a screen. The play badge is the whole
+		   affordance here. */
+		.td-video.is-thumb .td-video__mockup {
+			@apply hidden;
 		}
 
 		/* A box for the frame. Nothing here touches the assistant itself - it

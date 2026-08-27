@@ -7,21 +7,31 @@ if ( ! defined( 'ABSPATH' ) ) {
  * What Portal is, and the tour.
  *
  * A partial because it sits in two shapes. Two thirds of a row once this site
- * is connected, text beside the video; and stacked in the narrow right column
- * before then, where splitting 460px between a paragraph and a thumbnail would
- * leave neither readable.
+ * is connected, text beside the video; and in the narrow right column before
+ * then, where it takes the same shape as the cards it is stacked with - a
+ * thumbnail on the left, the words on the right.
+ *
+ * One set of markup, two sets of classes. The thumbnail is moved with `order`
+ * rather than by writing the card out twice, which also keeps the heading
+ * ahead of it for anything reading the page in document order.
  *
  * @var bool $td_portal_narrow Whether it is in the stacked column.
  */
 
 $td_portal_narrow = isset( $td_portal_narrow ) ? $td_portal_narrow : false;
+
+$td_portal_wrap  = $td_portal_narrow
+	? 'flex items-start gap-4'
+	: 'grid grid-cols-1 md:grid-cols-2 gap-6 items-center';
+
+$td_portal_thumb = $td_portal_narrow ? 'td-video is-thumb order-first' : 'td-video';
 ?>
 <div class="td-card">
-        <div class="grid grid-cols-1 <?php echo $td_portal_narrow ? '' : 'md:grid-cols-2'; ?> gap-6 items-center">
+        <div class="<?php echo esc_attr( $td_portal_wrap ); ?>">
             <div>
                 <h3 class="text-lg font-semibold m-0!"><?php esc_html_e( 'Overview of WPPortal', 'thrivedesk' ); ?></h3>
                 <p class="mt-2! mb-0! text-gray-500">
-                    <?php esc_html_e( 'Portal puts a help centre on your own site: customers sign in with the account they already have, read your knowledge base, open a ticket and follow it to a reply - without leaving your domain.', 'thrivedesk' ); ?>
+                    <?php esc_html_e( 'A help centre on your own domain, where customers read your knowledge base and follow their tickets.', 'thrivedesk' ); ?>
                 </p>
                 <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/wordpress/" target="_blank">
                     <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
@@ -40,9 +50,12 @@ $td_portal_narrow = isset( $td_portal_narrow ) ? $td_portal_narrow : false;
             ?>
             <button
                 type="button"
-                class="td-video"
+                class="<?php echo esc_attr( $td_portal_thumb ); ?>"
                 data-td-video="<?php echo esc_url( 'https://iframe.mediadelivery.net/embed/10114/9f38fded-ddd9-44ba-bdfe-7d362235d40c?autoplay=true&responsive=true' ); ?>"
                 data-td-video-title="<?php esc_attr_e( 'Overview of WPPortal', 'thrivedesk' ); ?>"
+                <?php // The caption used to name this button. With it gone the button had none, and "button" is not a name. ?>
+                aria-label="<?php esc_attr_e( 'Watch the 40 second tour', 'thrivedesk' ); ?>"
+                title="<?php esc_attr_e( 'Watch the 40 second tour', 'thrivedesk' ); ?>"
             >
                 <?php
                 /*
@@ -77,7 +90,6 @@ $td_portal_narrow = isset( $td_portal_narrow ) ? $td_portal_narrow : false;
                 <span class="td-video__play" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l11-6.5-11-6.5Z" fill="currentColor"/></svg>
                 </span>
-                <span class="td-video__label"><?php esc_html_e( 'Watch the 40 second tour', 'thrivedesk' ); ?></span>
             </button>
         </div>
 </div>

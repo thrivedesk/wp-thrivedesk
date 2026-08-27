@@ -176,9 +176,8 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 
 			$html = $this->render_screen();
 
-			$this->assertSame( 1, substr_count( $html, 'class="td-video"' ), "portal card, $state" );
+			$this->assertSame( 1, substr_count( $html, 'data-td-video=' ), "portal card, $state" );
 			$this->assertSame( 1, substr_count( $html, '>What is Assistant?</h3>' ), "assistant card, $state" );
-			$this->assertSame( 1, substr_count( $html, 'id="td-workspace-card"' ), "workspace card, $state" );
 		}
 	}
 
@@ -193,10 +192,10 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 
 		$this->assertLessThan( strpos( $html, 'What is Assistant?' ), $connect );
 		$this->assertLessThan( strpos( $html, 'Overview of WPPortal' ), $connect );
-		$this->assertLessThan( strpos( $html, 'id="td-workspace-card"' ), $connect );
 
-		// Stacked, so the tour is not splitting a narrow column between a
-		// paragraph and a thumbnail.
+		// The same shape as the card it is stacked with: thumbnail left, words
+		// right, rather than a paragraph and a video splitting a narrow column.
+		$this->assertStringContainsString( 'td-video is-thumb order-first', $html );
 		$this->assertStringNotContainsString( 'md:grid-cols-2 gap-6 items-center', $html );
 	}
 
@@ -206,6 +205,7 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 		$html = $this->render_screen();
 
 		$this->assertStringContainsString( 'md:grid-cols-2 gap-6 items-center', $html );
+		$this->assertStringNotContainsString( 'is-thumb', $html );
 		$this->assertLessThan(
 			strpos( $html, 'id="td-workspace-card"' ),
 			strpos( $html, 'Overview of WPPortal' ),
@@ -233,17 +233,20 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'id="td-setup-split"', $html, 'a connected site is not asked to connect' );
 	}
 
-	public function test_the_workspace_card_asks_for_a_connection() {
+	/**
+	 * It has nothing to report before there is a workspace, and a card whose
+	 * whole content is "this will say something later" is screen space spent
+	 * saying later, beside a card saying now.
+	 */
+	public function test_there_is_no_workspace_card_to_report_a_workspace() {
 		$html = $this->render_screen();
 
-		$this->assertStringContainsString( 'id="td-workspace-card"', $html );
-		$this->assertStringContainsString( 'Once this site is connected', $html );
-
-		// The rows the card is made of when it has something to say, marked up
-		// for the reveal that runs when they are filled in. Matching on the
-		// attribute rather than on a label - the copy above mentions the same
-		// words the labels use.
+		$this->assertStringNotContainsString( 'id="td-workspace-card"', $html );
 		$this->assertStringNotContainsString( 'data-td-reveal', $html );
+
+		$this->connect();
+
+		$this->assertStringContainsString( 'id="td-workspace-card"', $this->render_screen() );
 	}
 
 	public function test_live_chat_and_portal_offer_an_account_instead_of_empty_controls() {

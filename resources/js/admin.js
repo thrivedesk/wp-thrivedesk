@@ -265,78 +265,6 @@ function tdRevealIn(root) {
 }
 
 /**
- * The key was accepted, and the page it was entered on is still open.
- *
- * Nothing navigates: the card that asked for the key is removed, the card
- * beside it is re-rendered from the server with what ThriveDesk now says about
- * this workspace, and the two are tied together by the confetti and the glow.
- *
- * The reload at the end is not a change of mind about navigating. Every other
- * tab is still rendered for a site with no account - the Live Chat and Portal
- * panels are placeholders, the integration cards are locked - and all of that
- * is filled server-side. Reproducing it here would be a second implementation
- * of four panels; waiting for the glow to finish costs one page load.
- */
-function tdCelebrateConnection() {
-	const card = document.getElementById('td-workspace-card');
-	const body = document.getElementById('td-workspace-card-body');
-
-	tdConfetti();
-
-	Swal.fire({
-		toast: true,
-		position: 'top-end',
-		icon: 'success',
-		title: __('Connected to ThriveDesk', 'thrivedesk'),
-		text: __('Your site is set up and ready to take conversations.', 'thrivedesk'),
-		showConfirmButton: false,
-		timer: 5000,
-		timerProgressBar: true,
-		// Swal renders outside the plugin's own markup, so it needs its own
-		// hook to clear the admin bar and the confetti canvas.
-		customClass: { container: 'td-toast' },
-	});
-
-	// The connect card has done its job, and every word on it is now wrong.
-	// Its wrapper goes too - it is the centring row, and an empty one would
-	// leave a gap above the card that replaces it.
-	const connectCard = document.getElementById('td-setup-split');
-
-	if (connectCard) {
-		(connectCard.parentElement || connectCard).remove();
-	}
-
-	const settle = () => {
-		if (card) {
-			card.classList.add('is-celebrating');
-			card.scrollIntoView({ block: 'center', behavior: 'smooth' });
-		}
-
-		window.setTimeout(() => window.location.reload(), TD_CELEBRATE_MS + 400);
-	};
-
-	if (!body || typeof thrivedesk === 'undefined') {
-		settle();
-		return;
-	}
-
-	jQuery
-		.post(thrivedesk.ajax_url, {
-			action: 'thrivedesk_workspace_card',
-			data: { nonce: (window.thrivedeskAdmin || {}).pluginActionNonce || '' },
-		})
-		.done((html) => {
-			// A failed nonce answers with a JSON error object, not markup.
-			// Leaving the old card up is better than printing that at the user.
-			if (typeof html === 'string' && html.trim().charAt(0) === '<') {
-				body.innerHTML = html;
-				tdRevealIn(body);
-			}
-		})
-		.always(settle);
-}
-
-/**
  * Turn a `<select multiple>` into a dropdown of checkboxes.
  *
  * Progressive enhancement, not replacement: the original select stays in the
@@ -649,7 +577,14 @@ jQuery(document).ready(($) => {
 		});
 	}
 
-	// Arriving from a completed setup on the standalone screen.
+	/*
+	 * Arriving from a completed setup.
+	 *
+	 * On the load after connecting rather than in place, because the workspace
+	 * card does not exist on a screen with no account - nor do the Live Chat
+	 * and Portal panels, nor the unlocked integrations, and all of it is filled
+	 * server-side. The flag is what carries the celebration across that load.
+	 */
 	(() => {
 		if (!tdTakeFlag(TD_CONNECTED_FLAG)) {
 			return;
@@ -674,6 +609,16 @@ jQuery(document).ready(($) => {
 		});
 
 		tdConfetti();
+
+		// The workspace card is the one thing on the page that was blank a
+		// moment ago and is not now, so it is what fills in and what glows.
+		const card = document.getElementById('td-workspace-card');
+
+		if (card) {
+			card.classList.add('is-celebrating');
+			card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+			tdRevealIn(document.getElementById('td-workspace-card-body'));
+		}
 	})();
 
 	// The setup screen's reference column: a 40px rail until it is asked for.
@@ -1051,19 +996,18 @@ jQuery(document).ready(($) => {
 					
 					if (parsedResponse) {
 						if (parsedResponse.status === 'success') {
-							// The tabbed screen is where this used to navigate
-							// to, and the card now lives on it, so there is
-							// nowhere left to go - celebrate in place.
-							if (document.getElementById('td-workspace-card')) {
-								tdCelebrateConnection();
+							// Celebrate on the page that comes back, not this
+							// one: a burst started here is cut off by the load
+							// a moment later, and everything worth showing off
+							// is rendered server-side for a connected site.
+							tdSetFlag(TD_CONNECTED_FLAG);
+
+							// Already on the tabbed screen - reload it rather
+							// than navigating, which keeps the tab in the URL.
+							if (document.getElementById('td-admin-app')) {
+								window.location.reload();
 								return;
 							}
-
-							// The standalone setup screen has nothing to
-							// celebrate on. Hand the flag to the page it is
-							// about to open: a burst started here is cut off by
-							// the navigation a moment later.
-							tdSetFlag(TD_CONNECTED_FLAG);
 
 							window.location.href = tdSettingsUrl();
 							return;

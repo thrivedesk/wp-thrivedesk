@@ -81,8 +81,6 @@ final class Admin
 
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
 
-        add_action('wp_ajax_thrivedesk_workspace_card', [$this, 'ajax_workspace_card']);
-
         add_action('wp_ajax_thrivedesk_disconnect_account', [$this, 'ajax_disconnect_account']);
 
 		//remove wp footer text and version
@@ -637,36 +635,6 @@ final class Admin
      *
      * @return void
      */
-    /**
-     * The Workspace card, re-rendered for a page that is already open.
-     *
-     * Connecting from the Overview tab no longer navigates anywhere, so the
-     * card that was showing "not connected a moment ago" has to be replaced
-     * where it stands. Rendering it server-side keeps one copy of that markup
-     * rather than a second, drifting one written in JavaScript.
-     *
-     * The summary is rebuilt rather than read: the cache was populated by the
-     * probes a key that did not work yet, and serving it here would report the
-     * connection as still broken.
-     *
-     * @return void
-     */
-    public function ajax_workspace_card(): void
-    {
-        if (
-            ! current_user_can('manage_options')
-            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
-        ) {
-            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
-        }
-
-        \ThriveDesk\Services\WorkspaceService::summary(true);
-
-        thrivedesk_view('partials/workspace-card');
-
-        wp_die();
-    }
-
     /**
      * Forget the ThriveDesk account this site is connected to.
      *
