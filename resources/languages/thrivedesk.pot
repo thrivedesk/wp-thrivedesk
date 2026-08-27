@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T10:04:15+00:00\n"
+"POT-Creation-Date: 2026-08-27T10:51:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -201,39 +201,12 @@ msgstr ""
 msgid "Unauthorized"
 msgstr ""
 
-#: includes/views/pages/welcome.php:10
-msgid "Need help?"
-msgstr ""
-
-#: includes/views/pages/welcome.php:17
-msgid "Welcome, Let's Setup Your HelpDesk"
-msgstr ""
-
-#: includes/views/pages/welcome.php:19
-msgid "You are few clicks away from adding helpdesk and live chat to your website. ThriveDesk is a complete helpdesk solution that works with WordPress without any database queries or maintenance hassle."
-msgstr ""
-
-#: includes/views/pages/welcome.php:25
 #: includes/views/partials/connect-accounts.php:16
 msgid "Create New Account"
 msgstr ""
 
-#: includes/views/pages/welcome.php:29
 #: includes/views/partials/connect-accounts.php:20
 msgid "Connect Existing Account"
-msgstr ""
-
-#. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/pages/welcome.php:34
-#, php-format
-msgid "Already have API key? %1$sAdd here%2$s"
-msgstr ""
-
-#. translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags
-#: includes/views/pages/welcome.php:37
-#: includes/views/partials/connect-card.php:108
-#, php-format
-msgid "By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s."
 msgstr ""
 
 #: includes/views/partials/connect-card.php:23
@@ -289,6 +262,12 @@ msgstr ""
 #: includes/views/partials/connect-card.php:99
 #, php-format
 msgid "Still stuck? Email us at %1$shelp@thrivedesk.com%2$s with your site URL and IP address."
+msgstr ""
+
+#. translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags
+#: includes/views/partials/connect-card.php:108
+#, php-format
+msgid "By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s."
 msgstr ""
 
 #: includes/views/partials/connect-empty.php:19

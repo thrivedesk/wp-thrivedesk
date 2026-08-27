@@ -4,9 +4,11 @@ export const SETTINGS_URL = '/wp-admin/admin.php?page=thrivedesk';
 export const API_VERIFY_URL = '/wp-admin/admin.php?page=td-api';
 
 /**
- * The ThriveDesk menu page renders one of three views depending on stored state
- * (welcome / api-verify / settings). Landing on the wrong one means the site
- * under test isn't connected, so say that rather than time out on a selector.
+ * The ThriveDesk menu page renders one screen whatever the stored state - the
+ * tabs are there connected or not. What changes is the Overview tab: without a
+ * working key it leads with the connect card rather than the connection
+ * details. A missing settings form means the page did not render at all, so say
+ * that rather than time out on a selector.
  */
 export async function gotoSettings(page: Page): Promise<void> {
 	await page.goto(SETTINGS_URL);

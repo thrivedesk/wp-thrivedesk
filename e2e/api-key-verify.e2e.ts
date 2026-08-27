@@ -31,11 +31,13 @@ test('rejects a key the API does not recognise', async ({ page }) => {
 	await expect(swalText(page)).toContainText('401');
 	await confirmSwal(page);
 
-	// With no verified key on file the menu page drops back to the welcome
-	// screen instead of the settings form.
+	// The menu page keeps its tabs with no verified key on file - it no longer
+	// drops back to a separate welcome screen - and leads the Overview tab with
+	// the connect card instead of the connection details.
 	await page.goto('/wp-admin/admin.php?page=thrivedesk');
-	await expect(page.locator('#td_helpdesk_form')).toHaveCount(0);
-	await expect(page.getByText("Welcome, Let's Setup Your HelpDesk")).toBeVisible();
+	await expect(page.locator('#td-setup-split')).toBeVisible();
+	await expect(page.getByText('Just one last step!')).toBeVisible();
+	await expect(page.getByText('Connection details')).toHaveCount(0);
 });
 
 test('verifies the stored key and unlocks the connected settings', async ({ page }) => {
