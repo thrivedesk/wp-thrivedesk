@@ -4,6 +4,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $td_connected = thrivedesk_is_connected();
+
+// The same label treatment the Workspace card uses, so the two cards on this
+// tab read as one thing. Uppercasing is a class, never baked into the string:
+// plenty of languages have no case, and the ones that do do not all uppercase
+// the way English does.
+$td_fact_label = 'text-[11px] font-semibold uppercase tracking-wider text-slate-400 whitespace-nowrap';
 // See partials/workspace-card: summary() is five HTTP requests when cold, and
 // there is nothing worth asking about until this site has a key that works.
 $td_summary   = $td_connected
@@ -67,78 +73,110 @@ if ( ! $td_summary['connected'] ) {
 			<?php thrivedesk_view( 'partials/card-workspace' ); ?>
 		</div>
 
-	    <?php // Connection details, with the status of that connection stated on the same card. ?>
-	    <div class="td-card space-y-4">
-	        <div class="flex items-center justify-between gap-3 flex-wrap">
-	            <div>
-	                <div class="text-base font-bold"><?php esc_html_e( 'Connection details', 'thrivedesk' ); ?></div>
-	                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e( 'The API key that links this site to ThriveDesk.', 'thrivedesk' ); ?></p>
-	            </div>
-	            <div class="flex items-center gap-3">
-	                <span class="inline-flex items-center gap-2 text-sm font-medium <?php echo esc_attr( $td_status['text'] ); ?>">
-	                    <span class="w-2 h-2 rounded-full <?php echo esc_attr( $td_status['dot'] ); ?>" aria-hidden="true"></span>
-	                    <?php echo esc_html( $td_status['label'] ); ?>
-	                </span>
+		<?php
+		/*
+		 * What links this site to ThriveDesk, and the two things anyone comes
+		 * here to do: swap the key, or stop using it.
+		 *
+		 * Facts first, form second. The key used to be shown in a disabled text
+		 * input, which is a control that cannot be operated pretending to be a
+		 * value - it read as something broken rather than as something settled.
+		 * It is a value now, in the same label-and-value grid the Workspace card
+		 * uses, and the form only appears when it is asked for.
+		 */
+		?>
+		<div class="td-card space-y-4">
+			<div class="flex items-start justify-between gap-3 flex-wrap">
+				<div>
+					<div class="text-base font-bold"><?php esc_html_e( 'Connection details', 'thrivedesk' ); ?></div>
+					<p class="mt-1! mb-0! text-gray-500"><?php esc_html_e( 'The API key that links this site to ThriveDesk.', 'thrivedesk' ); ?></p>
+				</div>
 
-	                <?php
-	                /*
-	                 * Beside the status it undoes. Labelled, not icon-only: a
-	                 * bare x next to a status pill reads as "dismiss this
-	                 * message" at least as easily as "disconnect", and this is
-	                 * the one control on the screen that must not be guessed at.
-	                 *
-	                 * What it costs is spelled out in the confirmation, which is
-	                 * where anyone is going to read it - see the
-	                 * #td-disconnect-account handler in admin.js.
-	                 */
-	                ?>
-	                <button
-	                    type="button"
-	                    class="btn-danger"
-	                    id="td-disconnect-account"
-	                    title="<?php esc_attr_e( 'Disconnect this site from ThriveDesk', 'thrivedesk' ); ?>"
-	                >
-	                    <span class="btn-danger__icon" aria-hidden="true">
-	                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none">
-	                            <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-	                        </svg>
-	                    </span>
-	                    <span><?php esc_html_e( 'Disconnect', 'thrivedesk' ); ?></span>
-	                </button>
-	            </div>
-	        </div>
+				<div class="flex items-center gap-3">
+					<span class="inline-flex items-center gap-2 text-sm font-medium <?php echo esc_attr( $td_status['text'] ); ?>">
+						<span class="w-2 h-2 rounded-full <?php echo esc_attr( $td_status['dot'] ); ?>" aria-hidden="true"></span>
+						<?php echo esc_html( $td_status['label'] ); ?>
+					</span>
 
-	        <div class="pt-4 border-t border-slate-200">
-	            <div class="space-y-2">
-	                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
-	                <span>
-	                    <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
-	                    <a class="text-blue-500" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/api-key'); ?>" target="_blank">
-	                        <?php esc_html_e('here', 'thrivedesk'); ?>
-	                    </a>
-	                </span>
-	                <?php
-	                // type="password" hides the key on screen and nowhere else: it
-	                // is still in view-source, in the DOM, in password managers, on
-	                // a screen share, and one selector away from any script on the
-	                // page. Only a preview is rendered, and the editable field is
-	                // left blank - submitting it empty means "unchanged".
-	                ?>
-	                <div class="flex items-center api-key-preview">
-	                    <input class="truncate w-2/3 bg-gray-50" type="text" disabled value="<?php echo esc_attr($td_api_key_preview); ?>" />
-	                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
-	                </div>
-	                <div class="api-key-editable hidden">
-	                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_connect_token); ?>" placeholder="<?php echo esc_attr($td_api_key_preview); ?>" autocomplete="off" class="block p-2.5 w-full text-sm" />
+					<?php
+					/*
+					 * Beside the status it undoes. Labelled, not icon-only: a bare x
+					 * next to a status pill reads as "dismiss this message" at least
+					 * as easily as "disconnect", and this is the one control on the
+					 * screen that must not be guessed at. What it costs is spelled
+					 * out in the confirmation - see admin.js.
+					 */
+					?>
+					<button
+						type="button"
+						class="btn-danger"
+						id="td-disconnect-account"
+						title="<?php esc_attr_e( 'Disconnect this site from ThriveDesk', 'thrivedesk' ); ?>"
+					>
+						<span class="btn-danger__icon" aria-hidden="true">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none">
+								<path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+							</svg>
+						</span>
+						<span><?php esc_html_e( 'Disconnect', 'thrivedesk' ); ?></span>
+					</button>
+				</div>
+			</div>
 
-	                    <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
-	                        <?php esc_html_e('Verify', 'thrivedesk'); ?>
-	                    </button>
-	                </div>
-	            </div>
-	        </div>
+			<div class="pt-4 border-t border-slate-200">
+				<?php
+				// type="password" would hide the key on screen and nowhere else: it
+				// is still in view-source, in the DOM, in password managers, on a
+				// screen share, and one selector away from any script on the page.
+				// Only a preview is rendered - enough to tell which key is on file,
+				// not enough to use it - and the editable field is left blank,
+				// because submitting it empty means "unchanged".
+				?>
+				<div class="api-key-preview grid grid-cols-[auto_1fr_auto] gap-x-4 gap-y-3 items-center">
+					<span class="<?php echo esc_attr( $td_fact_label ); ?>"><?php esc_html_e( 'API key', 'thrivedesk' ); ?></span>
+					<code class="td-key"><?php echo esc_html( $td_api_key_preview ); ?></code>
+					<?php // A button, not the <span class="trigger"> this used to be: it does something, so it has to be reachable by keyboard. ?>
+					<button type="button" class="btn-ghost trigger"><?php esc_html_e( 'Replace', 'thrivedesk' ); ?></button>
 
-	    </div>
+					<?php if ( ! empty( $td_summary['checked_at'] ) ) : ?>
+						<?php // Says how old the word beside "Connection details" is. The status is cached for six hours; without this it reads as live. ?>
+						<span class="<?php echo esc_attr( $td_fact_label ); ?>"><?php esc_html_e( 'Last checked', 'thrivedesk' ); ?></span>
+						<span class="col-span-2 text-sm text-slate-800">
+							<?php
+							printf(
+								/* translators: %s: a length of time, e.g. "2 hours" */
+								esc_html__( '%s ago', 'thrivedesk' ),
+								esc_html( human_time_diff( (int) $td_summary['checked_at'] ) )
+							);
+							?>
+						</span>
+					<?php endif; ?>
+				</div>
+
+				<div class="api-key-editable hidden">
+					<label for="td_helpdesk_api_key" class="block text-sm font-semibold text-slate-700"><?php esc_html_e( 'New API key', 'thrivedesk' ); ?></label>
+					<input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr( $td_connect_token ); ?>" placeholder="<?php esc_attr_e( 'Paste your API key', 'thrivedesk' ); ?>" autocomplete="off" spellcheck="false" class="mt-2 w-full p-2! border border-slate-300! shadow-sm rounded" />
+					<p class="td-field-help">
+						<?php
+						printf(
+							/* translators: %1$s: opening link tag, %2$s: closing link tag */
+							esc_html__( 'Find it in ThriveDesk under Settings, Company, API key. %1$sOpen ThriveDesk%2$s', 'thrivedesk' ),
+							'<a href="' . esc_url( THRIVEDESK_APP_URL . '/settings/company/api-key' ) . '" target="_blank">',
+							'</a>'
+						);
+						?>
+					</p>
+
+					<div class="flex items-center gap-2 mt-4">
+						<button type="button" class="btn btn-dark" id="td-api-verification-btn">
+							<?php esc_html_e( 'Verify and save', 'thrivedesk' ); ?>
+						</button>
+						<?php // A way out. Opening the form used to be one-way until the page was reloaded. ?>
+						<button type="button" class="btn-ghost api-key-cancel"><?php esc_html_e( 'Cancel', 'thrivedesk' ); ?></button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<?php
 		/*

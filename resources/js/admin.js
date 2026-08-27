@@ -1273,8 +1273,11 @@ jQuery(document).ready(($) => {
 							.success(function (response) {
 								handleThriveDeskMainForm().then((response) => {
 									if (response.status === 'success') {
+										// Not a hardcoded /wp-admin/: that path is
+										// configurable, and this ran on a screen
+										// that is already at the right URL.
 										setTimeout(() => {
-											window.location.href = '/wp-admin/admin.php?page=thrivedesk';
+											window.location.href = tdSettingsUrl();
 										}, 1000);
 									}
 								}).catch(() => {
@@ -1353,12 +1356,25 @@ jQuery(document).ready(($) => {
 		}
 	}
 
-	// API key reveal box 
-	$('.api-key-preview .trigger').on('click', function(e){
+	// Swap the fact for the form, and back.
+	$(document).on('click', '.api-key-preview .trigger', function (e) {
+		e.preventDefault();
+
 		$('.api-key-preview').addClass('hidden');
 		$('.api-key-editable').removeClass('hidden');
+		$('#td_helpdesk_api_key').trigger('focus');
+	});
 
-	})
+	// Opening the form used to be one-way until the page was reloaded. The
+	// field is cleared on the way out so a half-typed key is not still sitting
+	// there, ready to be posted, the next time it is opened.
+	$(document).on('click', '.api-key-cancel', function (e) {
+		e.preventDefault();
+
+		$('#td_helpdesk_api_key').val('');
+		$('.api-key-editable').addClass('hidden');
+		$('.api-key-preview').removeClass('hidden');
+	});
 	// Load assistant 
 	async function loadAssistants(apiKey) {
 		jQuery

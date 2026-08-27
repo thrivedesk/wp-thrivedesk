@@ -234,6 +234,41 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The connection card shows the key as a value, not as a disabled text
+	 * input - a control that cannot be operated, standing in for a fact, reads
+	 * as something broken rather than as something settled. And the two things
+	 * it offers have to be operable from a keyboard, which the <span> that used
+	 * to open the form was not.
+	 */
+	public function test_the_connection_card_states_the_key_and_offers_two_actions() {
+		$this->connect();
+
+		$html = $this->render_screen();
+
+		$this->assertStringContainsString( '<code class="td-key">', $html );
+		$this->assertStringNotContainsString( 'type="text" disabled', $html );
+
+		$this->assertMatchesRegularExpression( '/<button[^>]*class="btn-ghost trigger"/', $html, 'Replace has to be a button' );
+		$this->assertMatchesRegularExpression( '/<button[^>]*class="btn-ghost api-key-cancel"/', $html, 'and the form needs a way out' );
+		$this->assertStringContainsString( 'id="td-api-verification-btn"', $html );
+
+		// Still the only thing about the key that reaches the page: four
+		// characters to recognise it by, and nothing usable.
+		$this->assertStringContainsString( 'REAL' . str_repeat( '*', 20 ), $html );
+		$this->assertStringNotContainsString( 'REAL-KEY-1234567890', $html );
+	}
+
+	/**
+	 * The status beside "Connection details" is cached for six hours. Without
+	 * saying when it was taken it reads as live.
+	 */
+	public function test_the_connection_card_says_how_old_its_status_is() {
+		$this->connect();
+
+		$this->assertStringContainsString( 'Last checked', $this->render_screen() );
+	}
+
+	/**
 	 * It has nothing to report before there is a workspace, and a card whose
 	 * whole content is "this will say something later" is screen space spent
 	 * saying later, beside a card saying now.

@@ -100,6 +100,15 @@
 		   the bottom one has to be beaten, and using `m-0!` to do it - which is
 		   what this replaces - also killed the top margin and any space-y the
 		   parent was applying, collapsing the text onto the field above it. */
+		/* The key on file, as a value rather than as a disabled input. WP admin
+		   styles <code> from an #id selector, which outranks a utility class,
+		   so the parts it sets are forced here. min-w-0 lets it shrink inside
+		   the grid column instead of pushing the Replace button off the card. */
+		.td-key {
+			@apply inline-block min-w-0 max-w-full truncate align-middle;
+			@apply bg-slate-50! px-2! py-1! rounded border border-slate-200;
+			@apply font-mono text-[13px]! text-slate-700 tracking-wide;
+		}
 		.td-field-help {
 			@apply mt-2! mb-0! text-[12px] text-gray-500;
 		}
