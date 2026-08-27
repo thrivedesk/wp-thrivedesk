@@ -958,7 +958,17 @@ jQuery(document).ready(($) => {
 
 			const next = Array.isArray(remaining) ? remaining.shift() : undefined;
 
-			if (!next) {
+			/*
+			 * Only ever a wordpress.org asset URL.
+			 *
+			 * The list is written by thrivedesk_detected_form_plugins() from a
+			 * catalogue key, so there is nothing untrusted in it today - but it
+			 * makes the round trip through a DOM attribute, and a URL read back
+			 * out of the DOM and assigned to `src` is worth checking whatever it
+			 * was when it went in. Anything else and the lettermark stands,
+			 * which is the same thing that happens when the icon 404s.
+			 */
+			if (!next || !/^https:\/\/ps\.w\.org\/[a-z0-9-]+\/assets\/[a-z0-9._-]+$/i.test(next)) {
 				img.remove();
 				return;
 			}
