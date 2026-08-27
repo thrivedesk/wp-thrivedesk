@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T08:42:04+00:00\n"
+"POT-Creation-Date: 2026-08-27T08:51:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -190,7 +190,7 @@ msgid "Enter your API Key"
 msgstr ""
 
 #: includes/views/pages/api-verify.php:31
-#: resources/js/admin.js:820
+#: resources/js/admin.js:880
 msgid "Complete Setup"
 msgstr ""
 
@@ -364,7 +364,7 @@ msgid "Login to ThriveDesk app and get your API key from "
 msgstr ""
 
 #: includes/views/partials/overview.php:206
-#: includes/views/partials/settings.php:283
+#: includes/views/partials/settings.php:310
 msgid "here"
 msgstr ""
 
@@ -396,171 +396,183 @@ msgstr ""
 msgid "Add to WooCommerce"
 msgstr ""
 
-#: includes/views/partials/settings.php:97
+#: includes/views/partials/settings.php:98
 msgid "Live Chat Assistant"
 msgstr ""
 
-#: includes/views/partials/settings.php:98
+#: includes/views/partials/settings.php:99
 msgid "Show a chat widget on your site so visitors can start a conversation without leaving the page."
 msgstr ""
 
-#: includes/views/partials/settings.php:101
+#: includes/views/partials/settings.php:102
 msgid "Manage assistants"
 msgstr ""
 
-#: includes/views/partials/settings.php:110
+#: includes/views/partials/settings.php:111
 msgid "Assistant"
 msgstr ""
 
-#: includes/views/partials/settings.php:112
+#: includes/views/partials/settings.php:113
 msgid "Select an assistant"
 msgstr ""
 
-#: includes/views/partials/settings.php:119
+#: includes/views/partials/settings.php:120
 msgid "Which assistant this site loads."
 msgstr ""
 
-#: includes/views/partials/settings.php:123
+#: includes/views/partials/settings.php:124
 msgid "Hide on these pages"
 msgstr ""
 
-#: includes/views/partials/settings.php:163
+#: includes/views/partials/settings.php:164
 msgid "The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way. Leave empty to show it everywhere."
 msgstr ""
 
-#: includes/views/partials/settings.php:177
+#: includes/views/partials/settings.php:178
 msgid "No assistant yet"
 msgstr ""
 
-#: includes/views/partials/settings.php:178
+#: includes/views/partials/settings.php:179
 msgid "Create one in ThriveDesk, then come back here to choose which assistant this site loads."
 msgstr ""
 
-#: includes/views/partials/settings.php:180
+#: includes/views/partials/settings.php:181
 msgid "Create an assistant"
 msgstr ""
 
-#: includes/views/partials/settings.php:193
+#: includes/views/partials/settings.php:199
+msgid "Preview"
+msgstr ""
+
+#: includes/views/partials/settings.php:200
+msgid "The assistant selected on the left, loaded exactly as visitors get it."
+msgstr ""
+
+#: includes/views/partials/settings.php:209
+msgid "Choose an assistant to preview it."
+msgstr ""
+
+#: includes/views/partials/settings.php:220
 msgid "Select your inbox"
 msgstr ""
 
-#: includes/views/partials/settings.php:194
+#: includes/views/partials/settings.php:221
 msgid "Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox."
 msgstr ""
 
-#: includes/views/partials/settings.php:201
+#: includes/views/partials/settings.php:228
 msgid "Select Inbox"
 msgstr ""
 
-#: includes/views/partials/settings.php:203
-#: resources/js/admin.js:1233
+#: includes/views/partials/settings.php:230
+#: resources/js/admin.js:1293
 msgid "All inboxes"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/settings.php:219
+#: includes/views/partials/settings.php:246
 #, php-format
 msgid "No inboxes found. Please %1$screate a new inbox%2$s and return at a later time."
 msgstr ""
 
-#: includes/views/partials/settings.php:228
+#: includes/views/partials/settings.php:255
 msgid "WP Post Sync"
 msgstr ""
 
-#: includes/views/partials/settings.php:229
+#: includes/views/partials/settings.php:256
 msgid "Sync your WordPress posts with ThriveDesk for faster support"
 msgstr ""
 
-#: includes/views/partials/settings.php:245
+#: includes/views/partials/settings.php:272
 msgid "You need to install WordPress Post Sync app to get this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:248
+#: includes/views/partials/settings.php:275
 msgid "Connect Now"
 msgstr ""
 
-#: includes/views/partials/settings.php:262
+#: includes/views/partials/settings.php:289
 #: resources/js/wp-scripts/admin-app/App.js:13
 msgid "Portal"
 msgstr ""
 
-#: includes/views/partials/settings.php:263
+#: includes/views/partials/settings.php:290
 msgid "Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more."
 msgstr ""
 
-#: includes/views/partials/settings.php:272
+#: includes/views/partials/settings.php:299
 msgid "Clear portal cache"
 msgstr ""
 
-#: includes/views/partials/settings.php:278
+#: includes/views/partials/settings.php:305
 msgid "Please insert or verify your ThriveDesk API key to use the Portal feature."
 msgstr ""
 
-#: includes/views/partials/settings.php:282
+#: includes/views/partials/settings.php:309
 msgid "Portal feature is available for Plus and upper plan. For plans details click"
 msgstr ""
 
-#: includes/views/partials/settings.php:291
+#: includes/views/partials/settings.php:318
 msgid "Ticket Submission Form Page"
 msgstr ""
 
-#: includes/views/partials/settings.php:292
+#: includes/views/partials/settings.php:319
 msgid "Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href=\"https://help.thrivedesk.com/en/wpportal#create-ticket-page\" target=\"_blank\">here</a>."
 msgstr ""
 
-#: includes/views/partials/settings.php:293
+#: includes/views/partials/settings.php:320
 msgid "Select the page that contains the embedded ticket form visitors will submit."
 msgstr ""
 
-#: includes/views/partials/settings.php:295
+#: includes/views/partials/settings.php:322
 msgid "Select the page with your ticket form"
 msgstr ""
 
-#: includes/views/partials/settings.php:305
+#: includes/views/partials/settings.php:332
 msgid "Search Provider"
 msgstr ""
 
-#: includes/views/partials/settings.php:306
+#: includes/views/partials/settings.php:333
 msgid "When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both."
 msgstr ""
 
-#: includes/views/partials/settings.php:307
+#: includes/views/partials/settings.php:334
 msgid "Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive."
 msgstr ""
 
-#: includes/views/partials/settings.php:310
+#: includes/views/partials/settings.php:337
 msgid "Knowledge Base "
 msgstr ""
 
-#: includes/views/partials/settings.php:312
+#: includes/views/partials/settings.php:339
 msgid "Select knowledgebase"
 msgstr ""
 
-#: includes/views/partials/settings.php:322
+#: includes/views/partials/settings.php:349
 msgid "WordPress Post Types "
 msgstr ""
 
-#: includes/views/partials/settings.php:336
+#: includes/views/partials/settings.php:363
 msgid "Add Support Tab"
 msgstr ""
 
-#: includes/views/partials/settings.php:337
+#: includes/views/partials/settings.php:364
 msgid "You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin"
 msgstr ""
 
-#: includes/views/partials/settings.php:340
+#: includes/views/partials/settings.php:367
 msgid "You must install and activate WooCommerce plugin to use this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:351
+#: includes/views/partials/settings.php:378
 msgid "Portal Shortcode"
 msgstr ""
 
-#: includes/views/partials/settings.php:353
+#: includes/views/partials/settings.php:380
 msgid "Utilize this shortcode on any page to transform it into a help center."
 msgstr ""
 
-#: includes/views/partials/settings.php:354
+#: includes/views/partials/settings.php:381
 msgid "The portal is accessible only to logged-in users."
 msgstr ""
 
@@ -577,11 +589,6 @@ msgid "System Status"
 msgstr ""
 
 #: includes/views/setting.php:35
-#: src/Portal/UserAccountPages.php:153
-msgid "Support"
-msgstr ""
-
-#: includes/views/setting.php:38
 msgid "Visit ThriveDesk"
 msgstr ""
 
@@ -821,6 +828,10 @@ msgstr ""
 msgid "Your reply could not be sent. Please try again."
 msgstr ""
 
+#: src/Portal/UserAccountPages.php:153
+msgid "Support"
+msgstr ""
+
 #: resources/js/admin.js:258
 msgid "Search pages"
 msgstr ""
@@ -871,147 +882,143 @@ msgstr ""
 msgid "Close video"
 msgstr ""
 
-#: resources/js/admin.js:646
-msgid "Issue/Feedback from WP Plugin"
+#: resources/js/admin.js:673
+msgid "Assistant preview"
 msgstr ""
 
-#: resources/js/admin.js:647
-msgid "Write your issue/feedback details here..."
-msgstr ""
-
-#: resources/js/admin.js:669
+#: resources/js/admin.js:729
 msgid "Copy failed. Select the text and copy it manually."
 msgstr ""
 
 #. translators: %s: an IP address.
-#: resources/js/admin.js:678
+#: resources/js/admin.js:738
 #, js-format
 msgid "Copied %s"
 msgstr ""
 
-#: resources/js/admin.js:699
-#: resources/js/admin.js:726
-#: resources/js/admin.js:770
-#: resources/js/admin.js:796
-#: resources/js/admin.js:804
-#: resources/js/admin.js:813
-#: resources/js/admin.js:983
-#: resources/js/admin.js:1061
-#: resources/js/admin.js:1068
-#: resources/js/admin.js:1082
-#: resources/js/admin.js:1095
-#: resources/js/admin.js:1104
-#: resources/js/admin.js:1113
+#: resources/js/admin.js:759
+#: resources/js/admin.js:786
+#: resources/js/admin.js:830
+#: resources/js/admin.js:856
+#: resources/js/admin.js:864
+#: resources/js/admin.js:873
+#: resources/js/admin.js:1043
 #: resources/js/admin.js:1121
-#: resources/js/admin.js:1157
+#: resources/js/admin.js:1128
+#: resources/js/admin.js:1142
+#: resources/js/admin.js:1155
 #: resources/js/admin.js:1164
-#: resources/js/admin.js:1189
-#: resources/js/admin.js:1213
-#: resources/js/admin.js:1220
-#: resources/js/admin.js:1261
-#: resources/js/admin.js:1296
-#: resources/js/admin.js:1320
+#: resources/js/admin.js:1173
+#: resources/js/admin.js:1181
+#: resources/js/admin.js:1217
+#: resources/js/admin.js:1224
+#: resources/js/admin.js:1249
+#: resources/js/admin.js:1273
+#: resources/js/admin.js:1280
+#: resources/js/admin.js:1321
+#: resources/js/admin.js:1356
+#: resources/js/admin.js:1380
 msgid "Error"
 msgstr ""
 
-#: resources/js/admin.js:700
+#: resources/js/admin.js:760
 msgid "ThriveDesk configuration not loaded. Please refresh the page."
 msgstr ""
 
-#: resources/js/admin.js:727
+#: resources/js/admin.js:787
 msgid "Invalid response from server"
 msgstr ""
 
-#: resources/js/admin.js:771
+#: resources/js/admin.js:831
 msgid "Invalid response from helpdesk form submission"
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:806
+#: resources/js/admin.js:866
 #, js-format
 msgid "Failed to save helpdesk form: %s"
 msgstr ""
 
-#: resources/js/admin.js:814
-#: resources/js/admin.js:1069
-#: resources/js/admin.js:1083
-#: resources/js/admin.js:1122
-#: resources/js/admin.js:1190
-#: resources/js/admin.js:1251
-#: resources/js/admin.js:1297
-#: resources/js/admin.js:1321
+#: resources/js/admin.js:874
+#: resources/js/admin.js:1129
+#: resources/js/admin.js:1143
+#: resources/js/admin.js:1182
+#: resources/js/admin.js:1250
+#: resources/js/admin.js:1311
+#: resources/js/admin.js:1357
+#: resources/js/admin.js:1381
 msgid "Something went wrong"
 msgstr ""
 
-#: resources/js/admin.js:920
+#: resources/js/admin.js:980
 msgid "Saving..."
 msgstr ""
 
-#: resources/js/admin.js:926
+#: resources/js/admin.js:986
 msgid "Changes saved"
 msgstr ""
 
-#: resources/js/admin.js:936
-#: resources/js/admin.js:944
+#: resources/js/admin.js:996
+#: resources/js/admin.js:1004
 msgid "Could not save"
 msgstr ""
 
-#: resources/js/admin.js:945
+#: resources/js/admin.js:1005
 msgid "Check your connection and try again."
 msgstr ""
 
-#: resources/js/admin.js:984
+#: resources/js/admin.js:1044
 msgid "API Key is required"
 msgstr ""
 
-#: resources/js/admin.js:1029
+#: resources/js/admin.js:1089
 msgid "Verified"
 msgstr ""
 
-#: resources/js/admin.js:1040
-#: resources/js/admin.js:1311
+#: resources/js/admin.js:1100
+#: resources/js/admin.js:1371
 msgid "Success"
 msgstr ""
 
-#: resources/js/admin.js:1062
+#: resources/js/admin.js:1122
 msgid "Form submition failed"
 msgstr ""
 
-#: resources/js/admin.js:1105
-#: resources/js/admin.js:1158
-#: resources/js/admin.js:1214
+#: resources/js/admin.js:1165
+#: resources/js/admin.js:1218
+#: resources/js/admin.js:1274
 msgid "Invalid API Key"
 msgstr ""
 
-#: resources/js/admin.js:1114
-#: resources/js/admin.js:1165
-#: resources/js/admin.js:1221
+#: resources/js/admin.js:1174
+#: resources/js/admin.js:1225
+#: resources/js/admin.js:1281
 msgid "Server Error"
 msgstr ""
 
-#: resources/js/admin.js:1174
+#: resources/js/admin.js:1234
 msgid "Select Assistant"
 msgstr ""
 
-#: resources/js/admin.js:1179
+#: resources/js/admin.js:1239
 msgid "No Assistant Found"
 msgstr ""
 
-#: resources/js/admin.js:1244
+#: resources/js/admin.js:1304
 msgid "No Inbox Found"
 msgstr ""
 
-#: resources/js/admin.js:1253
+#: resources/js/admin.js:1313
 msgid "Request timed out. Please try again."
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:1256
+#: resources/js/admin.js:1316
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: resources/js/admin.js:1312
+#: resources/js/admin.js:1372
 msgid "Cache Cleared"
 msgstr ""
 

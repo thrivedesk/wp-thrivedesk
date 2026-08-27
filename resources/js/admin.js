@@ -630,23 +630,83 @@ jQuery(document).ready(($) => {
 		}
 	} );
 
-	// Toolbar "Support": opens the ThriveDesk assistant widget rather than
-	// navigating anywhere. Bound here instead of an inline onclick so a missing
-	// widget is a no-op with an explanation rather than a ReferenceError - the
-	// script that defines Assistant() is loaded separately and may not be there.
-	$(document).on('click', '[data-td-assistant]', function (e) {
-		e.preventDefault();
+	/*
+	 * Live preview of the selected assistant.
+	 *
+	 * Rebuilt in an iframe on every change rather than re-initialising in place.
+	 * The widget positions itself against its own viewport, so an iframe is what
+	 * keeps it inside the preview box instead of floating over the whole admin
+	 * screen. A fresh window per render also stops one preview's widget
+	 * lingering when a different assistant is chosen - the bootloader keeps a
+	 * single readyQueue per window and does not expect to be re-initialised.
+	 */
+	function tdRenderAssistantPreview() {
+		const host = document.querySelector( '[data-td-assistant-preview]' );
+		const select = document.getElementById( 'td-assistants' );
 
-		if (typeof window.Assistant !== 'function') {
-			console.warn('ThriveDesk: the assistant widget has not loaded on this page.');
+		if ( ! host || ! select ) {
 			return;
 		}
 
-		window.Assistant($(this).attr('data-td-assistant'), {
-			subject: __('Issue/Feedback from WP Plugin', 'thrivedesk'),
-			body: __('Write your issue/feedback details here...', 'thrivedesk'),
-		});
-	});
+		const assistantId = select.value;
+		const existing = host.querySelector( 'iframe' );
+
+		if ( existing ) {
+			existing.remove();
+		}
+
+		const empty = host.querySelector( '.td-assistant-preview__empty' );
+
+		if ( ! assistantId ) {
+			if ( empty ) {
+				empty.hidden = false;
+			}
+
+			return;
+		}
+
+		if ( empty ) {
+			empty.hidden = true;
+		}
+
+		const frame = document.createElement( 'iframe' );
+		frame.setAttribute( 'title', __( 'Assistant preview', 'thrivedesk' ) );
+		// The widget opens links and may ask for storage; same-origin keeps it on
+		// this site's origin the way it will be in production.
+		frame.setAttribute( 'sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms' );
+
+		// JSON.stringify does the escaping. These values are a WordPress display
+		// name and email, but they are still being written into a script.
+		frame.srcdoc = [
+			'<!doctype html><html><head><meta charset="utf-8">',
+			'<style>html,body{margin:0;height:100%;background:transparent;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}</style>',
+			'</head><body><script>',
+			'!function(t,e,n){function s(){var t=e.getElementsByTagName("script")[0],n=e.createElement("script");',
+			'n.type="text/javascript",n.async=!0,n.src=' + JSON.stringify( host.dataset.bootloader ) + '+"?"+Date.now(),',
+			't.parentNode.insertBefore(n,t)}if(t.Assistant=n=function(e,n,s){t.Assistant.readyQueue.push({method:e,options:n,data:s})},',
+			'n.readyQueue=[],"complete"===e.readyState)return s();',
+			't.attachEvent?t.attachEvent("onload",s):t.addEventListener("load",s,!1)}',
+			'(window,document,window.Assistant||function(){});',
+			'window.Assistant("init",' + JSON.stringify( assistantId ) + ');',
+			'window.Assistant("identify",{name:' + JSON.stringify( host.dataset.name || '' ) + ',email:' + JSON.stringify( host.dataset.email || '' ) + '});',
+			'<\/script></body></html>',
+		].join( '' );
+
+		host.classList.remove( 'is-loading' );
+		// Reflow, so the fade restarts on a rebuild rather than being ignored as
+		// an animation that has already run.
+		void host.offsetWidth;
+		host.classList.add( 'is-loading' );
+
+		host.appendChild( frame );
+	}
+
+	$( document ).on( 'change', '#td-assistants', tdRenderAssistantPreview );
+
+	// The select is populated asynchronously, so the first paint has to wait for
+	// whatever put the options there to finish.
+	tdRenderAssistantPreview();
+	setTimeout( tdRenderAssistantPreview, 1500 );
 
 	// Copy-to-clipboard buttons (the ThriveDesk IP list on the setup screen).
 	// Delegated from document so the buttons work wherever they are rendered.

@@ -90,6 +90,7 @@ $current_user = wp_get_current_user();
 
 
     <div id="td-panel-livechat" hidden>
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
     <div class="td-card space-y-6">
 
         <div class="flex items-start gap-4 flex-wrap">
@@ -182,6 +183,32 @@ $current_user = wp_get_current_user();
             </div>
         <?php endif; ?>
 
+    </div>
+
+        <?php
+        /*
+         * The preview runs in an iframe, not on this page. The admin screen has
+         * already called Assistant("init") with ThriveDesk's own support widget
+         * - that is what the toolbar Support link opens - and the bootloader
+         * keeps one queue per window, so a second init here would fight it. An
+         * iframe gets its own window, which is also what makes the widget sit
+         * inside the box rather than floating over the whole screen.
+         */
+        ?>
+        <div class="td-card">
+            <div class="text-base font-bold"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></div>
+            <p class="mt-1! mb-4! text-gray-500"><?php esc_html_e( 'The assistant selected on the left, loaded exactly as visitors get it.', 'thrivedesk' ); ?></p>
+
+            <div
+                class="td-assistant-preview"
+                data-td-assistant-preview
+                data-bootloader="<?php echo esc_url( THRIVEDESK_ASSISTANT_URL . '/bootloader.js' ); ?>"
+                data-name="<?php echo esc_attr( $current_user->display_name ); ?>"
+                data-email="<?php echo esc_attr( $current_user->user_email ); ?>"
+            >
+                <p class="td-assistant-preview__empty"><?php esc_html_e( 'Choose an assistant to preview it.', 'thrivedesk' ); ?></p>
+            </div>
+        </div>
     </div>
     </div>
 
@@ -362,28 +389,3 @@ $current_user = wp_get_current_user();
 
 
 </form>
-
-<script>
-    ! function(t, e, n) {
-        function s() {
-            var t = e.getElementsByTagName("script")[0],
-                n = e.createElement("script");
-            n.type = "text/javascript", n.async = !0, n.src = "<?php echo esc_url_raw(THRIVEDESK_ASSISTANT_URL); ?>/bootloader.js?" + Date.now(),
-                t.parentNode.insertBefore(n, t)
-        }
-        if (t.Assistant = n = function(e, n, s) {
-                t.Assistant.readyQueue.push({
-                    method: e,
-                    options: n,
-                    data: s
-                })
-            },
-            n.readyQueue = [], "complete" === e.readyState) return s();
-        t.attachEvent ? t.attachEvent("onload", s) : t.addEventListener("load", s, !1)
-    }
-    (window, document, window.Assistant || function() {}), window.Assistant("init", "966fdf96-802e-4bf7-8692-78e01b503819");
-    Assistant('identify', {
-        name: '<?php echo esc_js($current_user->user_login); ?>',
-        email: '<?php echo esc_js($current_user->user_email); ?>',
-    })
-</script>

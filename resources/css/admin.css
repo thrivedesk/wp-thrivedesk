@@ -171,6 +171,26 @@
 			text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
 		}
 
+		.td-assistant-preview {
+			@apply relative w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-50;
+			/* Tall enough that the widget's own panel opens inside the box rather
+			   than being clipped the moment someone clicks it. */
+			height: 520px;
+		}
+		.td-assistant-preview iframe {
+			@apply block w-full h-full border-0 bg-transparent;
+		}
+		.td-assistant-preview__empty {
+			@apply absolute inset-0 m-0! flex items-center justify-center px-6 text-center text-gray-400;
+		}
+		.td-assistant-preview.is-loading::after {
+			content: '';
+			@apply absolute inset-0 bg-slate-50;
+			animation: td-fade-out .6s ease forwards;
+		}
+		@keyframes td-fade-out {
+			to { opacity: 0; visibility: hidden; }
+		}
 		.td-toolbar {
 			@apply flex items-center flex-wrap gap-x-3 gap-y-2 bg-white border-b border-slate-200 py-4 px-8;
 		}
