@@ -2,8 +2,6 @@ import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
 import {
 	Button,
-	Card,
-	CardBody,
 	Flex,
 	FlexBlock,
 	FlexItem,
@@ -60,22 +58,29 @@ function IntegrationCard( { integration, onError } ) {
 	};
 
 	return (
-		<Card size="small" className="td-integration">
-			<CardBody>
-				<Flex align="center" gap={ 3 }>
-					<FlexItem>
-						<img className="td-integration__logo" src={ image } alt="" width="40" height="40" />
-					</FlexItem>
-					<FlexBlock>
-						<Heading level={ 4 } className="td-integration__name">
-							{ name }
-						</Heading>
-						<Text variant="muted" upperCase size="11px">
-							{ category }
+		<li className="td-integration">
+			<Flex align="center" gap={ 3 }>
+				<FlexItem>
+					<img className="td-integration__logo" src={ image } alt="" width="32" height="32" />
+				</FlexItem>
+				<FlexBlock>
+					<span className="td-integration__name">{ name }</span>
+					<Text variant="muted" upperCase size="11px" className="td-integration__category">
+						{ category }
+					</Text>
+				</FlexBlock>
+				<FlexItem className="td-integration__state">
+					{ ! external && connected && (
+						<span className="td-integration__badge">{ __( 'Connected', 'thrivedesk' ) }</span>
+					) }
+					{ ! external && ! connected && ! installed && (
+						<Text variant="muted" size="12px">
+							{ __( 'Not installed', 'thrivedesk' ) }
 						</Text>
-					</FlexBlock>
-					<FlexItem>
-						{ external && (
+					) }
+				</FlexItem>
+				<FlexItem>
+					{ external && (
 							<Button variant="secondary" href={ external } target="_blank" rel="noreferrer">
 								{ __( 'Connect', 'thrivedesk' ) }
 							</Button>
@@ -100,17 +105,10 @@ function IntegrationCard( { integration, onError } ) {
 							>
 								{ __( 'Connect', 'thrivedesk' ) }
 							</Button>
-						) }
-					</FlexItem>
-				</Flex>
-
-				{ ! external && ! connected && ! installed && (
-					<Text variant="muted" size="12px" className="td-integration__hint">
-						{ __( 'Not installed', 'thrivedesk' ) }
-					</Text>
-				) }
-			</CardBody>
-		</Card>
+					) }
+				</FlexItem>
+			</Flex>
+		</li>
 	);
 }
 
@@ -133,11 +131,11 @@ export default function Integrations( { integrations } ) {
 				</Notice>
 			) }
 
-			<div className="td-integrations__grid">
+			<ul className="td-integrations__list">
 				{ integrations.map( ( integration ) => (
 					<IntegrationCard key={ integration.slug } integration={ integration } onError={ setError } />
 				) ) }
-			</div>
+			</ul>
 		</div>
 	);
 }

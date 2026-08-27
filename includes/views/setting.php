@@ -8,7 +8,7 @@ use ThriveDesk\Conversations\Conversation;
 $assistant_settings = Assistant::get_assistant_settings();
 $api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
 /*
- * Not for display - the sidebar card reads td_helpdesk_system_info, and this is
+ * Not for display - the Overview card reads td_helpdesk_system_info, and this is
  * what fills it on the first admin visit after connecting. Dropping this call
  * along with the header that used to show it would leave the card blank until
  * something else happened to fetch it.
@@ -42,31 +42,14 @@ if ( $api_key && ! get_option('td_helpdesk_system_info') ) {
     </div>
 
     <!-- body  -->
-    <div class="p-10 grid grid-cols-1 md:grid-cols-4 gap-12">
-        <div class="col-span-3 space-y-6">
-            <?php
-            /*
-             * The React app mounts here and owns the tabs. Integrations is
-             * rendered entirely by it; the settings form below is still server
-             * rendered and gets adopted into the Settings tab on mount.
-             *
-             * `hidden` matters: without it the form paints unstyled in the page
-             * flow for a frame before React moves it. It is cleared by
-             * HostedPanel once the node is in place, so a JavaScript failure
-             * leaves the form reachable rather than invisible.
-             */
-            ?>
-            <div id="td-admin-app"></div>
+    <?php // Full width: the cards that used to sit in a right rail are the Overview tab now. ?>
+    <div class="p-10">
+        <div id="td-admin-app"></div>
 
-            <?php thrivedesk_view( 'partials/settings' ); ?>
+        <?php thrivedesk_view( 'partials/settings' ); ?>
 
-            <noscript>
-                <style>[id^="td-panel-"] { display: block !important; }</style>
-            </noscript>
-        </div>
-        <div class="col-span-1">
-            <!-- include the sidebar -->
-            <?php thrivedesk_view( 'partials/sidebar' ); ?>
-        </div>
+        <noscript>
+            <style>[id^="td-panel-"] { display: block !important; }</style>
+        </noscript>
     </div>
 </div>

@@ -15,9 +15,36 @@ $td_capability = [
 	'knowledgebase' => __( 'Knowledge base', 'thrivedesk' ),
 ];
 ?>
-<div class="sidebar space-y-6">
-    <!-- workspace  -->
+<?php
+/*
+ * Three states, not two. "Connected" is not the same as "connected but the key
+ * cannot read half the API" - the second used to render as empty lists with no
+ * explanation, which is what the API access rows below exist to make visible.
+ */
+$td_reachable = array_filter( $td_summary['api'], static function ( $capability ) {
+	return $capability['ok'];
+} );
+$td_total     = count( $td_summary['api'] );
+$td_degraded  = $td_summary['connected'] && count( $td_reachable ) < $td_total;
+
+if ( ! $td_summary['connected'] ) {
+	$td_status = [ 'label' => __( 'Not connected', 'thrivedesk' ), 'dot' => 'bg-rose-500', 'text' => 'text-rose-600' ];
+} elseif ( $td_degraded ) {
+	$td_status = [ 'label' => __( 'Connected, with limits', 'thrivedesk' ), 'dot' => 'bg-amber-500', 'text' => 'text-amber-600' ];
+} else {
+	$td_status = [ 'label' => __( 'Connected', 'thrivedesk' ), 'dot' => 'bg-green-500', 'text' => 'text-green-600' ];
+}
+?>
+<div class="space-y-6">
     <div class="td-card space-y-4">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="text-base font-bold"><?php esc_html_e( 'Connection', 'thrivedesk' ); ?></div>
+            <span class="inline-flex items-center gap-2 text-sm font-medium <?php echo esc_attr( $td_status['text'] ); ?>">
+                <span class="w-2 h-2 rounded-full <?php echo esc_attr( $td_status['dot'] ); ?>" aria-hidden="true"></span>
+                <?php echo esc_html( $td_status['label'] ); ?>
+            </span>
+        </div>
+
         <?php
         // Uppercasing is a CSS class, never baked into the string: plenty of
         // languages have no case at all, and the ones that do do not all
@@ -97,7 +124,8 @@ $td_capability = [
         <?php endif; ?>
     </div>
 
-    <!-- cloudflare  -->
+    <?php // Reference material, three across now there is a full-width tab to hold it. ?>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="td-card bg-orange-50 border border-orange-400 space-y-2">
         <img class="w-36 ml-auto" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"); ?>">
         <h3 class="text-lg font-medium"><?php esc_html_e('Using Cloudflare?', 'thrivedesk'); ?></h3>
@@ -118,4 +146,5 @@ $td_capability = [
         <p><?php esc_html_e('Embed Help Center into your site that won’t make any database calls, no extra plugins dependency.', 'thrivedesk'); ?></p>
         <a href="https://www.thrivedesk.com/wordpress/" target="_blank" class="mt-2 inline-block"><?php esc_html_e('Learn more', 'thrivedesk'); ?></a>
     </div>
+</div>
 </div>

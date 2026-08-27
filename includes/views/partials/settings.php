@@ -80,6 +80,47 @@ $current_user = wp_get_current_user();
      * containment is not what makes saving work.
      */
     ?>
+    <?php // Overview leads: what this site is connected to, and the key that connects it. ?>
+    <div id="td-panel-overview" hidden>
+        <?php thrivedesk_view( 'partials/overview' ); ?>
+    <!-- connection  -->
+    <div class="space-y-1">
+        <div class="td-card-heading">
+            <div class="text-base font-bold"><?php esc_html_e('Connection Details', 'thrivedesk'); ?></div>
+            <p><?php esc_html_e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
+        </div>
+        <div class="td-card">
+            <div class="space-y-2">
+                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
+                <span>
+                    <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
+                    <a class="text-blue-500" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/api-key'); ?>" target="_blank">
+                        <?php esc_html_e('here', 'thrivedesk'); ?>
+                    </a>
+                </span>
+                <?php
+                // type="password" hides the key on screen and nowhere else: it
+                // is still in view-source, in the DOM, in password managers, on
+                // a screen share, and one selector away from any script on the
+                // page. Only a preview is rendered, and the editable field is
+                // left blank - submitting it empty means "unchanged".
+                ?>
+                <div class="flex items-center api-key-preview">
+                    <input class="truncate w-2/3 bg-gray-50" type="text" disabled value="<?php echo esc_attr($td_api_key_preview); ?>" />
+                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
+                </div>
+                <div class="api-key-editable hidden">
+                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_connect_token); ?>" placeholder="<?php echo esc_attr($td_api_key_preview); ?>" autocomplete="off" class="block p-2.5 w-full text-sm" />
+
+                    <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
+                        <?php esc_html_e('Verify', 'thrivedesk'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
     <div id="td-panel-settings" hidden>
     <!-- inbox selection -->
     <div class="space-y-1" style="display:none;">
@@ -150,43 +191,8 @@ $current_user = wp_get_current_user();
             </div>
         </div>
     <?php endif; ?>
-    <!-- connection  -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Connection Details', 'thrivedesk'); ?></div>
-            <p><?php esc_html_e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card">
-            <div class="space-y-2">
-                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
-                <span>
-                    <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
-                    <a class="text-blue-500" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/api-key'); ?>" target="_blank">
-                        <?php esc_html_e('here', 'thrivedesk'); ?>
-                    </a>
-                </span>
-                <?php
-                // type="password" hides the key on screen and nowhere else: it
-                // is still in view-source, in the DOM, in password managers, on
-                // a screen share, and one selector away from any script on the
-                // page. Only a preview is rendered, and the editable field is
-                // left blank - submitting it empty means "unchanged".
-                ?>
-                <div class="flex items-center api-key-preview">
-                    <input class="truncate w-2/3 bg-gray-50" type="text" disabled value="<?php echo esc_attr($td_api_key_preview); ?>" />
-                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
-                </div>
-                <div class="api-key-editable hidden">
-                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_connect_token); ?>" placeholder="<?php echo esc_attr($td_api_key_preview); ?>" autocomplete="off" class="block p-2.5 w-full text-sm" />
+    </div>
 
-                    <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
-                        <?php esc_html_e('Verify', 'thrivedesk'); ?>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
 
     <div id="td-panel-livechat" hidden>
     <div class="td-card space-y-6">

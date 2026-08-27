@@ -7,6 +7,7 @@ import HostedPanel from './HostedPanel';
 const TAB_PARAM = 'td_tab';
 
 const TABS = [
+	{ name: 'overview', title: __( 'Overview', 'thrivedesk' ), panel: 'td-panel-overview' },
 	{ name: 'integrations', title: __( 'Integrations', 'thrivedesk' ) },
 	{ name: 'livechat', title: __( 'Live Chat', 'thrivedesk' ), panel: 'td-panel-livechat' },
 	{ name: 'portal', title: __( 'Portal', 'thrivedesk' ), panel: 'td-panel-portal' },
