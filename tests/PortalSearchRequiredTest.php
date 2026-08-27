@@ -103,6 +103,44 @@ class PortalSearchRequiredTest extends TD_Ajax_TestCase {
 		$this->assertStringContainsString( 'id="td-modal-footer-note" hidden', $html );
 	}
 
+	/**
+	 * The Support tab control is WooCommerce's, and only renders while
+	 * WooCommerce is running - there is no My Account page to add a tab to
+	 * otherwise. It used to render disabled with a title explaining why.
+	 *
+	 * It still has to render *somewhere* whenever it can, because the save
+	 * handler reads it by class: a field that stops rendering saves empty and
+	 * wipes what was chosen.
+	 */
+	public function test_the_support_tab_control_waits_for_woocommerce() {
+		update_option( 'td_helpdesk_settings', [ 'td_helpdesk_api_key' => 'k' ] );
+		update_option( 'td_helpdesk_verified', true );
+
+		add_filter( 'pre_http_request', static fn() => [
+			'headers'  => [],
+			'response' => [ 'code' => 200, 'message' => 'OK' ],
+			'body'     => wp_json_encode( [] ),
+		], 10, 3 );
+
+		ob_start();
+		include THRIVEDESK_DIR . '/includes/views/partials/settings.php';
+		$html = (string) ob_get_clean();
+
+		remove_all_filters( 'pre_http_request' );
+		delete_option( 'td_helpdesk_verified' );
+
+		if ( defined( 'WC_VERSION' ) ) {
+			$this->assertStringContainsString( 'class="td-woo"', $html );
+			$this->assertStringContainsString( 'class="td_user_account_pages"', $html );
+			$this->assertStringContainsString( 'do not need the shortcode anywhere', $html );
+
+			return;
+		}
+
+		$this->assertStringNotContainsString( 'class="td-woo"', $html );
+		$this->assertStringNotContainsString( 'class="td_user_account_pages"', $html );
+	}
+
 	public function test_the_setting_is_on_the_portal_tab() {
 		update_option(
 			'td_helpdesk_settings',

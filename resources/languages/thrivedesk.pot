@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T16:13:06+00:00\n"
+"POT-Creation-Date: 2026-08-27T16:18:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -548,95 +548,83 @@ msgstr ""
 msgid "Point your form at one of these and its submissions become conversations."
 msgstr ""
 
-#: includes/views/partials/settings.php:490
+#: includes/views/partials/settings.php:497
+msgid "Add a Support tab to the WooCommerce My Account page"
+msgstr ""
+
+#: includes/views/partials/settings.php:500
+msgid "Customers reach their tickets where they already are - and with this on you do not need the shortcode anywhere, because the tab is the portal."
+msgstr ""
+
+#: includes/views/partials/settings.php:515
+msgid "Sync posts to ThriveDesk"
+msgstr ""
+
+#: includes/views/partials/settings.php:524
+msgid "Agents can search these from inside a conversation without leaving ThriveDesk."
+msgstr ""
+
+#: includes/views/partials/settings.php:536
 msgid "Connect with Help Center"
 msgstr ""
 
-#: includes/views/partials/settings.php:491
+#: includes/views/partials/settings.php:537
 msgid "Anyone opening a ticket is asked to search first. The better your Help Center is stocked, the fewer tickets reach you."
 msgstr ""
 
-#: includes/views/partials/settings.php:502
+#: includes/views/partials/settings.php:548
 msgid "Select a ticket creation form above to set this up."
 msgstr ""
 
-#: includes/views/partials/settings.php:510
+#: includes/views/partials/settings.php:556
 #: includes/views/setting.php:31
 msgid "Help Center"
 msgstr ""
 
-#: includes/views/partials/settings.php:512
+#: includes/views/partials/settings.php:558
 msgid "Do not search a Help Center"
 msgstr ""
 
-#: includes/views/partials/settings.php:519
+#: includes/views/partials/settings.php:565
 msgid "Which ThriveDesk Help Center the portal searches."
 msgstr ""
 
-#: includes/views/partials/settings.php:523
+#: includes/views/partials/settings.php:569
 msgid "WordPress content"
 msgstr ""
 
-#: includes/views/partials/settings.php:537
+#: includes/views/partials/settings.php:583
 msgid "Help Center only"
 msgstr ""
 
 #. translators: %d: how many post types are searched alongside the Help Center.
-#: includes/views/partials/settings.php:540
+#: includes/views/partials/settings.php:586
 #, php-format
 msgid "%d content types"
 msgstr ""
 
-#: includes/views/partials/settings.php:559
+#: includes/views/partials/settings.php:605
 msgid "Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only."
 msgstr ""
 
-#: includes/views/partials/settings.php:565
+#: includes/views/partials/settings.php:611
 msgid "Make searching compulsory"
 msgstr ""
 
-#: includes/views/partials/settings.php:567
+#: includes/views/partials/settings.php:613
 msgid "Hides the new ticket button until a search has run. People who find their answer never open the ticket; people who do not still can."
 msgstr ""
 
-#: includes/views/partials/settings.php:583
+#: includes/views/partials/settings.php:629
 msgid "What this does"
 msgstr ""
 
-#: includes/views/partials/settings.php:587
+#: includes/views/partials/settings.php:633
 msgid "With a Help Center and some post types chosen, anyone opening a ticket on the portal is asked to search first, and ThriveDesk shows the answer if it is already published in either place."
 msgstr ""
 
-#: includes/views/partials/settings.php:590
+#: includes/views/partials/settings.php:636
 msgid "The ones who find it never open the ticket, which is the point: fewer of the same question, asked and answered again."
-msgstr ""
-
-#: includes/views/partials/settings.php:601
-msgid "Elsewhere on this site"
-msgstr ""
-
-#: includes/views/partials/settings.php:602
-msgid "What ThriveDesk adds to pages it does not own."
-msgstr ""
-
-#: includes/views/partials/settings.php:609
-msgid "Support tab"
-msgstr ""
-
-#: includes/views/partials/settings.php:615
-msgid "You must install and activate WooCommerce plugin to use this feature"
-msgstr ""
-
-#: includes/views/partials/settings.php:622
-msgid "Adds a Support tab to the My Account page, so customers reach their tickets where they already are."
-msgstr ""
-
-#: includes/views/partials/settings.php:628
-msgid "Sync posts to ThriveDesk"
-msgstr ""
-
-#: includes/views/partials/settings.php:637
-msgid "Agents can search these from inside a conversation without leaving ThriveDesk."
 msgstr ""
 
 #: includes/views/partials/workspace-card.php:18

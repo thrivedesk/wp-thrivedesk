@@ -479,6 +479,52 @@ $current_user = wp_get_current_user();
 
             </div>
 
+            <?php
+            /*
+             * WooCommerce only, and only while it is running: the tab is added to
+             * its My Account page, so with WooCommerce inactive there is no page to
+             * add it to. It used to render disabled with a title explaining why,
+             * which is a row of screen spent on something most sites cannot use.
+             */
+            ?>
+            <?php if ($woo_plugin_installed && !empty($td_user_account_pages)) : ?>
+                <div class="td-woo">
+                    <img class="td-woo__logo" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/woo.svg'); ?>" alt="WooCommerce" width="36" height="36">
+                    <div class="min-w-0">
+                        <?php foreach ($td_user_account_pages as $td_account_key => $td_account_page) : ?>
+                            <label class="td-check" for="td-account-<?php echo esc_attr($td_account_key); ?>">
+                                <input class="td_user_account_pages" type="checkbox" id="td-account-<?php echo esc_attr($td_account_key); ?>" name="td_user_account_pages[]" value="<?php echo esc_attr($td_account_key); ?>" <?php checked(in_array($td_account_key, $td_selected_user_account_pages, true)); ?>>
+                                <span class="font-medium"><?php esc_html_e('Add a Support tab to the WooCommerce My Account page', 'thrivedesk'); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                        <p class="td-field-help"><?php esc_html_e('Customers reach their tickets where they already are - and with this on you do not need the shortcode anywhere, because the tab is the portal.', 'thrivedesk'); ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php
+            /*
+             * Not a portal setting, and the card it lived in has gone. It stays on
+             * this tab rather than being dropped: the save handler reads these by
+             * class, so a field that stops rendering does not stop being saved - it
+             * saves empty, and quietly wipes whatever was chosen.
+             */
+            ?>
+            <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
+                <div class="td-field" id="td_post_sync">
+                    <span class="td-field__label"><?php esc_html_e('Sync posts to ThriveDesk', 'thrivedesk'); ?></span>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                        <?php foreach ($wp_post_sync_types as $td_sync_type) : ?>
+                            <label class="td-check" for="td-sync-<?php echo esc_attr($td_sync_type); ?>">
+                                <input class="td_helpdesk_post_sync" type="checkbox" id="td-sync-<?php echo esc_attr($td_sync_type); ?>" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($td_sync_type); ?>" <?php checked(in_array($td_sync_type, $td_selected_post_sync, true)); ?>>
+                                <span><?php echo esc_html(ucfirst($td_sync_type)); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="td-field-help"><?php esc_html_e('Agents can search these from inside a conversation without leaving ThriveDesk.', 'thrivedesk'); ?></p>
+                </div>
+            <?php endif; ?>
+
             <?php // Announces a copy to screen readers; the icon swap alone is silent. ?>
             <span id="td-copy-status" class="sr-only" role="status" aria-live="polite"></span>
         </div>
@@ -593,54 +639,6 @@ $current_user = wp_get_current_user();
 
             </div>
         </div>
-
-        <?php if (!empty($td_user_account_pages) || ($wppostsync && $wppostsync->get_plugin_data('connected'))) : ?>
-            <div class="td-card space-y-6">
-
-                <div>
-                    <div class="text-base font-bold"><?php esc_html_e('Elsewhere on this site', 'thrivedesk'); ?></div>
-                    <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('What ThriveDesk adds to pages it does not own.', 'thrivedesk'); ?></p>
-                </div>
-
-                <div class="space-y-5 pt-5 border-t border-slate-200">
-
-                    <?php if (!empty($td_user_account_pages)) : ?>
-                        <div class="td-field">
-                            <span class="td-field__label"><?php esc_html_e('Support tab', 'thrivedesk'); ?></span>
-                            <div class="space-y-2">
-                                <?php foreach ($td_user_account_pages as $key => $page) : ?>
-                                    <label
-                                        class="td-check<?php echo $woo_plugin_installed ? '' : ' is-disabled'; ?>"
-                                        for="td-account-<?php echo esc_attr($key); ?>"
-                                        <?php echo !$woo_plugin_installed ? 'title="' . esc_attr__('You must install and activate WooCommerce plugin to use this feature', 'thrivedesk') . '"' : ''; ?>
-                                    >
-                                        <input class="td_user_account_pages" type="checkbox" id="td-account-<?php echo esc_attr($key); ?>" name="td_user_account_pages[]" value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?php echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
-                                        <span><?php echo esc_html($page); ?></span>
-                                    </label>
-                                <?php endforeach; ?>
-                            </div>
-                            <p class="td-field-help"><?php esc_html_e('Adds a Support tab to the My Account page, so customers reach their tickets where they already are.', 'thrivedesk'); ?></p>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-                        <div class="td-field" id="td_post_sync">
-                            <span class="td-field__label"><?php esc_html_e('Sync posts to ThriveDesk', 'thrivedesk'); ?></span>
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
-                                <?php foreach ($wp_post_sync_types as $post_sync) : ?>
-                                    <label class="td-check" for="td-sync-<?php echo esc_attr($post_sync); ?>">
-                                        <input class="td_helpdesk_post_sync" type="checkbox" id="td-sync-<?php echo esc_attr($post_sync); ?>" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array($post_sync, $td_selected_post_sync) ? 'checked' : ''; ?>>
-                                        <span><?php echo esc_html(ucfirst($post_sync)); ?></span>
-                                    </label>
-                                <?php endforeach; ?>
-                            </div>
-                            <p class="td-field-help"><?php esc_html_e('Agents can search these from inside a conversation without leaving ThriveDesk.', 'thrivedesk'); ?></p>
-                        </div>
-                    <?php endif; ?>
-
-                </div>
-            </div>
-        <?php endif; ?>
 
     </div>
     <?php endif; ?>

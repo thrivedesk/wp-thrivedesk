@@ -18,7 +18,14 @@
 
 class SettingsFieldContractTest extends WP_UnitTestCase {
 
-	/** Kept in step with TD_AUTOSAVE_FIELDS in resources/js/admin.js. */
+	/**
+	 * Kept in step with TD_AUTOSAVE_FIELDS in resources/js/admin.js.
+	 *
+	 * The two that depend on another plugin being present are not here -
+	 * .td_user_account_pages needs WooCommerce active and .td_helpdesk_post_sync
+	 * needs the WP Post Sync app connected - so a bare test site renders
+	 * neither. They are covered where their own condition is set up.
+	 */
 	private const AUTOSAVED = [
 		'#td-assistants'          => 'id="td-assistants"',
 		'#td-excluded-routes'     => 'id="td-excluded-routes"',
@@ -26,7 +33,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		'#td_helpdesk_page_id'    => 'id="td_helpdesk_page_id"',
 		'#td_knowledgebase_slug'  => 'id="td_knowledgebase_slug"',
 		'#td_helpdesk_post_types' => 'id="td_helpdesk_post_types"',
-		'.td_user_account_pages'  => 'class="td_user_account_pages"',
+
 	];
 
 	public function set_up() {

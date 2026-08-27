@@ -65,12 +65,23 @@ class PortalSearchGateTest extends WP_UnitTestCase {
 		return (string) ob_get_clean();
 	}
 
+	/**
+	 * The search card is the last thing in the Portal panel, so it runs to the
+	 * end of the form. Bounded on the form's close rather than on whatever
+	 * happens to follow it - this used to slice at a neighbouring card, and
+	 * silently became an empty string the day that card was removed.
+	 */
 	private function card( string $html ): string {
 		$start = strpos( $html, 'id="td-search-card"' );
 
 		$this->assertIsInt( $start, 'the search card has to be on the screen either way' );
 
-		return substr( $html, $start, strpos( $html, 'Elsewhere on this site' ) - $start );
+		$end = strpos( $html, '</form>' );
+
+		$this->assertIsInt( $end );
+		$this->assertGreaterThan( $start, $end );
+
+		return substr( $html, $start, $end - $start );
 	}
 
 	public function test_the_card_is_locked_until_a_ticket_form_is_chosen() {

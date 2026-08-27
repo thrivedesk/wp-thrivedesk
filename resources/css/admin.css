@@ -155,6 +155,17 @@
 		.td-info__icon {
 			@apply inline-flex shrink-0 text-blue-600;
 		}
+		/* WooCommerce's own purple, kept light: this is a setting about
+		   WooCommerce sitting among settings that are not, and the logo alone
+		   is too small to say so at a glance. */
+		.td-woo {
+			@apply flex items-start gap-3 rounded-md border p-4;
+			border-color: color-mix(in srgb, #7f54b3 30%, transparent);
+			background-color: color-mix(in srgb, #7f54b3 6%, #fff);
+		}
+		.td-woo__logo {
+			@apply w-9 h-9 shrink-0 object-contain;
+		}
 		/* The other kind of note: not something to paste into your site, but
 		   something the account already is. Plain, so the two stacked in one
 		   column do not read as one long blue block - and white rather than
