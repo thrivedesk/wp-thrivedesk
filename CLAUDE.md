@@ -84,6 +84,26 @@ Each extends `ThriveDesk\Plugin` (`src/Abstracts/Plugin.php`) and is a singleton
 
 Lifecycle hooks (`register_activation_hook` etc.) stay at file scope in `thrivedesk.php`, outside the `is_admin()` gate, so WP-CLI activation still runs them.
 
+### Admin screen (React)
+
+`admin.php?page=thrivedesk` is a React app built with `wp-scripts`, entry
+`resources/js/wp-scripts/thrivedesk-admin-app.js`, using `@wordpress/components`.
+WordPress provides `wp-components` as a script and style, so it is a build
+external and costs no npm dependency — `Admin::enqueue_admin_app()` reads the
+generated `.asset.php` for the handles rather than hardcoding them.
+
+`TabPanel` owns the page: Overview, Integrations, Live Chat, Portal. Integrations
+is fully ported and renders from `thrivedesk_integrations()`, bootstrapped into
+`window.thrivedeskAdmin`. The other four are still server-rendered PHP in
+`includes/views/partials/overview.php` and
+`includes/views/partials/settings.php`, split into `#td-panel-*` divs that
+`HostedPanel` adopts into their tab — a staging device, not the end state.
+
+Two things that will bite if changed carelessly: every panel is rendered on every
+tab with only `hidden` toggling, because unmounting a `HostedPanel` destroys the
+markup it adopted; and the save handler reads fields **by id**, not by
+serialising the form, which is the only reason panels can live outside it.
+
 ### Options
 
 `thrivedesk_options` (integration connections), `td_helpdesk_settings` (API key + helpdesk config), `td_helpdesk_verified`, `td_assistant_settings`, `td_inbox_settings`, `td_user_account_pages`, `td_db_version`.

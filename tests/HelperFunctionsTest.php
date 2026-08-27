@@ -15,6 +15,27 @@ class HelperFunctionsTest extends WP_UnitTestCase {
 		parent::tear_down();
 	}
 
+	/**
+	 * thrivedesk_view() used require_once, so a template rendered a second time
+	 * in the same request produced nothing at all. That is not a hypothetical:
+	 * the settings view renders the overview view, and any second render - a
+	 * loop, or two tests in one process - came back empty with no error.
+	 */
+	public function test_a_view_can_be_rendered_more_than_once_per_request() {
+		$render = static function () {
+			ob_start();
+			thrivedesk_view( 'icons/close' );
+
+			return trim( (string) ob_get_clean() );
+		};
+
+		$first  = $render();
+		$second = $render();
+
+		$this->assertNotSame( '', $first, 'the view rendered nothing at all' );
+		$this->assertSame( $first, $second, 'a second render must produce the same markup, not nothing' );
+	}
+
 	public function test_thrivedesk_options_returns_array_or_empty() {
 		delete_option( 'thrivedesk_options' );
 		$this->assertSame( [], thrivedesk_options() );

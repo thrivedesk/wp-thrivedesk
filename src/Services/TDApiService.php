@@ -75,7 +75,7 @@ class TDApiService {
     private function handle_response($response): array
     {
         $response_code      = wp_remote_retrieve_response_code( $response );
-        $instruction_ip_whitelist = 'Please try to white list these IP addresses: 20.68.187.32, 20.68.186.235, 20.117.184.59';
+        $instruction_ip_whitelist = 'Please try to white list these IP addresses: ' . implode(', ', thrivedesk_service_ips());
 
 		if ( is_wp_error( $response ) ) {
             $error_message = $response->get_error_message();

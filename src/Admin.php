@@ -81,6 +81,8 @@ final class Admin
 
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
 
+        add_action('wp_ajax_thrivedesk_disconnect_account', [$this, 'ajax_disconnect_account']);
+
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
         // menu icon style 
@@ -324,6 +326,8 @@ final class Admin
                     'kb_url' => $knowledgebase_url,
                 )
             );
+
+            $this->enqueue_admin_app();
         }
 
         if (class_exists('BWF_Contacts')) {
@@ -331,6 +335,65 @@ final class Admin
 
             wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-autonami-tab.js', $asset_file['dependencies'], $asset_file['version'] ?? THRIVEDESK_VERSION);
         }
+    }
+
+    /**
+     * The React settings screen, built with @wordpress/components.
+     *
+     * wp-components arrives as a WordPress-provided script and style, so the
+     * design system costs no npm dependency - the build lists it as an
+     * external and WordPress serves it. The generated .asset.php is the
+     * authority on which handles this build actually needs; hardcoding them
+     * here would drift the first time an import changes.
+     *
+     * Everything the app paints on first load is passed in rather than fetched,
+     * so the tabs do not flash empty while a request is in flight.
+     *
+     * @return void
+     */
+    private function enqueue_admin_app(): void
+    {
+        $asset_path = THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-admin-app.asset.php';
+
+        if (! file_exists($asset_path)) {
+            return;
+        }
+
+        $asset = include $asset_path;
+
+        wp_enqueue_style('wp-components');
+        wp_enqueue_style(
+            'thrivedesk-admin-app',
+            THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/style-thrivedesk-admin-app.css',
+            ['wp-components'],
+            $asset['version'] ?? THRIVEDESK_VERSION
+        );
+
+        wp_enqueue_script(
+            'thrivedesk-admin-app',
+            THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-admin-app.js',
+            $asset['dependencies'] ?? [],
+            $asset['version'] ?? THRIVEDESK_VERSION,
+            true
+        );
+
+        wp_set_script_translations('thrivedesk-admin-app', 'thrivedesk');
+
+        wp_localize_script(
+            'thrivedesk-admin-app',
+            'thrivedeskAdmin',
+            [
+                'ajaxUrl'           => admin_url('admin-ajax.php'),
+                // The same nonce action the connect and disconnect handlers
+                // verify against; see ajax_connect_plugin().
+                'pluginActionNonce' => wp_create_nonce('thrivedesk-plugin-action'),
+                'integrations'      => thrivedesk_integrations(),
+                // Locks the integration cards rather than hiding them: what
+                // ThriveDesk connects to is most of the reason to connect at
+                // all, so it stays readable before there is a key.
+                'connected'         => thrivedesk_is_connected(),
+            ]
+        );
     }
 
     public function load_pages(){
@@ -375,15 +438,17 @@ final class Admin
             }
         }
 
-        if($td_api_key && $api_status){
-            thrivedesk_view('setting');
-        }
-        elseif($td_api_key == '' || '' !== self::connect_return_token()){
-            thrivedesk_view('pages/api-verify');
-        }
-        else{
-            thrivedesk_view('pages/welcome');
-        }
+        /*
+         * One destination, connected or not. This used to fork into a
+         * fullscreen setup screen and a welcome screen, which meant a new
+         * install saw nothing of the plugin until it had a key - no tour, no
+         * integrations, nothing to read while deciding. The tabs render either
+         * way now: the Overview tab leads with the same connect card those
+         * screens used to be, and every tab that needs an account says so.
+         *
+         * See thrivedesk_is_connected(), which is what the views branch on.
+         */
+        thrivedesk_view('setting');
     }
 
     public function verification_page(){
@@ -570,6 +635,90 @@ final class Admin
      *
      * @return void
      */
+    /**
+     * Forget the ThriveDesk account this site is connected to.
+     *
+     * @return void
+     */
+    public function ajax_disconnect_account(): void
+    {
+        if (
+            ! current_user_can('manage_options')
+            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
+        ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
+        }
+
+        self::forget_account();
+
+        wp_send_json_success(['message' => __('Disconnected from ThriveDesk.', 'thrivedesk')]);
+    }
+
+    /**
+     * Undo everything connecting did, and nothing else.
+     *
+     * Two halves, and the second is the one that is easy to miss. Clearing the
+     * API key stops *this site* from calling ThriveDesk - but each connected
+     * integration holds its own `api_token`, issued to the org id in
+     * td_helpdesk_system_info, and Api::api_listener() honours that token on
+     * its own without ever consulting the helpdesk key. A disconnect that left
+     * them in place would still be answering the old workspace's requests for
+     * orders, subscriptions, contacts and posts. So they are revoked here, and
+     * the confirmation says so before anyone agrees to it.
+     *
+     * What survives is what describes this site rather than the workspace:
+     * which page hosts the portal, which post types sync, which routes hide
+     * the widget. All of it is still true after reconnecting, and none of it
+     * is worth making someone set up twice.
+     *
+     * @return void
+     */
+    public static function forget_account(): void
+    {
+        $settings = get_option('td_helpdesk_settings');
+        $settings = is_array($settings) ? $settings : [];
+        $api_key  = (string) ($settings['td_helpdesk_api_key'] ?? '');
+
+        foreach (['td_helpdesk_api_key', 'td_helpdesk_assistant_id', 'td_helpdesk_inbox_id', 'td_knowledgebase_slug'] as $key) {
+            unset($settings[$key]);
+        }
+
+        update_option('td_helpdesk_settings', $settings);
+
+        self::set_api_verification_status(false);
+        delete_option('td_helpdesk_system_info');
+
+        $integrations = get_option('thrivedesk_options', []);
+
+        if (is_array($integrations)) {
+            foreach ($integrations as $slug => $integration) {
+                if (! is_array($integration)) {
+                    continue;
+                }
+
+                $integrations[$slug] = ['api_token' => '', 'connected' => false];
+            }
+
+            update_option('thrivedesk_options', $integrations);
+        }
+
+        // Both are stale the moment the key is gone, and they are stored
+        // differently: the summary is an option, so the transient sweep below
+        // does not reach it.
+        \ThriveDesk\Services\WorkspaceService::flush();
+
+        // By name first. The sweep below reads the options table, and under an
+        // external object cache transients never go there - these two are keyed
+        // by the departing API key, so this is the only moment they can be
+        // named at all.
+        if ('' !== $api_key) {
+            delete_transient('thrivedesk_assistants_' . md5($api_key));
+            delete_transient('thrivedesk_inboxes_' . md5($api_key));
+        }
+
+        remove_thrivedesk_all_cache();
+    }
+
     public function ajax_disconnect_plugin(): void
     {
         if (

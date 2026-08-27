@@ -175,8 +175,6 @@ class ConnectTokenBindingTest extends WP_UnitTestCase {
 		$this->reset_memo();
 		$_GET['token'] = 'ATTACKER-KEY';
 
-		// Included directly: thrivedesk_view() uses require_once, so a view
-		// renders at most once per process.
 		ob_start();
 		include THRIVEDESK_DIR . '/includes/views/pages/api-verify.php';
 		$html = (string) ob_get_clean();
@@ -215,8 +213,18 @@ class ConnectTokenBindingTest extends WP_UnitTestCase {
 	 * Finding A step 1: `isset($_GET['token'])` forced the authorize screen on
 	 * any install, so an attacker could put a connected site back in front of
 	 * the "Complete Setup" button.
+	 *
+	 * This used to assert that the connect card was absent, because an install
+	 * with an unverified key was sent to a welcome screen that had no API key
+	 * field on it. It is sent to the tabs now and the card is on the Overview
+	 * tab, so its presence is no longer the thing that distinguishes an
+	 * attacker's link from an ordinary visit - an admin who has not connected
+	 * yet is meant to see that card.
+	 *
+	 * What was ever dangerous is the field being pre-filled, which is what is
+	 * asserted here instead: the input renders, and it renders empty.
 	 */
-	public function test_a_planted_token_cannot_force_the_authorize_screen() {
+	public function test_a_planted_token_cannot_pre_fill_the_authorize_screen() {
 		update_option( 'td_helpdesk_settings', [ 'td_helpdesk_api_key' => 'REAL-KEY-1234567890' ] );
 		update_option( 'td_helpdesk_verified', false );
 		set_transient( 'thrivedesk_reverify_attempted', true, MINUTE_IN_SECONDS );
@@ -231,10 +239,15 @@ class ConnectTokenBindingTest extends WP_UnitTestCase {
 		delete_transient( 'thrivedesk_reverify_attempted' );
 
 		$this->assertStringNotContainsString( 'ATTACKER-KEY', $html );
-		$this->assertStringNotContainsString(
-			'Just one last step!',
+
+		// Pinned together on purpose. Asserting only that the key is absent
+		// would keep passing if the field itself ever stopped rendering, and
+		// then this would be testing nothing.
+		$this->assertStringContainsString( 'id="td_helpdesk_api_key"', $html );
+		$this->assertMatchesRegularExpression(
+			'/id="td_helpdesk_api_key"[^>]*value=""/',
 			$html,
-			'a token nobody asked for must not put an install back on the authorize screen'
+			'a token nobody asked for must not reach the field that Complete Setup posts'
 		);
 	}
 }

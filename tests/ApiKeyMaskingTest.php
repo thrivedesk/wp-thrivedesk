@@ -44,11 +44,6 @@ class ApiKeyMaskingTest extends TD_Ajax_TestCase {
 		parent::tear_down();
 	}
 
-	/**
-	 * The partial is included directly rather than through thrivedesk_view(),
-	 * which uses require_once and so renders a given view at most once per
-	 * process - fine for a real request, useless across several test cases.
-	 */
 	private function render_settings(): string {
 		ob_start();
 		include THRIVEDESK_DIR . '/includes/views/partials/settings.php';

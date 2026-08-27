@@ -1,0 +1,163 @@
+/**
+ * Layout only. Colour, type and spacing come from @wordpress/components and the
+ * wp-components stylesheet, so this file deliberately sets none of them - the
+ * point of the port was to stop this screen carrying its own design language.
+ */
+.td-tabs {
+	max-width: 1200px;
+	margin: 0 auto;
+
+	.components-tab-panel__tabs {
+		border-bottom: 1px solid #e0e0e0;
+	}
+
+	.components-tab-panel__tab-content {
+		padding-top: 24px;
+	}
+}
+
+.td-integrations__grid {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+
+/* Three across is the target; the steps below it keep a card wide enough to
+   hold a two-line description without the name wrapping mid-word. */
+@media (min-width: 782px) {
+	.td-integrations__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (min-width: 1200px) {
+	.td-integrations__grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+/* A column, so the footer can be pushed to the bottom edge of the card and
+   line up with its neighbours whatever the description costs. */
+.td-integration {
+	display: flex;
+	flex-direction: column;
+	margin: 0;
+	padding: 16px;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+	background: #fff;
+}
+
+.td-integration__logo {
+	display: block;
+	width: 48px;
+	height: 48px;
+	border-radius: 4px;
+	object-fit: contain;
+}
+
+/* center, not flex-start: the name is 13px on a 1.3 line and the chip is a
+   10px pill with its own padding, so aligning their box tops leaves the two
+   texts visibly off from each other. A nudged margin was papering over it. */
+.td-integration__title {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px 8px;
+	margin-top: 12px;
+}
+
+.td-integration__name {
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.td-integration__category {
+	flex-shrink: 0;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #757575;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+
+.td-integration__description {
+	display: block;
+	flex-grow: 1;
+	margin-top: 8px;
+}
+
+/* The action leads. It is the one thing on the card anyone came to press, and
+   space-between put it at the far edge with whatever status text there was
+   holding the near one. */
+.td-integration__footer {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid #f0f0f1;
+
+	/* The button is last in the markup, because the status it describes should
+	   be read first. `order` moves it without changing that. */
+	.components-button {
+		order: -1;
+	}
+}
+/* Pushed to the far side, so the row reads action first, state second. */
+.td-integration__state {
+	margin-left: auto;
+}
+
+.td-integration__badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: #edfaef;
+	color: #007017;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+/* Locked, not hidden. What ThriveDesk connects to is most of the reason to
+   connect at all, so the card stays readable and only its controls go inert -
+   the logo is drained of colour and the whole card sits back a step, which is
+   the difference a reader can see at a glance across a grid of seven. */
+.td-integration.is-locked {
+	background: #fbfbfc;
+	border-style: dashed;
+
+	.td-integration__logo {
+		filter: grayscale(1);
+		opacity: 0.65;
+	}
+
+	.td-integration__name,
+	.td-integration__description {
+		opacity: 0.75;
+	}
+}
+
+.td-integration__lock {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #757575;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+/* The notice sits above the grid and explains the padlocks once, rather than
+   every card carrying the same sentence. */
+.td-integrations__locked {
+	margin: 0 0 16px;
+}
