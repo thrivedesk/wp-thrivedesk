@@ -145,6 +145,17 @@
 		.td-info__icon {
 			@apply inline-flex shrink-0 text-blue-600;
 		}
+		/* The other kind of note: not something to paste into your site, but
+		   something the account already is. Plain, so the two stacked in one
+		   column do not read as one long blue block - and white rather than
+		   tinted, or the slate chips inside it would have nothing to sit
+		   against. */
+		.td-info--plain {
+			@apply border-slate-200 bg-white;
+		}
+		.td-info--plain .td-info__icon {
+			@apply text-slate-400;
+		}
 		/* Green, because this one is not a note - it is an answer. */
 		.td-info--found {
 			@apply border-green-200 bg-green-50/60;
