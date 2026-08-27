@@ -43,19 +43,26 @@
 		.btn-dark {
 			@apply bg-slate-900 hover:bg-slate-800 text-white hover:text-white;
 		}
-		/* Sits next to the connection status, so it is sized against a line of
-		   text rather than against the buttons elsewhere on the page. Red at
-		   rest because it is the only destructive control on this screen and
-		   the icon alone does not say so. */
-		.td-disconnect {
-			@apply inline-flex items-center justify-center w-6 h-6 shrink-0 p-0 rounded-full;
-			@apply border-0 bg-transparent text-rose-500 cursor-pointer transition;
-			@apply hover:bg-rose-50 hover:text-rose-700;
+		/* Destructive, and sized against the line of text it sits beside rather
+		   than against the buttons elsewhere on the page. The x carries the
+		   colour at rest - a fully red button would be the loudest thing on a
+		   card someone opened to read their API key - and the whole control
+		   turns on hover, once it is clear what is about to be pressed. */
+		.btn-danger {
+			@apply inline-flex items-center gap-1.5 shrink-0 py-1.5 px-3 rounded border cursor-pointer transition;
+			@apply border-slate-300 bg-white text-[13px] font-semibold text-slate-700;
+			@apply hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700;
 		}
-		.td-disconnect:focus-visible {
+		.btn-danger__icon {
+			@apply inline-flex text-rose-500 transition-colors;
+		}
+		.btn-danger:hover .btn-danger__icon {
+			@apply text-rose-700;
+		}
+		.btn-danger:focus-visible {
 			@apply outline-2 outline-offset-2 outline-rose-500;
 		}
-		.td-disconnect[disabled] {
+		.btn-danger[disabled] {
 			@apply opacity-50 cursor-not-allowed;
 		}
 		/* A link sitting inside a sentence, reading as part of it rather than as
