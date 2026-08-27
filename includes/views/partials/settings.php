@@ -316,6 +316,9 @@ $current_user = wp_get_current_user();
                      * winner would hide the one they actually build with.
                      */
                     ?>
+                    <?php // Leads the grid rather than following it: it is the instruction the tiles carry out, and the field above has already said what the form is for. ?>
+                    <p class="td-field-help"><?php esc_html_e('Build it with one of these, then select its page above.', 'thrivedesk'); ?></p>
+
                     <?php // Two abreast once there is more than one; a lone tile in a two column grid is a tile and a hole. ?>
                     <div class="grid grid-cols-1 <?php echo count($td_form_plugins) > 1 ? 'sm:grid-cols-2' : ''; ?> gap-3 mt-3">
                         <?php foreach ($td_form_plugins as $td_form_plugin) : ?>
@@ -370,8 +373,7 @@ $current_user = wp_get_current_user();
                         <?php endforeach; ?>
                     </div>
             
-                        <p class="td-field-help"><?php esc_html_e('Build your ticket form with any of these, publish it on a page, then select that page above.', 'thrivedesk'); ?></p>
-                <?php endif; ?>
+                    <?php endif; ?>
 
                     <?php
                     /*
