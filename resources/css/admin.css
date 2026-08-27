@@ -187,9 +187,9 @@
 			   on a flat field. */
 			background-image: linear-gradient(
 				118deg,
-				color-mix(in srgb, #873EFF 20%, #fff) 0%,
-				color-mix(in srgb, #873EFF 9%, #fff) 45%,
-				color-mix(in srgb, #3858e9 11%, #fff) 100%
+				color-mix(in srgb, #873EFF 10%, #fff) 0%,
+				color-mix(in srgb, #873EFF 4%, #fff) 45%,
+				color-mix(in srgb, #3858e9 5%, #fff) 100%
 			);
 		}
 		/*
