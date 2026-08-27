@@ -195,8 +195,9 @@ $current_user = wp_get_current_user();
          * inside the box rather than floating over the whole screen.
          */
         ?>
-        <div class="td-card">
-            <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></div>
+        <?php // 1px so the frame sits flush; the label carries its own padding instead. ?>
+        <div class="td-card p-px!">
+            <div class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></div>
 
             <div
                 class="td-assistant-preview"
