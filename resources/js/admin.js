@@ -689,7 +689,7 @@ jQuery(document).ready(($) => {
 			'<!doctype html><html><head><meta charset="utf-8">',
 			// Only the default body margin, so the widget sits where it would on
 			// a real page rather than being inset by 8px. Nothing else.
-			'<style>body{margin:0}</style>',
+			'<style>html,body{margin:0;background:transparent}</style>',
 			'</head><body><script>',
 			'!function(t,e,n){function s(){var t=e.getElementsByTagName("script")[0],n=e.createElement("script");',
 			'n.type="text/javascript",n.async=!0,n.src=' + JSON.stringify( host.dataset.bootloader ) + '+"?"+Date.now(),',

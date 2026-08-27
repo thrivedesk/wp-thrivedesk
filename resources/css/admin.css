@@ -174,11 +174,25 @@
 		/* A box for the frame. Nothing here touches the assistant itself - it
 		   renders inside the frame exactly as it does on the front end. */
 		.td-assistant-preview {
-			@apply relative w-full overflow-hidden rounded-lg border border-slate-200 bg-white;
+			@apply relative w-full overflow-hidden rounded-lg border border-slate-200;
 			height: 520px;
+			background-color: var(--color-slate-50);
+			/* A dot grid, so an empty preview reads as a surface waiting for
+			   something rather than as a blank panel that failed to load. */
+			background-image: radial-gradient(var(--color-slate-300) 1px, transparent 1px);
+			background-size: 16px 16px;
+			background-position: -8px -8px;
 		}
+		/* Absolute, so the frame below it fills the box rather than being pushed
+		   down by a heading. */
 		.td-assistant-preview iframe {
-			@apply block w-full h-full border-0;
+			@apply absolute inset-0 block w-full h-full border-0;
+			background: transparent;
+		}
+		.td-assistant-preview__pill {
+			@apply absolute top-3 left-3 z-10 inline-block rounded-full border border-slate-200 bg-white px-3 py-1;
+			@apply text-[11px] font-semibold uppercase tracking-wider text-slate-400;
+			box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
 		}
 		.td-assistant-preview__empty {
 			@apply absolute inset-0 m-0! flex items-center justify-center px-6 text-center text-gray-400;

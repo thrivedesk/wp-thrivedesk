@@ -90,7 +90,8 @@ $current_user = wp_get_current_user();
 
 
     <div id="td-panel-livechat" hidden>
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+    <?php // The settings are a handful of controls; the preview is the thing worth the room. ?>
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-6 items-start">
     <div class="td-card space-y-6">
 
         <div class="flex items-start gap-4 flex-wrap">
@@ -195,9 +196,8 @@ $current_user = wp_get_current_user();
          * inside the box rather than floating over the whole screen.
          */
         ?>
-        <?php // 1px so the frame sits flush; the label carries its own padding instead. ?>
+        <?php // 1px so the preview surface sits flush inside the card border. ?>
         <div class="td-card p-px!">
-            <div class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></div>
 
             <div
                 class="td-assistant-preview"
@@ -206,6 +206,7 @@ $current_user = wp_get_current_user();
                 data-name="<?php echo esc_attr( $current_user->display_name ); ?>"
                 data-email="<?php echo esc_attr( $current_user->user_email ); ?>"
             >
+                <span class="td-assistant-preview__pill"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></span>
                 <p class="td-assistant-preview__empty"><?php esc_html_e( 'Choose an assistant to preview it.', 'thrivedesk' ); ?></p>
             </div>
         </div>
