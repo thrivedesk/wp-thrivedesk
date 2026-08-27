@@ -375,58 +375,11 @@ $current_user = wp_get_current_user();
             
                     <?php endif; ?>
 
-                    <?php
-                    /*
-                     * The address the sentence above just told them to use, so
-                     * it does not have to be fetched from another tab. The
-                     * mailbox connected to the inbox where there is one, the
-                     * ThriveDesk-hosted address otherwise - see
-                     * thrivedesk_inbox_address().
-                     */
-                    $td_addressed = array_filter($td_inboxes, static function ($td_inbox) {
-                        return '' !== thrivedesk_inbox_address((array) $td_inbox);
-                    });
-                    ?>
-                    <?php if ($td_addressed) : ?>
-                        <div class="td-field">
-                            <span class="td-field__label"><?php esc_html_e('Your inbox addresses', 'thrivedesk'); ?></span>
-                            <ul class="m-0! p-0! list-none space-y-2">
-                                <?php foreach ($td_addressed as $td_inbox) : ?>
-                                    <?php
-                                    $td_inbox         = (array) $td_inbox;
-                                    $td_inbox_address = thrivedesk_inbox_address($td_inbox);
-                                    ?>
-                                    <li class="flex items-center flex-wrap gap-x-3 gap-y-1">
-                                        <span class="text-sm font-medium text-slate-700"><?php echo esc_html($td_inbox['name'] ?? ''); ?></span>
-                                        <span class="td-ip-row">
-                                            <code class="td-key"><?php echo esc_html($td_inbox_address); ?></code>
-                                            <button
-                                                type="button"
-                                                class="td-copy"
-                                                data-td-copy="<?php echo esc_attr($td_inbox_address); ?>"
-                                                title="<?php echo esc_attr(
-                                                    /* translators: %s: an email address */
-                                                    sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
-                                                ); ?>"
-                                                aria-label="<?php echo esc_attr(
-                                                    /* translators: %s: an email address */
-                                                    sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
-                                                ); ?>"
-                                            >
-                                                <span class="td-copy-idle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M15 6V5.5A2.5 2.5 0 0 0 12.5 3h-6A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-                                                <span class="td-copy-done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                                            </button>
-                                        </span>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                            <p class="td-field-help"><?php esc_html_e('Mail sent to one of these becomes a conversation in that inbox.', 'thrivedesk'); ?></p>
-                        </div>
-                    <?php endif; ?>
-
                 </div>
 
-                <?php // A note, not a field: nothing here is set, it is read and pasted somewhere else. ?>
+                <?php // Notes, not fields: nothing in this column is set, it is read and pasted somewhere else. ?>
+                <div class="space-y-4">
+
                 <aside class="td-info">
                     <div class="td-info__title">
                         <span class="td-info__icon" aria-hidden="true">
@@ -451,6 +404,64 @@ $current_user = wp_get_current_user();
 
                     <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Put this on any page to turn it into the help centre. Only logged-in visitors can see it.', 'thrivedesk'); ?></p>
                 </aside>
+
+                <?php
+                /*
+                 * The address a ticket form has to submit to, beside the shortcode
+                 * because both are things read here and pasted somewhere else. The
+                 * mailbox connected to the inbox where there is one, the
+                 * ThriveDesk-hosted address otherwise - see thrivedesk_inbox_address().
+                 */
+                $td_addressed = array_filter($td_inboxes, static function ($td_inbox) {
+                    return '' !== thrivedesk_inbox_address((array) $td_inbox);
+                });
+                ?>
+                <?php if ($td_addressed) : ?>
+                    <aside class="td-info">
+                        <div class="td-info__title">
+                            <span class="td-info__icon" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M2 12c0-3.771 0-5.657 1.172-6.828C4.343 4 6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172C22 6.343 22 8.229 22 12c0 3.771 0 5.657-1.172 6.828C19.657 20 17.771 20 14 20h-4c-3.771 0-5.657 0-6.828-1.172C2 17.657 2 15.771 2 12Z" stroke="currentColor" stroke-width="1.5"/><path d="m6 8 2.159 1.799c1.836 1.53 2.755 2.296 3.841 2.296 1.086 0 2.005-.765 3.841-2.296L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            </span>
+                            <?php esc_html_e('Your inbox addresses', 'thrivedesk'); ?>
+                        </div>
+                
+                        <?php // Name over address rather than beside it: this column is narrow and an address is long. ?>
+                        <ul class="mt-3! mb-0! p-0! list-none space-y-2">
+                            <?php foreach ($td_addressed as $td_inbox) : ?>
+                                <?php
+                                $td_inbox         = (array) $td_inbox;
+                                $td_inbox_address = thrivedesk_inbox_address($td_inbox);
+                                ?>
+                                <li>
+                                    <div class="text-[12px] font-medium text-slate-700"><?php echo esc_html($td_inbox['name'] ?? ''); ?></div>
+                                    <div class="td-ip-row">
+                                        <code class="td-key"><?php echo esc_html($td_inbox_address); ?></code>
+                                        <button
+                                            type="button"
+                                            class="td-copy"
+                                            data-td-copy="<?php echo esc_attr($td_inbox_address); ?>"
+                                            title="<?php echo esc_attr(
+                                                /* translators: %s: an email address */
+                                                sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
+                                            ); ?>"
+                                            aria-label="<?php echo esc_attr(
+                                                /* translators: %s: an email address */
+                                                sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
+                                            ); ?>"
+                                        >
+                                            <span class="td-copy-idle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M15 6V5.5A2.5 2.5 0 0 0 12.5 3h-6A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                                            <span class="td-copy-done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                        </button>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                
+                        <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Point your form at one of these and its submissions become conversations.', 'thrivedesk'); ?></p>
+                    </aside>
+                <?php endif; ?>
+
+                </div>
 
             </div>
 
