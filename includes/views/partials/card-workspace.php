@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * TD_CONNECTED_FLAG block in admin.js.
  */
 ?>
-<div class="td-card" id="td-workspace-card">
+<div class="td-card h-full" id="td-workspace-card">
 	<div id="td-workspace-card-body">
 		<?php thrivedesk_view( 'partials/workspace-card' ); ?>
 	</div>

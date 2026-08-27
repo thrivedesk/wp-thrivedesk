@@ -26,12 +26,21 @@ $td_portal_wrap  = $td_portal_narrow
 
 $td_portal_thumb = $td_portal_narrow ? 'td-video is-thumb order-first' : 'td-video';
 ?>
-<div class="td-card">
+<?php
+/*
+ * h-full so it fills the cell rather than sitting at its own height. In the
+ * connected row it is wrapped in a col-span-2 grid item, and the wrapper is
+ * what stretches - without this the card inside it stops short and the two
+ * cards' bottoms do not line up. Harmless in the stacked column, where the
+ * parent has no definite height and 100% resolves to auto.
+ */
+?>
+<div class="td-card h-full">
         <div class="<?php echo esc_attr( $td_portal_wrap ); ?>">
             <div>
                 <h3 class="text-lg font-semibold m-0!"><?php esc_html_e( 'Overview of WPPortal', 'thrivedesk' ); ?></h3>
                 <p class="mt-2! mb-0! text-gray-500">
-                    <?php esc_html_e( 'A help centre on your own domain, where customers read your knowledge base and follow their tickets.', 'thrivedesk' ); ?>
+                    <?php esc_html_e( 'A help centre on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else\'s.', 'thrivedesk' ); ?>
                 </p>
                 <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/wordpress/" target="_blank">
                     <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T17:18:45+00:00\n"
+"POT-Creation-Date: 2026-08-27T18:17:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -166,7 +166,7 @@ msgstr ""
 #. translators: %s: human-readable time difference, e.g. "3 months"
 #. translators: %s: a length of time, e.g. "2 hours"
 #: includes/helper.php:475
-#: includes/views/partials/overview.php:160
+#: includes/views/partials/overview.php:170
 #, php-format
 msgid "%s ago"
 msgstr ""
@@ -225,22 +225,22 @@ msgid "Live chat, knowledge base and a contact form in one widget, shown on the 
 msgstr ""
 
 #: includes/views/partials/card-assistant.php:21
-#: includes/views/partials/card-portal.php:37
-#: includes/views/partials/overview.php:209
+#: includes/views/partials/card-portal.php:46
+#: includes/views/partials/overview.php:219
 msgid "Learn more"
 msgstr ""
 
-#: includes/views/partials/card-portal.php:32
-#: includes/views/partials/card-portal.php:55
+#: includes/views/partials/card-portal.php:41
+#: includes/views/partials/card-portal.php:64
 msgid "Overview of WPPortal"
 msgstr ""
 
-#: includes/views/partials/card-portal.php:34
-msgid "A help centre on your own domain, where customers read your knowledge base and follow their tickets."
+#: includes/views/partials/card-portal.php:43
+msgid "A help centre on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else's."
 msgstr ""
 
-#: includes/views/partials/card-portal.php:57
-#: includes/views/partials/card-portal.php:58
+#: includes/views/partials/card-portal.php:66
+#: includes/views/partials/card-portal.php:67
 msgid "Watch the 40 second tour"
 msgstr ""
 
@@ -370,64 +370,64 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: includes/views/partials/overview.php:103
+#: includes/views/partials/overview.php:113
 msgid "Connection details"
 msgstr ""
 
-#: includes/views/partials/overview.php:104
+#: includes/views/partials/overview.php:114
 msgid "The API key that links this site to ThriveDesk."
 msgstr ""
 
-#: includes/views/partials/overview.php:126
+#: includes/views/partials/overview.php:136
 msgid "Disconnect this site from ThriveDesk"
 msgstr ""
 
-#: includes/views/partials/overview.php:133
+#: includes/views/partials/overview.php:143
 #: resources/js/admin.js:700
 #: resources/js/wp-scripts/admin-app/Integrations.js:122
 msgid "Disconnect"
 msgstr ""
 
-#: includes/views/partials/overview.php:148
+#: includes/views/partials/overview.php:158
 msgid "API key"
 msgstr ""
 
-#: includes/views/partials/overview.php:151
+#: includes/views/partials/overview.php:161
 msgid "Replace"
 msgstr ""
 
-#: includes/views/partials/overview.php:155
+#: includes/views/partials/overview.php:165
 msgid "Last checked"
 msgstr ""
 
-#: includes/views/partials/overview.php:169
+#: includes/views/partials/overview.php:179
 msgid "New API key"
 msgstr ""
 
-#: includes/views/partials/overview.php:170
+#: includes/views/partials/overview.php:180
 msgid "Paste your API key"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/overview.php:175
+#: includes/views/partials/overview.php:185
 #, php-format
 msgid "Find it in ThriveDesk under Settings, Company, API key. %1$sOpen ThriveDesk%2$s"
 msgstr ""
 
-#: includes/views/partials/overview.php:184
+#: includes/views/partials/overview.php:194
 msgid "Verify and save"
 msgstr ""
 
-#: includes/views/partials/overview.php:187
+#: includes/views/partials/overview.php:197
 #: resources/js/admin.js:701
 msgid "Cancel"
 msgstr ""
 
-#: includes/views/partials/overview.php:206
+#: includes/views/partials/overview.php:216
 msgid "Using Cloudflare?"
 msgstr ""
 
-#: includes/views/partials/overview.php:207
+#: includes/views/partials/overview.php:217
 msgid "Add the ThriveDesk IP addresses to your Cloudflare allowlist. Without them, WooCommerce and the other integrations may not be reachable."
 msgstr ""
 

@@ -76,8 +76,18 @@ if ( ! $td_summary['connected'] ) {
 
 		<?php thrivedesk_view( 'partials/card-woo-promo' ); ?>
 
-		<?php // Portal leads at two thirds; the workspace facts sit beside it as a reference column. ?>
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+		<?php
+		/*
+		 * Portal leads at two thirds; the workspace facts sit beside it as a
+		 * reference column.
+		 *
+		 * No items-start: the two are read as a pair, and a pair of cards whose
+		 * bottoms do not line up reads as one of them having failed to load.
+		 * Stretching is what makes them equal at every width rather than at the
+		 * one width somebody measured.
+		 */
+		?>
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 			<div class="lg:col-span-2">
 				<?php thrivedesk_view( 'partials/card-portal' ); ?>
 			</div>

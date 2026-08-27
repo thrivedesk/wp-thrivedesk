@@ -180,8 +180,17 @@
 		/* #873EFF is the purple from WooCommerce's brand guidelines, and the
 		   same one inside the wordmark. */
 		.td-promo--woo {
-			border-color: color-mix(in srgb, #873EFF 25%, transparent);
-			background-image: linear-gradient(135deg, color-mix(in srgb, #873EFF 12%, #fff) 0%, #fff 62%);
+			border-color: color-mix(in srgb, #873EFF 30%, transparent);
+			/* Three stops rather than a fade to white: the purple stays present
+			   across the whole card instead of giving out a third of the way
+			   in, and the blue at the far end keeps the wordmark from sitting
+			   on a flat field. */
+			background-image: linear-gradient(
+				118deg,
+				color-mix(in srgb, #873EFF 20%, #fff) 0%,
+				color-mix(in srgb, #873EFF 9%, #fff) 45%,
+				color-mix(in srgb, #3858e9 11%, #fff) 100%
+			);
 		}
 		/*
 		 * A hairline of colour turning slowly around the card.
@@ -198,7 +207,9 @@
 			content: '';
 			@apply absolute inset-0 pointer-events-none;
 			border-radius: inherit;
-			padding: 1px;
+			/* 2px, because 1px of a moving gradient at this opacity reads as an
+			   artefact rather than as a border. */
+			padding: 2px;
 			background: conic-gradient(
 				from var(--td-ring-angle),
 				#873EFF, #3858e9, #22c55e, #f59e0b, #ec4899, #873EFF
@@ -211,7 +222,7 @@
 				linear-gradient(#000 0 0);
 			-webkit-mask-composite: xor;
 			mask-composite: exclude;
-			opacity: 0.55;
+			opacity: 0.85;
 			animation: td-ring-spin 9s linear infinite;
 		}
 		@media (prefers-reduced-motion: reduce) {
@@ -227,10 +238,10 @@
 			@apply absolute pointer-events-none select-none;
 			right: -2.5rem;
 			top: 50%;
-			width: 22rem;
+			width: 24rem;
 			height: auto;
 			transform: translateY(-50%);
-			opacity: 0.12;
+			opacity: 0.16;
 		}
 		/* Wide enough for a feature to fit on one line; the prose inside is
 		   capped separately, because a paragraph this wide is hard to read
