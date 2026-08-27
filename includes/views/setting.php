@@ -20,6 +20,7 @@ if ( thrivedesk_is_connected() && ! get_option('td_helpdesk_system_info') ) {
 
 <div class="thrivedesk">
     <div class="td-toolbar">
+        <div class="td-toolbar__inner">
         <a href="https://www.thrivedesk.com/" target="_blank" class="shrink-0">
             <img class="w-32 block" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . "/images/thrivedesk.png"); ?>" alt="ThriveDesk">
         </a>
@@ -36,6 +37,7 @@ if ( thrivedesk_is_connected() && ! get_option('td_helpdesk_system_info') ) {
                 <?php thrivedesk_view( 'icons/external' ); ?>
             </a>
         </nav>
+        </div>
     </div>
 
     <!-- body  -->

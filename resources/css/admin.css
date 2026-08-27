@@ -22,6 +22,22 @@
 		.top-nav a {
 			@apply text-gray-500 hover:text-blue-500;
 		}
+		/* Tailwind's preflight sets `cursor: default` on buttons, which is
+		   correct for the HTML default and wrong for every button on this
+		   screen. Said once here rather than as a utility on each control, and
+		   the disabled case says the opposite. */
+		button,
+		[role="button"],
+		summary,
+		a[href],
+		label:has(input[type="checkbox"]) {
+			@apply cursor-pointer;
+		}
+		button:disabled,
+		[aria-disabled="true"],
+		label:has(input[type="checkbox"]:disabled) {
+			@apply cursor-not-allowed;
+		}
 		.td-card {
 			@apply border border-slate-300 rounded-md p-4 transition bg-white hover:shadow-lg;
 		}
@@ -196,8 +212,11 @@
 		.td-promo__lede {
 			@apply mt-2! mb-0! max-w-2xl text-gray-600;
 		}
+		/* No column gap: the claims are short enough that the space left at the
+		   end of each one already separates the columns, and a gap on top of
+		   that reads as a gutter down the middle of the card. */
 		.td-promo__features {
-			@apply mt-4! mb-0! p-0! list-none grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2;
+			@apply mt-4! mb-0! p-0! list-none grid grid-cols-1 sm:grid-cols-2 gap-y-2;
 		}
 		/* One line each. These are short claims, and a claim that wraps reads
 		   as two half-claims. */
@@ -421,8 +440,14 @@
 		.td-assistant-preview__empty {
 			@apply absolute inset-0 m-0! flex items-center justify-center px-6 text-center text-gray-400;
 		}
+		/* The bar spans the screen; its contents do not. The inner padding
+		   matches the p-10 on the panel wrapper below, so the logo starts on
+		   the same line as the tabs rather than 8px inside them. */
 		.td-toolbar {
-			@apply flex items-center flex-wrap gap-x-3 gap-y-2 bg-white border-b border-slate-200 py-4 px-8;
+			@apply bg-white border-b border-slate-200;
+		}
+		.td-toolbar__inner {
+			@apply flex items-center flex-wrap gap-x-3 gap-y-2 py-4 px-10;
 		}
 		/* Colours forced: WordPress styles admin links from an ID selector
 		   (#3858E9) that outranks any plain class here, and these are chrome
