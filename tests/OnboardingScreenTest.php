@@ -138,16 +138,78 @@ class OnboardingScreenTest extends WP_UnitTestCase {
 		);
 	}
 
+	/**
+	 * The IP addresses that card is really about are already on the connect
+	 * card, behind its Additional Info rail, so showing it too is both noise
+	 * and a second copy of the same advice.
+	 */
+	public function test_the_cloudflare_tip_waits_for_a_connection_to_troubleshoot() {
+		$this->assertStringNotContainsString( 'Using Cloudflare?', $this->render_screen() );
+
+		$this->connect();
+
+		$this->assertStringContainsString( 'Using Cloudflare?', $this->render_screen() );
+	}
+
 	public function test_the_assistant_card_stays_in_the_tips_row_once_connected() {
 		$this->connect();
 
 		$html = $this->render_screen();
 
-		$this->assertSame( 1, substr_count( $html, 'What is Assistant?' ) );
+		$this->assertSame( 1, substr_count( $html, '>What is Assistant?</h3>' ) );
 		$this->assertLessThan(
 			strpos( $html, 'What is Assistant?' ),
 			strpos( $html, 'Using Cloudflare?' ),
 			'connected, it is the second card of the bottom row again'
+		);
+	}
+
+	/**
+	 * Three partials now render in one of two branches each, which is exactly
+	 * how a shared partial goes wrong - so both branches are counted.
+	 */
+	public function test_every_shared_card_renders_exactly_once() {
+		foreach ( [ 'disconnected', 'connected' ] as $state ) {
+			if ( 'connected' === $state ) {
+				$this->connect();
+			}
+
+			$html = $this->render_screen();
+
+			$this->assertSame( 1, substr_count( $html, 'class="td-video"' ), "portal card, $state" );
+			$this->assertSame( 1, substr_count( $html, '>What is Assistant?</h3>' ), "assistant card, $state" );
+			$this->assertSame( 1, substr_count( $html, 'id="td-workspace-card"' ), "workspace card, $state" );
+		}
+	}
+
+	/**
+	 * Everything that answers "why would I sign up" moves in beside the card
+	 * doing the asking, and moves back out once it has been answered.
+	 */
+	public function test_the_tour_and_the_tip_sit_beside_the_ask_until_connected() {
+		$html = $this->render_screen();
+
+		$connect = strpos( $html, 'id="td-setup-split"' );
+
+		$this->assertLessThan( strpos( $html, 'What is Assistant?' ), $connect );
+		$this->assertLessThan( strpos( $html, 'Overview of WPPortal' ), $connect );
+		$this->assertLessThan( strpos( $html, 'id="td-workspace-card"' ), $connect );
+
+		// Stacked, so the tour is not splitting a narrow column between a
+		// paragraph and a thumbnail.
+		$this->assertStringNotContainsString( 'md:grid-cols-2 gap-6 items-center', $html );
+	}
+
+	public function test_the_tour_takes_the_wide_column_back_once_connected() {
+		$this->connect();
+
+		$html = $this->render_screen();
+
+		$this->assertStringContainsString( 'md:grid-cols-2 gap-6 items-center', $html );
+		$this->assertLessThan(
+			strpos( $html, 'id="td-workspace-card"' ),
+			strpos( $html, 'Overview of WPPortal' ),
+			'the tour leads the row and the workspace facts sit beside it'
 		);
 	}
 
