@@ -7,6 +7,7 @@ use ThriveDesk\Inboxes\Inbox;
 use ThriveDesk\KnowledgeBase\KnowledgeBase;
 use ThriveDesk\Services\PortalService;
 use ThriveDesk\Plugins\WPPostSync;
+use ThriveDesk\Plugins\WooCommerce;
 
 $td_helpdesk_selected_option = get_td_helpdesk_settings();
 $td_selected_post_types      = (array) ($td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []);
@@ -62,7 +63,14 @@ $wp_post_sync_types = array_filter(get_post_types(array(
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
 });
-$woo_plugin_installed = defined('WC_VERSION');
+/*
+ * Connected, not merely installed. The Support tab is only worth offering once
+ * WooCommerce is talking to ThriveDesk: the tab shows a customer their tickets,
+ * and until the integration is connected there is nothing behind it to show.
+ * An active-but-unconnected store would get a switch that turns on a blank tab.
+ */
+$td_woo               = WooCommerce::instance();
+$woo_plugin_connected = $td_woo && $td_woo->is_plugin_active() && $td_woo->get_plugin_data('connected');
 $td_user_account_pages = array(
     'woocommerce' => __('Add to WooCommerce', 'thrivedesk')
 );
@@ -389,6 +397,39 @@ $current_user = wp_get_current_user();
             
                     <?php endif; ?>
 
+
+                <?php
+                /*
+                 * WooCommerce only, and only while it is running: the tab is added to
+                 * its My Account page, so with WooCommerce inactive there is no page to
+                 * add it to. It used to render disabled with a title explaining why,
+                 * which is a row of screen spent on something most sites cannot use.
+                 */
+                ?>
+                <?php if ($woo_plugin_connected && !empty($td_user_account_pages)) : ?>
+                    <div class="td-woo">
+                        <img class="td-woo__logo" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/woo.svg'); ?>" alt="WooCommerce" width="36" height="36">
+                        <div class="min-w-0">
+                            <?php foreach ($td_user_account_pages as $td_account_key => $td_account_page) : ?>
+                                <label class="td-check" for="td-account-<?php echo esc_attr($td_account_key); ?>">
+                                    <input class="td_user_account_pages" type="checkbox" id="td-account-<?php echo esc_attr($td_account_key); ?>" name="td_user_account_pages[]" value="<?php echo esc_attr($td_account_key); ?>" <?php checked(in_array($td_account_key, $td_selected_user_account_pages, true)); ?>>
+                                    <span class="font-medium"><?php esc_html_e('Add a Support tab to the WooCommerce My Account page', 'thrivedesk'); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                            <p class="td-field-help"><?php
+                            printf(
+                                wp_kses(
+                                    /* translators: %1$s: opening <strong> tag, %2$s: closing </strong> tag */
+                                    __( 'Customers reach their tickets where they already are - and with this on you do not need the %1$sshortcode%2$s anywhere, because the tab is the portal.', 'thrivedesk' ),
+                                    [ 'strong' => [] ]
+                                ),
+                                '<strong>',
+                                '</strong>'
+                            );
+                            ?></p>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 </div>
 
                 <?php // Notes, not fields: nothing in this column is set, it is read and pasted somewhere else. ?>
@@ -478,29 +519,6 @@ $current_user = wp_get_current_user();
                 </div>
 
             </div>
-
-            <?php
-            /*
-             * WooCommerce only, and only while it is running: the tab is added to
-             * its My Account page, so with WooCommerce inactive there is no page to
-             * add it to. It used to render disabled with a title explaining why,
-             * which is a row of screen spent on something most sites cannot use.
-             */
-            ?>
-            <?php if ($woo_plugin_installed && !empty($td_user_account_pages)) : ?>
-                <div class="td-woo">
-                    <img class="td-woo__logo" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/woo.svg'); ?>" alt="WooCommerce" width="36" height="36">
-                    <div class="min-w-0">
-                        <?php foreach ($td_user_account_pages as $td_account_key => $td_account_page) : ?>
-                            <label class="td-check" for="td-account-<?php echo esc_attr($td_account_key); ?>">
-                                <input class="td_user_account_pages" type="checkbox" id="td-account-<?php echo esc_attr($td_account_key); ?>" name="td_user_account_pages[]" value="<?php echo esc_attr($td_account_key); ?>" <?php checked(in_array($td_account_key, $td_selected_user_account_pages, true)); ?>>
-                                <span class="font-medium"><?php esc_html_e('Add a Support tab to the WooCommerce My Account page', 'thrivedesk'); ?></span>
-                            </label>
-                        <?php endforeach; ?>
-                        <p class="td-field-help"><?php esc_html_e('Customers reach their tickets where they already are - and with this on you do not need the shortcode anywhere, because the tab is the portal.', 'thrivedesk'); ?></p>
-                    </div>
-                </div>
-            <?php endif; ?>
 
             <?php
             /*

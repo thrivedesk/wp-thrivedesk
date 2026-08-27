@@ -104,15 +104,16 @@ class PortalSearchRequiredTest extends TD_Ajax_TestCase {
 	}
 
 	/**
-	 * The Support tab control is WooCommerce's, and only renders while
-	 * WooCommerce is running - there is no My Account page to add a tab to
-	 * otherwise. It used to render disabled with a title explaining why.
+	 * The Support tab control belongs to a connected WooCommerce, not merely an
+	 * installed one. The tab shows a customer their tickets, so before the
+	 * integration is connected there is nothing behind it - a switch that turns
+	 * on a blank tab is worse than no switch.
 	 *
-	 * It still has to render *somewhere* whenever it can, because the save
-	 * handler reads it by class: a field that stops rendering saves empty and
-	 * wipes what was chosen.
+	 * It still has to render whenever it can, because the save handler reads it
+	 * by class: a field that stops rendering saves empty and wipes what was
+	 * chosen.
 	 */
-	public function test_the_support_tab_control_waits_for_woocommerce() {
+	private function portal_tab(): string {
 		update_option( 'td_helpdesk_settings', [ 'td_helpdesk_api_key' => 'k' ] );
 		update_option( 'td_helpdesk_verified', true );
 
@@ -129,16 +130,36 @@ class PortalSearchRequiredTest extends TD_Ajax_TestCase {
 		remove_all_filters( 'pre_http_request' );
 		delete_option( 'td_helpdesk_verified' );
 
-		if ( defined( 'WC_VERSION' ) ) {
-			$this->assertStringContainsString( 'class="td-woo"', $html );
-			$this->assertStringContainsString( 'class="td_user_account_pages"', $html );
-			$this->assertStringContainsString( 'do not need the shortcode anywhere', $html );
+		return $html;
+	}
 
-			return;
-		}
+	public function test_an_unconnected_woocommerce_is_offered_nothing() {
+		update_option( 'thrivedesk_options', [ 'woocommerce' => [ 'api_token' => '', 'connected' => false ] ] );
+
+		$html = $this->portal_tab();
+
+		delete_option( 'thrivedesk_options' );
 
 		$this->assertStringNotContainsString( 'class="td-woo"', $html );
 		$this->assertStringNotContainsString( 'class="td_user_account_pages"', $html );
+	}
+
+	public function test_a_connected_woocommerce_gets_the_support_tab() {
+		if ( ! defined( 'WC_VERSION' ) ) {
+			$this->markTestSkipped( 'WooCommerce is not active in this environment' );
+		}
+
+		update_option( 'thrivedesk_options', [ 'woocommerce' => [ 'api_token' => 'tok', 'connected' => true ] ] );
+
+		$html = $this->portal_tab();
+
+		delete_option( 'thrivedesk_options' );
+
+		$this->assertStringContainsString( 'class="td-woo"', $html );
+		$this->assertStringContainsString( 'class="td_user_account_pages"', $html );
+
+		// The part people miss: the tab replaces the shortcode.
+		$this->assertStringContainsString( '<strong>shortcode</strong>', $html );
 	}
 
 	public function test_the_setting_is_on_the_portal_tab() {
