@@ -344,14 +344,28 @@ $current_user = wp_get_current_user();
 
                         <?php if (!$td_form_plugin['active']) : ?>
                             <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Activate it and you can build the ticket page without installing anything else.', 'thrivedesk'); ?></p>
-                            <a class="btn-ghost mt-3" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
-                                <?php esc_html_e('Activate it', 'thrivedesk'); ?>
-                            </a>
+                            <div class="flex justify-end mt-3">
+                                <a class="btn-ghost" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
+                                    <?php esc_html_e('Activate it', 'thrivedesk'); ?>
+                                </a>
+                            </div>
                         <?php elseif ($td_form_plugin['new_form_url']) : ?>
                             <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Build your ticket form, publish it on a page, then select that page above.', 'thrivedesk'); ?></p>
-                            <a class="btn btn-dark mt-3 justify-center" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>">
-                                <?php esc_html_e('Create a form', 'thrivedesk'); ?>
-                            </a>
+                            <?php
+                            /*
+                             * A new tab, because building a form is a long
+                             * detour and this page has unsaved-looking state on
+                             * it. The external icon says so before it is
+                             * clicked - the same one every other new-tab link
+                             * on this screen carries.
+                             */
+                            ?>
+                            <div class="flex justify-end mt-3">
+                                <a class="btn-solid" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>" target="_blank" rel="noopener">
+                                    <span><?php esc_html_e('Create a form', 'thrivedesk'); ?></span>
+                                    <?php thrivedesk_view('icons/external'); ?>
+                                </a>
+                            </div>
                         <?php else : ?>
                             <?php
                             // No verified builder URL for this one. Saying

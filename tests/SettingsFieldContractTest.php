@@ -168,6 +168,14 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 
 		// The letter behind the icon, for when wordpress.org cannot be reached.
 		$this->assertStringContainsString( 'data-letter="C"', $html );
+
+		// Building a form is a long detour, so it opens away from this page -
+		// and says so before it is clicked.
+		$this->assertMatchesRegularExpression(
+			'/<a class="btn-solid"[^>]*target="_blank"[^>]*rel="noopener"/',
+			$html,
+			'the builder opens in a new tab'
+		);
 	}
 
 	public function test_a_site_with_no_form_plugin_is_not_told_about_one() {

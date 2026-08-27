@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T11:54:07+00:00\n"
+"POT-Creation-Date: 2026-08-27T12:01:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -284,8 +284,8 @@ msgstr ""
 #. translators: %s: an email address
 #: includes/views/partials/connect-card.php:83
 #: includes/views/partials/connect-card.php:87
-#: includes/views/partials/settings.php:406
-#: includes/views/partials/settings.php:410
+#: includes/views/partials/settings.php:420
+#: includes/views/partials/settings.php:424
 #, php-format
 msgid "Copy %s"
 msgstr ""
@@ -516,99 +516,99 @@ msgstr ""
 msgid "Activate it and you can build the ticket page without installing anything else."
 msgstr ""
 
-#: includes/views/partials/settings.php:348
+#: includes/views/partials/settings.php:349
 msgid "Activate it"
 msgstr ""
 
-#: includes/views/partials/settings.php:351
+#: includes/views/partials/settings.php:353
 msgid "Build your ticket form, publish it on a page, then select that page above."
 msgstr ""
 
-#: includes/views/partials/settings.php:353
+#: includes/views/partials/settings.php:365
 msgid "Create a form"
 msgstr ""
 
 #. translators: %s: the name of a form plugin, e.g. "Contact Form 7"
-#: includes/views/partials/settings.php:366
+#: includes/views/partials/settings.php:380
 #, php-format
 msgid "Build your ticket form in %s, publish it on a page, then select that page above."
 msgstr ""
 
-#: includes/views/partials/settings.php:389
+#: includes/views/partials/settings.php:403
 msgid "Your inbox addresses"
 msgstr ""
 
-#: includes/views/partials/settings.php:420
+#: includes/views/partials/settings.php:434
 msgid "Mail sent to one of these becomes a conversation in that inbox."
 msgstr ""
 
-#: includes/views/partials/settings.php:432
+#: includes/views/partials/settings.php:446
 msgid "Portal shortcode"
 msgstr ""
 
-#: includes/views/partials/settings.php:441
-#: includes/views/partials/settings.php:442
+#: includes/views/partials/settings.php:455
+#: includes/views/partials/settings.php:456
 msgid "Copy the portal shortcode"
 msgstr ""
 
-#: includes/views/partials/settings.php:449
+#: includes/views/partials/settings.php:463
 msgid "Put this on any page to turn it into the help centre. Only logged-in visitors can see it."
 msgstr ""
 
-#: includes/views/partials/settings.php:462
+#: includes/views/partials/settings.php:476
 msgid "Search before ticket"
 msgstr ""
 
-#: includes/views/partials/settings.php:463
+#: includes/views/partials/settings.php:477
 msgid "Anyone opening a ticket is asked to search first. The better this is stocked, the fewer tickets reach you."
 msgstr ""
 
-#: includes/views/partials/settings.php:469
+#: includes/views/partials/settings.php:483
 #: includes/views/partials/workspace-card.php:22
 msgid "Knowledge base"
 msgstr ""
 
-#: includes/views/partials/settings.php:471
+#: includes/views/partials/settings.php:485
 msgid "Do not search a knowledge base"
 msgstr ""
 
-#: includes/views/partials/settings.php:478
+#: includes/views/partials/settings.php:492
 msgid "Which ThriveDesk knowledge base the portal searches."
 msgstr ""
 
-#: includes/views/partials/settings.php:482
+#: includes/views/partials/settings.php:496
 msgid "WordPress content"
 msgstr ""
 
-#: includes/views/partials/settings.php:492
+#: includes/views/partials/settings.php:506
 msgid "Post types on this site to search alongside the knowledge base."
 msgstr ""
 
-#: includes/views/partials/settings.php:502
+#: includes/views/partials/settings.php:516
 msgid "Elsewhere on this site"
 msgstr ""
 
-#: includes/views/partials/settings.php:503
+#: includes/views/partials/settings.php:517
 msgid "What ThriveDesk adds to pages it does not own."
 msgstr ""
 
-#: includes/views/partials/settings.php:510
+#: includes/views/partials/settings.php:524
 msgid "Support tab"
 msgstr ""
 
-#: includes/views/partials/settings.php:516
+#: includes/views/partials/settings.php:530
 msgid "You must install and activate WooCommerce plugin to use this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:523
+#: includes/views/partials/settings.php:537
 msgid "Adds a Support tab to the My Account page, so customers reach their tickets where they already are."
 msgstr ""
 
-#: includes/views/partials/settings.php:529
+#: includes/views/partials/settings.php:543
 msgid "Sync posts to ThriveDesk"
 msgstr ""
 
-#: includes/views/partials/settings.php:538
+#: includes/views/partials/settings.php:552
 msgid "Agents can search these from inside a conversation without leaving ThriveDesk."
 msgstr ""
 

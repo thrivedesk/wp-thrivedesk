@@ -233,6 +233,17 @@
 			@apply inline-flex items-center gap-1.5 rounded border border-slate-300 bg-transparent px-4 py-2 text-sm font-medium transition no-underline;
 			@apply text-slate-700! hover:bg-slate-50 hover:border-slate-400 hover:text-slate-900!;
 		}
+		/* The ghost button's solid twin, same metrics so the two line up when a
+		   card offers both. Colour is forced because these are used on <a>:
+		   WordPress styles admin links from an ID selector that outranks any
+		   utility class, so an unforced label renders link-blue on black. */
+		.btn-solid {
+			@apply inline-flex items-center gap-1.5 rounded border px-4 py-2 text-sm font-semibold transition no-underline;
+			@apply border-slate-900 bg-slate-900 text-white! hover:border-slate-800 hover:bg-slate-800 hover:text-white!;
+		}
+		.btn-solid:focus-visible {
+			@apply outline-2 outline-offset-2 outline-slate-900;
+		}
 		.btn-ghost:focus-visible {
 			@apply outline-2 outline-offset-2 outline-blue-500;
 		}
