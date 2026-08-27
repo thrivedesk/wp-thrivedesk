@@ -1446,6 +1446,26 @@
 		padding: 0.5rem;
 	}
 
+	/* where the CTA lands when a search came back with nothing */
+	.td-empty-state-cta:empty {
+		display: none;
+	}
+	/* the nudge beside the footer CTA, shown only when there are results */
+	.td-modal-footer-note {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		margin-right: auto;
+		font-size: 0.8125rem;
+		color: hsl(var(--muted-foreground));
+	}
+	.td-modal-footer-note[hidden] {
+		display: none;
+	}
+	.td-modal-footer-note svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
 	/* footer mirrors the portal-actions row, right-aligned CTA */
 	.td-modal-footer {
 		padding: 0.875rem 1.5rem;

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T13:17:47+00:00\n"
+"POT-Creation-Date: 2026-08-27T13:23:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -460,7 +460,7 @@ msgid "Portal serves your inboxes and knowledge base on your own site, so it has
 msgstr ""
 
 #: includes/views/partials/settings.php:250
-#: resources/js/admin.js:1612
+#: resources/js/admin.js:1615
 msgid "All inboxes"
 msgstr ""
 
@@ -571,43 +571,51 @@ msgstr ""
 msgid "Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only."
 msgstr ""
 
-#: includes/views/partials/settings.php:559
+#: includes/views/partials/settings.php:549
+msgid "Make searching compulsory"
+msgstr ""
+
+#: includes/views/partials/settings.php:551
+msgid "Hides the new ticket button until a search has run. People who find their answer never open the ticket; people who do not still can."
+msgstr ""
+
+#: includes/views/partials/settings.php:567
 msgid "What this does"
 msgstr ""
 
-#: includes/views/partials/settings.php:563
+#: includes/views/partials/settings.php:571
 msgid "With a Help Center and some post types chosen, anyone opening a ticket on the portal is asked to search first, and ThriveDesk shows the answer if it is already published in either place."
 msgstr ""
 
-#: includes/views/partials/settings.php:566
+#: includes/views/partials/settings.php:574
 msgid "The ones who find it never open the ticket, which is the point: fewer of the same question, asked and answered again."
 msgstr ""
 
-#: includes/views/partials/settings.php:577
+#: includes/views/partials/settings.php:585
 msgid "Elsewhere on this site"
 msgstr ""
 
-#: includes/views/partials/settings.php:578
+#: includes/views/partials/settings.php:586
 msgid "What ThriveDesk adds to pages it does not own."
 msgstr ""
 
-#: includes/views/partials/settings.php:585
+#: includes/views/partials/settings.php:593
 msgid "Support tab"
 msgstr ""
 
-#: includes/views/partials/settings.php:591
+#: includes/views/partials/settings.php:599
 msgid "You must install and activate WooCommerce plugin to use this feature"
 msgstr ""
 
-#: includes/views/partials/settings.php:598
+#: includes/views/partials/settings.php:606
 msgid "Adds a Support tab to the My Account page, so customers reach their tickets where they already are."
 msgstr ""
 
-#: includes/views/partials/settings.php:604
+#: includes/views/partials/settings.php:612
 msgid "Sync posts to ThriveDesk"
 msgstr ""
 
-#: includes/views/partials/settings.php:613
+#: includes/views/partials/settings.php:621
 msgid "Agents can search these from inside a conversation without leaving ThriveDesk."
 msgstr ""
 
@@ -751,12 +759,12 @@ msgid "Unable to load conversation. Please try again later."
 msgstr ""
 
 #: includes/views/shortcode/conversations.php:22
-#: includes/views/shortcode/modal.php:102
+#: includes/views/shortcode/modal.php:132
 msgid "No ticket page is selected. Set one in ThriveDesk settings to enable creating new tickets."
 msgstr ""
 
 #: includes/views/shortcode/conversations.php:23
-#: includes/views/shortcode/modal.php:103
+#: includes/views/shortcode/modal.php:133
 msgid "Open the new ticket form"
 msgstr ""
 
@@ -775,7 +783,7 @@ msgid "Search tickets…"
 msgstr ""
 
 #: includes/views/shortcode/conversations.php:61
-#: includes/views/shortcode/modal.php:32
+#: includes/views/shortcode/modal.php:41
 msgid "Clear search"
 msgstr ""
 
@@ -825,7 +833,7 @@ msgid "Open ticket %2$s: %1$s"
 msgstr ""
 
 #: includes/views/shortcode/conversations.php:216
-#: includes/views/shortcode/modal.php:82
+#: includes/views/shortcode/modal.php:91
 msgid "No matches"
 msgstr ""
 
@@ -841,43 +849,47 @@ msgstr ""
 msgid "Page navigation"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:13
+#: includes/views/shortcode/modal.php:22
 msgid "Search documentation"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:14
+#: includes/views/shortcode/modal.php:23
 msgid "Find answers in our knowledge base or open a ticket."
 msgstr ""
 
-#: includes/views/shortcode/modal.php:16
+#: includes/views/shortcode/modal.php:25
 msgid "Close (Esc)"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:17
+#: includes/views/shortcode/modal.php:26
 msgid "Esc"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:30
+#: includes/views/shortcode/modal.php:39
 msgid "Search articles, guides, and docs…"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:51
+#: includes/views/shortcode/modal.php:60
 msgid "Searching…"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:69
+#: includes/views/shortcode/modal.php:78
 msgid "Search before opening a ticket"
 msgstr ""
 
-#: includes/views/shortcode/modal.php:70
+#: includes/views/shortcode/modal.php:79
 msgid "Type at least one character to search our knowledge base. Most questions are already answered there."
 msgstr ""
 
-#: includes/views/shortcode/modal.php:83
+#: includes/views/shortcode/modal.php:92
 msgid "We couldn't find anything for that query. Try a different term or open a new ticket."
 msgstr ""
 
-#: includes/views/shortcode/modal.php:100
+#: includes/views/shortcode/modal.php:121
+msgid "Not happy with the results? Create a ticket"
+msgstr ""
+
+#: includes/views/shortcode/modal.php:130
 msgid "Create a new ticket"
 msgstr ""
 
@@ -907,15 +919,15 @@ msgstr ""
 msgid "Failed to reload tickets"
 msgstr ""
 
-#: src/Conversations/Conversation.php:523
+#: src/Conversations/Conversation.php:527
 msgid "You must be logged in to view the ticket or conversation"
 msgstr ""
 
-#: src/Conversations/Conversation.php:725
+#: src/Conversations/Conversation.php:729
 msgid "Reply text can not be empty."
 msgstr ""
 
-#: src/Conversations/Conversation.php:744
+#: src/Conversations/Conversation.php:748
 msgid "Your reply could not be sent. Please try again."
 msgstr ""
 
@@ -1029,21 +1041,21 @@ msgstr ""
 #: resources/js/admin.js:1102
 #: resources/js/admin.js:1110
 #: resources/js/admin.js:1119
-#: resources/js/admin.js:1349
-#: resources/js/admin.js:1427
-#: resources/js/admin.js:1434
-#: resources/js/admin.js:1448
-#: resources/js/admin.js:1461
-#: resources/js/admin.js:1470
-#: resources/js/admin.js:1479
-#: resources/js/admin.js:1487
-#: resources/js/admin.js:1536
-#: resources/js/admin.js:1543
-#: resources/js/admin.js:1568
-#: resources/js/admin.js:1592
-#: resources/js/admin.js:1599
-#: resources/js/admin.js:1640
-#: resources/js/admin.js:1674
+#: resources/js/admin.js:1352
+#: resources/js/admin.js:1430
+#: resources/js/admin.js:1437
+#: resources/js/admin.js:1451
+#: resources/js/admin.js:1464
+#: resources/js/admin.js:1473
+#: resources/js/admin.js:1482
+#: resources/js/admin.js:1490
+#: resources/js/admin.js:1539
+#: resources/js/admin.js:1546
+#: resources/js/admin.js:1571
+#: resources/js/admin.js:1595
+#: resources/js/admin.js:1602
+#: resources/js/admin.js:1643
+#: resources/js/admin.js:1677
 msgid "Error"
 msgstr ""
 
@@ -1066,97 +1078,97 @@ msgid "Failed to save helpdesk form: %s"
 msgstr ""
 
 #: resources/js/admin.js:1120
-#: resources/js/admin.js:1435
-#: resources/js/admin.js:1449
-#: resources/js/admin.js:1488
-#: resources/js/admin.js:1569
-#: resources/js/admin.js:1630
-#: resources/js/admin.js:1675
+#: resources/js/admin.js:1438
+#: resources/js/admin.js:1452
+#: resources/js/admin.js:1491
+#: resources/js/admin.js:1572
+#: resources/js/admin.js:1633
+#: resources/js/admin.js:1678
 msgid "Something went wrong"
 msgstr ""
 
-#: resources/js/admin.js:1262
+#: resources/js/admin.js:1265
 msgid "Saving..."
 msgstr ""
 
-#: resources/js/admin.js:1272
-#: resources/js/admin.js:1281
+#: resources/js/admin.js:1275
+#: resources/js/admin.js:1284
 msgid "Changes saved"
 msgstr ""
 
-#: resources/js/admin.js:1283
+#: resources/js/admin.js:1286
 msgid "Portal cache cleared."
 msgstr ""
 
-#: resources/js/admin.js:1284
+#: resources/js/admin.js:1287
 msgid "The portal cache could not be cleared."
 msgstr ""
 
-#: resources/js/admin.js:1296
-#: resources/js/admin.js:1304
+#: resources/js/admin.js:1299
+#: resources/js/admin.js:1307
 msgid "Could not save"
 msgstr ""
 
-#: resources/js/admin.js:1305
-#: resources/js/admin.js:1698
+#: resources/js/admin.js:1308
+#: resources/js/admin.js:1701
 msgid "Check your connection and try again."
 msgstr ""
 
-#: resources/js/admin.js:1350
+#: resources/js/admin.js:1353
 msgid "API Key is required"
 msgstr ""
 
-#: resources/js/admin.js:1395
+#: resources/js/admin.js:1398
 msgid "Verified"
 msgstr ""
 
-#: resources/js/admin.js:1403
+#: resources/js/admin.js:1406
 msgid "Success"
 msgstr ""
 
-#: resources/js/admin.js:1428
+#: resources/js/admin.js:1431
 msgid "Form submition failed"
 msgstr ""
 
-#: resources/js/admin.js:1471
-#: resources/js/admin.js:1537
-#: resources/js/admin.js:1593
+#: resources/js/admin.js:1474
+#: resources/js/admin.js:1540
+#: resources/js/admin.js:1596
 msgid "Invalid API Key"
 msgstr ""
 
-#: resources/js/admin.js:1480
-#: resources/js/admin.js:1544
-#: resources/js/admin.js:1600
+#: resources/js/admin.js:1483
+#: resources/js/admin.js:1547
+#: resources/js/admin.js:1603
 msgid "Server Error"
 msgstr ""
 
-#: resources/js/admin.js:1553
+#: resources/js/admin.js:1556
 msgid "Select Assistant"
 msgstr ""
 
-#: resources/js/admin.js:1558
+#: resources/js/admin.js:1561
 msgid "No Assistant Found"
 msgstr ""
 
-#: resources/js/admin.js:1623
+#: resources/js/admin.js:1626
 msgid "No Inbox Found"
 msgstr ""
 
-#: resources/js/admin.js:1632
+#: resources/js/admin.js:1635
 msgid "Request timed out. Please try again."
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:1635
+#: resources/js/admin.js:1638
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: resources/js/admin.js:1694
+#: resources/js/admin.js:1697
 msgid "Portal cache cleared"
 msgstr ""
 
-#: resources/js/admin.js:1697
+#: resources/js/admin.js:1700
 msgid "Could not clear the cache"
 msgstr ""
 
@@ -1173,24 +1185,24 @@ msgstr ""
 msgid "Failed to reload tickets. Please try again."
 msgstr ""
 
-#: resources/js/conversation.js:230
+#: resources/js/conversation.js:270
 msgid "Knowledge Base"
 msgstr ""
 
-#: resources/js/conversation.js:241
+#: resources/js/conversation.js:281
 msgid "WordPress"
 msgstr ""
 
-#: resources/js/conversation.js:456
-#: resources/js/conversation.js:485
+#: resources/js/conversation.js:496
+#: resources/js/conversation.js:525
 msgid "Oops..."
 msgstr ""
 
-#: resources/js/conversation.js:457
+#: resources/js/conversation.js:497
 msgid "Reply text can not be empty!"
 msgstr ""
 
-#: resources/js/conversation.js:476
+#: resources/js/conversation.js:516
 msgid "Reply sent"
 msgstr ""
 

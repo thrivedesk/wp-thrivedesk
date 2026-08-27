@@ -385,6 +385,10 @@ class Conversation
                 'td_helpdesk_page_id'                   => $data['td_helpdesk_page_id'] ?? '',
                 'td_knowledgebase_slug'                 => $data['td_knowledgebase_slug'] ?? '',
                 'td_helpdesk_post_types'                => $data['td_helpdesk_post_types'] ?? [],
+                // Stored as 0/1 rather than left absent when unticked: an
+                // unchecked box posts nothing, and "absent" would be
+                // indistinguishable from "this install predates the setting".
+                'td_helpdesk_search_required'           => empty($data['td_helpdesk_search_required']) ? 0 : 1,
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? [],
                 'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],

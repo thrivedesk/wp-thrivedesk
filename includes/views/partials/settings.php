@@ -523,7 +523,7 @@ $current_user = wp_get_current_user();
                          * rather than a control with no UI.
                          */
                         ?>
-                        <div class="td-multiselect" data-td-multiselect>
+                        <div class="td-multiselect max-w-md" data-td-multiselect>
                             <select name="td_helpdesk_post_types[]" id="td_helpdesk_post_types" size="6" multiple class="td-multiselect__source w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
                                 <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
                                     <?php
@@ -541,6 +541,14 @@ $current_user = wp_get_current_user();
                             </select>
                         </div>
                         <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only.', 'thrivedesk'); ?></p>
+                    </div>
+
+                    <div class="td-field">
+                        <label class="td-check<?php echo $td_has_ticket_page ? '' : ' is-disabled'; ?>" for="td_helpdesk_search_required">
+                            <input type="checkbox" id="td_helpdesk_search_required" name="td_helpdesk_search_required" value="1" <?php checked(!empty($td_helpdesk_selected_option['td_helpdesk_search_required'])); ?> <?php disabled(!$td_has_ticket_page); ?>>
+                            <span><?php esc_html_e('Make searching compulsory', 'thrivedesk'); ?></span>
+                        </label>
+                        <p class="td-field-help"><?php esc_html_e('Hides the new ticket button until a search has run. People who find their answer never open the ticket; people who do not still can.', 'thrivedesk'); ?></p>
                     </div>
                 </div>
 

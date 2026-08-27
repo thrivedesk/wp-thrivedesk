@@ -1140,6 +1140,7 @@ jQuery(document).ready(($) => {
 		// A multiple <select>, like the excluded routes above: .val() is already
 		// the array this wants, so there is nothing to map.
 		let td_helpdesk_post_types = $('#td_helpdesk_post_types').val() || [];
+		let td_helpdesk_search_required = $('#td_helpdesk_search_required').is(':checked') ? 1 : 0;
 
 		let td_helpdesk_post_sync = $('.td_helpdesk_post_sync:checked')
 			.map((i, item) => item.value)
@@ -1158,6 +1159,7 @@ jQuery(document).ready(($) => {
 			td_helpdesk_page_id: td_helpdesk_page_id,
 			td_knowledgebase_slug: td_knowledgebase_slug,
 			td_helpdesk_post_types: td_helpdesk_post_types,
+			td_helpdesk_search_required: td_helpdesk_search_required,
 			td_helpdesk_post_sync: td_helpdesk_post_sync,
 			td_user_account_pages: td_user_account_pages,
 			td_assistant_route_list: td_assistant_route_list
@@ -1196,6 +1198,7 @@ jQuery(document).ready(($) => {
 		'#td_helpdesk_page_id',
 		'#td_knowledgebase_slug',
 		'#td_helpdesk_post_types',
+		'#td_helpdesk_search_required',
 		'.td_user_account_pages',
 		'.td_helpdesk_post_sync',
 	].join( ',' );

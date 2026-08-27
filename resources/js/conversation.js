@@ -110,9 +110,48 @@ jQuery(document).ready(($) => {
     const tdModalEmpty = $('#td-search-empty');
     const tdModalSpinner = $('#td-search-spinner');
     const tdModalSearchClearBtn = $('#td-modal-search-clear');
+    const tdTicketCta = $('#td-new-ticket-url');
+    const tdFooterNote = $('#td-modal-footer-note');
+    const tdEmptyCtaSlot = $('#td-search-empty-cta');
+    const tdModalFooter = $('.td-modal-footer');
+    // Set in modal.php from td_helpdesk_search_required.
+    const tdSearchRequired = $('#tdConversationModal').data('td-search-required') == 1;
 
     // tracks which overlay is currently shown in the body
     let currentModalState = 'initial';
+
+    /**
+     * Put the "new ticket" button where the current state wants it.
+     *
+     * Moved, never duplicated: a second copy would be a second element with
+     * the same id, and the one in the footer is what every other handler
+     * refers to. Moving a node does not detach its listeners.
+     *
+     *   empty   - after the "no matches" message, because that is where the
+     *             reader already is and what they now need.
+     *   results - back in the footer, with a line beside it offering the
+     *             ticket anyway. Before a search there is nothing to be
+     *             unhappy with, so the line only appears here.
+     *
+     * When searching is compulsory the button is hidden until a search has
+     * actually run. Hidden, not disabled: a disabled control invites
+     * clicking at it, and there is nothing wrong with the button - there is
+     * simply nothing to have read yet.
+     */
+    const placeTicketCta = (state) => {
+        if (!tdTicketCta.length) return;
+
+        const searched = state === 'results' || state === 'empty';
+
+        if (state === 'empty' && tdEmptyCtaSlot.length) {
+            tdEmptyCtaSlot.append(tdTicketCta);
+        } else if (tdModalFooter.length) {
+            tdModalFooter.append(tdTicketCta);
+        }
+
+        tdTicketCta.prop('hidden', tdSearchRequired && !searched);
+        tdFooterNote.prop('hidden', state !== 'results');
+    };
 
     const updateModalClearBtn = () => {
         if (!tdModalSearchClearBtn.length) return;
@@ -132,6 +171,7 @@ jQuery(document).ready(($) => {
         tdModalInitial.prop('hidden', state !== 'initial');
         tdModalSpinner.prop('hidden', state !== 'loading');
         tdModalEmpty.prop('hidden', state !== 'empty');
+        placeTicketCta(state);
         updateModalClearBtn();
     };
 
