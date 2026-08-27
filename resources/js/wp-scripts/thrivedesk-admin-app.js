@@ -20,5 +20,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	const config = window.thrivedeskAdmin || {};
 
-	createRoot( mount ).render( <App integrations={ config.integrations || [] } /> );
+	createRoot( mount ).render(
+		<App integrations={ config.integrations || [] } connected={ !! config.connected } />
+	);
 } );

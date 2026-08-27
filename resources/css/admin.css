@@ -309,9 +309,88 @@
 				@apply w-6 bg-green-400;
 			}
 		}
-		#td-excluded-routes{
-			max-width: 100%;
+		/* What a tab shows before there is an account: one column, centred,
+		   because there is nothing to compare it against. */
+		.td-empty {
+			@apply flex flex-col items-center text-center py-14 px-6;
 		}
+		.td-empty__icon {
+			@apply flex items-center justify-center w-14 h-14 mb-4 rounded-full bg-slate-100 text-slate-400;
+		}
+		.td-empty__actions {
+			@apply flex flex-col items-center gap-3 mt-6 w-full max-w-md;
+		}
+		.td-empty__actions > div {
+			@apply w-full;
+		}
+		/* A button that reads as a link. Colour and size both need forcing:
+		   WordPress styles admin controls from ID selectors that outrank a
+		   utility class. */
+		.td-empty__link {
+			@apply p-0 border-0 bg-transparent underline cursor-pointer;
+			@apply text-[13px]! text-slate-500! hover:text-blue-600!;
+		}
+		.td-empty__link:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500 rounded-xs;
+		}
+		/* Arriving a line at a time, once, when the workspace card is filled in
+		   after connecting. `both` holds the from-state before the delay
+		   elapses, or every row would flash in and then animate. */
+		.td-reveal {
+			animation: td-reveal .45s cubic-bezier(.2, .7, .3, 1) both;
+		}
+		/* Three passes of one second - see TD_CELEBRATE_MS in admin.js, which
+		   waits for this to finish before reloading. Relative, so the glow is
+		   painted over the cards beside it rather than under them. */
+		.td-card.is-celebrating {
+			@apply relative z-10;
+			animation: td-celebrate 1s linear 3;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.td-reveal,
+			.td-card.is-celebrating {
+				animation: none;
+			}
+		}
+	}
+}
+
+/* Top level, not nested: @keyframes is not a style rule, and nesting it inside
+   a selector does not scope it to one - it only risks the name not being
+   registered at all. */
+@keyframes td-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+		filter: blur(3px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+}
+
+/* The colours are the confetti's, in the same order, so the card and the burst
+   read as one event rather than two things that happened at once. */
+@keyframes td-celebrate {
+	0% {
+		box-shadow: 0 0 0 1px rgb(56 88 233 / 0.55), 0 0 22px 3px rgb(56 88 233 / 0.45);
+	}
+	20% {
+		box-shadow: 0 0 0 1px rgb(37 99 235 / 0.55), 0 0 26px 6px rgb(37 99 235 / 0.45);
+	}
+	40% {
+		box-shadow: 0 0 0 1px rgb(34 197 94 / 0.55), 0 0 26px 6px rgb(34 197 94 / 0.45);
+	}
+	60% {
+		box-shadow: 0 0 0 1px rgb(245 158 11 / 0.55), 0 0 26px 6px rgb(245 158 11 / 0.45);
+	}
+	80% {
+		box-shadow: 0 0 0 1px rgb(236 72 153 / 0.55), 0 0 26px 6px rgb(236 72 153 / 0.45);
+	}
+	100% {
+		box-shadow: 0 0 0 1px rgb(139 92 246 / 0.55), 0 0 22px 3px rgb(139 92 246 / 0.45);
 	}
 }
 

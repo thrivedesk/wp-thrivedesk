@@ -13,16 +13,28 @@ $td_selected_post_types      = (array) ($td_helpdesk_selected_option['td_helpdes
 $td_selected_post_sync       = (array) ($td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? []);
 
 
-$td_assistants               = Assistant::assistants();
-$td_inboxes                  = Inbox::inboxes();
-$td_knowledgebase            = KnowledgeBase::knowledgebase();
+/*
+ * Live Chat and Portal are both windows onto a ThriveDesk account; without one
+ * they render as a screen of empty selects. See partials/connect-empty.
+ *
+ * The flag is read before the four lookups below rather than after, because
+ * every one of them is an HTTP request to ThriveDesk and none of them can
+ * succeed without a working key. Fetching anyway meant an install that had not
+ * connected yet - or whose key had just been rejected - paid for a round of
+ * failing requests on every admin page load, and the failures are not cached.
+ */
+$td_connected                = thrivedesk_is_connected();
+
+$td_assistants               = $td_connected ? Assistant::assistants() : [];
+$td_inboxes                  = $td_connected ? Inbox::inboxes() : [];
+$td_knowledgebase            = $td_connected ? KnowledgeBase::knowledgebase() : [];
 // A ?token= only counts when it came back from an authorization this site
 // started; see \ThriveDesk\Admin::connect_return_token(). Otherwise the key on
 // file is the key.
 $td_connect_token            = \ThriveDesk\Admin::connect_return_token();
 $td_api_key                  = '' !== $td_connect_token ? $td_connect_token : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = get_option('td_user_account_pages');
-$has_portal_access           = (new PortalService())->has_portal_access();
+$has_portal_access           = $td_connected && (new PortalService())->has_portal_access();
 $wppostsync                  = WPPostSync::instance();
 
 // What the admin is shown in place of the key. Enough to recognise which key
@@ -90,6 +102,12 @@ $current_user = wp_get_current_user();
 
 
     <div id="td-panel-livechat" hidden>
+    <?php if ( ! $td_connected ) : ?>
+        <?php thrivedesk_view( 'partials/connect-empty', [
+            'td_empty_title' => __( 'Live Chat needs a ThriveDesk account', 'thrivedesk' ),
+            'td_empty_text'  => __( 'The chat widget is configured from the assistants in your workspace, so there is nothing to choose from until this site is connected.', 'thrivedesk' ),
+        ] ); ?>
+    <?php else : ?>
     <?php // The settings are a handful of controls; the preview is the thing worth the room. ?>
     <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-6 items-start">
     <div class="td-card space-y-6">
@@ -212,9 +230,16 @@ $current_user = wp_get_current_user();
             </div>
         </div>
     </div>
+    <?php endif; ?>
     </div>
 
     <div id="td-panel-portal" hidden>
+    <?php if ( ! $td_connected ) : ?>
+        <?php thrivedesk_view( 'partials/connect-empty', [
+            'td_empty_title' => __( 'Portal needs a ThriveDesk account', 'thrivedesk' ),
+            'td_empty_text'  => __( 'Portal serves your inboxes and knowledge base on your own site, so it has nothing to serve until this site is connected.', 'thrivedesk' ),
+        ] ); ?>
+    <?php else : ?>
     <?php // The inbox select is hidden but must stay in the DOM: the save handler reads it by id. ?>
     <!-- inbox selection -->
     <div class="space-y-1" style="display:none;">
@@ -387,6 +412,7 @@ $current_user = wp_get_current_user();
             </div>
         </div>
     </div>
+    <?php endif; ?>
     </div>
 
 

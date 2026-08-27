@@ -110,3 +110,40 @@
 	font-size: 11px;
 	font-weight: 600;
 }
+
+/* Locked, not hidden. What ThriveDesk connects to is most of the reason to
+   connect at all, so the card stays readable and only its controls go inert -
+   the logo is drained of colour and the whole card sits back a step, which is
+   the difference a reader can see at a glance across a grid of seven. */
+.td-integration.is-locked {
+	background: #fbfbfc;
+	border-style: dashed;
+
+	.td-integration__logo {
+		filter: grayscale(1);
+		opacity: 0.65;
+	}
+
+	.td-integration__name,
+	.td-integration__description {
+		opacity: 0.75;
+	}
+}
+
+.td-integration__lock {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	color: #757575;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+/* The notice sits above the grid and explains the padlocks once, rather than
+   every card carrying the same sentence. */
+.td-integrations__locked {
+	margin: 0 0 16px;
+}

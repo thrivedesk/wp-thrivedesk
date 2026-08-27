@@ -210,6 +210,106 @@ function tdSettingsUrl() {
 }
 
 /**
+ * How long the workspace card is allowed to glow, in milliseconds.
+ *
+ * Kept in step with the .is-celebrating rule in admin.css - the animation is
+ * declared there and the page is reloaded here, and the two disagreeing would
+ * either cut the glow off or leave the page sitting on stale panels.
+ */
+const TD_CELEBRATE_MS = 3000;
+
+/**
+ * Bring `root`'s contents in a line at a time.
+ *
+ * Marked up server-side with data-td-reveal so the order is the reading order
+ * rather than whatever the DOM happens to hand back. The delay is set here and
+ * not in CSS because the number of rows depends on the plan - an :nth-child
+ * ladder would need a rule for every row the card might ever have.
+ */
+function tdRevealIn(root) {
+	if (!root || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+		return;
+	}
+
+	root.querySelectorAll('[data-td-reveal]').forEach((el, i) => {
+		el.style.animationDelay = i * 70 + 'ms';
+		el.classList.add('td-reveal');
+	});
+}
+
+/**
+ * The key was accepted, and the page it was entered on is still open.
+ *
+ * Nothing navigates: the card that asked for the key is removed, the card
+ * beside it is re-rendered from the server with what ThriveDesk now says about
+ * this workspace, and the two are tied together by the confetti and the glow.
+ *
+ * The reload at the end is not a change of mind about navigating. Every other
+ * tab is still rendered for a site with no account - the Live Chat and Portal
+ * panels are placeholders, the integration cards are locked - and all of that
+ * is filled server-side. Reproducing it here would be a second implementation
+ * of four panels; waiting for the glow to finish costs one page load.
+ */
+function tdCelebrateConnection() {
+	const card = document.getElementById('td-workspace-card');
+	const body = document.getElementById('td-workspace-card-body');
+
+	tdConfetti();
+
+	Swal.fire({
+		toast: true,
+		position: 'top-end',
+		icon: 'success',
+		title: __('Connected to ThriveDesk', 'thrivedesk'),
+		text: __('Your site is set up and ready to take conversations.', 'thrivedesk'),
+		showConfirmButton: false,
+		timer: 5000,
+		timerProgressBar: true,
+		// Swal renders outside the plugin's own markup, so it needs its own
+		// hook to clear the admin bar and the confetti canvas.
+		customClass: { container: 'td-toast' },
+	});
+
+	// The connect card has done its job, and every word on it is now wrong.
+	// Its wrapper goes too - it is the centring row, and an empty one would
+	// leave a gap above the card that replaces it.
+	const connectCard = document.getElementById('td-setup-split');
+
+	if (connectCard) {
+		(connectCard.parentElement || connectCard).remove();
+	}
+
+	const settle = () => {
+		if (card) {
+			card.classList.add('is-celebrating');
+			card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+		}
+
+		window.setTimeout(() => window.location.reload(), TD_CELEBRATE_MS + 400);
+	};
+
+	if (!body || typeof thrivedesk === 'undefined') {
+		settle();
+		return;
+	}
+
+	jQuery
+		.post(thrivedesk.ajax_url, {
+			action: 'thrivedesk_workspace_card',
+			data: { nonce: (window.thrivedeskAdmin || {}).pluginActionNonce || '' },
+		})
+		.done((html) => {
+			// A failed nonce answers with a JSON error object, not markup.
+			// Leaving the old card up is better than printing that at the user.
+			if (typeof html === 'string' && html.trim().charAt(0) === '<') {
+				body.innerHTML = html;
+				tdRevealIn(body);
+			}
+		})
+		.always(settle);
+}
+
+/**
  * Turn a `<select multiple>` into a dropdown of checkboxes.
  *
  * Progressive enhancement, not replacement: the original select stays in the
@@ -557,6 +657,29 @@ jQuery(document).ready(($) => {
 		$split.find('.td-aside-toggle').attr('aria-expanded', open ? 'true' : 'false');
 	});
 
+	/*
+	 * The empty Live Chat and Portal tabs point at the connect card, which is
+	 * on another tab. The React app owns which tab is showing, so this asks
+	 * rather than reaches in - see SELECT_TAB_EVENT in admin-app/App.js.
+	 */
+	$(document).on('click', '[data-td-goto-tab]', function (e) {
+		e.preventDefault();
+
+		const name = this.getAttribute('data-td-goto-tab');
+
+		if (document.querySelector('.td-tabs')) {
+			document.dispatchEvent(new CustomEvent('thrivedesk:select-tab', { detail: name }));
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			return;
+		}
+
+		// No app on the page - it failed to boot, or scripts are off. The URL
+		// selects the tab on its own; see initialTab().
+		const url = new URL(window.location.href);
+		url.searchParams.set('td_tab', name);
+		window.location.href = url.toString();
+	});
+
 	document.querySelectorAll( '[data-td-multiselect]' ).forEach( tdEnhanceMultiselect );
 
 	// Video posters. The iframe is created when the dialog opens and its src is
@@ -839,11 +962,18 @@ jQuery(document).ready(($) => {
 					
 					if (parsedResponse) {
 						if (parsedResponse.status === 'success') {
-							// Celebrate on the page being navigated to, not the
-							// one being left: a burst started here is cut off by
-							// the navigation a moment later. A failure still gets
-							// a modal - that one has to be read before anything
-							// else happens.
+							// The tabbed screen is where this used to navigate
+							// to, and the card now lives on it, so there is
+							// nowhere left to go - celebrate in place.
+							if (document.getElementById('td-workspace-card')) {
+								tdCelebrateConnection();
+								return;
+							}
+
+							// The standalone setup screen has nothing to
+							// celebrate on. Hand the flag to the page it is
+							// about to open: a burst started here is cut off by
+							// the navigation a moment later.
 							try {
 								window.sessionStorage.setItem(TD_CONNECTED_FLAG, '1');
 							} catch (e) {

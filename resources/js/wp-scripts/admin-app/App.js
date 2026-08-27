@@ -1,10 +1,20 @@
 import { __ } from '@wordpress/i18n';
+import { useEffect, useState } from '@wordpress/element';
 import { TabPanel } from '@wordpress/components';
 
 import Integrations from './Integrations';
 import HostedPanel from './HostedPanel';
 
 const TAB_PARAM = 'td_tab';
+
+/**
+ * Event the rest of the page uses to ask for a tab.
+ *
+ * The empty Live Chat and Portal tabs point at the connect card on Overview,
+ * and they are server-rendered PHP with no way into React state. An event is
+ * the seam: admin.js dispatches, this component decides.
+ */
+const SELECT_TAB_EVENT = 'thrivedesk:select-tab';
 
 const TABS = [
 	{ name: 'overview', title: __( 'Overview', 'thrivedesk' ), panel: 'td-panel-overview' },
@@ -26,7 +36,32 @@ function initialTab() {
 	return TABS.some( ( tab ) => tab.name === requested ) ? requested : TABS[ 0 ].name;
 }
 
-export default function App( { integrations } ) {
+export default function App( { integrations, connected } ) {
+	/*
+	 * TabPanel picks up initialTabName on mount and never again, so a request
+	 * from outside is honoured by remounting it against a new key. The nonce is
+	 * what makes a repeat request work: asking twice for the same tab has to
+	 * change the key, or the second ask is a no-op.
+	 *
+	 * Remounting is cheap and safe here - HostedPanel keeps a reference to every
+	 * panel it has adopted precisely so it can put them back.
+	 */
+	const [ target, setTarget ] = useState( { name: initialTab(), nonce: 0 } );
+
+	useEffect( () => {
+		const select = ( event ) => {
+			const name = event.detail;
+
+			if ( TABS.some( ( tab ) => tab.name === name ) ) {
+				setTarget( ( prev ) => ( { name, nonce: prev.nonce + 1 } ) );
+			}
+		};
+
+		document.addEventListener( SELECT_TAB_EVENT, select );
+
+		return () => document.removeEventListener( SELECT_TAB_EVENT, select );
+	}, [] );
+
 	const onSelect = ( name ) => {
 		// replaceState, not pushState: tab changes are not navigation, and
 		// stacking them would make the browser back button walk through tabs
@@ -37,7 +72,13 @@ export default function App( { integrations } ) {
 	};
 
 	return (
-		<TabPanel className="td-tabs" tabs={ TABS } initialTabName={ initialTab() } onSelect={ onSelect }>
+		<TabPanel
+			key={ target.nonce }
+			className="td-tabs"
+			tabs={ TABS }
+			initialTabName={ target.name }
+			onSelect={ onSelect }
+		>
 			{ ( active ) => (
 				/*
 				 * Every panel is rendered on every tab, and only `hidden`
@@ -49,7 +90,7 @@ export default function App( { integrations } ) {
 				 */
 				<>
 					<div hidden={ active.name !== 'integrations' }>
-						<Integrations integrations={ integrations } />
+						<Integrations integrations={ integrations } connected={ connected } />
 					</div>
 
 					{ TABS.filter( ( tab ) => tab.panel ).map( ( tab ) => (

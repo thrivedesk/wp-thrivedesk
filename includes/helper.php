@@ -74,6 +74,29 @@ if (!function_exists('thrivedesk_service_ips')) {
     }
 }
 
+if (!function_exists('thrivedesk_is_connected')) {
+    /**
+     * Whether this site holds a key ThriveDesk has accepted.
+     *
+     * The one predicate every admin screen branches on. A key on file is not
+     * the same thing as a working connection - the flag is written by the
+     * verification handshake and cleared when ThriveDesk rejects the key - and
+     * treating the two as one is what left the settings screen offering
+     * controls over lists it could never fill.
+     *
+     * @since 2.6.0
+     * @access public
+     * @return bool
+     */
+    function thrivedesk_is_connected(): bool
+    {
+        $settings = get_option('td_helpdesk_settings');
+        $api_key  = is_array($settings) ? trim((string) ($settings['td_helpdesk_api_key'] ?? '')) : '';
+
+        return '' !== $api_key && (bool) get_option('td_helpdesk_verified', false);
+    }
+}
+
 if (!function_exists('thrivedesk_integrations')) {
     /**
      * The integrations shown on the settings screen.

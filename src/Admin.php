@@ -81,6 +81,8 @@ final class Admin
 
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
 
+        add_action('wp_ajax_thrivedesk_workspace_card', [$this, 'ajax_workspace_card']);
+
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
         // menu icon style 
@@ -386,6 +388,10 @@ final class Admin
                 // verify against; see ajax_connect_plugin().
                 'pluginActionNonce' => wp_create_nonce('thrivedesk-plugin-action'),
                 'integrations'      => thrivedesk_integrations(),
+                // Locks the integration cards rather than hiding them: what
+                // ThriveDesk connects to is most of the reason to connect at
+                // all, so it stays readable before there is a key.
+                'connected'         => thrivedesk_is_connected(),
             ]
         );
     }
@@ -432,15 +438,17 @@ final class Admin
             }
         }
 
-        if($td_api_key && $api_status){
-            thrivedesk_view('setting');
-        }
-        elseif($td_api_key == '' || '' !== self::connect_return_token()){
-            thrivedesk_view('pages/api-verify');
-        }
-        else{
-            thrivedesk_view('pages/welcome');
-        }
+        /*
+         * One destination, connected or not. This used to fork into a
+         * fullscreen setup screen and a welcome screen, which meant a new
+         * install saw nothing of the plugin until it had a key - no tour, no
+         * integrations, nothing to read while deciding. The tabs render either
+         * way now: the Overview tab leads with the same connect card those
+         * screens used to be, and every tab that needs an account says so.
+         *
+         * See thrivedesk_is_connected(), which is what the views branch on.
+         */
+        thrivedesk_view('setting');
     }
 
     public function verification_page(){
@@ -627,6 +635,36 @@ final class Admin
      *
      * @return void
      */
+    /**
+     * The Workspace card, re-rendered for a page that is already open.
+     *
+     * Connecting from the Overview tab no longer navigates anywhere, so the
+     * card that was showing "not connected a moment ago" has to be replaced
+     * where it stands. Rendering it server-side keeps one copy of that markup
+     * rather than a second, drifting one written in JavaScript.
+     *
+     * The summary is rebuilt rather than read: the cache was populated by the
+     * probes a key that did not work yet, and serving it here would report the
+     * connection as still broken.
+     *
+     * @return void
+     */
+    public function ajax_workspace_card(): void
+    {
+        if (
+            ! current_user_can('manage_options')
+            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
+        ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
+        }
+
+        \ThriveDesk\Services\WorkspaceService::summary(true);
+
+        thrivedesk_view('partials/workspace-card');
+
+        wp_die();
+    }
+
     public function ajax_disconnect_plugin(): void
     {
         if (

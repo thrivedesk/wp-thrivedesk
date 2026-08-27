@@ -13,7 +13,7 @@ $api_key = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
  * along with the header that used to show it would leave the card blank until
  * something else happened to fetch it.
  */
-if ( $api_key && ! get_option('td_helpdesk_system_info') ) {
+if ( thrivedesk_is_connected() && ! get_option('td_helpdesk_system_info') ) {
     Conversation::get_system_info($api_key);
 }
 ?>
