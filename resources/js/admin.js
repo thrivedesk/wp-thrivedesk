@@ -633,13 +633,18 @@ jQuery(document).ready(($) => {
 	/*
 	 * Live preview of the selected assistant.
 	 *
-	 * Rebuilt in an iframe on every change rather than re-initialising in place.
-	 * The widget positions itself against its own viewport, so an iframe is what
-	 * keeps it inside the preview box instead of floating over the whole admin
-	 * screen. A fresh window per render also stops one preview's widget
-	 * lingering when a different assistant is chosen - the bootloader keeps a
-	 * single readyQueue per window and does not expect to be re-initialised.
+	 * A frame per assistant, rebuilt on change. This is not a styling choice: the
+	 * bundle calls customElements.define('thrivedesk-assistant'), a name can only
+	 * be registered once per window, and there is no way to withdraw it. Mounted
+	 * on this page the first assistant works and every switch after it throws
+	 * NotSupportedError. A frame is a fresh window, so switching is immediate.
+	 *
+	 * What goes inside is the scaffolding the front end emits, unchanged - the
+	 * same queue shim, the same bootloader, the same init and identify calls. No
+	 * styling is applied to the widget.
 	 */
+	let tdPreviewId = null;
+
 	function tdRenderAssistantPreview() {
 		const host = document.querySelector( '[data-td-assistant-preview]' );
 		const select = document.getElementById( 'td-assistants' );
@@ -649,13 +654,19 @@ jQuery(document).ready(($) => {
 		}
 
 		const assistantId = select.value;
+
+		if ( assistantId === tdPreviewId ) {
+			return;
+		}
+
+		tdPreviewId = assistantId;
+
+		const empty = host.querySelector( '.td-assistant-preview__empty' );
 		const existing = host.querySelector( 'iframe' );
 
 		if ( existing ) {
 			existing.remove();
 		}
-
-		const empty = host.querySelector( '.td-assistant-preview__empty' );
 
 		if ( ! assistantId ) {
 			if ( empty ) {
@@ -671,15 +682,14 @@ jQuery(document).ready(($) => {
 
 		const frame = document.createElement( 'iframe' );
 		frame.setAttribute( 'title', __( 'Assistant preview', 'thrivedesk' ) );
-		// The widget opens links and may ask for storage; same-origin keeps it on
-		// this site's origin the way it will be in production.
-		frame.setAttribute( 'sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms' );
 
-		// JSON.stringify does the escaping. These values are a WordPress display
-		// name and email, but they are still being written into a script.
+		// JSON.stringify does the escaping. These are a WordPress display name
+		// and email, but they are still being written into a script.
 		frame.srcdoc = [
 			'<!doctype html><html><head><meta charset="utf-8">',
-			'<style>html,body{margin:0;height:100%;background:transparent;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}</style>',
+			// Only the default body margin, so the widget sits where it would on
+			// a real page rather than being inset by 8px. Nothing else.
+			'<style>body{margin:0}</style>',
 			'</head><body><script>',
 			'!function(t,e,n){function s(){var t=e.getElementsByTagName("script")[0],n=e.createElement("script");',
 			'n.type="text/javascript",n.async=!0,n.src=' + JSON.stringify( host.dataset.bootloader ) + '+"?"+Date.now(),',
@@ -691,12 +701,6 @@ jQuery(document).ready(($) => {
 			'window.Assistant("identify",{name:' + JSON.stringify( host.dataset.name || '' ) + ',email:' + JSON.stringify( host.dataset.email || '' ) + '});',
 			'<\/script></body></html>',
 		].join( '' );
-
-		host.classList.remove( 'is-loading' );
-		// Reflow, so the fade restarts on a rebuild rather than being ignored as
-		// an animation that has already run.
-		void host.offsetWidth;
-		host.classList.add( 'is-loading' );
 
 		host.appendChild( frame );
 	}

@@ -105,7 +105,7 @@ $current_user = wp_get_current_user();
         </div>
 
         <?php if (!empty($td_assistants)) : ?>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-5 border-t border-slate-200">
+            <div class="space-y-5 pt-5 border-t border-slate-200">
 
                 <div class="td-field">
                     <label for="td-assistants"><?php esc_html_e('Assistant', 'thrivedesk'); ?></label>
@@ -196,8 +196,7 @@ $current_user = wp_get_current_user();
          */
         ?>
         <div class="td-card">
-            <div class="text-base font-bold"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></div>
-            <p class="mt-1! mb-4! text-gray-500"><?php esc_html_e( 'The assistant selected on the left, loaded exactly as visitors get it.', 'thrivedesk' ); ?></p>
+            <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></div>
 
             <div
                 class="td-assistant-preview"
