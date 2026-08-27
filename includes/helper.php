@@ -160,28 +160,28 @@ if (!function_exists('thrivedesk_form_plugin_actions')) {
     }
 }
 
-if (!function_exists('thrivedesk_detected_form_plugin')) {
+if (!function_exists('thrivedesk_detected_form_plugins')) {
     /**
-     * The form plugin this site would build its ticket page with.
+     * Every form plugin on this site, in the order worth reading them.
      *
      * The Portal tab tells people to make a page with a form plugin and point
      * it at a ThriveDesk inbox. Most of them already have one - so rather than
-     * describe the step in the abstract, this finds it and the tab offers to
-     * open it.
+     * describe the step in the abstract, the tab names what is here and offers
+     * to open it.
      *
-     * Walked in catalogue order, not in the order WordPress happens to list
-     * plugins on disk: the catalogue is sorted by install count, so on a site
-     * with two form plugins the answer is the one more people would mean. An
-     * active plugin wins outright over any inactive one, however popular -
-     * an inactive plugin cannot build anything.
+     * All of them, not the best one: a site with three form plugins has three
+     * because someone chose each of them, and picking a winner would hide the
+     * one they actually build with. Active first, because an inactive plugin
+     * cannot build anything, and within each group in catalogue order, which is
+     * install count - so the likeliest answer leads.
      *
      * @since 2.6.0
      * @access public
      *
-     * @return array Empty when nothing matched. Otherwise slug, file, name,
-     *               active, icon and new_form_url (which may be '').
+     * @return array<int,array> Each with slug, file, name, active, icons and
+     *                          new_form_url (which may be '').
      */
-    function thrivedesk_detected_form_plugin(): array
+    function thrivedesk_detected_form_plugins(): array
     {
         $catalogue = thrivedesk_form_plugins();
 
@@ -206,6 +206,7 @@ if (!function_exists('thrivedesk_detected_form_plugin')) {
         }
 
         $actions  = thrivedesk_form_plugin_actions();
+        $active   = [];
         $inactive = [];
 
         foreach ($catalogue as $slug => $name) {
@@ -219,22 +220,34 @@ if (!function_exists('thrivedesk_detected_form_plugin')) {
                 'name'         => $name,
                 'active'       => is_plugin_active($installed[$slug]),
                 // Served by wordpress.org, so nothing is bundled and nothing is
-                // fetched server-side. A slug with no icon there simply fails to
-                // load and the lettermark behind it stays - see .td-plugin__logo.
-                'icon'         => 'https://ps.w.org/' . $slug . '/assets/icon-128x128.png',
+                // fetched server-side to find out which of these exists. The
+                // browser tries them in turn and the lettermark behind shows
+                // when none of them load - see the img error handler in
+                // admin.js and .td-plugin__logo.
+                //
+                // A list because the extension is not predictable: Contact
+                // Form 7 is a png, Forminator a gif, Everest Forms has no 256
+                // at all. Guessing one path renders a blank square for every
+                // plugin that chose differently.
+                'icons'        => array_map(
+                    static function ($file) use ($slug) {
+                        return 'https://ps.w.org/' . $slug . '/assets/' . $file;
+                    },
+                    // 128 first: displayed at 40px, so the larger ones are only
+                    // worth reaching for when there is no small one.
+                    ['icon-128x128.png', 'icon-128x128.gif', 'icon-128x128.jpg', 'icon.svg', 'icon-256x256.png', 'icon-256x256.gif']
+                ),
                 'new_form_url' => (string) ($actions[$slug] ?? ''),
             ];
 
             if ($found['active']) {
-                return $found;
-            }
-
-            if (!$inactive) {
-                $inactive = $found;
+                $active[] = $found;
+            } else {
+                $inactive[] = $found;
             }
         }
 
-        return $inactive;
+        return array_merge($active, $inactive);
     }
 }
 

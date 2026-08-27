@@ -872,18 +872,44 @@ jQuery(document).ready(($) => {
 	// Copy-to-clipboard buttons (the ThriveDesk IP list on the setup screen).
 	// Delegated from document so the buttons work wherever they are rendered.
 	/*
-	 * A plugin icon that does not load, removed so the lettermark underneath it
-	 * shows. Bound with a capturing listener rather than through jQuery: `error`
-	 * does not bubble, so a delegated handler never sees it.
+	 * Walk the candidate icon URLs until one loads.
+	 *
+	 * wordpress.org does not agree with itself about the extension - Contact
+	 * Form 7 is a png, Forminator a gif, Everest Forms has no 256 at all - and
+	 * there is no way to know which exists without asking, which would mean an
+	 * HTTP request while the page renders. So the server offers every shape it
+	 * allows and the browser finds out for free. When the list runs out the
+	 * image goes and the lettermark behind it shows.
+	 *
+	 * A capturing listener rather than a delegated jQuery one: `error` does not
+	 * bubble, so a delegated handler would never see it.
 	 */
 	document.addEventListener(
 		'error',
 		(event) => {
 			const img = event.target;
 
-			if (img instanceof HTMLImageElement && img.classList.contains('td-plugin__icon')) {
-				img.remove();
+			if (!(img instanceof HTMLImageElement) || !img.classList.contains('td-plugin__icon')) {
+				return;
 			}
+
+			let remaining = [];
+
+			try {
+				remaining = JSON.parse(img.getAttribute('data-td-icons') || '[]');
+			} catch (e) {
+				remaining = [];
+			}
+
+			const next = Array.isArray(remaining) ? remaining.shift() : undefined;
+
+			if (!next) {
+				img.remove();
+				return;
+			}
+
+			img.setAttribute('data-td-icons', JSON.stringify(remaining));
+			img.src = next;
 		},
 		true
 	);

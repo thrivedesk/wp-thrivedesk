@@ -144,7 +144,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 	/**
 	 * The step above says "use your existing form plugin". When there is one,
 	 * the tab names it and offers to open it rather than leaving that as an
-	 * instruction. See thrivedesk_detected_form_plugin().
+	 * instruction. See thrivedesk_detected_form_plugins().
 	 */
 	public function test_a_detected_form_plugin_is_offered_on_the_portal_tab() {
 		add_filter( 'thrivedesk_form_plugins', static fn() => [ 'contact-form-7' => 'Contact Form 7' ] );
@@ -161,7 +161,6 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		remove_all_filters( 'thrivedesk_form_plugins' );
 		remove_all_filters( 'thrivedesk_form_plugin_actions' );
 
-		$this->assertStringContainsString( 'Form plugin found', $html );
 		$this->assertStringContainsString( 'Contact Form 7', $html );
 		$this->assertStringContainsString( 'https://ps.w.org/contact-form-7/assets/icon-128x128.png', $html );
 		$this->assertStringContainsString( admin_url( 'admin.php?page=wpcf7-new' ), $html );
@@ -172,7 +171,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		// Building a form is a long detour, so it opens away from this page -
 		// and says so before it is clicked.
 		$this->assertMatchesRegularExpression(
-			'/<a class="btn-solid"[^>]*target="_blank"[^>]*rel="noopener"/',
+			'/<a class="btn-solid[^"]*"[^>]*target="_blank"[^>]*rel="noopener"/',
 			$html,
 			'the builder opens in a new tab'
 		);
@@ -187,7 +186,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		wp_cache_delete( 'plugins', 'plugins' );
 		remove_all_filters( 'thrivedesk_form_plugins' );
 
-		$this->assertStringNotContainsString( 'Form plugin found', $html );
+		$this->assertStringNotContainsString( 'td-plugin__logo', $html );
 
 		// And the tab is otherwise intact.
 		$this->assertStringContainsString( 'Ticket creation form', $html );

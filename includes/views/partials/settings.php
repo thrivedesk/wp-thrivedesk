@@ -302,88 +302,75 @@ $current_user = wp_get_current_user();
                         </p>
                     </div>
 
-                <?php
-                $td_form_plugin = thrivedesk_detected_form_plugin();
-                ?>
-                <?php if ($td_form_plugin) : ?>
+                <?php $td_form_plugins = thrivedesk_detected_form_plugins(); ?>
+                <?php if ($td_form_plugins) : ?>
                     <?php
                     /*
-                     * The step above says "use your existing form plugin".
-                     * Most sites have one, so rather than leave that as an
-                     * instruction, it is named - with the button that opens
-                     * its builder where we know where that lives.
+                     * The step above says "use your existing form plugin". Most sites
+                     * have one, so rather than leave that as an instruction, what is
+                     * here is named - with the button that opens its builder wherever
+                     * we know where that lives.
+                     *
+                     * All of them, not the best one: a site with three form plugins
+                     * has three because someone chose each of them, and picking a
+                     * winner would hide the one they actually build with.
                      */
                     ?>
-                    <aside class="td-info td-info--found">
-                        <div class="td-info__title">
-                            <span class="td-info__icon" aria-hidden="true">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            </span>
-                            <?php esc_html_e('Form plugin found', 'thrivedesk'); ?>
-                        </div>
-
-                        <div class="td-plugin mt-3">
-                            <?php
-                            // The letter shows through when the icon does
-                            // not load - a slug with no PNG on
-                            // wordpress.org, or a site that cannot reach it
-                            // at all. See the img error handler in admin.js.
-                            ?>
-                            <span class="td-plugin__logo" data-letter="<?php echo esc_attr(mb_strtoupper(mb_substr($td_form_plugin['name'], 0, 1))); ?>">
-                                <img class="td-plugin__icon" src="<?php echo esc_url($td_form_plugin['icon']); ?>" alt="" width="40" height="40" loading="lazy">
-                            </span>
-                            <div class="min-w-0">
-                                <div class="text-sm font-semibold text-slate-800 truncate"><?php echo esc_html($td_form_plugin['name']); ?></div>
-                                <div class="text-[12px] <?php echo $td_form_plugin['active'] ? 'text-green-600' : 'text-gray-500'; ?>">
-                                    <?php echo $td_form_plugin['active']
-                                        ? esc_html__('Active on this site', 'thrivedesk')
-                                        : esc_html__('Installed, not active', 'thrivedesk'); ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <?php if (!$td_form_plugin['active']) : ?>
-                            <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Activate it and you can build the ticket page without installing anything else.', 'thrivedesk'); ?></p>
-                            <div class="flex justify-end mt-3">
-                                <a class="btn-ghost" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
-                                    <?php esc_html_e('Activate it', 'thrivedesk'); ?>
-                                </a>
-                            </div>
-                        <?php elseif ($td_form_plugin['new_form_url']) : ?>
-                            <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Build your ticket form, publish it on a page, then select that page above.', 'thrivedesk'); ?></p>
-                            <?php
-                            /*
-                             * A new tab, because building a form is a long
-                             * detour and this page has unsaved-looking state on
-                             * it. The external icon says so before it is
-                             * clicked - the same one every other new-tab link
-                             * on this screen carries.
-                             */
-                            ?>
-                            <div class="flex justify-end mt-3">
-                                <a class="btn-solid" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>" target="_blank" rel="noopener">
-                                    <span><?php esc_html_e('Create a form', 'thrivedesk'); ?></span>
-                                    <?php thrivedesk_view('icons/external'); ?>
-                                </a>
-                            </div>
-                        <?php else : ?>
-                            <?php
-                            // No verified builder URL for this one. Saying
-                            // where to go beats a button that lands
-                            // somewhere approximate - see
-                            // includes/data/form-plugin-actions.php.
-                            ?>
-                            <p class="mt-3! mb-0! text-[12px] text-slate-600">
+                    <?php // Two abreast once there is more than one; a lone tile in a two column grid is a tile and a hole. ?>
+                    <div class="grid grid-cols-1 <?php echo count($td_form_plugins) > 1 ? 'sm:grid-cols-2' : ''; ?> gap-3 mt-3">
+                        <?php foreach ($td_form_plugins as $td_form_plugin) : ?>
+                            <div class="td-plugin">
                                 <?php
-                                printf(
-                                    /* translators: %s: the name of a form plugin, e.g. "Contact Form 7" */
-                                    esc_html__('Build your ticket form in %s, publish it on a page, then select that page above.', 'thrivedesk'),
-                                    esc_html($td_form_plugin['name'])
-                                );
+                                // The letter shows through when none of the candidate
+                                // icons load - a plugin whose icon wordpress.org does
+                                // not have, or a site that cannot reach it at all. See
+                                // the img error handler in admin.js, which walks
+                                // data-td-icons.
                                 ?>
-                            </p>
-                        <?php endif; ?>
-                    </aside>
+                                <span class="td-plugin__logo" data-letter="<?php echo esc_attr(mb_strtoupper(mb_substr($td_form_plugin['name'], 0, 1))); ?>">
+                                    <img
+                                        class="td-plugin__icon"
+                                        src="<?php echo esc_url($td_form_plugin['icons'][0]); ?>"
+                                        data-td-icons="<?php echo esc_attr(wp_json_encode(array_slice($td_form_plugin['icons'], 1))); ?>"
+                                        alt=""
+                                        width="40"
+                                        height="40"
+                                    >
+                                </span>
+            
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-sm font-semibold text-slate-800 truncate" title="<?php echo esc_attr($td_form_plugin['name']); ?>"><?php echo esc_html($td_form_plugin['name']); ?></div>
+                                    <div class="text-[12px] <?php echo $td_form_plugin['active'] ? 'text-green-600' : 'text-gray-500'; ?>">
+                                        <?php echo $td_form_plugin['active']
+                                            ? esc_html__('Active', 'thrivedesk')
+                                            : esc_html__('Not active', 'thrivedesk'); ?>
+                                    </div>
+                                </div>
+            
+                                <?php if (!$td_form_plugin['active']) : ?>
+                                    <a class="btn-ghost shrink-0" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
+                                        <?php esc_html_e('Activate', 'thrivedesk'); ?>
+                                    </a>
+                                <?php elseif ($td_form_plugin['new_form_url']) : ?>
+                                    <?php
+                                    /*
+                                     * A new tab, because building a form is a long
+                                     * detour away from a page in the middle of being
+                                     * set up. The external icon says so before it is
+                                     * clicked - the same one every other new-tab link
+                                     * on this screen carries.
+                                     */
+                                    ?>
+                                    <a class="btn-solid shrink-0" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>" target="_blank" rel="noopener">
+                                        <span><?php esc_html_e('Create a form', 'thrivedesk'); ?></span>
+                                        <?php thrivedesk_view('icons/external'); ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+            
+                        <p class="td-field-help"><?php esc_html_e('Build your ticket form with any of these, publish it on a page, then select that page above.', 'thrivedesk'); ?></p>
                 <?php endif; ?>
 
                     <?php

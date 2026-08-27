@@ -76,58 +76,80 @@ class FormPluginDetectionTest extends WP_UnitTestCase {
 	public function test_a_site_with_no_form_plugin_gets_no_card() {
 		$this->site( [ 'akismet/akismet.php', 'hello.php' ] );
 
-		$this->assertSame( [], thrivedesk_detected_form_plugin() );
+		$this->assertSame( [], thrivedesk_detected_form_plugins() );
 	}
 
-	public function test_the_active_form_plugin_is_the_answer() {
+	public function test_the_form_plugin_on_the_site_is_the_answer() {
 		$this->site( [ 'ninja-forms/ninja-forms.php' ], [ 'ninja-forms/ninja-forms.php' ] );
 
-		$found = thrivedesk_detected_form_plugin();
+		$found = thrivedesk_detected_form_plugins();
 
-		$this->assertSame( 'ninja-forms', $found['slug'] );
-		$this->assertSame( 'Ninja Forms', $found['name'] );
-		$this->assertTrue( $found['active'] );
+		$this->assertCount( 1, $found );
+		$this->assertSame( 'ninja-forms', $found[0]['slug'] );
+		$this->assertSame( 'Ninja Forms', $found[0]['name'] );
+		$this->assertTrue( $found[0]['active'] );
+	}
+
+	/**
+	 * All of them, not the best one. A site with three form plugins has three
+	 * because someone chose each of them, and picking a winner would hide the
+	 * one they actually build with.
+	 */
+	public function test_every_form_plugin_on_the_site_is_listed() {
+		$this->site(
+			[ 'contact-form-7/wp-contact-form-7.php', 'wpforms-lite/wpforms.php', 'ninja-forms/ninja-forms.php' ],
+			[ 'contact-form-7/wp-contact-form-7.php', 'wpforms-lite/wpforms.php', 'ninja-forms/ninja-forms.php' ]
+		);
+
+		$this->assertSame(
+			[ 'contact-form-7', 'wpforms-lite', 'ninja-forms' ],
+			array_column( thrivedesk_detected_form_plugins(), 'slug' )
+		);
 	}
 
 	/**
 	 * The tie-break that matters most. Contact Form 7 outranks Ninja Forms in
 	 * the catalogue, but an inactive plugin cannot build anything.
 	 */
-	public function test_an_active_plugin_beats_a_more_popular_inactive_one() {
+	public function test_an_active_plugin_leads_a_more_popular_inactive_one() {
 		$this->site(
 			[ 'contact-form-7/wp-contact-form-7.php', 'ninja-forms/ninja-forms.php' ],
 			[ 'ninja-forms/ninja-forms.php' ]
 		);
 
-		$found = thrivedesk_detected_form_plugin();
-
-		$this->assertSame( 'ninja-forms', $found['slug'] );
-		$this->assertTrue( $found['active'] );
+		$this->assertSame(
+			[ 'ninja-forms', 'contact-form-7' ],
+			array_column( thrivedesk_detected_form_plugins(), 'slug' ),
+			'an inactive plugin cannot build anything, however popular'
+		);
 	}
 
-	/** Two active: the one more sites run is the one more readers will mean. */
-	public function test_the_more_popular_of_two_active_plugins_wins() {
+	/** Two active: the one more sites run leads, whatever order disk gave them. */
+	public function test_the_more_popular_of_two_active_plugins_leads() {
 		$this->site(
 			[ 'ninja-forms/ninja-forms.php', 'contact-form-7/wp-contact-form-7.php' ],
 			[ 'ninja-forms/ninja-forms.php', 'contact-form-7/wp-contact-form-7.php' ]
 		);
 
-		$this->assertSame( 'contact-form-7', thrivedesk_detected_form_plugin()['slug'] );
+		$this->assertSame(
+			[ 'contact-form-7', 'ninja-forms' ],
+			array_column( thrivedesk_detected_form_plugins(), 'slug' )
+		);
 	}
 
 	public function test_an_installed_but_inactive_plugin_is_still_worth_naming() {
 		$this->site( [ 'wpforms-lite/wpforms.php' ] );
 
-		$found = thrivedesk_detected_form_plugin();
+		$found = thrivedesk_detected_form_plugins();
 
-		$this->assertSame( 'wpforms-lite', $found['slug'] );
-		$this->assertFalse( $found['active'] );
+		$this->assertSame( 'wpforms-lite', $found[0]['slug'] );
+		$this->assertFalse( $found[0]['active'] );
 	}
 
 	public function test_the_builder_url_comes_from_the_verified_table() {
 		$this->site( [ 'contact-form-7/wp-contact-form-7.php' ], [ 'contact-form-7/wp-contact-form-7.php' ] );
 
-		$this->assertSame( 'admin.php?page=wpcf7-new', thrivedesk_detected_form_plugin()['new_form_url'] );
+		$this->assertSame( 'admin.php?page=wpcf7-new', thrivedesk_detected_form_plugins()[0]['new_form_url'] );
 	}
 
 	/**
@@ -138,31 +160,34 @@ class FormPluginDetectionTest extends WP_UnitTestCase {
 	public function test_a_plugin_with_no_verified_url_is_still_detected() {
 		$this->site( [ 'obscure-forms/obscure-forms.php' ], [ 'obscure-forms/obscure-forms.php' ] );
 
-		$found = thrivedesk_detected_form_plugin();
+		$found = thrivedesk_detected_form_plugins();
 
-		$this->assertSame( 'obscure-forms', $found['slug'] );
-		$this->assertSame( '', $found['new_form_url'] );
+		$this->assertSame( 'obscure-forms', $found[0]['slug'] );
+		$this->assertSame( '', $found[0]['new_form_url'] );
 	}
 
 	/**
-	 * Nothing is bundled and nothing is fetched server-side: the icon is a
-	 * wordpress.org URL the browser loads, and the lettermark behind it stays
-	 * when it does not.
+	 * Nothing is bundled and nothing is fetched server-side to find out which
+	 * of these exists. wordpress.org does not agree with itself about the
+	 * extension - Contact Form 7 is a png, Forminator a gif - so every shape it
+	 * allows is offered and the browser finds out for free.
 	 */
-	public function test_the_icon_is_served_by_wordpress_org() {
+	public function test_every_icon_shape_is_offered_for_the_browser_to_try() {
 		$this->site( [ 'wpforms-lite/wpforms.php' ], [ 'wpforms-lite/wpforms.php' ] );
 
-		$this->assertSame(
-			'https://ps.w.org/wpforms-lite/assets/icon-128x128.png',
-			thrivedesk_detected_form_plugin()['icon']
-		);
+		$icons = thrivedesk_detected_form_plugins()[0]['icons'];
+
+		$this->assertSame( 'https://ps.w.org/wpforms-lite/assets/icon-128x128.png', $icons[0], 'the small png is tried first' );
+		$this->assertContains( 'https://ps.w.org/wpforms-lite/assets/icon-128x128.gif', $icons, 'Forminator is a gif' );
+		$this->assertContains( 'https://ps.w.org/wpforms-lite/assets/icon.svg', $icons );
+		$this->assertGreaterThan( 3, count( $icons ) );
 	}
 
 	/** A plugin that is one file in the root has no directory to match on. */
 	public function test_a_single_file_plugin_cannot_be_matched() {
 		$this->site( [ 'contact-form-7.php' ], [ 'contact-form-7.php' ] );
 
-		$this->assertSame( [], thrivedesk_detected_form_plugin() );
+		$this->assertSame( [], thrivedesk_detected_form_plugins() );
 	}
 
 	/** Nothing to match against - a release that lost the data file. */
@@ -172,7 +197,7 @@ class FormPluginDetectionTest extends WP_UnitTestCase {
 
 		$this->site( [ 'contact-form-7/wp-contact-form-7.php' ], [ 'contact-form-7/wp-contact-form-7.php' ] );
 
-		$this->assertSame( [], thrivedesk_detected_form_plugin() );
+		$this->assertSame( [], thrivedesk_detected_form_plugins() );
 
 		remove_filter( 'thrivedesk_form_plugins', '__return_empty_array', 99 );
 	}

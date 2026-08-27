@@ -152,8 +152,10 @@
 		.td-info--found .td-info__icon {
 			@apply text-green-600;
 		}
+		/* A tile, because there can be several side by side and they have to
+		   read as separate things rather than as rows of one list. */
 		.td-plugin {
-			@apply flex items-center gap-3;
+			@apply flex items-center gap-3 rounded-md border border-slate-200 bg-white p-3;
 		}
 		/* The letter is the floor, the icon sits on top of it. wordpress.org
 		   serves the icon, so nothing is bundled and nothing is fetched
