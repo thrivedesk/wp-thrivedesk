@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T08:24:01+00:00\n"
+"POT-Creation-Date: 2026-08-27T08:28:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -181,7 +181,7 @@ msgid "Add your API key to connect this site to ThriveDesk."
 msgstr ""
 
 #: includes/views/pages/api-verify.php:24
-#: includes/views/partials/overview.php:176
+#: includes/views/partials/overview.php:202
 msgid "API Key"
 msgstr ""
 
@@ -283,7 +283,7 @@ msgid "Knowledge base"
 msgstr ""
 
 #: includes/views/partials/overview.php:29
-#: includes/views/partials/overview.php:100
+#: includes/views/partials/overview.php:126
 msgid "Not connected"
 msgstr ""
 
@@ -297,8 +297,8 @@ msgid "Connected"
 msgstr ""
 
 #: includes/views/partials/overview.php:43
-#: includes/views/partials/overview.php:69
-msgid "What is Portal?"
+#: includes/views/partials/overview.php:66
+msgid "Overview of WPPortal"
 msgstr ""
 
 #: includes/views/partials/overview.php:45
@@ -306,98 +306,94 @@ msgid "Portal puts a help centre on your own site: customers sign in with the ac
 msgstr ""
 
 #: includes/views/partials/overview.php:48
-msgid "It runs on a shortcode and makes no database calls of its own, so there are no extra tables to maintain and nothing new to keep in sync."
-msgstr ""
-
-#: includes/views/partials/overview.php:51
-#: includes/views/partials/overview.php:210
-#: includes/views/partials/overview.php:216
+#: includes/views/partials/overview.php:236
+#: includes/views/partials/overview.php:242
 msgid "Learn more"
 msgstr ""
 
-#: includes/views/partials/overview.php:75
+#: includes/views/partials/overview.php:101
 msgid "Watch the 40 second tour"
 msgstr ""
 
-#: includes/views/partials/overview.php:81
+#: includes/views/partials/overview.php:107
 msgid "Workspace"
 msgstr ""
 
-#: includes/views/partials/overview.php:98
+#: includes/views/partials/overview.php:124
 msgid "Workspace:"
 msgstr ""
 
-#: includes/views/partials/overview.php:104
+#: includes/views/partials/overview.php:130
 msgid "Plan:"
 msgstr ""
 
-#: includes/views/partials/overview.php:115
+#: includes/views/partials/overview.php:141
 msgid "Portal:"
 msgstr ""
 
-#: includes/views/partials/overview.php:118
+#: includes/views/partials/overview.php:144
 msgid "Included"
 msgstr ""
 
-#: includes/views/partials/overview.php:119
+#: includes/views/partials/overview.php:145
 msgid "Not included"
 msgstr ""
 
-#: includes/views/partials/overview.php:123
+#: includes/views/partials/overview.php:149
 msgid "Subscription expired"
 msgstr ""
 
-#: includes/views/partials/overview.php:129
+#: includes/views/partials/overview.php:155
 msgid "API access"
 msgstr ""
 
-#: includes/views/partials/overview.php:149
+#: includes/views/partials/overview.php:175
 msgid "unreachable"
 msgstr ""
 
-#: includes/views/partials/overview.php:165
+#: includes/views/partials/overview.php:191
 msgid "Connection details"
 msgstr ""
 
-#: includes/views/partials/overview.php:166
+#: includes/views/partials/overview.php:192
 msgid "The API key that links this site to ThriveDesk."
 msgstr ""
 
-#: includes/views/partials/overview.php:178
+#: includes/views/partials/overview.php:204
 msgid "Login to ThriveDesk app and get your API key from "
 msgstr ""
 
-#: includes/views/partials/overview.php:180
+#: includes/views/partials/overview.php:206
 #: includes/views/partials/settings.php:283
 msgid "here"
 msgstr ""
 
-#: includes/views/partials/overview.php:192
+#: includes/views/partials/overview.php:218
 msgid "Update"
 msgstr ""
 
-#: includes/views/partials/overview.php:198
+#: includes/views/partials/overview.php:224
 msgid "Verify"
 msgstr ""
 
-#: includes/views/partials/overview.php:208
+#: includes/views/partials/overview.php:234
 msgid "Using Cloudflare?"
 msgstr ""
 
-#: includes/views/partials/overview.php:209
+#: includes/views/partials/overview.php:235
 msgid "To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly."
 msgstr ""
 
-#: includes/views/partials/overview.php:213
+#: includes/views/partials/overview.php:239
 #: includes/views/partials/settings.php:110
 msgid "Assistant"
 msgstr ""
 
-#: includes/views/partials/overview.php:214
+#: includes/views/partials/overview.php:240
 msgid "What is Assistant?"
 msgstr ""
 
-#: includes/views/partials/overview.php:215
+#: includes/views/partials/overview.php:241
 msgid "Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant."
 msgstr ""
 

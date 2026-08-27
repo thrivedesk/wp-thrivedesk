@@ -141,12 +141,19 @@
 			@apply outline-2 outline-offset-2 outline-blue-500;
 		}
 
-		/* Video poster. Built from brand assets rather than a remote thumbnail:
+		/* Video poster. The mockup inside it is drawn, not a remote thumbnail:
 		   the embed host's thumbnail URL is not something to guess at, and a
 		   broken image is worse than no photograph. */
 		.td-video {
 			@apply relative flex items-center justify-center w-full aspect-video overflow-hidden rounded-lg border-0 cursor-pointer p-0;
 			background: linear-gradient(135deg, #1e3a8a 0%, #3858e9 60%, #6366f1 100%);
+		}
+		.td-video__mockup {
+			@apply absolute inset-0 flex items-center justify-center;
+			padding: 7% 11% 13%;
+		}
+		.td-video__mockup svg {
+			filter: drop-shadow(0 10px 24px rgb(15 23 42 / 0.35));
 		}
 		.td-video:hover .td-video__play {
 			@apply scale-110;
@@ -154,34 +161,16 @@
 		.td-video:focus-visible {
 			@apply outline-2 outline-offset-2 outline-blue-500;
 		}
-		.td-video__mark {
-			@apply absolute right-4 bottom-3 w-10 opacity-30;
-		}
 		.td-video__play {
-			@apply flex items-center justify-center w-14 h-14 rounded-full bg-white text-blue-700 shadow-lg transition;
+			@apply relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-white text-blue-700 shadow-xl transition;
 			/* nudged right: an optical centre, since the glyph's mass sits left */
 			padding-left: 4px;
 		}
 		.td-video__label {
-			@apply absolute left-4 bottom-3 text-white text-[12px] font-medium;
+			@apply absolute left-4 bottom-3 z-10 text-white text-[12px] font-medium;
+			text-shadow: 0 1px 3px rgb(0 0 0 / 0.5);
 		}
 
-		.td-video-modal {
-			@apply w-[min(90vw,960px)] max-w-none border-0 rounded-lg p-0 bg-black overflow-hidden;
-		}
-		.td-video-modal::backdrop {
-			background: rgb(0 0 0 / 0.7);
-		}
-		.td-video-modal__frame {
-			@apply block w-full aspect-video border-0;
-		}
-		.td-video-modal__close {
-			@apply absolute right-2 top-2 flex items-center justify-center w-9 h-9 rounded-full border-0 cursor-pointer text-white;
-			background: rgb(0 0 0 / 0.5);
-		}
-		.td-video-modal__close:hover {
-			background: rgb(0 0 0 / 0.75);
-		}
 		.td-toolbar {
 			@apply flex items-center flex-wrap gap-x-3 gap-y-2 bg-white border-b border-slate-200 py-4 px-8;
 		}
@@ -298,6 +287,49 @@
 			max-width: 100%;
 		}
 	}
+}
+
+/* Sized in plain CSS. A <dialog> carries UA width and max-width rules
+   that a utility class loses to, which is why this opened at a fraction
+   of the screen with the player letterboxed inside it. */
+.td-video-modal {
+width: min(94vw, 1280px);
+max-width: min(94vw, 1280px);
+max-height: 92vh;
+padding: 0;
+border: 0;
+border-radius: 10px;
+background: #000;
+overflow: hidden;
+box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
+}
+.td-video-modal::backdrop {
+background: rgb(0 0 0 / 0.75);
+}
+.td-video-modal__frame {
+display: block;
+width: 100%;
+aspect-ratio: 16 / 9;
+border: 0;
+}
+.td-video-modal__close {
+position: absolute;
+top: 10px;
+right: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 36px;
+height: 36px;
+padding: 0;
+border: 0;
+border-radius: 999px;
+color: #fff;
+cursor: pointer;
+background: rgb(0 0 0 / 0.55);
+}
+.td-video-modal__close:hover {
+background: rgb(0 0 0 / 0.8);
 }
 
 /* SweetAlert2 renders into <body>, outside the .thrivedesk scope, so its
