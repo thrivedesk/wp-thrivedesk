@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T08:28:08+00:00\n"
+"POT-Creation-Date: 2026-08-27T08:34:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -306,8 +306,8 @@ msgid "Portal puts a help centre on your own site: customers sign in with the ac
 msgstr ""
 
 #: includes/views/partials/overview.php:48
-#: includes/views/partials/overview.php:236
-#: includes/views/partials/overview.php:242
+#: includes/views/partials/overview.php:240
+#: includes/views/partials/overview.php:254
 msgid "Learn more"
 msgstr ""
 
@@ -376,25 +376,20 @@ msgstr ""
 msgid "Verify"
 msgstr ""
 
-#: includes/views/partials/overview.php:234
+#: includes/views/partials/overview.php:237
 msgid "Using Cloudflare?"
 msgstr ""
 
-#: includes/views/partials/overview.php:235
-msgid "To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly."
+#: includes/views/partials/overview.php:238
+msgid "Add the ThriveDesk IP addresses to your Cloudflare allowlist. Without them, WooCommerce and the other integrations may not be reachable."
 msgstr ""
 
-#: includes/views/partials/overview.php:239
-#: includes/views/partials/settings.php:110
-msgid "Assistant"
-msgstr ""
-
-#: includes/views/partials/overview.php:240
+#: includes/views/partials/overview.php:251
 msgid "What is Assistant?"
 msgstr ""
 
-#: includes/views/partials/overview.php:241
-msgid "Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant."
+#: includes/views/partials/overview.php:252
+msgid "Live chat, knowledge base and a contact form in one widget, shown on the pages you choose."
 msgstr ""
 
 #: includes/views/partials/settings.php:51
@@ -411,6 +406,10 @@ msgstr ""
 
 #: includes/views/partials/settings.php:101
 msgid "Manage assistants"
+msgstr ""
+
+#: includes/views/partials/settings.php:110
+msgid "Assistant"
 msgstr ""
 
 #: includes/views/partials/settings.php:112

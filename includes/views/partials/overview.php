@@ -46,7 +46,7 @@ if ( ! $td_summary['connected'] ) {
                     </p>
                     <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/wordpress/" target="_blank">
                         <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true"><path d="M11.099 3c-3.65.007-5.56.096-6.781 1.318C3 5.636 3 7.757 3 12c0 4.242 0 6.364 1.318 7.682C5.636 21 7.757 21 11.998 21c4.243 0 6.364 0 7.682-1.318 1.22-1.221 1.31-3.133 1.317-6.782M20.556 3.496 11.05 13.06m9.507-9.563c-.494-.494-3.822-.448-4.525-.438m4.525.438c.494.495.448 3.827.438 4.531" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <?php thrivedesk_view( 'icons/external' ); ?>
                     </a>
                 </div>
 
@@ -228,18 +228,34 @@ if ( ! $td_summary['connected'] ) {
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="td-card bg-orange-50 border border-orange-400 space-y-2">
-        <img class="w-36 ml-auto" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . "/images/cloudflare-logo.svg"); ?>">
-        <h3 class="text-lg font-medium"><?php esc_html_e('Using Cloudflare?', 'thrivedesk'); ?></h3>
-        <p><?php esc_html_e('To ensure seamless integration, add the ThriveDesk IP address to your Cloudflare whitelist; without this, WooCommerce and other plugins may not integrate correctly.', 'thrivedesk');?></p>
-        <a href="https://help.thrivedesk.com/en/troubleshooting-with-cloudflare" target="_blank" class="inline-block"><?php esc_html_e('Learn more', 'thrivedesk'); ?></a>
-    </div>
-    <div class="td-card">
-        <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/livechat-hero.jpg'); ?>" alt="<?php esc_attr_e('Assistant', 'thrivedesk'); ?>">
-        <h3 class="text-lg font-medium my-4"><?php esc_html_e('What is Assistant?', 'thrivedesk'); ?></h3>
-        <p><?php esc_html_e('Enable Live Chat, Knowledge base and Contact form in a simple widget called Assistant.', 'thrivedesk'); ?></p>
-        <a href="https://www.thrivedesk.com/live-chat/" target="_blank" class="mt-2 inline-block"><?php esc_html_e('Learn more', 'thrivedesk'); ?></a>
-    </div>
+    <?php // Image left, content right - the same shape as the Portal card above. ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div class="td-card bg-orange-50 border border-orange-400">
+            <div class="flex items-start gap-4">
+                <img class="w-24 shrink-0 mt-1" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/cloudflare-logo.svg' ); ?>" alt="Cloudflare">
+                <div>
+                    <h3 class="text-base font-semibold m-0!"><?php esc_html_e( 'Using Cloudflare?', 'thrivedesk' ); ?></h3>
+                    <p class="mt-2! mb-0! text-gray-600"><?php esc_html_e( 'Add the ThriveDesk IP addresses to your Cloudflare allowlist. Without them, WooCommerce and the other integrations may not be reachable.', 'thrivedesk' ); ?></p>
+                    <a class="btn-ghost mt-4" href="https://help.thrivedesk.com/en/troubleshooting-with-cloudflare" target="_blank">
+                        <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
+                        <?php thrivedesk_view( 'icons/external' ); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="td-card">
+            <div class="flex items-start gap-4">
+                <img class="w-24 h-20 shrink-0 rounded object-cover mt-1" src="<?php echo esc_url( THRIVEDESK_PLUGIN_ASSETS . '/images/livechat-hero.jpg' ); ?>" alt="">
+                <div>
+                    <h3 class="text-base font-semibold m-0!"><?php esc_html_e( 'What is Assistant?', 'thrivedesk' ); ?></h3>
+                    <p class="mt-2! mb-0! text-gray-500"><?php esc_html_e( 'Live chat, knowledge base and a contact form in one widget, shown on the pages you choose.', 'thrivedesk' ); ?></p>
+                    <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/live-chat/" target="_blank">
+                        <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
+                        <?php thrivedesk_view( 'icons/external' ); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
