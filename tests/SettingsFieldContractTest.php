@@ -64,7 +64,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		if ( false !== strpos( $url, 'assistant' ) ) {
 			$body = [ 'assistants' => [ [ 'id' => 'a1', 'name' => 'Support' ] ] ];
 		} elseif ( false !== strpos( $url, 'inbox' ) ) {
-			$body = [ 'data' => [ [ 'id' => 'i1', 'name' => 'General', 'email' => 'general@acme.thrivedesk.com' ] ] ];
+			$body = [ 'data' => [ [ 'id' => 'i1', 'name' => 'General', 'connected_email_address' => '', 'inbox_address' => 'general@acme.thrivedesk.com' ] ] ];
 		} elseif ( false !== strpos( $url, 'knowledgebase' ) ) {
 			$body = [ 'data' => [ [ 'slug' => 'help', 'name' => 'Help' ] ] ];
 		}
@@ -119,8 +119,8 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 	/**
 	 * The Portal tab tells people to use an inbox address as their form's
 	 * submission email, so the addresses are printed there rather than left in
-	 * another tab. Only ones ThriveDesk actually gave - see
-	 * thrivedesk_inbox_address(), which refuses to guess.
+	 * another tab - the connected mailbox where there is one, and the hosted
+	 * address otherwise. See thrivedesk_inbox_address().
 	 */
 	public function test_the_portal_tab_offers_the_inbox_addresses_to_copy() {
 		$html = $this->render();

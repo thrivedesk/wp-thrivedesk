@@ -305,10 +305,10 @@ $current_user = wp_get_current_user();
                     <?php
                     /*
                      * The address the sentence above just told them to use, so
-                     * it does not have to be fetched from another tab. Only
-                     * inboxes ThriveDesk actually gave an address for are
-                     * listed - see thrivedesk_inbox_address(), which refuses to
-                     * guess one.
+                     * it does not have to be fetched from another tab. The
+                     * mailbox connected to the inbox where there is one, the
+                     * ThriveDesk-hosted address otherwise - see
+                     * thrivedesk_inbox_address().
                      */
                     $td_addressed = array_filter($td_inboxes, static function ($td_inbox) {
                         return '' !== thrivedesk_inbox_address((array) $td_inbox);

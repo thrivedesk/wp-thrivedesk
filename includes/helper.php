@@ -76,16 +76,23 @@ if (!function_exists('thrivedesk_service_ips')) {
 
 if (!function_exists('thrivedesk_inbox_address')) {
     /**
-     * The forwarding address of a ThriveDesk inbox, if the API gave us one.
+     * The address mail reaches a ThriveDesk inbox on.
      *
-     * /v1/inboxes is passed through raw - Inbox::inboxes() returns whatever
-     * ThriveDesk sent - and the plugin has only ever read `id` and `name` from
-     * it. Rather than commit to one field name and silently render nothing when
-     * it is wrong, the plausible ones are tried in order and anything that is
-     * not an email address is refused.
+     * Two fields, in this order, per the /v1/inboxes contract:
      *
-     * Returns '' when there is nothing to show, which the caller reads as "omit
-     * the row" - an address is either right or absent, never a guess.
+     * - `connected_email_address` is the mailbox the owner has connected to
+     *   this inbox. Where one exists it is the address their customers already
+     *   write to, and the one a ticket form should submit to.
+     * - `inbox_address` is the ThriveDesk-hosted address every inbox has. It
+     *   always works, so it is what is shown when nothing is connected.
+     *
+     * Validated rather than printed as-is: this arrives over the network and
+     * ends up in a copy button's data attribute, in a title, and in whatever
+     * the reader pastes it into. A connected address that is not an address
+     * falls through to the hosted one instead of being shown, and an inbox with
+     * neither returns '' - which the view reads as "omit the row". An address
+     * printed beside "use this as your form's submission email" has to be right
+     * or absent; a wrong one silently sends every ticket nowhere.
      *
      * @since 2.6.0
      * @access public
@@ -96,7 +103,7 @@ if (!function_exists('thrivedesk_inbox_address')) {
      */
     function thrivedesk_inbox_address(array $inbox): string
     {
-        foreach (['email', 'email_address', 'inbox_email', 'forward_email', 'forwarding_email', 'address'] as $key) {
+        foreach (['connected_email_address', 'inbox_address'] as $key) {
             $value = $inbox[$key] ?? '';
 
             if (is_string($value) && is_email($value)) {

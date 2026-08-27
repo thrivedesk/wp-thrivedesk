@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T11:07:57+00:00\n"
+"POT-Creation-Date: 2026-08-27T11:16:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -46,151 +46,151 @@ msgstr ""
 msgid "Support Tickets by ThriveDesk"
 msgstr ""
 
-#: includes/helper.php:160
+#: includes/helper.php:167
 msgid "WooCommerce"
 msgstr ""
 
-#: includes/helper.php:162
+#: includes/helper.php:169
 msgid "Show orders, subscriptions and shipping details beside every conversation."
 msgstr ""
 
-#: includes/helper.php:168
+#: includes/helper.php:175
 msgid "Easy Digital Downloads"
 msgstr ""
 
-#: includes/helper.php:170
+#: includes/helper.php:177
 msgid "Pull up a customer’s purchases, licenses and order history while you reply."
 msgstr ""
 
-#: includes/helper.php:176
+#: includes/helper.php:183
 msgid "FluentCRM"
 msgstr ""
 
-#: includes/helper.php:178
+#: includes/helper.php:185
 msgid "See the contact’s lists, tags and lifetime value without leaving the inbox."
 msgstr ""
 
-#: includes/helper.php:184
+#: includes/helper.php:191
 msgid "WordPress Post Sync"
 msgstr ""
 
-#: includes/helper.php:186
+#: includes/helper.php:193
 msgid "Search your published posts and drop a link to one straight into a reply."
 msgstr ""
 
-#: includes/helper.php:192
+#: includes/helper.php:199
 msgid "FunnelKit"
 msgstr ""
 
-#: includes/helper.php:194
+#: includes/helper.php:201
 msgid "Bring FunnelKit Automations contacts, lists and tags into the conversation sidebar."
 msgstr ""
 
-#: includes/helper.php:218
+#: includes/helper.php:225
 msgid "View SureCart orders, subscriptions and refunds against the customer you are helping."
 msgstr ""
 
-#: includes/helper.php:219
+#: includes/helper.php:226
 msgid "Look up Freemius licenses, payments and plan changes right from a ticket."
 msgstr ""
 
-#: includes/helper.php:248
+#: includes/helper.php:255
 msgid "Unknown time"
 msgstr ""
 
-#: includes/helper.php:260
+#: includes/helper.php:267
 #, php-format
 msgid "%d year"
 msgid_plural "%d years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:261
+#: includes/helper.php:268
 #, php-format
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:262
+#: includes/helper.php:269
 #, php-format
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:263
+#: includes/helper.php:270
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:264
+#: includes/helper.php:271
 #, php-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:265
+#: includes/helper.php:272
 #, php-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:266
+#: includes/helper.php:273
 #, php-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:271
+#: includes/helper.php:278
 msgid "just now"
 msgstr ""
 
 #. translators: %s: human-readable time difference, e.g. "3 months"
 #. translators: %s: a length of time, e.g. "2 hours"
-#: includes/helper.php:275
+#: includes/helper.php:282
 #: includes/views/partials/overview.php:148
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: includes/helper.php:291
+#: includes/helper.php:298
 #: includes/views/shortcode/conversations.php:106
 msgid "Active"
 msgstr ""
 
-#: includes/helper.php:293
+#: includes/helper.php:300
 #: includes/views/shortcode/conversations.php:110
 msgid "Pending"
 msgstr ""
 
-#: includes/helper.php:295
+#: includes/helper.php:302
 #: includes/views/shortcode/conversations.php:114
 msgid "Closed"
 msgstr ""
 
-#: includes/helper.php:298
+#: includes/helper.php:305
 msgid "Unknown"
 msgstr ""
 
-#: includes/helper.php:345
+#: includes/helper.php:352
 msgid "Previous"
 msgstr ""
 
-#: includes/helper.php:345
+#: includes/helper.php:352
 msgid "Next"
 msgstr ""
 
-#: includes/helper.php:634
+#: includes/helper.php:641
 msgid "Invalid nonce"
 msgstr ""
 
-#: includes/helper.php:638
+#: includes/helper.php:645
 #: src/Admin.php:604
 #: src/Admin.php:649
 #: src/Admin.php:729
