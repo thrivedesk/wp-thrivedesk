@@ -91,4 +91,32 @@ class IntegrationsPayloadTest extends WP_UnitTestCase {
 
 		delete_option( 'thrivedesk_options' );
 	}
+
+	/**
+	 * The category reaches the screen as a label, not as the slug it is stored
+	 * under. It used to go out raw and be uppercased by CSS, so every language
+	 * showed the English word - and a slug like `core` is not even the English
+	 * word for what it means.
+	 */
+	public function test_the_category_is_a_label_and_not_a_slug() {
+		$categories = array_unique( array_column( thrivedesk_integrations(), 'category' ) );
+
+		$this->assertNotEmpty( $categories );
+
+		foreach ( $categories as $category ) {
+			$this->assertNotSame( strtolower( $category ), $category, "`$category` is still a slug" );
+		}
+
+		$this->assertContains( 'Ecommerce', $categories );
+		$this->assertContains( 'Content', $categories, 'the wppostsync slug is `core`, which says nothing to a reader' );
+	}
+
+	/** Translators get one string per category, not one per integration. */
+	public function test_every_integration_in_a_category_shares_its_label() {
+		$by_slug = array_column( thrivedesk_integrations(), 'category', 'slug' );
+
+		$this->assertSame( $by_slug['woocommerce'], $by_slug['edd'] );
+		$this->assertSame( $by_slug['woocommerce'], $by_slug['surecart'], 'partners are labelled from the same table' );
+		$this->assertSame( $by_slug['fluentcrm'], $by_slug['autonami'] );
+	}
 }

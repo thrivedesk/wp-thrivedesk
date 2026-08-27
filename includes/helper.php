@@ -383,13 +383,29 @@ if (!function_exists('thrivedesk_integrations')) {
 
         $integrations = [];
 
+        /*
+         * The category is a slug in the table above - it is an identifier, and
+         * identifiers do not get translated. What reaches the screen is the
+         * label, which does: it was going out as the raw slug, uppercased by
+         * CSS, so every language showed the English word.
+         *
+         * Uppercasing stays in CSS for the reason it always does: plenty of
+         * languages have no case, and the ones that do do not all uppercase the
+         * way English does.
+         */
+        $labels = [
+            'ecommerce' => __('Ecommerce', 'thrivedesk'),
+            'crm'       => __('CRM', 'thrivedesk'),
+            'core'      => __('Content', 'thrivedesk'),
+        ];
+
         foreach ($plugins as $plugin) {
             $instance = call_user_func([$plugin['class'], 'instance']);
 
             $integrations[] = [
                 'slug'        => $plugin['slug'],
                 'name'        => $plugin['name'],
-                'category'    => $plugin['category'],
+                'category'    => $labels[$plugin['category']] ?? $plugin['category'],
                 'description' => $plugin['description'],
                 'image'       => THRIVEDESK_PLUGIN_ASSETS . '/images/' . sanitize_file_name($plugin['image']),
                 'installed'   => (bool) $instance->is_plugin_active(),
@@ -409,7 +425,7 @@ if (!function_exists('thrivedesk_integrations')) {
             $integrations[] = [
                 'slug'        => $slug,
                 'name'        => $name,
-                'category'    => 'ecommerce',
+                'category'    => $labels['ecommerce'],
                 'description' => $description,
                 'image'       => THRIVEDESK_PLUGIN_ASSETS . '/images/' . $slug . '.png',
                 'installed'   => true,

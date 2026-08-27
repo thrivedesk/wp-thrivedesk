@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-27T16:48:26+00:00\n"
+"POT-Creation-Date: 2026-08-27T16:58:05+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -86,112 +86,124 @@ msgstr ""
 msgid "Bring FunnelKit Automations contacts, lists and tags into the conversation sidebar."
 msgstr ""
 
-#: includes/helper.php:402
+#: includes/helper.php:397
+msgid "Ecommerce"
+msgstr ""
+
+#: includes/helper.php:398
+msgid "CRM"
+msgstr ""
+
+#: includes/helper.php:399
+msgid "Content"
+msgstr ""
+
+#: includes/helper.php:418
 msgid "View SureCart orders, subscriptions and refunds against the customer you are helping."
 msgstr ""
 
-#: includes/helper.php:403
+#: includes/helper.php:419
 msgid "Look up Freemius licenses, payments and plan changes right from a ticket."
 msgstr ""
 
-#: includes/helper.php:432
+#: includes/helper.php:448
 msgid "Unknown time"
 msgstr ""
 
-#: includes/helper.php:444
+#: includes/helper.php:460
 #, php-format
 msgid "%d year"
 msgid_plural "%d years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:445
+#: includes/helper.php:461
 #, php-format
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:446
+#: includes/helper.php:462
 #, php-format
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:447
+#: includes/helper.php:463
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:448
+#: includes/helper.php:464
 #, php-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:449
+#: includes/helper.php:465
 #, php-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:450
+#: includes/helper.php:466
 #, php-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/helper.php:455
+#: includes/helper.php:471
 msgid "just now"
 msgstr ""
 
 #. translators: %s: human-readable time difference, e.g. "3 months"
 #. translators: %s: a length of time, e.g. "2 hours"
-#: includes/helper.php:459
+#: includes/helper.php:475
 #: includes/views/partials/overview.php:160
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: includes/helper.php:475
+#: includes/helper.php:491
 #: includes/views/partials/settings.php:370
 #: includes/views/shortcode/conversations.php:106
 msgid "Active"
 msgstr ""
 
-#: includes/helper.php:477
+#: includes/helper.php:493
 #: includes/views/shortcode/conversations.php:110
 msgid "Pending"
 msgstr ""
 
-#: includes/helper.php:479
+#: includes/helper.php:495
 #: includes/views/shortcode/conversations.php:114
 msgid "Closed"
 msgstr ""
 
-#: includes/helper.php:482
+#: includes/helper.php:498
 msgid "Unknown"
 msgstr ""
 
-#: includes/helper.php:529
+#: includes/helper.php:545
 msgid "Previous"
 msgstr ""
 
-#: includes/helper.php:529
+#: includes/helper.php:545
 msgid "Next"
 msgstr ""
 
-#: includes/helper.php:818
+#: includes/helper.php:834
 msgid "Invalid nonce"
 msgstr ""
 
-#: includes/helper.php:822
+#: includes/helper.php:838
 #: src/Admin.php:604
 #: src/Admin.php:649
 #: src/Admin.php:729
