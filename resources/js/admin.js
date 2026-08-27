@@ -865,37 +865,111 @@ jQuery(document).ready(($) => {
 	}
 
 	// helpdesk form
-	$('#td_helpdesk_form').submit(async function (e) {
-		let $btn = $('#td_setting_btn_submit');
-		$btn.prop('disabled', true)
-			.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + __('Processing...', 'thrivedesk'));
+	/*
+	 * Settings persist as they are changed. There is no Save button any more, so
+	 * everything below exists to make that trustworthy rather than merely
+	 * automatic.
+	 *
+	 * The API key is deliberately not in this list. It has its own verify step,
+	 * and persisting it on every keystroke would disconnect the site halfway
+	 * through typing a new one.
+	 */
+	const TD_AUTOSAVE_FIELDS = [
+		'#td-assistants',
+		'#td-excluded-routes',
+		'#td-inboxes',
+		'#td_helpdesk_page_id',
+		'#td_knowledgebase_slug',
+		'.td_helpdesk_post_types',
+		'.td_user_account_pages',
+		'.td_helpdesk_post_sync',
+	].join( ',' );
 
+	let tdSaveTimer = null;
+	let tdSaving = false;
+	let tdChangedWhileSaving = false;
 
+	function tdSaveToast( options ) {
+		return Swal.fire(
+			Object.assign(
+				{
+					toast: true,
+					position: 'bottom-end',
+					showConfirmButton: false,
+					customClass: { container: 'td-toast' },
+				},
+				options
+			)
+		);
+	}
+
+	function tdSaveNow() {
+		// One request at a time. A change that lands mid-flight is remembered and
+		// saved after, so the last thing the user did is always what ends up
+		// stored - two overlapping requests could land in either order.
+		if ( tdSaving ) {
+			tdChangedWhileSaving = true;
+			return;
+		}
+
+		tdSaving = true;
+
+		// Only announce saving if it is slow enough to be worth announcing.
+		// Flashing "Saving..." for 200ms reads as a glitch.
+		const pending = setTimeout( () => {
+			tdSaveToast( { title: __( 'Saving...', 'thrivedesk' ), timer: undefined, showConfirmButton: false } );
+		}, 400 );
+
+		handleThriveDeskMainForm()
+			.then( ( response ) => {
+				if ( response && 'success' === response.status ) {
+					tdSaveToast( { icon: 'success', title: __( 'Changes saved', 'thrivedesk' ), timer: 2000 } );
+					return;
+				}
+
+				// The old Save button showed nothing at all on a non-success
+				// response and stayed disabled forever. Silence is worse without a
+				// button, not better: nothing was clicked, so nothing else would
+				// tell the user their change did not stick.
+				tdSaveToast( {
+					icon: 'error',
+					title: __( 'Could not save', 'thrivedesk' ),
+					text: response && response.message ? response.message : undefined,
+					timer: 6000,
+				} );
+			} )
+			.catch( () => {
+				tdSaveToast( {
+					icon: 'error',
+					title: __( 'Could not save', 'thrivedesk' ),
+					text: __( 'Check your connection and try again.', 'thrivedesk' ),
+					timer: 6000,
+				} );
+			} )
+			.then( () => {
+				clearTimeout( pending );
+				tdSaving = false;
+
+				if ( tdChangedWhileSaving ) {
+					tdChangedWhileSaving = false;
+					tdSaveNow();
+				}
+			} );
+	}
+
+	$( document ).on( 'change', TD_AUTOSAVE_FIELDS, function () {
+		// Debounced: ticking four post types is one save, not four.
+		clearTimeout( tdSaveTimer );
+		tdSaveTimer = setTimeout( tdSaveNow, 700 );
+	} );
+
+	// No submit button remains, but Enter in a field still submits a form.
+	// Catch it so that reloads the page for nobody.
+	$( '#td_helpdesk_form' ).on( 'submit', function ( e ) {
 		e.preventDefault();
-		handleThriveDeskMainForm().then(function (response) {
-			let icon;
-			if (response.status === 'success') {
-				response.status === 'success' ? (icon = 'success') : (icon = 'error');
-				Swal.fire({
-					icon: icon,
-					title: ( response.status === 'success' ? __('Success', 'thrivedesk') : __('Error', 'thrivedesk') ),
-					text: response.message,
-				});
-
-				// Remove loading state
-				setTimeout(function() {
-					$btn.prop('disabled', false)
-						.html(__('Save', 'thrivedesk'));
-				}, 1000);
-			}
-		}).catch(()=>{
-			Swal.fire({
-				icon: 'error',
-				title: __('Error', 'thrivedesk'),
-				text: __('Form submition failed', 'thrivedesk'),
-			});
-		});
-	});
+		clearTimeout( tdSaveTimer );
+		tdSaveNow();
+	} );
 
 	// verify the API key
 	$('#td-api-verification-btn').on('click', async function (e) {

@@ -361,9 +361,6 @@ $current_user = wp_get_current_user();
     </div>
 
 
-    <button type="submit" id="td_setting_btn_submit" class="btn btn-primary">
-        <?php esc_html_e('Save', 'thrivedesk'); ?>
-    </button>
 </form>
 
 <script>
