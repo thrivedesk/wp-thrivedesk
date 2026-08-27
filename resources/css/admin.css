@@ -156,13 +156,6 @@
 		.td-info--plain .td-info__icon {
 			@apply text-slate-400;
 		}
-		/* Green, because this one is not a note - it is an answer. */
-		.td-info--found {
-			@apply border-green-200 bg-green-50/60;
-		}
-		.td-info--found .td-info__icon {
-			@apply text-green-600;
-		}
 		/* A tile, because there can be several side by side and they have to
 		   read as separate things rather than as rows of one list. */
 		.td-plugin {
