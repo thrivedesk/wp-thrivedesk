@@ -74,6 +74,40 @@ if (!function_exists('thrivedesk_service_ips')) {
     }
 }
 
+if (!function_exists('thrivedesk_inbox_address')) {
+    /**
+     * The forwarding address of a ThriveDesk inbox, if the API gave us one.
+     *
+     * /v1/inboxes is passed through raw - Inbox::inboxes() returns whatever
+     * ThriveDesk sent - and the plugin has only ever read `id` and `name` from
+     * it. Rather than commit to one field name and silently render nothing when
+     * it is wrong, the plausible ones are tried in order and anything that is
+     * not an email address is refused.
+     *
+     * Returns '' when there is nothing to show, which the caller reads as "omit
+     * the row" - an address is either right or absent, never a guess.
+     *
+     * @since 2.6.0
+     * @access public
+     *
+     * @param array $inbox One entry from Inbox::inboxes().
+     *
+     * @return string
+     */
+    function thrivedesk_inbox_address(array $inbox): string
+    {
+        foreach (['email', 'email_address', 'inbox_email', 'forward_email', 'forwarding_email', 'address'] as $key) {
+            $value = $inbox[$key] ?? '';
+
+            if (is_string($value) && is_email($value)) {
+                return sanitize_email($value);
+            }
+        }
+
+        return '';
+    }
+}
+
 if (!function_exists('thrivedesk_is_connected')) {
     /**
      * Whether this site holds a key ThriveDesk has accepted.

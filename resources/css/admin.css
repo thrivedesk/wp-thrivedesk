@@ -132,6 +132,19 @@
 		.td-check.is-disabled {
 			@apply opacity-60 cursor-not-allowed;
 		}
+		/* A note beside the settings rather than one of them: nothing in here
+		   is set, it is read and pasted somewhere else. Tinted so it reads as
+		   reference at a glance, and it sits inside a card, so it is flatter
+		   than one. */
+		.td-info {
+			@apply rounded-md border border-blue-200 bg-blue-50/60 p-4;
+		}
+		.td-info__title {
+			@apply flex items-center gap-2 text-sm font-semibold text-slate-800;
+		}
+		.td-info__icon {
+			@apply inline-flex shrink-0 text-blue-600;
+		}
 		/* Said once, at the top, rather than repeated beside every control it
 		   applies to. */
 		.td-notice {

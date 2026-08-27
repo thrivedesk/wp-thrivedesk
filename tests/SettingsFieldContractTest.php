@@ -64,7 +64,7 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 		if ( false !== strpos( $url, 'assistant' ) ) {
 			$body = [ 'assistants' => [ [ 'id' => 'a1', 'name' => 'Support' ] ] ];
 		} elseif ( false !== strpos( $url, 'inbox' ) ) {
-			$body = [ 'inboxes' => [ [ 'id' => 'i1', 'name' => 'General' ] ] ];
+			$body = [ 'data' => [ [ 'id' => 'i1', 'name' => 'General', 'email' => 'general@acme.thrivedesk.com' ] ] ];
 		} elseif ( false !== strpos( $url, 'knowledgebase' ) ) {
 			$body = [ 'data' => [ [ 'slug' => 'help', 'name' => 'Help' ] ] ];
 		}
@@ -116,6 +116,31 @@ class SettingsFieldContractTest extends WP_UnitTestCase {
 	 * rendered: the save handler reads it by id like every other field, and a
 	 * missing one would post an empty inbox over a chosen one.
 	 */
+	/**
+	 * The Portal tab tells people to use an inbox address as their form's
+	 * submission email, so the addresses are printed there rather than left in
+	 * another tab. Only ones ThriveDesk actually gave - see
+	 * thrivedesk_inbox_address(), which refuses to guess.
+	 */
+	public function test_the_portal_tab_offers_the_inbox_addresses_to_copy() {
+		$html = $this->render();
+
+		$this->assertStringContainsString( 'general@acme.thrivedesk.com', $html );
+		$this->assertStringContainsString( 'data-td-copy="general@acme.thrivedesk.com"', $html );
+		$this->assertStringContainsString( 'Your inbox addresses', $html );
+	}
+
+	public function test_the_shortcode_is_offered_beside_the_form_field() {
+		$html = $this->render();
+
+		$this->assertStringContainsString( 'data-td-copy="[thrivedesk_portal]"', $html );
+		$this->assertStringContainsString( 'td-info__title', $html );
+		$this->assertStringContainsString( 'Ticket creation form', $html );
+
+		// One live region for the copy announcements, not one per button.
+		$this->assertSame( 1, substr_count( $html, 'id="td-copy-status"' ) );
+	}
+
 	public function test_the_hidden_inbox_select_survives() {
 		$html = $this->render();
 

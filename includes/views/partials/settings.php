@@ -281,30 +281,89 @@ $current_user = wp_get_current_user();
                 <?php endif; ?>
             </div>
 
-            <div class="space-y-5 pt-5 border-t border-slate-200">
+            <?php // The form on the left, and what to paste where beside it. ?>
+            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-6 items-start pt-5 border-t border-slate-200">
 
-                <div class="td-field">
-                    <label for="td_helpdesk_page_id"><?php esc_html_e('Ticket submission form page', 'thrivedesk'); ?></label>
-                    <select id="td_helpdesk_page_id" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5">
-                        <option value=""><?php esc_html_e('Select the page with your ticket form', 'thrivedesk'); ?></option>
-                        <?php foreach (get_pages() as $page) : ?>
-                            <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
-                                <?php echo esc_html($page->post_title); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <?php // The distinction that gets this wrong most often, said once and plainly. ?>
-                    <p class="td-field-help">
-                        <?php esc_html_e('The page your ticket form is embedded on - not your Support or Contact page, unless the form itself is on it.', 'thrivedesk'); ?>
-                        <a class="td-inline-link" href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank"><?php esc_html_e('How to build one', 'thrivedesk'); ?></a>
-                    </p>
+                <div class="space-y-5">
+
+                    <div class="td-field">
+                        <label for="td_helpdesk_page_id"><?php esc_html_e('Ticket creation form', 'thrivedesk'); ?></label>
+                        <select id="td_helpdesk_page_id" class="w-full bg-white border border-slate-300! rounded px-2 py-1.5">
+                            <option value=""><?php esc_html_e('Select the page with your ticket form', 'thrivedesk'); ?></option>
+                            <?php foreach (get_pages() as $page) : ?>
+                                <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($page->post_title); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="td-field-help">
+                            <?php esc_html_e('You can use your existing form plugin, or any free one, to build the ticket page. All you have to do is set a ThriveDesk inbox address as the form\'s submission email.', 'thrivedesk'); ?>
+                            <a class="td-inline-link" href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank"><?php esc_html_e('How to build one', 'thrivedesk'); ?></a>
+                        </p>
+                    </div>
+
+                    <?php
+                    /*
+                     * The address the sentence above just told them to use, so
+                     * it does not have to be fetched from another tab. Only
+                     * inboxes ThriveDesk actually gave an address for are
+                     * listed - see thrivedesk_inbox_address(), which refuses to
+                     * guess one.
+                     */
+                    $td_addressed = array_filter($td_inboxes, static function ($td_inbox) {
+                        return '' !== thrivedesk_inbox_address((array) $td_inbox);
+                    });
+                    ?>
+                    <?php if ($td_addressed) : ?>
+                        <div class="td-field">
+                            <span class="td-field__label"><?php esc_html_e('Your inbox addresses', 'thrivedesk'); ?></span>
+                            <ul class="m-0! p-0! list-none space-y-2">
+                                <?php foreach ($td_addressed as $td_inbox) : ?>
+                                    <?php
+                                    $td_inbox         = (array) $td_inbox;
+                                    $td_inbox_address = thrivedesk_inbox_address($td_inbox);
+                                    ?>
+                                    <li class="flex items-center flex-wrap gap-x-3 gap-y-1">
+                                        <span class="text-sm font-medium text-slate-700"><?php echo esc_html($td_inbox['name'] ?? ''); ?></span>
+                                        <span class="td-ip-row">
+                                            <code class="td-key"><?php echo esc_html($td_inbox_address); ?></code>
+                                            <button
+                                                type="button"
+                                                class="td-copy"
+                                                data-td-copy="<?php echo esc_attr($td_inbox_address); ?>"
+                                                title="<?php echo esc_attr(
+                                                    /* translators: %s: an email address */
+                                                    sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
+                                                ); ?>"
+                                                aria-label="<?php echo esc_attr(
+                                                    /* translators: %s: an email address */
+                                                    sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
+                                                ); ?>"
+                                            >
+                                                <span class="td-copy-idle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M15 6V5.5A2.5 2.5 0 0 0 12.5 3h-6A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                                                <span class="td-copy-done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                            </button>
+                                        </span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <p class="td-field-help"><?php esc_html_e('Mail sent to one of these becomes a conversation in that inbox.', 'thrivedesk'); ?></p>
+                        </div>
+                    <?php endif; ?>
+
                 </div>
 
-                <?php // The shortcode is a value to be copied, so it is offered the way the IP addresses on the setup screen are. ?>
-                <div class="td-field">
-                    <label for="td-portal-shortcode"><?php esc_html_e('Portal shortcode', 'thrivedesk'); ?></label>
-                    <div class="td-ip-row">
-                        <code class="td-key" id="td-portal-shortcode">[thrivedesk_portal]</code>
+                <?php // A note, not a field: nothing here is set, it is read and pasted somewhere else. ?>
+                <aside class="td-info">
+                    <div class="td-info__title">
+                        <span class="td-info__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9.25" stroke="currentColor" stroke-width="1.5"/><path d="M12 16.5v-5M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <?php esc_html_e('Portal shortcode', 'thrivedesk'); ?>
+                    </div>
+
+                    <div class="td-ip-row mt-3">
+                        <code class="td-key">[thrivedesk_portal]</code>
                         <button
                             type="button"
                             class="td-copy"
@@ -316,11 +375,14 @@ $current_user = wp_get_current_user();
                             <span class="td-copy-done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                         </button>
                     </div>
-                    <p class="td-field-help"><?php esc_html_e('Put this on any page to turn it into the help centre. Only logged-in visitors can see it.', 'thrivedesk'); ?></p>
-                    <span id="td-copy-status" class="sr-only" role="status" aria-live="polite"></span>
-                </div>
+
+                    <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Put this on any page to turn it into the help centre. Only logged-in visitors can see it.', 'thrivedesk'); ?></p>
+                </aside>
 
             </div>
+
+            <?php // Announces a copy to screen readers; the icon swap alone is silent. ?>
+            <span id="td-copy-status" class="sr-only" role="status" aria-live="polite"></span>
         </div>
 
         <?php // What the portal searches before it lets anyone open a ticket. ?>
