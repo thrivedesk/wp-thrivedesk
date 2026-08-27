@@ -51,7 +51,8 @@ not include the WP Portal.
   it, and storing it clears the assistant, inbox and knowledge base. Any spec
   that verifies has to restore.
 - **Prefer the ids already in the markup** (`#td_helpdesk_api_key`,
-  `#td-assistants`, `.td-toast`, `button.connect[data-plugin]`)
+  `#td-assistants`, `#td_helpdesk_page_id`, `#td-search-card`, `.td-toast`,
+  `button.connect[data-plugin]`)
   over adding new hooks.
 - **Assertions go through the UI.** A spec that reaches around the interface to
   make its assertions stops describing what a user can do. Teardown is the one
