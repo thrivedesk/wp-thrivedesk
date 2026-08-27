@@ -183,6 +183,42 @@
 			border-color: color-mix(in srgb, #873EFF 25%, transparent);
 			background-image: linear-gradient(135deg, color-mix(in srgb, #873EFF 12%, #fff) 0%, #fff 62%);
 		}
+		/*
+		 * A hairline of colour turning slowly around the card.
+		 *
+		 * A conic gradient, masked down to the border itself so only the 1px
+		 * ring is painted. The plain border underneath stays: where @property
+		 * is not supported the angle never animates and this renders as a
+		 * static multicolour edge, which is a fine thing to fall back to.
+		 *
+		 * Slow and half-transparent on purpose - it should catch the eye on the
+		 * way past, not ask to be watched.
+		 */
+		.td-promo--woo::before {
+			content: '';
+			@apply absolute inset-0 pointer-events-none;
+			border-radius: inherit;
+			padding: 1px;
+			background: conic-gradient(
+				from var(--td-ring-angle),
+				#873EFF, #3858e9, #22c55e, #f59e0b, #ec4899, #873EFF
+			);
+			-webkit-mask:
+				linear-gradient(#000 0 0) content-box,
+				linear-gradient(#000 0 0);
+			mask:
+				linear-gradient(#000 0 0) content-box,
+				linear-gradient(#000 0 0);
+			-webkit-mask-composite: xor;
+			mask-composite: exclude;
+			opacity: 0.55;
+			animation: td-ring-spin 9s linear infinite;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.td-promo--woo::before {
+				animation: none;
+			}
+		}
 		/* Bleeds off the right edge; the container clips it. Behind the words
 		   rather than beside them, so the copy keeps the full width on a narrow
 		   screen instead of being squeezed into a column. A wordmark, so its
@@ -611,6 +647,22 @@
 				animation: none;
 			}
 		}
+	}
+}
+
+/* A custom property has to be registered as an <angle> before it can be
+   animated at all - an unregistered one is a string, and strings do not
+   interpolate. Browsers without @property ignore this block and the ring
+   renders static, which is the intended fallback rather than a broken one. */
+@property --td-ring-angle {
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: false;
+}
+
+@keyframes td-ring-spin {
+	to {
+		--td-ring-angle: 360deg;
 	}
 }
 
