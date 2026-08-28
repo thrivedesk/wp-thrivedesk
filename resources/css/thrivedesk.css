@@ -1627,21 +1627,33 @@
 
 	/* Darker than the --success token, which is tuned for a solid fill and does
 	   not clear 4.5:1 as text. */
-	.td-hours.is-open { color: hsl(142 71% 26%); }
+	/* Both states are pills on the filter row, so they read as one control that
+	   changes colour rather than as two different things. Compact, not banners -
+	   the full-width bar at the top of the page belongs to the holiday. */
+	.td-hours.is-open,
+	.td-hours.is-closed {
+		padding: 0.25rem 0.625rem;
+		border-radius: 999px;
+		border: 1px solid transparent;
+	}
+
+	/* A heavier tint than the amber below it at the same alpha would give:
+	   --success sits at 45% lightness against --warning's 50%, and is far less
+	   saturated, so an identical alpha reads as barely-there grey-green. Matched
+	   by eye against the offline pill rather than by number. */
+	.td-hours.is-open {
+		border-color: hsl(var(--success) / 0.45);
+		background: hsl(var(--success) / 0.16);
+		color: hsl(142 71% 24%);
+	}
 	/* A slow pulse, so "online" reads as now rather than as a label someone left
 	   switched on. */
 	.td-hours.is-open .td-hours__dot {
 		animation: td-hours-pulse 2.4s ease-in-out infinite;
 	}
 
-	/* Offline is the state worth noticing, so it is the one that gets a fill.
-	   Compact - a pill on the filter row, not a banner. The full-width bar at the
-	   top of the page belongs to the holiday, and two banners would be one too
-	   many things asking to be read. */
 	.td-hours.is-closed {
-		padding: 0.25rem 0.625rem;
-		border-radius: 999px;
-		border: 1px solid hsl(var(--warning) / 0.4);
+		border-color: hsl(var(--warning) / 0.4);
 		background: hsl(var(--warning) / 0.15);
 		color: hsl(38 92% 26%);
 	}
