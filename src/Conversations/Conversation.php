@@ -389,6 +389,14 @@ class Conversation
                 // unchecked box posts nothing, and "absent" would be
                 // indistinguishable from "this install predates the setting".
                 'td_helpdesk_search_required'           => empty($data['td_helpdesk_search_required']) ? 0 : 1,
+                // Same 0/1 treatment, and for the same reason: an unticked box
+                // posts nothing, and "absent" must not read as "this install
+                // predates the setting".
+                'td_helpdesk_business_hours'            => empty($data['td_helpdesk_business_hours']) ? 0 : 1,
+                // Empty means "whichever is first", which is what every
+                // single-schedule workspace stores - the select only renders
+                // when there is more than one to choose between.
+                'td_helpdesk_business_hours_profile'    => $data['td_helpdesk_business_hours_profile'] ?? '',
                 'td_helpdesk_post_sync'                 => $data['td_helpdesk_post_sync'] ?? [],
                 'td_user_account_pages'                 => $data['td_user_account_pages'] ?? [],
                 'td_assistant_route_list'               => $data['td_assistant_route_list'] ?? [],

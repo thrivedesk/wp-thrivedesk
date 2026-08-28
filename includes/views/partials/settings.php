@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\Inboxes\Inbox;
 use ThriveDesk\KnowledgeBase\KnowledgeBase;
+use ThriveDesk\Services\BusinessHoursService;
 use ThriveDesk\Services\PortalService;
 use ThriveDesk\Plugins\WPPostSync;
 use ThriveDesk\Plugins\WooCommerce;
@@ -42,6 +43,13 @@ $td_connect_token            = \ThriveDesk\Admin::connect_return_token();
 $td_api_key                  = '' !== $td_connect_token ? $td_connect_token : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = get_option('td_user_account_pages');
 $has_portal_access           = $td_connected && (new PortalService())->has_portal_access();
+
+// Business hours are set in ThriveDesk and only mirrored here. The option is
+// offered disabled rather than hidden when the workspace has none, because an
+// admin who cannot see it cannot tell there is anything to go and switch on.
+$td_business_hours_profiles  = $td_connected ? BusinessHoursService::profiles() : [];
+$td_business_hours_ready     = [] !== $td_business_hours_profiles;
+$td_business_hours_profile   = (string) ($td_helpdesk_selected_option['td_helpdesk_business_hours_profile'] ?? '');
 $wppostsync                  = WPPostSync::instance();
 
 // What the admin is shown in place of the key. Enough to recognise which key
@@ -428,6 +436,63 @@ $current_user = wp_get_current_user();
                             );
                             ?></p>
                         </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php
+                /*
+                 * Business hours are read from ThriveDesk, never set here. The desk
+                 * already routes and auto-replies on them, so a second place to edit
+                 * them from WordPress would be a second answer to the same question.
+                 *
+                 * Disabled rather than hidden when the workspace has none: an admin who
+                 * cannot see the option cannot tell there is something to go and switch
+                 * on. The tooltip says so, and the help text below it says where.
+                 */
+                ?>
+                <div class="td-field">
+                    <label
+                        class="td-check<?php echo $td_business_hours_ready ? '' : ' is-disabled'; ?>"
+                        for="td_helpdesk_business_hours"
+                        <?php if (!$td_business_hours_ready) : ?>title="<?php esc_attr_e('Set your business hours in ThriveDesk first, then you can show them here.', 'thrivedesk'); ?>"<?php endif; ?>
+                    >
+                        <input type="checkbox" id="td_helpdesk_business_hours" name="td_helpdesk_business_hours" value="1" <?php checked(!empty($td_helpdesk_selected_option['td_helpdesk_business_hours'])); ?> <?php disabled(!$td_business_hours_ready); ?>>
+                        <span><?php esc_html_e('Show business hours on the portal', 'thrivedesk'); ?></span>
+                    </label>
+
+                    <p class="td-field-help">
+                        <?php if ($td_business_hours_ready) : ?>
+                            <?php esc_html_e('A bar at the top of the portal saying whether you are open and how long until that changes. Holidays announce themselves.', 'thrivedesk'); ?>
+                        <?php else : ?>
+                            <?php esc_html_e('This workspace has no business hours set yet.', 'thrivedesk'); ?>
+                            <a class="td-inline-link" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings'); ?>" target="_blank"><?php esc_html_e('Set them in ThriveDesk', 'thrivedesk'); ?></a>
+                        <?php endif; ?>
+                    </p>
+                </div>
+
+                <?php
+                /*
+                 * Only once there is a choice to make. A select holding the single
+                 * profile every ordinary workspace has is not a choice, it is a
+                 * label - and one more thing to read on a screen that already has
+                 * plenty.
+                 *
+                 * A sibling of the checkbox rather than nested inside it: .td-field
+                 * styles its own direct-child label, and a .td-field within a
+                 * .td-field would apply that twice.
+                 */
+                ?>
+                <?php if (count($td_business_hours_profiles) > 1) : ?>
+                    <div class="td-field">
+                        <label for="td_helpdesk_business_hours_profile"><?php esc_html_e('Which hours', 'thrivedesk'); ?></label>
+                        <select id="td_helpdesk_business_hours_profile" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5">
+                            <?php foreach ($td_business_hours_profiles as $td_hours_profile) : ?>
+                                <option value="<?php echo esc_attr($td_hours_profile['id'] ?? ''); ?>" <?php selected($td_business_hours_profile, (string) ($td_hours_profile['id'] ?? '')); ?>>
+                                    <?php echo esc_html($td_hours_profile['name'] ?? __('Unnamed schedule', 'thrivedesk')); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="td-field-help"><?php esc_html_e('This workspace has more than one schedule. The portal counts down against this one.', 'thrivedesk'); ?></p>
                     </div>
                 <?php endif; ?>
                 </div>

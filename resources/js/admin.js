@@ -1223,6 +1223,8 @@ jQuery(document).ready(($) => {
 		'#td_knowledgebase_slug',
 		'#td_helpdesk_post_types',
 		'#td_helpdesk_search_required',
+		'#td_helpdesk_business_hours',
+		'#td_helpdesk_business_hours_profile',
 		'.td_user_account_pages',
 		'.td_helpdesk_post_sync',
 	].join( ',' );

@@ -1573,6 +1573,67 @@
 		animation: td-spin 0.7s linear infinite;
 	}
 
+	/* business hours bar
+	   Collapsed until conversation.js has worked out what it says. Everything on
+	   it is a countdown, so there is no correct server-rendered state to show
+	   first - and an empty strip above the header would be worse than nothing. */
+	.td-hours {
+		display: none;
+		align-items: center;
+		gap: 0.5rem;
+		margin-bottom: 0.75rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 0.8125rem;
+		line-height: 1.25rem;
+		border: 1px solid hsl(var(--border));
+		border-radius: var(--radius);
+		background: hsl(var(--muted));
+		color: hsl(var(--muted-foreground));
+	}
+	.td-hours.is-ready { display: flex; }
+
+	.td-hours__dot {
+		flex: none;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 999px;
+		background: currentColor;
+	}
+
+	/* Darker than the token itself: --success is tuned for a solid fill, and at
+	   45% lightness on an 8% tint of itself it does not clear 4.5:1. */
+	.td-hours.is-open {
+		border-color: hsl(var(--success) / 0.35);
+		background: hsl(var(--success) / 0.08);
+		color: hsl(142 71% 26%);
+	}
+	/* A slow pulse, so "open" reads as now rather than as a label someone left
+	   switched on. */
+	.td-hours.is-open .td-hours__dot {
+		animation: td-hours-pulse 2.4s ease-in-out infinite;
+	}
+
+	.td-hours.is-closed .td-hours__dot { opacity: 0.55; }
+
+	/* A holiday is an announcement rather than a status - it is the thing that
+	   changes what someone should expect from the reply they are about to wait
+	   for - so it is the one state that raises its voice. */
+	.td-hours.is-holiday {
+		border-color: hsl(var(--warning) / 0.45);
+		background: hsl(var(--warning) / 0.12);
+		color: hsl(38 92% 26%);
+		font-weight: 600;
+	}
+
+	@keyframes td-hours-pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.35; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.td-hours.is-open .td-hours__dot { animation: none; }
+	}
+
 	/* portal-unavailable notice */
 	.td-portal-notice {
 		padding: 2.5rem 1.5rem;

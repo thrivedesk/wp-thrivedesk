@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 jQuery(document).ready(($) => {
     $('#openConversationModal').click(function (e) {
@@ -543,4 +543,237 @@ jQuery(document).ready(($) => {
             );
         }
     });
+
+    // ---- business hours ----------------------------------------------------
+    //
+    // The bar above the portal header: open or closed, and how long until that
+    // changes. Everything about it is computed here rather than server side,
+    // because a countdown rendered into HTML starts being wrong the moment it
+    // is sent - and because the boundaries then look after themselves. When the
+    // last minute of the working day runs out the bar becomes "closed" on its
+    // own, with no request and no reload.
+    tdBusinessHours();
+
+    function tdBusinessHours() {
+        const bar = document.querySelector('.td-hours');
+
+        if (!bar) {
+            return;
+        }
+
+        let data;
+
+        try {
+            data = JSON.parse(bar.dataset.tdHours || 'null');
+        } catch (e) {
+            return;
+        }
+
+        if (!data) {
+            return;
+        }
+
+        const DAY = 86400;
+        const week = Array.isArray(data.week) ? data.week : [];
+        const holidays = Array.isArray(data.holidays) ? data.holidays : [];
+
+        // The visitor's clock is not evidence. Every comparison below is made
+        // against the server's, carried in the payload; this is the correction
+        // for a machine that is minutes - or hours - out. Without it we would
+        // tell someone with a wrong clock, with total confidence, the wrong
+        // time to expect a reply.
+        const skew = data.now * 1000 - Date.now();
+        const now = () => Date.now() + skew;
+
+        // Where an instant falls in the *schedule's* week, which is not
+        // necessarily the visitor's. Shifting by the offset and then reading
+        // the UTC parts is how you ask "what day and time is it there".
+        function parts(ms) {
+            const shifted = new Date(ms + data.offset * 1000);
+
+            return {
+                day: shifted.getUTCDay(),
+                secs:
+                    shifted.getUTCHours() * 3600 +
+                    shifted.getUTCMinutes() * 60 +
+                    shifted.getUTCSeconds(),
+            };
+        }
+
+        function windowAt(day, secs) {
+            return (week[day] || []).find(([start, end]) => secs >= start && secs < end) || null;
+        }
+
+        // Seconds until the desk closes. Follows a window that runs to midnight
+        // into the next day's, so an overnight shift - which the server splits
+        // at midnight so nothing here has to span days - counts down once
+        // rather than hitting zero at 00:00 and starting again.
+        function closesIn(day, secs) {
+            let elapsed = 0;
+            let d = day;
+            let s = secs;
+
+            for (let i = 0; i <= 7; i++) {
+                const open = windowAt(d, s);
+
+                if (!open) {
+                    return elapsed;
+                }
+
+                elapsed += open[1] - s;
+
+                if (open[1] < DAY) {
+                    return elapsed;
+                }
+
+                d = (d + 1) % 7;
+                s = 0;
+
+                const next = (week[d] || [])[0];
+
+                if (!next || next[0] !== 0) {
+                    return elapsed;
+                }
+            }
+
+            return elapsed;
+        }
+
+        // Seconds until the desk opens: later today if there is anything left
+        // today, otherwise the first window of the next day that has one.
+        function opensIn(day, secs) {
+            const later = (week[day] || []).find(([start]) => start > secs);
+
+            if (later) {
+                return later[0] - secs;
+            }
+
+            for (let i = 1; i <= 7; i++) {
+                const windows = week[(day + i) % 7] || [];
+
+                if (windows.length) {
+                    return DAY - secs + (i - 1) * DAY + windows[0][0];
+                }
+            }
+
+            return null;
+        }
+
+        function holidayAt(ms) {
+            const secs = ms / 1000;
+
+            return holidays.find((h) => secs >= h.from && secs < h.to) || null;
+        }
+
+        // Coarse on purpose. Nobody waiting on a support reply needs the
+        // seconds when the answer is four hours away, and a figure that changes
+        // every second is harder to read than one that does not.
+        function duration(total) {
+            const s = Math.max(0, Math.round(total));
+            const d = Math.floor(s / DAY);
+            const h = Math.floor((s % DAY) / 3600);
+            const m = Math.floor((s % 3600) / 60);
+
+            // The trailing zero is dropped rather than padded: "7h" is what a
+            // person would say, and "7h 0m" reads like a stopwatch.
+            if (d) {
+                return h
+                    ? /* translators: 1: days, 2: hours. A duration, e.g. "2d 6h". */
+                      sprintf(__('%1$dd %2$dh', 'thrivedesk'), d, h)
+                    : /* translators: %d: days. A duration in whole days, e.g. "2d". */
+                      sprintf(__('%dd', 'thrivedesk'), d);
+            }
+
+            if (h) {
+                return m
+                    ? /* translators: 1: hours, 2: minutes. A duration, e.g. "2h 14m". */
+                      sprintf(__('%1$dh %2$dm', 'thrivedesk'), h, m)
+                    : /* translators: %d: hours. A duration in whole hours, e.g. "7h". */
+                      sprintf(__('%dh', 'thrivedesk'), h);
+            }
+
+            if (m) {
+                /* translators: %d: minutes. A duration, e.g. "45m". */
+                return sprintf(__('%dm', 'thrivedesk'), m);
+            }
+
+            /* translators: %d: seconds. A duration under a minute, e.g. "30s". */
+            return sprintf(__('%ds', 'thrivedesk'), s % 60);
+        }
+
+        // Formatted in the schedule's timezone, not the reader's: a holiday
+        // ending at midnight in Dhaka is not a different date because the
+        // person reading about it is in Chicago.
+        function dayLabel(epochSecs) {
+            return new Date((epochSecs + data.offset) * 1000).toLocaleDateString(undefined, {
+                timeZone: 'UTC',
+                month: 'long',
+                day: 'numeric',
+            });
+        }
+
+        function state() {
+            const ms = now();
+            const holiday = holidayAt(ms);
+
+            if (holiday) {
+                return {
+                    cls: 'is-holiday',
+                    text: holiday.name
+                        ? /* translators: 1: holiday name, 2: the date the desk reopens. */
+                          sprintf(__('Closed for %1$s — back on %2$s', 'thrivedesk'), holiday.name, dayLabel(holiday.to))
+                        : /* translators: %s: the date the desk reopens. */
+                          sprintf(__('Closed for a holiday — back on %s', 'thrivedesk'), dayLabel(holiday.to)),
+                };
+            }
+
+            if (data.always) {
+                return { cls: 'is-open', text: __('Open around the clock', 'thrivedesk') };
+            }
+
+            const { day, secs } = parts(ms);
+
+            if (windowAt(day, secs)) {
+                return {
+                    cls: 'is-open',
+                    /* translators: %s: how long until the desk closes, e.g. "2h 14m". */
+                    text: sprintf(__('Open now — closing in %s', 'thrivedesk'), duration(closesIn(day, secs))),
+                };
+            }
+
+            const until = opensIn(day, secs);
+
+            return {
+                cls: 'is-closed',
+                text:
+                    null === until
+                        ? __('Closed right now', 'thrivedesk')
+                        : /* translators: %s: how long until the desk opens, e.g. "9h 22m". */
+                          sprintf(__('Closed right now — back in %s', 'thrivedesk'), duration(until)),
+            };
+        }
+
+        const label = bar.querySelector('.td-hours__text');
+        let shown = '';
+
+        function render() {
+            const next = state();
+
+            if (next.cls + next.text === shown) {
+                return;
+            }
+
+            shown = next.cls + next.text;
+
+            bar.classList.remove('is-open', 'is-closed', 'is-holiday');
+            bar.classList.add(next.cls, 'is-ready');
+
+            if (label) {
+                label.textContent = next.text;
+            }
+        }
+
+        render();
+        setInterval(render, 1000);
+    }
 });

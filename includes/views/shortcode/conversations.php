@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\BusinessHoursService;
 use ThriveDesk\Services\PortalService;
 
 $conversations       = Conversation::get_conversations();
@@ -14,6 +15,13 @@ $ticket_page_id      = absint($settings['td_helpdesk_page_id'] ?? 0);
 $ticket_page_url     = $ticket_page_id ? get_page_link($ticket_page_id) : '';
 $has_knowledgebase   = ! empty($settings['td_knowledgebase_slug']);
 $should_open_modal   = $has_knowledgebase && $ticket_page_id;
+
+// The hours bar, when the admin has asked for one and ThriveDesk has hours to
+// give. payload() returns null for a workspace whose schedule is unusable, so
+// this is also the "is there anything worth drawing" answer.
+$business_hours = ! empty($settings['td_helpdesk_business_hours'])
+    ? BusinessHoursService::payload((string) ($settings['td_helpdesk_business_hours_profile'] ?? ''))
+    : null;
 
 // new-ticket button state when no ticket page is configured. Show it
 // as disabled with an explanation instead of a broken # link
@@ -49,6 +57,27 @@ $open_count = $counts['active'] + $counts['open'];
         <?php else: ?>
 
             <div class="td-page">
+
+                <?php if ($business_hours) : ?>
+                    <?php
+                    /*
+                     * Drawn by conversation.js, not here. Everything on it is a
+                     * countdown, so there is no useful state to render server side -
+                     * a bar saying "closing in 2h 14m" would start being wrong the
+                     * moment it was sent. It stays collapsed until the script adds
+                     * .is-ready, so a browser that never runs it shows nothing at
+                     * all rather than an empty strip.
+                     *
+                     * Deliberately not a live region: the text changes every second,
+                     * and announcing that to a screen reader once a second would
+                     * make the page unusable.
+                     */
+                    ?>
+                    <div class="td-hours" data-td-hours="<?php echo esc_attr(wp_json_encode($business_hours)); ?>">
+                        <span class="td-hours__dot" aria-hidden="true"></span>
+                        <span class="td-hours__text"></span>
+                    </div>
+                <?php endif; ?>
 
                 <!-- header: search + actions -->
                 <div class="td-portal-header">
