@@ -1573,24 +1573,40 @@
 		animation: td-spin 0.7s linear infinite;
 	}
 
-	/* business hours bar
-	   Collapsed until conversation.js has worked out what it says. Everything on
-	   it is a countdown, so there is no correct server-rendered state to show
-	   first - and an empty strip above the header would be worse than nothing. */
+	/* business hours
+	   Two things, deliberately apart. The open/closed line is a status and sits
+	   beside the filters, where the eye already is when someone is deciding
+	   whether to wait or to write. A holiday is an announcement and takes the
+	   full width at the top. Both are collapsed until conversation.js has worked
+	   out what they say - everything on them is a countdown, so there is no
+	   correct state to render server side. */
+	.td-tabs-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+		/* Wraps rather than pushing the status into the tabs, which scroll
+		   horizontally on mobile and would carry it out of sight. */
+		flex-wrap: wrap;
+	}
+
 	.td-hours {
 		display: none;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: 0.5rem;
-		margin-bottom: 0.75rem;
-		padding: 0.5rem 0.75rem;
+		margin-left: auto;
 		font-size: 0.8125rem;
 		line-height: 1.25rem;
-		border: 1px solid hsl(var(--border));
-		border-radius: var(--radius);
-		background: hsl(var(--muted));
 		color: hsl(var(--muted-foreground));
 	}
 	.td-hours.is-ready { display: flex; }
+	/* Once it has wrapped onto its own row there is no longer a right-hand side
+	   to sit on, and a right-aligned line under left-aligned tabs reads as a
+	   mistake rather than as alignment. */
+	@container (max-width: 639px) {
+		.td-hours { margin-left: 0; }
+	}
 
 	.td-hours__dot {
 		flex: none;
@@ -1600,34 +1616,57 @@
 		background: currentColor;
 	}
 
-	/* Darker than the token itself: --success is tuned for a solid fill, and at
-	   45% lightness on an 8% tint of itself it does not clear 4.5:1. */
-	.td-hours.is-open {
-		border-color: hsl(var(--success) / 0.35);
-		background: hsl(var(--success) / 0.08);
-		color: hsl(142 71% 26%);
-	}
-	/* A slow pulse, so "open" reads as now rather than as a label someone left
+	/* Darker than the --success token, which is tuned for a solid fill and does
+	   not clear 4.5:1 as text. */
+	.td-hours.is-open { color: hsl(142 71% 26%); }
+	/* A slow pulse, so "online" reads as now rather than as a label someone left
 	   switched on. */
 	.td-hours.is-open .td-hours__dot {
 		animation: td-hours-pulse 2.4s ease-in-out infinite;
 	}
-
 	.td-hours.is-closed .td-hours__dot { opacity: 0.55; }
 
-	/* A holiday is an announcement rather than a status - it is the thing that
-	   changes what someone should expect from the reply they are about to wait
-	   for - so it is the one state that raises its voice. */
-	.td-hours.is-holiday {
-		border-color: hsl(var(--warning) / 0.45);
-		background: hsl(var(--warning) / 0.12);
-		color: hsl(38 92% 26%);
-		font-weight: 600;
+	/* Recessive but tonally part of the line: it inherits the state colour and
+	   steps back rather than introducing a third one. Out of the layout entirely
+	   while the desk is open, when there is nothing to reassure anyone about. */
+	.td-hours__note { opacity: 0.8; }
+	.td-hours__note:empty { display: none; }
+	.td-hours__note::before {
+		content: '·';
+		margin-right: 0.5rem;
+		opacity: 0.6;
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.td-hours.is-open .td-hours__dot { animation: none; }
+	.td-holiday {
+		display: none;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-bottom: 0.75rem;
+		padding: 0.5rem 0.75rem;
+		font-size: 0.8125rem;
+		line-height: 1.25rem;
+		font-weight: 600;
+		border: 1px solid hsl(var(--warning) / 0.45);
+		border-radius: var(--radius);
+		background: hsl(var(--warning) / 0.12);
+		color: hsl(38 92% 26%);
 	}
+	.td-holiday.is-ready { display: flex; }
+
+	.td-holiday__dot {
+		flex: none;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 999px;
+		background: currentColor;
+	}
+
+	.td-holiday__note {
+		font-weight: 400;
+		opacity: 0.85;
+	}
+	.td-holiday__note:empty { display: none; }
 
 	/* portal-unavailable notice */
 	.td-portal-notice {

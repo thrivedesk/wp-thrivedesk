@@ -61,21 +61,20 @@ $open_count = $counts['active'] + $counts['open'];
                 <?php if ($business_hours) : ?>
                     <?php
                     /*
-                     * Drawn by conversation.js, not here. Everything on it is a
-                     * countdown, so there is no useful state to render server side -
-                     * a bar saying "closing in 2h 14m" would start being wrong the
-                     * moment it was sent. It stays collapsed until the script adds
-                     * .is-ready, so a browser that never runs it shows nothing at
-                     * all rather than an empty strip.
+                     * A holiday is an announcement rather than a status - it changes
+                     * what someone should expect from the reply they are about to
+                     * wait for - so it gets the full width at the top of the page,
+                     * where the ordinary open/closed line does not.
                      *
-                     * Deliberately not a live region: the text changes every second,
-                     * and announcing that to a screen reader once a second would
-                     * make the page unusable.
+                     * Filled by conversation.js and collapsed until it is, so a
+                     * browser that never runs the script shows nothing rather than an
+                     * empty strip.
                      */
                     ?>
-                    <div class="td-hours" data-td-hours="<?php echo esc_attr(wp_json_encode($business_hours)); ?>">
-                        <span class="td-hours__dot" aria-hidden="true"></span>
-                        <span class="td-hours__text"></span>
+                    <div class="td-holiday">
+                        <span class="td-holiday__dot" aria-hidden="true"></span>
+                        <span class="td-holiday__text"></span>
+                        <span class="td-holiday__note"></span>
                     </div>
                 <?php endif; ?>
 
@@ -125,7 +124,8 @@ $open_count = $counts['active'] + $counts['open'];
                     </div>
                 </div>
 
-                <!-- filter tabs -->
+                <!-- filter tabs, with whether anyone is on the desk beside them -->
+                <div class="td-tabs-row">
                 <div class="td-tabs" role="tablist" aria-label="<?php esc_attr_e('Filter by status', 'thrivedesk'); ?>">
                     <a href="<?php echo esc_url(remove_query_arg('cv_status', get_permalink())); ?>" class="is-active" role="tab" aria-selected="true" data-filter="all">
                         <?php esc_html_e('All', 'thrivedesk'); ?>
@@ -143,6 +143,30 @@ $open_count = $counts['active'] + $counts['open'];
                         <?php esc_html_e('Closed', 'thrivedesk'); ?>
                         <span class="td-tab-count"><?php echo (int) $counts['closed']; ?></span>
                     </a>
+                </div>
+
+                <?php if ($business_hours) : ?>
+                    <?php
+                    /*
+                     * Beside the filters rather than above them: it is a status, and
+                     * this is where someone's eye already is when they are deciding
+                     * whether to wait or to open a ticket.
+                     *
+                     * Everything on it is a countdown, so nothing useful can be
+                     * rendered server side - a line saying "closes in 2h 14m" would
+                     * start being wrong the moment it was sent.
+                     *
+                     * Deliberately not a live region: the text changes every second,
+                     * and announcing that once a second would make the page unusable.
+                     */
+                    ?>
+                    <div class="td-hours" data-td-hours="<?php echo esc_attr(wp_json_encode($business_hours)); ?>">
+                        <span class="td-hours__dot" aria-hidden="true"></span>
+                        <span class="td-hours__text"></span>
+                        <?php // Filled only while the desk is shut; :empty keeps it out of the layout otherwise. ?>
+                        <span class="td-hours__note"></span>
+                    </div>
+                <?php endif; ?>
                 </div>
 
                 <!-- tickets list -->

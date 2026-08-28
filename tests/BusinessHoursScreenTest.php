@@ -262,6 +262,30 @@ class BusinessHoursScreenTest extends TD_Ajax_TestCase {
 		$this->assertStringContainsString( 'data-td-hours=', $html );
 	}
 
+	public function test_the_status_sits_with_the_filters_and_the_holiday_bar_above_them() {
+		// Two elements, deliberately apart: a status belongs beside the filters,
+		// an announcement belongs at the top. Only the status carries the
+		// payload - the script fills both from it.
+		$html = $this->portal(
+			array( $this->profile() ),
+			array( 'td_helpdesk_business_hours' => 1 )
+		);
+
+		$this->assertStringContainsString( 'class="td-tabs-row"', $html );
+		$this->assertStringContainsString( 'class="td-holiday"', $html );
+
+		$this->assertLessThan(
+			strpos( $html, 'class="td-tabs-row"' ),
+			strpos( $html, 'class="td-holiday"' ),
+			'the holiday announcement belongs above the filters, not in them'
+		);
+		$this->assertGreaterThan(
+			strpos( $html, 'class="td-tabs-row"' ),
+			strpos( $html, 'class="td-hours"' ),
+			'the open/closed status belongs inside the filter row'
+		);
+	}
+
 	public function test_the_payload_on_the_bar_is_the_schedule_the_browser_needs() {
 		$html = $this->portal(
 			array( $this->profile() ),

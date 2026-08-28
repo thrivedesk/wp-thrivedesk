@@ -712,23 +712,39 @@ jQuery(document).ready(($) => {
             });
         }
 
-        function state() {
-            const ms = now();
-            const holiday = holidayAt(ms);
+        // Said whenever the desk is shut, and only then. Someone reading a
+        // closed sign needs to know the door is still open - the wait is on the
+        // reply, not on being able to ask.
+        const shutNote = () =>
+            __('You can always open a ticket — expect a delay before someone replies.', 'thrivedesk');
 
-            if (holiday) {
-                return {
-                    cls: 'is-holiday',
-                    text: holiday.name
-                        ? /* translators: 1: holiday name, 2: the date the desk reopens. */
-                          sprintf(__('Closed for %1$s — back on %2$s', 'thrivedesk'), holiday.name, dayLabel(holiday.to))
-                        : /* translators: %s: the date the desk reopens. */
-                          sprintf(__('Closed for a holiday — back on %s', 'thrivedesk'), dayLabel(holiday.to)),
-                };
+        // A holiday is not a status, so it is answered separately and takes over
+        // the announcement bar. The countdown is deliberately not repeated
+        // alongside it: the next scheduled window may well fall inside the
+        // holiday, and a confident "opens in 4h" during a week the desk is shut
+        // is worse than saying nothing.
+        function holidayState() {
+            const holiday = holidayAt(now());
+
+            if (!holiday) {
+                return null;
             }
 
+            return {
+                text: holiday.name
+                    ? /* translators: 1: holiday name, 2: the date the desk reopens. */
+                      sprintf(__('Closed for %1$s — back on %2$s', 'thrivedesk'), holiday.name, dayLabel(holiday.to))
+                    : /* translators: %s: the date the desk reopens. */
+                      sprintf(__('Closed for a holiday — back on %s', 'thrivedesk'), dayLabel(holiday.to)),
+                note: shutNote(),
+            };
+        }
+
+        function state() {
+            const ms = now();
+
             if (data.always) {
-                return { cls: 'is-open', text: __('Open around the clock', 'thrivedesk') };
+                return { cls: 'is-open', text: __('Support is online around the clock', 'thrivedesk'), note: '' };
             }
 
             const { day, secs } = parts(ms);
@@ -737,7 +753,8 @@ jQuery(document).ready(($) => {
                 return {
                     cls: 'is-open',
                     /* translators: %s: how long until the desk closes, e.g. "2h 14m". */
-                    text: sprintf(__('Open now — closing in %s', 'thrivedesk'), duration(closesIn(day, secs))),
+                    text: sprintf(__('Support is online — closes in %s', 'thrivedesk'), duration(closesIn(day, secs))),
+                    note: '',
                 };
             }
 
@@ -747,29 +764,65 @@ jQuery(document).ready(($) => {
                 cls: 'is-closed',
                 text:
                     null === until
-                        ? __('Closed right now', 'thrivedesk')
+                        ? __('Support is offline', 'thrivedesk')
                         : /* translators: %s: how long until the desk opens, e.g. "9h 22m". */
-                          sprintf(__('Closed right now — back in %s', 'thrivedesk'), duration(until)),
+                          sprintf(__('Support is offline — opens in %s', 'thrivedesk'), duration(until)),
+                note: shutNote(),
             };
         }
 
         const label = bar.querySelector('.td-hours__text');
+        const note = bar.querySelector('.td-hours__note');
+
+        const holidayBar = document.querySelector('.td-holiday');
+        const holidayLabel = holidayBar && holidayBar.querySelector('.td-holiday__text');
+        const holidayNote = holidayBar && holidayBar.querySelector('.td-holiday__note');
+
         let shown = '';
 
         function render() {
+            const holiday = holidayState();
             const next = state();
+            const key = (holiday ? holiday.text + holiday.note : '') + next.cls + next.text + next.note;
 
-            if (next.cls + next.text === shown) {
+            if (key === shown) {
                 return;
             }
 
-            shown = next.cls + next.text;
+            shown = key;
 
-            bar.classList.remove('is-open', 'is-closed', 'is-holiday');
+            if (holidayBar) {
+                holidayBar.classList.toggle('is-ready', !!holiday);
+
+                if (holiday) {
+                    if (holidayLabel) {
+                        holidayLabel.textContent = holiday.text;
+                    }
+
+                    if (holidayNote) {
+                        holidayNote.textContent = holiday.note;
+                    }
+                }
+            }
+
+            // While a holiday is up, the status line beside the filters would only
+            // repeat it - and would repeat it with a countdown that cannot be
+            // trusted. The announcement above is the whole answer.
+            bar.classList.remove('is-open', 'is-closed');
+
+            if (holiday) {
+                bar.classList.remove('is-ready');
+                return;
+            }
+
             bar.classList.add(next.cls, 'is-ready');
 
             if (label) {
                 label.textContent = next.text;
+            }
+
+            if (note) {
+                note.textContent = next.note;
             }
         }
 

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-28T17:24:52+00:00\n"
+"POT-Creation-Date: 2026-08-28T17:46:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -859,25 +859,25 @@ msgid "New ticket (not configured)"
 msgstr ""
 
 #: includes/views/shortcode/conversations.php:34
-#: includes/views/shortcode/conversations.php:168
-#: includes/views/shortcode/conversations.php:176
+#: includes/views/shortcode/conversations.php:192
+#: includes/views/shortcode/conversations.php:200
 msgid "New ticket"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:89
+#: includes/views/shortcode/conversations.php:88
 msgid "Search tickets…"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:90
+#: includes/views/shortcode/conversations.php:89
 #: includes/views/shortcode/modal.php:41
 msgid "Clear search"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:98
+#: includes/views/shortcode/conversations.php:97
 msgid "Reload tickets"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:105
+#: includes/views/shortcode/conversations.php:104
 msgid "Reload"
 msgstr ""
 
@@ -889,49 +889,49 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:158
+#: includes/views/shortcode/conversations.php:182
 msgid "No tickets yet"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:159
+#: includes/views/shortcode/conversations.php:183
 msgid "Open a new ticket to start a conversation with the team. We typically reply within a few hours during business days."
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:189
 #: includes/views/shortcode/conversations.php:213
+#: includes/views/shortcode/conversations.php:237
 msgid "Status"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:190
-#: includes/views/shortcode/conversations.php:218
+#: includes/views/shortcode/conversations.php:214
+#: includes/views/shortcode/conversations.php:242
 msgid "Subject"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:191
-#: includes/views/shortcode/conversations.php:229
+#: includes/views/shortcode/conversations.php:215
+#: includes/views/shortcode/conversations.php:253
 msgid "Last update"
 msgstr ""
 
 #. translators: 1: ticket subject, 2: ticket ID
-#: includes/views/shortcode/conversations.php:210
+#: includes/views/shortcode/conversations.php:234
 #, php-format
 msgid "Open ticket %2$s: %1$s"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:245
+#: includes/views/shortcode/conversations.php:269
 #: includes/views/shortcode/modal.php:91
 msgid "No matches"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:246
+#: includes/views/shortcode/conversations.php:270
 msgid "No tickets match your search. Try a different term or clear the search to see all tickets."
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:259
+#: includes/views/shortcode/conversations.php:283
 msgid "Powered by"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:264
+#: includes/views/shortcode/conversations.php:288
 msgid "Page navigation"
 msgstr ""
 
@@ -1325,36 +1325,40 @@ msgstr ""
 msgid "%ds"
 msgstr ""
 
+#: resources/js/conversation.js:719
+msgid "You can always open a ticket — expect a delay before someone replies."
+msgstr ""
+
 #. translators: 1: holiday name, 2: the date the desk reopens.
-#: resources/js/conversation.js:724
+#: resources/js/conversation.js:736
 #, js-format
 msgid "Closed for %1$s — back on %2$s"
 msgstr ""
 
 #. translators: %s: the date the desk reopens.
-#: resources/js/conversation.js:726
+#: resources/js/conversation.js:738
 #, js-format
 msgid "Closed for a holiday — back on %s"
 msgstr ""
 
-#: resources/js/conversation.js:731
-msgid "Open around the clock"
+#: resources/js/conversation.js:747
+msgid "Support is online around the clock"
 msgstr ""
 
 #. translators: %s: how long until the desk closes, e.g. "2h 14m".
-#: resources/js/conversation.js:740
+#: resources/js/conversation.js:756
 #, js-format
-msgid "Open now — closing in %s"
+msgid "Support is online — closes in %s"
 msgstr ""
 
-#: resources/js/conversation.js:750
-msgid "Closed right now"
+#: resources/js/conversation.js:767
+msgid "Support is offline"
 msgstr ""
 
 #. translators: %s: how long until the desk opens, e.g. "9h 22m".
-#: resources/js/conversation.js:752
+#: resources/js/conversation.js:769
 #, js-format
-msgid "Closed right now — back in %s"
+msgid "Support is offline — opens in %s"
 msgstr ""
 
 #: resources/js/wp-scripts/admin-app/App.js:20
