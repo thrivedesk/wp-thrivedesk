@@ -72,8 +72,33 @@ $open_count = $counts['active'] + $counts['open'];
                      */
                     ?>
                     <div class="td-holiday">
-                        <span class="td-holiday__dot" aria-hidden="true"></span>
-                        <span class="td-holiday__text"></span>
+                        <?php
+                        /*
+                         * A tear-off calendar leaf, the same shape ThriveDesk uses
+                         * for a holiday in its own settings, so the two read as the
+                         * same object. Filled by conversation.js; aria-hidden because
+                         * the date is said in words on the line beside it.
+                         */
+                        ?>
+                        <span class="td-holiday__leaf" aria-hidden="true">
+                            <span class="td-holiday__month"></span>
+                            <span class="td-holiday__day"></span>
+                        </span>
+
+                        <div class="td-holiday__body">
+                            <div class="td-holiday__head">
+                                <span class="td-holiday__name"></span>
+                                <span class="td-holiday__chip"></span>
+                            </div>
+                            <div class="td-holiday__meta">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+                                    <rect x="3.25" y="5.25" width="17.5" height="15.5" rx="2.5" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="td-holiday__when"></span>
+                            </div>
+                        </div>
+
                         <span class="td-holiday__note"></span>
                     </div>
                 <?php endif; ?>

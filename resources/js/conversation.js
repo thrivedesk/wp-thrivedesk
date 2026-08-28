@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 jQuery(document).ready(($) => {
     $('#openConversationModal').click(function (e) {
@@ -707,13 +707,45 @@ jQuery(document).ready(($) => {
         // Said whenever the desk is shut, and only then. Someone reading a
         // closed sign needs to know the door is still open - the wait is on the
         // reply, not on being able to ask.
-        const shutNote = () => __('You can still open a ticket — expect a slower reply.', 'thrivedesk');
+        const shutNote = () => __('You can still open a ticket', 'thrivedesk');
 
         // A holiday is not a status, so it is answered separately and takes over
         // the announcement bar. The countdown is deliberately not repeated
         // alongside it: the next scheduled window may well fall inside the
         // holiday, and a confident "opens in 4h" during a week the desk is shut
         // is worse than saying nothing.
+        // Dates are read in the schedule's own zone, never the reader's: a
+        // holiday that ends at midnight in Dhaka is not a different date because
+        // the person reading about it is in Chicago.
+        function inZone(epochSecs) {
+            return new Date((epochSecs + data.offset) * 1000);
+        }
+
+        function partsOf(date, options) {
+            return date.toLocaleDateString(undefined, Object.assign({ timeZone: 'UTC' }, options));
+        }
+
+        // "August 5, 2026" for one day, "August 27 – 31, 2026" for a run of them,
+        // "August 27 – September 1, 2026" when the run crosses a month.
+        //
+        // formatRange does the collapsing, and does it per locale. Building the
+        // range by hand means asking toLocaleDateString for a day and a year
+        // without a month, which is not a date format any locale has - ICU
+        // answers "2026 (day: 31)".
+        function spanLabel(from, last) {
+            const options = { timeZone: 'UTC', month: 'long', day: 'numeric', year: 'numeric' };
+
+            if (from.getTime() === last.getTime()) {
+                return partsOf(from, options);
+            }
+
+            const formatter = new Intl.DateTimeFormat(undefined, options);
+
+            return 'function' === typeof formatter.formatRange
+                ? formatter.formatRange(from, last)
+                : partsOf(from, options) + ' – ' + partsOf(last, options);
+        }
+
         function holidayState() {
             const holiday = holidayAt(now());
 
@@ -721,12 +753,22 @@ jQuery(document).ready(($) => {
                 return null;
             }
 
+            const from = inZone(holiday.from);
+            const last = inZone(holiday.to - DAY);
+            const days = Math.max(1, Math.round((holiday.to - holiday.from) / DAY));
+
             return {
-                text: holiday.name
-                    ? /* translators: 1: holiday name, 2: the date the desk reopens. */
-                      sprintf(__('Closed for %1$s — back on %2$s', 'thrivedesk'), holiday.name, dayLabel(holiday.to))
-                    : /* translators: %s: the date the desk reopens. */
-                      sprintf(__('Closed for a holiday — back on %s', 'thrivedesk'), dayLabel(holiday.to)),
+                name: holiday.name || __('Holiday', 'thrivedesk'),
+                month: partsOf(from, { month: 'short' }).toUpperCase(),
+                day: String(from.getUTCDate()).padStart(2, '0'),
+                when: [
+                    spanLabel(from, last),
+                    /* translators: %s: a number of days. How long a holiday runs, e.g. "3 days". */
+                    sprintf(_n('%s day', '%s days', days, 'thrivedesk'), days),
+                    /* translators: %s: a date, e.g. "September 2". When the desk reopens. */
+                    sprintf(__('back on %s', 'thrivedesk'), dayLabel(holiday.to)),
+                ].join(' · '),
+                chip: __('Closed', 'thrivedesk'),
                 note: shutNote(),
             };
         }
@@ -735,29 +777,34 @@ jQuery(document).ready(($) => {
             const ms = now();
 
             if (data.always) {
-                return { cls: 'is-open', text: __('Support is online around the clock', 'thrivedesk'), note: '' };
+                return { cls: 'is-open', text: __('Support is online around the clock', 'thrivedesk'), timer: '', note: '' };
             }
 
             const { day, secs } = parts(ms);
 
             if (windowAt(day, secs)) {
+                const left = duration(closesIn(day, secs));
+
                 return {
                     cls: 'is-open',
-                    /* translators: %s: how long until the desk closes, e.g. "2h 14m". */
-                    text: sprintf(__('Support is online — closes in %s', 'thrivedesk'), duration(closesIn(day, secs))),
+                    /* translators: %s: how long until the desk closes, e.g. "2h 14m 03s". */
+                    text: sprintf(__('Support is online — closes in %s', 'thrivedesk'), left),
+                    timer: left,
                     note: '',
                 };
             }
 
             const until = opensIn(day, secs);
+            const away = null === until ? '' : duration(until);
 
             return {
                 cls: 'is-closed',
                 text:
-                    null === until
+                    '' === away
                         ? __('Support is offline', 'thrivedesk')
-                        : /* translators: %s: how long until the desk opens, e.g. "9h 22m". */
-                          sprintf(__('Support is offline — opens in %s', 'thrivedesk'), duration(until)),
+                        : /* translators: %s: how long until the desk opens, e.g. "9h 22m 03s". */
+                          sprintf(__('Support is offline — opens in %s', 'thrivedesk'), away),
+                timer: away,
                 note: shutNote(),
             };
         }
@@ -766,15 +813,18 @@ jQuery(document).ready(($) => {
         const note = bar.querySelector('.td-hours__note');
 
         const holidayBar = document.querySelector('.td-holiday');
-        const holidayLabel = holidayBar && holidayBar.querySelector('.td-holiday__text');
-        const holidayNote = holidayBar && holidayBar.querySelector('.td-holiday__note');
+        const holidayFields = {};
+
+        [ 'name', 'month', 'day', 'when', 'chip', 'note' ].forEach((key) => {
+            holidayFields[key] = holidayBar && holidayBar.querySelector('.td-holiday__' + key);
+        });
 
         let shown = '';
 
         function render() {
             const holiday = holidayState();
             const next = state();
-            const key = (holiday ? holiday.text + holiday.note : '') + next.cls + next.text + next.note;
+            const key = (holiday ? holiday.name + holiday.when : '') + next.cls + next.text + next.note;
 
             if (key === shown) {
                 return;
@@ -786,13 +836,11 @@ jQuery(document).ready(($) => {
                 holidayBar.classList.toggle('is-ready', !!holiday);
 
                 if (holiday) {
-                    if (holidayLabel) {
-                        holidayLabel.textContent = holiday.text;
-                    }
-
-                    if (holidayNote) {
-                        holidayNote.textContent = holiday.note;
-                    }
+                    Object.keys(holidayFields).forEach((key) => {
+                        if (holidayFields[key]) {
+                            holidayFields[key].textContent = holiday[key];
+                        }
+                    });
                 }
             }
 
@@ -808,13 +856,39 @@ jQuery(document).ready(($) => {
 
             bar.classList.add(next.cls, 'is-ready');
 
-            if (label) {
-                label.textContent = next.text;
-            }
+            paint(next.text, next.timer);
 
             if (note) {
                 note.textContent = next.note;
             }
+        }
+
+        /*
+         * The running figure is the only part set apart, because it is the part
+         * being read - the sentence around it does not change.
+         *
+         * Built as its own node rather than by wrapping the translated string in
+         * markup: the placeholder is at the end in English and need not be in
+         * any other language, and nothing here has to touch innerHTML.
+         */
+        function paint(text, timer) {
+            if (!label) {
+                return;
+            }
+
+            const at = timer ? text.lastIndexOf(timer) : -1;
+
+            if (-1 === at) {
+                label.textContent = text;
+                return;
+            }
+
+            const figure = document.createElement('span');
+            figure.className = 'td-hours__timer';
+            figure.textContent = timer;
+
+            label.textContent = '';
+            label.append(text.slice(0, at), figure, text.slice(at + timer.length));
         }
 
         render();
