@@ -137,6 +137,15 @@ class BusinessHoursScreenTest extends TD_Ajax_TestCase {
 
 		$this->assertStringContainsString( 'Set your business hours in ThriveDesk first', $html );
 		$this->assertStringContainsString( 'Set them in ThriveDesk', $html );
+
+		// The deep link, not just the section. Telling someone to go and set
+		// their hours and then landing them on a settings index is half an
+		// instruction, and this URL is not something the plugin can discover -
+		// it has to be right here or not at all.
+		$this->assertStringContainsString(
+			esc_url( THRIVEDESK_APP_URL . '/settings/company/business-hours' ),
+			$html
+		);
 	}
 
 	public function test_hours_on_the_workspace_unlock_the_option() {

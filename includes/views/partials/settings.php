@@ -465,7 +465,7 @@ $current_user = wp_get_current_user();
                             <?php esc_html_e('A bar at the top of the portal saying whether you are open and how long until that changes. Holidays announce themselves.', 'thrivedesk'); ?>
                         <?php else : ?>
                             <?php esc_html_e('This workspace has no business hours set yet.', 'thrivedesk'); ?>
-                            <a class="td-inline-link" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings'); ?>" target="_blank"><?php esc_html_e('Set them in ThriveDesk', 'thrivedesk'); ?></a>
+                            <a class="td-inline-link" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/business-hours'); ?>" target="_blank"><?php esc_html_e('Set them in ThriveDesk', 'thrivedesk'); ?></a>
                         <?php endif; ?>
                     </p>
                 </div>
