@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-28T17:46:24+00:00\n"
+"POT-Creation-Date: 2026-08-28T17:59:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -859,8 +859,8 @@ msgid "New ticket (not configured)"
 msgstr ""
 
 #: includes/views/shortcode/conversations.php:34
-#: includes/views/shortcode/conversations.php:192
-#: includes/views/shortcode/conversations.php:200
+#: includes/views/shortcode/conversations.php:208
+#: includes/views/shortcode/conversations.php:216
 msgid "New ticket"
 msgstr ""
 
@@ -889,49 +889,49 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:182
+#: includes/views/shortcode/conversations.php:198
 msgid "No tickets yet"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:183
+#: includes/views/shortcode/conversations.php:199
 msgid "Open a new ticket to start a conversation with the team. We typically reply within a few hours during business days."
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:213
-#: includes/views/shortcode/conversations.php:237
+#: includes/views/shortcode/conversations.php:229
+#: includes/views/shortcode/conversations.php:253
 msgid "Status"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:214
-#: includes/views/shortcode/conversations.php:242
+#: includes/views/shortcode/conversations.php:230
+#: includes/views/shortcode/conversations.php:258
 msgid "Subject"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:215
-#: includes/views/shortcode/conversations.php:253
+#: includes/views/shortcode/conversations.php:231
+#: includes/views/shortcode/conversations.php:269
 msgid "Last update"
 msgstr ""
 
 #. translators: 1: ticket subject, 2: ticket ID
-#: includes/views/shortcode/conversations.php:234
+#: includes/views/shortcode/conversations.php:250
 #, php-format
 msgid "Open ticket %2$s: %1$s"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:269
+#: includes/views/shortcode/conversations.php:285
 #: includes/views/shortcode/modal.php:91
 msgid "No matches"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:270
+#: includes/views/shortcode/conversations.php:286
 msgid "No tickets match your search. Try a different term or clear the search to see all tickets."
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:283
+#: includes/views/shortcode/conversations.php:299
 msgid "Powered by"
 msgstr ""
 
-#: includes/views/shortcode/conversations.php:288
+#: includes/views/shortcode/conversations.php:304
 msgid "Page navigation"
 msgstr ""
 
@@ -1289,74 +1289,56 @@ msgstr ""
 msgid "Reply sent"
 msgstr ""
 
-#. translators: 1: days, 2: hours. A duration, e.g. "2d 6h".
-#: resources/js/conversation.js:682
-#, js-format
-msgid "%1$dd %2$dh"
-msgstr ""
-
-#. translators: %d: days. A duration in whole days, e.g. "2d".
+#. translators: 1: hours, 2: minutes, 3: seconds. A countdown, e.g. "39h 08m 12s".
 #: resources/js/conversation.js:684
 #, js-format
-msgid "%dd"
+msgid "%1$sh %2$sm %3$ss"
 msgstr ""
 
-#. translators: 1: hours, 2: minutes. A duration, e.g. "2h 14m".
-#: resources/js/conversation.js:690
+#. translators: 1: minutes, 2: seconds. A countdown under an hour, e.g. "08m 12s".
+#: resources/js/conversation.js:689
 #, js-format
-msgid "%1$dh %2$dm"
+msgid "%1$sm %2$ss"
 msgstr ""
 
-#. translators: %d: hours. A duration in whole hours, e.g. "7h".
-#: resources/js/conversation.js:692
+#. translators: %s: seconds. A countdown under a minute, e.g. "12s".
+#: resources/js/conversation.js:693
 #, js-format
-msgid "%dh"
+msgid "%ss"
 msgstr ""
 
-#. translators: %d: minutes. A duration, e.g. "45m".
-#: resources/js/conversation.js:697
-#, js-format
-msgid "%dm"
-msgstr ""
-
-#. translators: %d: seconds. A duration under a minute, e.g. "30s".
-#: resources/js/conversation.js:701
-#, js-format
-msgid "%ds"
-msgstr ""
-
-#: resources/js/conversation.js:719
-msgid "You can always open a ticket — expect a delay before someone replies."
+#: resources/js/conversation.js:710
+msgid "You can still open a ticket — expect a slower reply."
 msgstr ""
 
 #. translators: 1: holiday name, 2: the date the desk reopens.
-#: resources/js/conversation.js:736
+#: resources/js/conversation.js:727
 #, js-format
 msgid "Closed for %1$s — back on %2$s"
 msgstr ""
 
 #. translators: %s: the date the desk reopens.
-#: resources/js/conversation.js:738
+#: resources/js/conversation.js:729
 #, js-format
 msgid "Closed for a holiday — back on %s"
 msgstr ""
 
-#: resources/js/conversation.js:747
+#: resources/js/conversation.js:738
 msgid "Support is online around the clock"
 msgstr ""
 
 #. translators: %s: how long until the desk closes, e.g. "2h 14m".
-#: resources/js/conversation.js:756
+#: resources/js/conversation.js:747
 #, js-format
 msgid "Support is online — closes in %s"
 msgstr ""
 
-#: resources/js/conversation.js:767
+#: resources/js/conversation.js:758
 msgid "Support is offline"
 msgstr ""
 
 #. translators: %s: how long until the desk opens, e.g. "9h 22m".
-#: resources/js/conversation.js:769
+#: resources/js/conversation.js:760
 #, js-format
 msgid "Support is offline — opens in %s"
 msgstr ""

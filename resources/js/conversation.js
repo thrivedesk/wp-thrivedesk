@@ -665,40 +665,32 @@ jQuery(document).ready(($) => {
             return holidays.find((h) => secs >= h.from && secs < h.to) || null;
         }
 
-        // Coarse on purpose. Nobody waiting on a support reply needs the
-        // seconds when the answer is four hours away, and a figure that changes
-        // every second is harder to read than one that does not.
+        // A running clock, not a rounded-off estimate: it ticks every second, so
+        // it has to read as something counting down rather than as a label.
+        //
+        // Hours all the way up rather than rolling into days - "39h 08m" is a
+        // wait someone can weigh against their afternoon in a way "1d 15h" is
+        // not. Minutes and seconds are zero padded so the pill does not change
+        // width on every tick and shuffle itself sideways.
         function duration(total) {
             const s = Math.max(0, Math.round(total));
-            const d = Math.floor(s / DAY);
-            const h = Math.floor((s % DAY) / 3600);
+            const h = Math.floor(s / 3600);
             const m = Math.floor((s % 3600) / 60);
-
-            // The trailing zero is dropped rather than padded: "7h" is what a
-            // person would say, and "7h 0m" reads like a stopwatch.
-            if (d) {
-                return h
-                    ? /* translators: 1: days, 2: hours. A duration, e.g. "2d 6h". */
-                      sprintf(__('%1$dd %2$dh', 'thrivedesk'), d, h)
-                    : /* translators: %d: days. A duration in whole days, e.g. "2d". */
-                      sprintf(__('%dd', 'thrivedesk'), d);
-            }
+            const sec = s % 60;
+            const pad = (n) => String(n).padStart(2, '0');
 
             if (h) {
-                return m
-                    ? /* translators: 1: hours, 2: minutes. A duration, e.g. "2h 14m". */
-                      sprintf(__('%1$dh %2$dm', 'thrivedesk'), h, m)
-                    : /* translators: %d: hours. A duration in whole hours, e.g. "7h". */
-                      sprintf(__('%dh', 'thrivedesk'), h);
+                /* translators: 1: hours, 2: minutes, 3: seconds. A countdown, e.g. "39h 08m 12s". */
+                return sprintf(__('%1$sh %2$sm %3$ss', 'thrivedesk'), h, pad(m), pad(sec));
             }
 
             if (m) {
-                /* translators: %d: minutes. A duration, e.g. "45m". */
-                return sprintf(__('%dm', 'thrivedesk'), m);
+                /* translators: 1: minutes, 2: seconds. A countdown under an hour, e.g. "08m 12s". */
+                return sprintf(__('%1$sm %2$ss', 'thrivedesk'), m, pad(sec));
             }
 
-            /* translators: %d: seconds. A duration under a minute, e.g. "30s". */
-            return sprintf(__('%ds', 'thrivedesk'), s % 60);
+            /* translators: %s: seconds. A countdown under a minute, e.g. "12s". */
+            return sprintf(__('%ss', 'thrivedesk'), sec);
         }
 
         // Formatted in the schedule's timezone, not the reader's: a holiday
@@ -715,8 +707,7 @@ jQuery(document).ready(($) => {
         // Said whenever the desk is shut, and only then. Someone reading a
         // closed sign needs to know the door is still open - the wait is on the
         // reply, not on being able to ask.
-        const shutNote = () =>
-            __('You can always open a ticket — expect a delay before someone replies.', 'thrivedesk');
+        const shutNote = () => __('You can still open a ticket — expect a slower reply.', 'thrivedesk');
 
         // A holiday is not a status, so it is answered separately and takes over
         // the announcement bar. The countdown is deliberately not repeated

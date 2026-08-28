@@ -1606,10 +1606,19 @@
 	   mistake rather than as alignment. */
 	@container (max-width: 639px) {
 		.td-hours { margin-left: 0; }
+		/* The separator only separates while the two halves share a line. Once
+		   the note has wrapped below, a leading middot reads as a stray bullet. */
+		.td-hours__note::before { display: none; }
 	}
 
+	/* One glyph at a time. The markup carries both so the state class can swap
+	   them without the script knowing anything about icons. */
+	.td-hours__dot,
+	.td-hours__clock { display: none; flex: none; }
+	.td-hours.is-open .td-hours__dot { display: inline-block; }
+	.td-hours.is-closed .td-hours__clock { display: inline-flex; }
+
 	.td-hours__dot {
-		flex: none;
 		width: 0.5rem;
 		height: 0.5rem;
 		border-radius: 999px;
@@ -1624,11 +1633,41 @@
 	.td-hours.is-open .td-hours__dot {
 		animation: td-hours-pulse 2.4s ease-in-out infinite;
 	}
-	.td-hours.is-closed .td-hours__dot { opacity: 0.55; }
+
+	/* Offline is the state worth noticing, so it is the one that gets a fill.
+	   Compact - a pill on the filter row, not a banner. The full-width bar at the
+	   top of the page belongs to the holiday, and two banners would be one too
+	   many things asking to be read. */
+	.td-hours.is-closed {
+		padding: 0.25rem 0.625rem;
+		border-radius: 999px;
+		border: 1px solid hsl(var(--warning) / 0.4);
+		background: hsl(var(--warning) / 0.15);
+		color: hsl(38 92% 26%);
+	}
+
+	/* The hands turn, the minute hand twelve times faster than the hour hand as
+	   on a real clock. That ratio is what makes it read as a clock running rather
+	   than as a spinner. */
+	.td-hours__clock svg { display: block; }
+	.td-hours__hand { transform-origin: 8px 8px; }
+	.td-hours__hand--minute { animation: td-clock-hand 3s linear infinite; }
+	.td-hours__hand--hour { animation: td-clock-hand 36s linear infinite; }
+
+	/* Both animations are decoration - the countdown is in the text, and the
+	   text keeps updating either way. */
+	@media (prefers-reduced-motion: reduce) {
+		.td-hours.is-open .td-hours__dot,
+		.td-hours__hand { animation: none; }
+	}
 
 	/* Recessive but tonally part of the line: it inherits the state colour and
 	   steps back rather than introducing a third one. Out of the layout entirely
 	   while the desk is open, when there is nothing to reassure anyone about. */
+	/* Tabular figures: the countdown reruns every second, and proportional
+	   digits are different widths, so without this the pill twitches. */
+	.td-hours__text { font-variant-numeric: tabular-nums; }
+
 	.td-hours__note { opacity: 0.8; }
 	.td-hours__note:empty { display: none; }
 	.td-hours__note::before {
@@ -1705,6 +1744,10 @@
 /* Top level, like td-spin above it: @keyframes nested inside a style rule
    is not valid CSS, and the minifier does not merely drop the at-rule - it
    takes the token block at the top of this file with it. */
+@keyframes td-clock-hand {
+	to { transform: rotate(360deg); }
+}
+
 @keyframes td-hours-pulse {
 	0%, 100% { opacity: 1; }
 	50% { opacity: 0.35; }

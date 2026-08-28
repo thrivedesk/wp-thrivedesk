@@ -161,7 +161,23 @@ $open_count = $counts['active'] + $counts['open'];
                      */
                     ?>
                     <div class="td-hours" data-td-hours="<?php echo esc_attr(wp_json_encode($business_hours)); ?>">
+                        <?php
+                        /*
+                         * Two glyphs, one shown at a time by the state class: a dot
+                         * that pulses while someone is on the desk, and a clock whose
+                         * hands turn while nobody is. Drawn rather than set as text
+                         * so the hands can actually move - the point of it is that
+                         * something is counting.
+                         */
+                        ?>
                         <span class="td-hours__dot" aria-hidden="true"></span>
+                        <span class="td-hours__clock" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" width="13" height="13" fill="none">
+                                <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
+                                <line class="td-hours__hand td-hours__hand--hour" x1="8" y1="8" x2="8" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <line class="td-hours__hand td-hours__hand--minute" x1="8" y1="8" x2="8" y2="3.75" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+                            </svg>
+                        </span>
                         <span class="td-hours__text"></span>
                         <?php // Filled only while the desk is shut; :empty keeps it out of the layout otherwise. ?>
                         <span class="td-hours__note"></span>
