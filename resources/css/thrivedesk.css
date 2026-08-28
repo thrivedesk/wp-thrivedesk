@@ -1625,11 +1625,6 @@
 		font-weight: 600;
 	}
 
-	@keyframes td-hours-pulse {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.35; }
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.td-hours.is-open .td-hours__dot { animation: none; }
 	}
@@ -1668,6 +1663,14 @@
 
 /* keyframe has to live at the top level , PostCSS/cssnano can't
    pick it up from inside the #thrivedesk block */
+/* Top level, like td-spin above it: @keyframes nested inside a style rule
+   is not valid CSS, and the minifier does not merely drop the at-rule - it
+   takes the token block at the top of this file with it. */
+@keyframes td-hours-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.35; }
+}
+
 @keyframes td-spin {
 	to { transform: rotate(360deg); }
 }
