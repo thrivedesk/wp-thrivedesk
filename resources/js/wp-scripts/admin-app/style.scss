@@ -50,7 +50,13 @@
 	flex-direction: column;
 	margin: 0;
 	padding: 16px;
-	border: 1px solid #e0e0e0;
+	/* Read off :root, where admin.css declares them, rather than copied: sass
+	   compiles without Tailwind's tokens, but both stylesheets load together on
+	   this screen. Same reason the radius reads a token - a literal here is a
+	   second answer to "what colour is a card border", and the two drift apart
+	   the next time either is changed. The locked variant only swaps
+	   border-style, so it follows this. */
+	border: 1px solid var(--color-slate-300, #cbd5e1);
 	border-radius: var(--radius-md, 0.375rem);
 	background: #fff;
 }
