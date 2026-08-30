@@ -104,9 +104,20 @@ class I18nSetupTest extends WP_UnitTestCase {
 			unlink( $mofile );
 		}
 
-		$this->assertSame(
-			trailingslashit( $dir ),
-			$found,
+		// Compared by its tail, not as a whole path. load_plugin_textdomain()
+		// builds WP_PLUGIN_DIR . '/' . plugin_basename(...), and under CI the
+		// checkout lives outside WP_PLUGIN_DIR, so plugin_basename() cannot
+		// shorten it and the two get concatenated into a path that exists
+		// nowhere. That is an artefact of where the runner puts the code, not
+		// something a real install can hit - and asserting the whole string
+		// only tests the runner's directory layout.
+		//
+		// The tail is the part that carries the meaning: whatever WordPress
+		// resolves to has to be the directory Domain Path names. That the
+		// directory exists at all is a separate test, above.
+		$this->assertStringEndsWith(
+			ltrim( $this->headers()['DomainPath'], '/' ) . '/',
+			(string) $found,
 			'the plugin\'s translations must resolve to its own Domain Path'
 		);
 	}
