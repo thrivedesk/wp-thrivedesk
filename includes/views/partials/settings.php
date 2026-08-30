@@ -301,7 +301,7 @@ $current_user = wp_get_current_user();
             <div class="flex items-start gap-4 flex-wrap">
                 <div class="flex-1 min-w-[16rem]">
                     <div class="text-base font-bold"><?php esc_html_e('Portal', 'thrivedesk'); ?></div>
-                    <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('A help centre on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain.', 'thrivedesk'); ?></p>
+                    <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('A help center on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain.', 'thrivedesk'); ?></p>
                 </div>
                 <?php if ($has_portal_access) : ?>
                     <button type="button" id="thrivedesk_clear_cache_btn" class="btn-ghost shrink-0">
@@ -522,7 +522,7 @@ $current_user = wp_get_current_user();
                         </button>
                     </div>
 
-                    <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Put this on any page to turn it into the help centre. Only logged-in visitors can see it.', 'thrivedesk'); ?></p>
+                    <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Put this on any page to turn it into the help center. Only logged-in visitors can see it.', 'thrivedesk'); ?></p>
                 </aside>
 
                 <?php

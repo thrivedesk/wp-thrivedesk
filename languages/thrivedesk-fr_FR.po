@@ -248,7 +248,7 @@ msgid "Overview of WPPortal"
 msgstr "Présentation de WPPortal"
 
 #: includes/views/partials/card-portal.php:43
-msgid "A help centre on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else's."
+msgid "A help center on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else's."
 msgstr "Un centre d’aide sur votre propre domaine, où les clients consultent votre base de connaissances et suivent leurs tickets. Tout se trouve derrière l’identifiant qu’ils possèdent déjà : personne n’est renvoyé vers un site qui semble appartenir à quelqu’un d’autre."
 
 #: includes/views/partials/card-portal.php:66
@@ -257,7 +257,7 @@ msgid "Watch the 40 second tour"
 msgstr "Voir la présentation de 40 secondes"
 
 #: includes/views/partials/card-woo-promo.php:22
-msgid "A chatbot that answers from your own catalogue"
+msgid "A chatbot that answers from your own catalog"
 msgstr "Un chatbot qui répond à partir de votre propre catalogue"
 
 #: includes/views/partials/card-woo-promo.php:23
@@ -543,7 +543,7 @@ msgid "Portal"
 msgstr "Portail"
 
 #: includes/views/partials/settings.php:304
-msgid "A help centre on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain."
+msgid "A help center on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain."
 msgstr "Un centre d’aide sur votre propre site : les clients ouvrent des tickets, consultent la base de connaissances et suivent leurs réponses sans quitter votre domaine."
 
 #: includes/views/partials/settings.php:309
@@ -634,7 +634,7 @@ msgid "Copy the portal shortcode"
 msgstr "Copier le code court du portail"
 
 #: includes/views/partials/settings.php:525
-msgid "Put this on any page to turn it into the help centre. Only logged-in visitors can see it."
+msgid "Put this on any page to turn it into the help center. Only logged-in visitors can see it."
 msgstr "Placez-le sur n’importe quelle page pour la transformer en centre d’aide. Seuls les visiteurs connectés peuvent le voir."
 
 #: includes/views/partials/settings.php:545

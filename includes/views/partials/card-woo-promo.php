@@ -19,7 +19,7 @@ if ( $td_woo_promo && $td_woo_promo->get_plugin_data( 'connected' ) ) {
 }
 
 $td_woo_features = [
-	__( 'A chatbot that answers from your own catalogue', 'thrivedesk' ),
+	__( 'A chatbot that answers from your own catalog', 'thrivedesk' ),
 	__( 'Refunds, order edits and shipping without leaving the chat', 'thrivedesk' ),
 	__( 'Agentic AI with real control over the store, not just replies', 'thrivedesk' ),
 	__( 'Subscriptions and order history beside every conversation', 'thrivedesk' ),

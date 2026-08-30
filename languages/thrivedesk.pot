@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T07:30:26+00:00\n"
+"POT-Creation-Date: 2026-08-30T09:15:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -251,7 +251,7 @@ msgid "Overview of WPPortal"
 msgstr ""
 
 #: includes/views/partials/card-portal.php:43
-msgid "A help centre on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else's."
+msgid "A help center on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else's."
 msgstr ""
 
 #: includes/views/partials/card-portal.php:66
@@ -260,7 +260,7 @@ msgid "Watch the 40 second tour"
 msgstr ""
 
 #: includes/views/partials/card-woo-promo.php:22
-msgid "A chatbot that answers from your own catalogue"
+msgid "A chatbot that answers from your own catalog"
 msgstr ""
 
 #: includes/views/partials/card-woo-promo.php:23
@@ -546,7 +546,7 @@ msgid "Portal"
 msgstr ""
 
 #: includes/views/partials/settings.php:304
-msgid "A help centre on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain."
+msgid "A help center on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain."
 msgstr ""
 
 #: includes/views/partials/settings.php:309
@@ -637,7 +637,7 @@ msgid "Copy the portal shortcode"
 msgstr ""
 
 #: includes/views/partials/settings.php:525
-msgid "Put this on any page to turn it into the help centre. Only logged-in visitors can see it."
+msgid "Put this on any page to turn it into the help center. Only logged-in visitors can see it."
 msgstr ""
 
 #: includes/views/partials/settings.php:545

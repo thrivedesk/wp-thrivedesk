@@ -40,7 +40,7 @@ $td_portal_thumb = $td_portal_narrow ? 'td-video is-thumb order-first' : 'td-vid
             <div>
                 <h3 class="text-lg font-semibold m-0!"><?php esc_html_e( 'Overview of WPPortal', 'thrivedesk' ); ?></h3>
                 <p class="mt-2! mb-0! text-gray-500">
-                    <?php esc_html_e( 'A help centre on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else\'s.', 'thrivedesk' ); ?>
+                    <?php esc_html_e( 'A help center on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else\'s.', 'thrivedesk' ); ?>
                 </p>
                 <a class="btn-ghost mt-4" href="https://www.thrivedesk.com/wordpress/" target="_blank">
                     <span><?php esc_html_e( 'Learn more', 'thrivedesk' ); ?></span>
