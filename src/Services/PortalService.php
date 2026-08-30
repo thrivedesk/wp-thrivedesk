@@ -174,6 +174,16 @@ class PortalService {
 			return false;
 		}
 
+		// Sites upgrading from the previous release hold a truthy value rather
+		// than a sentinel. Reading that as a miss would send every one of them
+		// back to the API on the first portal render after deploy, which is the
+		// stampede the sentinel exists to prevent. A stale grant costs at most
+		// one window; false was never storable in the old format, so there is
+		// no matching case on the deny side.
+		if ( ! empty( $cached ) ) {
+			return true;
+		}
+
 		return null;
 	}
 

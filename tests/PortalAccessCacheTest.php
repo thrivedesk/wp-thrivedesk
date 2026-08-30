@@ -95,6 +95,23 @@ class PortalAccessCacheTest extends WP_UnitTestCase {
 		$this->assertSame( 'yes', get_transient( \ThriveDesk\Services\PortalService::PORTAL_ACCESS_TRANSIENT ) );
 	}
 
+	/**
+	 * Sites upgrading from the previous release hold a truthy transient rather
+	 * than the sentinel. Reading that as a miss would send every one of them
+	 * back to the API on the first portal render after deploy, which is the
+	 * stampede the sentinel exists to prevent.
+	 */
+	public function test_a_legacy_truthy_cache_is_still_read_as_granted() {
+		$this->stub_plan_api( array( 'overview' => array( 'slug' => 'pro' ) ) );
+
+		set_transient( \ThriveDesk\Services\PortalService::PORTAL_ACCESS_TRANSIENT, true, HOUR_IN_SECONDS );
+
+		$service = new \ThriveDesk\Services\PortalService();
+
+		$this->assertTrue( $service->has_portal_access() );
+		$this->assertSame( 0, $this->calls, 'a legacy cached grant must not re-call the API' );
+	}
+
 	public function test_the_render_path_lookup_uses_the_short_timeout() {
 		$this->stub_plan_api( array( 'overview' => array( 'slug' => 'pro' ) ) );
 
