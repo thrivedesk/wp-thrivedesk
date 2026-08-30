@@ -66,7 +66,11 @@ function IntegrationCard( { integration, locked, onError } ) {
 	};
 
 	return (
-		<li className={ locked ? 'td-integration is-locked' : 'td-integration' }>
+		<li
+			className={ locked ? 'td-integration is-locked' : 'td-integration' }
+			data-plugin={ slug }
+			data-connected={ connected ? '1' : '0' }
+		>
 			<img className="td-integration__logo" src={ image } alt="" width="48" height="48" />
 
 			<div className="td-integration__title">
@@ -118,7 +122,14 @@ function IntegrationCard( { integration, locked, onError } ) {
 				) }
 
 				{ ! external && connected && (
-					<Button variant="secondary" isDestructive isBusy={ busy } disabled={ busy || locked } onClick={ disconnect }>
+					<Button
+						variant="secondary"
+						isDestructive
+						isBusy={ busy }
+						disabled={ busy || locked }
+						onClick={ disconnect }
+						data-test="integration-disconnect"
+					>
 						{ __( 'Disconnect', 'thrivedesk' ) }
 					</Button>
 				) }
@@ -129,6 +140,7 @@ function IntegrationCard( { integration, locked, onError } ) {
 						isBusy={ busy }
 						disabled={ busy || locked || ! installed }
 						onClick={ connect }
+						data-test="integration-connect"
 						// Says why it is unavailable, which a disabled
 						// button on its own never does. The missing account
 						// comes first: installing the partner plugin will not

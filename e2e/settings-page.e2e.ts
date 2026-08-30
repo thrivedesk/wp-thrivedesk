@@ -9,20 +9,23 @@ import { gotoSettings } from './helpers/wp';
  * actually works, as opposed to merely being flagged as verified.
  */
 test('lists the assistants and inboxes fetched from ThriveDesk', async ({ page }) => {
-	await gotoSettings(page);
+	await gotoSettings(page, 'livechat');
 
 	const assistants = page.locator('#td-assistants option');
 	await expect(assistants.first()).toHaveText(/Select an assistant/);
 	expect(await assistants.count(), 'no assistants came back from the API').toBeGreaterThan(1);
+
+	// Inboxes are served on the Portal tab, so this needs the other panel.
+	await gotoSettings(page, 'portal');
 
 	const inboxes = page.locator('#td-inboxes option');
 	expect(await inboxes.count(), 'no inboxes came back from the API').toBeGreaterThan(1);
 });
 
 test('offers every integration the plugin supports', async ({ page }) => {
-	await gotoSettings(page);
+	await gotoSettings(page, 'integrations');
 
-	const woocommerce = page.locator('button.connect[data-plugin="woocommerce"]');
+	const woocommerce = page.locator('[data-plugin="woocommerce"] [data-test="integration-connect"], [data-plugin="woocommerce"] [data-test="integration-disconnect"]');
 	await expect(woocommerce).toBeVisible();
 
 	// WooCommerce is active on the site under test, so its button must be live.
@@ -30,6 +33,6 @@ test('offers every integration the plugin supports', async ({ page }) => {
 	await expect(woocommerce).toBeEnabled();
 
 	for (const plugin of ['edd', 'fluentcrm', 'wppostsync', 'autonami']) {
-		await expect(page.locator(`button.connect[data-plugin="${plugin}"]`)).toHaveCount(1);
+		await expect(page.locator(`[data-plugin="${plugin}"]`)).toHaveCount(1);
 	}
 });

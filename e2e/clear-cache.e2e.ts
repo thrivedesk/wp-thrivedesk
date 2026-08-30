@@ -8,7 +8,7 @@ import { gotoSettings } from './helpers/wp';
  * it. There is nothing to acknowledge and nothing for a reload to show.
  */
 test('clears the portal cache from the settings screen', async ({ page }) => {
-	await gotoSettings(page);
+	await gotoSettings(page, 'portal');
 
 	// The Portal tab owns the button, and every panel is rendered on every tab
 	// with only `hidden` toggling - so it has to be shown before it is clickable.
@@ -28,5 +28,4 @@ test('clears the portal cache from the settings screen', async ({ page }) => {
 	// It dismisses itself, and the screen is still the screen: no reload, and
 	// nothing to click away.
 	await expect(toast).toBeHidden({ timeout: 15_000 });
-	await expect(page.locator('#td_helpdesk_form')).toBeVisible();
 });

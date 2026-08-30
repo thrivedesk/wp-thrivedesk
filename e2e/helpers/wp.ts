@@ -10,8 +10,31 @@ export const API_VERIFY_URL = '/wp-admin/admin.php?page=td-api';
  * details. A missing settings form means the page did not render at all, so say
  * that rather than time out on a selector.
  */
-export async function gotoSettings(page: Page): Promise<void> {
-	await page.goto(SETTINGS_URL);
+/** The screen's tabs, and the panel each one reveals. */
+const TAB_PANELS: Record<string, string> = {
+	overview: '#td-panel-overview',
+	livechat: '#td-panel-livechat',
+	portal: '#td-panel-portal',
+	integrations: '.td-integrations',
+};
+
+export type SettingsTab = keyof typeof TAB_PANELS;
+
+/**
+ * Opens the ThriveDesk menu page on a given tab and waits until it is usable.
+ *
+ * The screen is one form of panels that a React TabPanel hosts: on mount it
+ * MOVES each `#td-panel-*` out of the form and into the active tab, so the form
+ * itself ends up empty and never becomes visible. Waiting on the panel is
+ * therefore the only assertion that means "this tab is on screen"; waiting on
+ * the form waits forever.
+ *
+ * The tab is chosen through the same `td_tab` query parameter the screen writes
+ * back on every switch, so a spec lands where it needs to be without clicking
+ * through the tab strip first.
+ */
+export async function gotoSettings(page: Page, tab: SettingsTab = 'overview'): Promise<void> {
+	await page.goto(`${SETTINGS_URL}&td_tab=${tab}`);
 
 	const form = page.locator('#td_helpdesk_form');
 
@@ -21,8 +44,13 @@ export async function gotoSettings(page: Page): Promise<void> {
 		);
 	}
 
-	await expect(form).toBeVisible();
-	await waitForHandlers(page, 'button.connect');
+	await expect(page.locator(TAB_PANELS[tab])).toBeVisible();
+
+	// Every jQuery handler binds in one ready callback, so any bound element
+	// proves them all bound. The verify button is on Overview and is present
+	// connected or not, which the integration buttons — now React, with no
+	// jQuery handlers at all — are not.
+	await waitForHandlers(page, '#td-api-verification-btn');
 }
 
 export async function gotoApiVerify(page: Page): Promise<void> {

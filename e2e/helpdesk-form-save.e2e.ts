@@ -25,7 +25,7 @@ async function selectAssistantAndWaitForSave(
 }
 
 test('saves the selected assistant automatically and reads it back', async ({ page }) => {
-	await gotoSettings(page);
+	await gotoSettings(page, 'livechat');
 
 	const assistants = page.locator('#td-assistants');
 	const original = await assistants.inputValue();
@@ -36,12 +36,12 @@ test('saves the selected assistant automatically and reads it back', async ({ pa
 
 	await selectAssistantAndWaitForSave(page, target!);
 
-	await gotoSettings(page);
+	await gotoSettings(page, 'livechat');
 	await expect(page.locator('#td-assistants')).toHaveValue(target!);
 
 	await selectAssistantAndWaitForSave(page, original);
 
-	await gotoSettings(page);
+	await gotoSettings(page, 'livechat');
 	await expect(page.locator('#td-assistants')).toHaveValue(original);
 });
 
@@ -51,7 +51,7 @@ test('saves the selected assistant automatically and reads it back', async ({ pa
  * and the stored value stops matching the last thing that was clicked.
  */
 test('batches rapid changes into a single save', async ({ page }) => {
-	await gotoSettings(page);
+	await gotoSettings(page, 'portal');
 
 	const saves: string[] = [];
 	page.on('request', (request) => {

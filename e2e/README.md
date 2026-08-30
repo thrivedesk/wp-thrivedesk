@@ -52,8 +52,15 @@ not include the WP Portal.
   that verifies has to restore.
 - **Prefer the ids already in the markup** (`#td_helpdesk_api_key`,
   `#td-assistants`, `#td_helpdesk_page_id`, `#td-search-card`, `.td-toast`,
-  `button.connect[data-plugin]`)
-  over adding new hooks.
+  `[data-plugin]` on an integration card)
+  over adding new hooks. The integrations grid is React, so its card carries
+  `data-plugin` and `data-connected` and its buttons carry
+  `data-test="integration-connect"` / `"integration-disconnect"`.
+- **The screen is tabbed.** A React `TabPanel` moves each `#td-panel-*` out of
+  the settings form on mount, so the form itself never becomes visible and a
+  field is only on screen when its tab is. Reach a tab with
+  `gotoSettings(page, 'livechat' | 'portal' | 'integrations')` rather than
+  clicking through the strip.
 - **Assertions go through the UI.** A spec that reaches around the interface to
   make its assertions stops describing what a user can do. Teardown is the one
   exception — `helpers/connection.ts` posts to the plugin's own admin-ajax
