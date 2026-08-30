@@ -19,6 +19,12 @@ composer.lock
 .gitignore
 .gitattributes
 .distignore
+.editorconfig
+.prettierrc.json
+composer.json
+phpcs.xml
+phpcs-security.xml
+phpcs-i18n.xml
 
 # IDE and editor files
 .vscode
@@ -46,11 +52,8 @@ readme.md
 CHANGELOG.md
 CONTRIBUTING.md
 
-# Source files (if you have compiled versions)
-/resources/sass
-/resources/js
-/resources/css
-/resources/images
+# Source files, all of them: assets/ is the built output the plugin loads
+/resources
 
 # Logs and temporary files
 *.log
@@ -59,3 +62,11 @@ temp/
 
 # SVN directory (if present)
 /svn
+
+# Repo-only documentation
+/docs
+CLAUDE.md
+
+# Local development bench (Docker). Never ships.
+/docker
+/plugins

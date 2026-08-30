@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<ruleset name="ThriveDesk i18n">
+    <description>
+        Translation sniffs, enforced across ALL source with no path exclusions.
+
+        A separate ruleset for the same reason phpcs-security.xml is one:
+        phpcs.xml excludes legacy paths from the `WordPress` ref while
+        formatting is adopted incrementally, and PHPCS keys a rule-scoped
+        exclude by its ref string, so the `WordPress` exclusion is consulted
+        for WordPress.WP.I18n and wins. Those excluded paths - includes/,
+        src/Admin.php, src/Conversations/ - are where nearly every translatable
+        string in the plugin lives, so the sniff was configured and reaching
+        almost nothing.
+
+        Warnings fail here, unlike the security ruleset. The one warning this
+        sniff raises is a missing "translators:" comment, and a placeholder with
+        no explanation is a string a translator has to guess at - which is the
+        defect, not a note about one.
+
+        Run with: composer phpcs-i18n
+    </description>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/assets/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="thrivedesk"/>
+            </property>
+        </properties>
+    </rule>
+</ruleset>

@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\BusinessHoursService;
 use ThriveDesk\Services\PortalService;
 
 $conversations       = Conversation::get_conversations();
@@ -14,6 +15,13 @@ $ticket_page_id      = absint($settings['td_helpdesk_page_id'] ?? 0);
 $ticket_page_url     = $ticket_page_id ? get_page_link($ticket_page_id) : '';
 $has_knowledgebase   = ! empty($settings['td_knowledgebase_slug']);
 $should_open_modal   = $has_knowledgebase && $ticket_page_id;
+
+// The hours bar, when the admin has asked for one and ThriveDesk has hours to
+// give. payload() returns null for a workspace whose schedule is unusable, so
+// this is also the "is there anything worth drawing" answer.
+$business_hours = ! empty($settings['td_helpdesk_business_hours'])
+    ? BusinessHoursService::payload((string) ($settings['td_helpdesk_business_hours_profile'] ?? ''))
+    : null;
 
 // new-ticket button state when no ticket page is configured. Show it
 // as disabled with an explanation instead of a broken # link
@@ -49,6 +57,51 @@ $open_count = $counts['active'] + $counts['open'];
         <?php else: ?>
 
             <div class="td-page">
+
+                <?php if ($business_hours) : ?>
+                    <?php
+                    /*
+                     * A holiday is an announcement rather than a status - it changes
+                     * what someone should expect from the reply they are about to
+                     * wait for - so it gets the full width at the top of the page,
+                     * where the ordinary open/closed line does not.
+                     *
+                     * Filled by conversation.js and collapsed until it is, so a
+                     * browser that never runs the script shows nothing rather than an
+                     * empty strip.
+                     */
+                    ?>
+                    <div class="td-holiday">
+                        <?php
+                        /*
+                         * A tear-off calendar leaf, the same shape ThriveDesk uses
+                         * for a holiday in its own settings, so the two read as the
+                         * same object. Filled by conversation.js; aria-hidden because
+                         * the date is said in words on the line beside it.
+                         */
+                        ?>
+                        <span class="td-holiday__leaf" aria-hidden="true">
+                            <span class="td-holiday__month"></span>
+                            <span class="td-holiday__day"></span>
+                        </span>
+
+                        <div class="td-holiday__body">
+                            <div class="td-holiday__head">
+                                <span class="td-holiday__name"></span>
+                                <span class="td-holiday__chip"></span>
+                            </div>
+                            <div class="td-holiday__meta">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+                                    <rect x="3.25" y="5.25" width="17.5" height="15.5" rx="2.5" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M3.5 9.5h17M8 3.5v3.5M16 3.5v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="td-holiday__when"></span>
+                            </div>
+                        </div>
+
+                        <span class="td-holiday__note"></span>
+                    </div>
+                <?php endif; ?>
 
                 <!-- header: search + actions -->
                 <div class="td-portal-header">
@@ -96,7 +149,8 @@ $open_count = $counts['active'] + $counts['open'];
                     </div>
                 </div>
 
-                <!-- filter tabs -->
+                <!-- filter tabs, with whether anyone is on the desk beside them -->
+                <div class="td-tabs-row">
                 <div class="td-tabs" role="tablist" aria-label="<?php esc_attr_e('Filter by status', 'thrivedesk'); ?>">
                     <a href="<?php echo esc_url(remove_query_arg('cv_status', get_permalink())); ?>" class="is-active" role="tab" aria-selected="true" data-filter="all">
                         <?php esc_html_e('All', 'thrivedesk'); ?>
@@ -114,6 +168,46 @@ $open_count = $counts['active'] + $counts['open'];
                         <?php esc_html_e('Closed', 'thrivedesk'); ?>
                         <span class="td-tab-count"><?php echo (int) $counts['closed']; ?></span>
                     </a>
+                </div>
+
+                <?php if ($business_hours) : ?>
+                    <?php
+                    /*
+                     * Beside the filters rather than above them: it is a status, and
+                     * this is where someone's eye already is when they are deciding
+                     * whether to wait or to open a ticket.
+                     *
+                     * Everything on it is a countdown, so nothing useful can be
+                     * rendered server side - a line saying "closes in 2h 14m" would
+                     * start being wrong the moment it was sent.
+                     *
+                     * Deliberately not a live region: the text changes every second,
+                     * and announcing that once a second would make the page unusable.
+                     */
+                    ?>
+                    <div class="td-hours" data-td-hours="<?php echo esc_attr(wp_json_encode($business_hours)); ?>">
+                        <?php
+                        /*
+                         * Two glyphs, one shown at a time by the state class: a dot
+                         * that pulses while someone is on the desk, and a clock whose
+                         * hands turn while nobody is. Drawn rather than set as text
+                         * so the hands can actually move - the point of it is that
+                         * something is counting.
+                         */
+                        ?>
+                        <span class="td-hours__dot" aria-hidden="true"></span>
+                        <span class="td-hours__clock" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" width="13" height="13" fill="none">
+                                <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
+                                <line class="td-hours__hand td-hours__hand--hour" x1="8" y1="8" x2="8" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <line class="td-hours__hand td-hours__hand--minute" x1="8" y1="8" x2="8" y2="3.75" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="td-hours__text"></span>
+                        <?php // Filled only while the desk is shut; :empty keeps it out of the layout otherwise. ?>
+                        <span class="td-hours__note"></span>
+                    </div>
+                <?php endif; ?>
                 </div>
 
                 <!-- tickets list -->

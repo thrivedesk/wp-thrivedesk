@@ -22,6 +22,22 @@
 		.top-nav a {
 			@apply text-gray-500 hover:text-blue-500;
 		}
+		/* Tailwind's preflight sets `cursor: default` on buttons, which is
+		   correct for the HTML default and wrong for every button on this
+		   screen. Said once here rather than as a utility on each control, and
+		   the disabled case says the opposite. */
+		button,
+		[role="button"],
+		summary,
+		a[href],
+		label:has(input[type="checkbox"]) {
+			@apply cursor-pointer;
+		}
+		button:disabled,
+		[aria-disabled="true"],
+		label:has(input[type="checkbox"]:disabled) {
+			@apply cursor-not-allowed;
+		}
 		.td-card {
 			@apply border border-slate-300 rounded-md p-4 transition bg-white hover:shadow-lg;
 		}
@@ -34,8 +50,44 @@
 		.btn-primary {
 			@apply bg-blue-600 hover:bg-blue-700 text-white hover:text-white;
 		}
+		/* Colour forced, or the label reads link-blue and competes with the
+		   primary action beside it. WordPress styles admin links from an ID
+		   selector (#3858E9), which outranks any plain class here. */
 		.btn-secondary {
-			@apply bg-white hover:bg-blue-100;
+			@apply bg-white text-slate-900! hover:bg-blue-100 hover:text-slate-900!;
+		}
+		.btn-dark {
+			@apply bg-slate-900 hover:bg-slate-800 text-white hover:text-white;
+		}
+		/* Destructive, and sized against the line of text it sits beside rather
+		   than against the buttons elsewhere on the page. The x carries the
+		   colour at rest - a fully red button would be the loudest thing on a
+		   card someone opened to read their API key - and the whole control
+		   turns on hover, once it is clear what is about to be pressed. */
+		.btn-danger {
+			@apply inline-flex items-center gap-1.5 shrink-0 py-1.5 px-3 rounded border cursor-pointer transition;
+			@apply border-slate-300 bg-white text-[13px] font-semibold text-slate-700;
+			@apply hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700;
+		}
+		.btn-danger__icon {
+			@apply inline-flex text-rose-500 transition-colors;
+		}
+		.btn-danger:hover .btn-danger__icon {
+			@apply text-rose-700;
+		}
+		.btn-danger:focus-visible {
+			@apply outline-2 outline-offset-2 outline-rose-500;
+		}
+		.btn-danger[disabled] {
+			@apply opacity-50 cursor-not-allowed;
+		}
+		/* A link sitting inside a sentence, reading as part of it rather than as
+		   a control. Both properties need forcing: WordPress sets admin link
+		   colour and size from ID selectors that outrank utilities. */
+		.td-inline-link {
+			color: inherit !important;
+			font-size: inherit !important;
+			@apply underline;
 		}
 		.alert {
 			@apply p-4 border rounded bg-neutral-100 text-sm;
@@ -46,6 +98,514 @@
 		.alert-danger {
 			@apply bg-rose-50 border-rose-300 text-rose-600;
 		}
+		/* The setup screen's two columns. The reference column is a 40px rail
+		   until it is asked for; opening it takes the split to 60/40. Below md
+		   there is one column and the rail becomes an ordinary horizontal bar,
+		   because a vertical strip has nothing to be tall against. */
+		/* Full height without the scrollbar. The admin bar is fixed above this
+		   content, so 100vh overshoots by exactly its height and every visit got
+		   a pointless 32px of scroll. WordPress publishes that height, and moves
+		   it to 46px below 783px, so read it rather than hardcoding either.
+		   min-height, not height: content taller than the viewport must still
+		   scroll rather than be clipped. */
+		/* Multi-select dropdown, built over a native <select multiple>. The
+		   source select is only hidden once JavaScript has replaced it, so a
+		   failed script leaves a usable list box rather than nothing. */
+		/* Help text under a form control.
+		   Both margins are forced. WordPress sets p margins from an ID selector so
+		   the bottom one has to be beaten, and using `m-0!` to do it - which is
+		   what this replaces - also killed the top margin and any space-y the
+		   parent was applying, collapsing the text onto the field above it. */
+		/* The key on file, as a value rather than as a disabled input. WP admin
+		   styles <code> from an #id selector, which outranks a utility class,
+		   so the parts it sets are forced here. min-w-0 lets it shrink inside
+		   the grid column instead of pushing the Replace button off the card. */
+		.td-key {
+			@apply inline-block min-w-0 max-w-full truncate align-middle;
+			@apply bg-slate-50! px-2! py-1! rounded border border-slate-200;
+			@apply font-mono text-[13px]! text-slate-700 tracking-wide;
+		}
+		/* A card whose settings do not mean anything yet. The controls carry a
+		   real disabled attribute as well - dimming alone still leaves them
+		   reachable by keyboard, which is a worse lie than not dimming at
+		   all. */
+		.td-gated.is-locked .td-field {
+			@apply opacity-55;
+		}
+		.td-gated__hint {
+			@apply flex items-start gap-2 mt-0! mb-0! rounded-md border border-amber-300 bg-amber-50 p-3 text-[13px]! text-amber-900;
+		}
+		.td-field-help {
+			@apply mt-2! mb-0! text-[12px] text-gray-500;
+		}
+		/* A group of checkboxes has no single control to point at, so its
+		   heading is a span. Same treatment either way - the label is doing the
+		   same job for the reader. */
+		.td-field > label,
+		.td-field__label {
+			@apply block mb-1.5! text-sm font-semibold text-slate-700;
+		}
+		/* The whole row is the hit target, not the 13px box. WP admin sets
+		   checkbox margins from an ID selector, which outranks a utility, so
+		   the gap has to come from the flex container and the margin has to be
+		   forced off. */
+		.td-check {
+			@apply inline-flex items-center gap-2 text-sm text-slate-700 cursor-pointer;
+		}
+		.td-check input {
+			@apply m-0! shrink-0;
+		}
+		.td-check.is-disabled {
+			@apply opacity-60 cursor-not-allowed;
+		}
+		/* A note beside the settings rather than one of them: nothing in here
+		   is set, it is read and pasted somewhere else. Tinted so it reads as
+		   reference at a glance, and it sits inside a card, so it is flatter
+		   than one. */
+		.td-info {
+			@apply rounded-md border border-blue-200 bg-blue-50/60 p-4;
+		}
+		.td-info__title {
+			@apply flex items-center gap-2 text-sm font-semibold text-slate-800;
+		}
+		.td-info__icon {
+			@apply inline-flex shrink-0 text-blue-600;
+		}
+		/* A promotion, so it is allowed to be the loudest thing in the row -
+		   but only in its own colour, and only while there is something left
+		   to sell. */
+		.td-promo {
+			@apply relative overflow-hidden rounded-md border p-6;
+		}
+		/* #873EFF is the purple from WooCommerce's brand guidelines, and the
+		   same one inside the wordmark. */
+		.td-promo--woo {
+			border-color: color-mix(in srgb, #873EFF 30%, transparent);
+			/* Three stops rather than a fade to white: the purple stays present
+			   across the whole card instead of giving out a third of the way
+			   in, and the blue at the far end keeps the wordmark from sitting
+			   on a flat field. */
+			background-image: linear-gradient(
+				118deg,
+				color-mix(in srgb, #873EFF 10%, #fff) 0%,
+				color-mix(in srgb, #873EFF 4%, #fff) 45%,
+				color-mix(in srgb, #3858e9 5%, #fff) 100%
+			);
+		}
+		/*
+		 * A hairline of colour turning slowly around the card.
+		 *
+		 * A conic gradient, masked down to the border itself so only the 1px
+		 * ring is painted. The plain border underneath stays: where @property
+		 * is not supported the angle never animates and this renders as a
+		 * static multicolour edge, which is a fine thing to fall back to.
+		 *
+		 * Slow and half-transparent on purpose - it should catch the eye on the
+		 * way past, not ask to be watched.
+		 */
+		.td-promo--woo::before {
+			content: '';
+			@apply absolute inset-0 pointer-events-none;
+			border-radius: inherit;
+			/* 2px, because 1px of a moving gradient at this opacity reads as an
+			   artefact rather than as a border. */
+			padding: 2px;
+			background: conic-gradient(
+				from var(--td-ring-angle),
+				#873EFF, #3858e9, #22c55e, #f59e0b, #ec4899, #873EFF
+			);
+			-webkit-mask:
+				linear-gradient(#000 0 0) content-box,
+				linear-gradient(#000 0 0);
+			mask:
+				linear-gradient(#000 0 0) content-box,
+				linear-gradient(#000 0 0);
+			-webkit-mask-composite: xor;
+			mask-composite: exclude;
+			opacity: 0.85;
+			animation: td-ring-spin 9s linear infinite;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.td-promo--woo::before {
+				animation: none;
+			}
+		}
+		/* Bleeds off the right edge; the container clips it. Behind the words
+		   rather than beside them, so the copy keeps the full width on a narrow
+		   screen instead of being squeezed into a column. A wordmark, so its
+		   height follows its width rather than being squared off. */
+		.td-promo__art {
+			@apply absolute pointer-events-none select-none;
+			right: -2.5rem;
+			top: 50%;
+			width: 24rem;
+			height: auto;
+			transform: translateY(-50%);
+			opacity: 0.16;
+		}
+		/* Wide enough for a feature to fit on one line; the prose inside is
+		   capped separately, because a paragraph this wide is hard to read
+		   even when a list of four short lines is not. */
+		.td-promo__body {
+			@apply relative z-10 max-w-4xl;
+		}
+		.td-promo__eyebrow {
+			@apply block text-[11px] font-semibold uppercase tracking-wider;
+			color: #873EFF;
+		}
+		.td-promo__title {
+			@apply mt-1! mb-0! max-w-2xl text-lg font-bold text-slate-900;
+		}
+		.td-promo__lede {
+			@apply mt-2! mb-0! max-w-2xl text-gray-600;
+		}
+		/* No column gap: the claims are short enough that the space left at the
+		   end of each one already separates the columns, and a gap on top of
+		   that reads as a gutter down the middle of the card. */
+		.td-promo__features {
+			@apply mt-4! mb-0! p-0! list-none grid grid-cols-1 sm:grid-cols-2 gap-y-2;
+		}
+		/* One line each. These are short claims, and a claim that wraps reads
+		   as two half-claims. */
+		.td-promo__features li {
+			@apply flex items-center gap-2 text-[13px] text-slate-700;
+		}
+		.td-promo__tick {
+			@apply inline-flex shrink-0;
+			color: #873EFF;
+		}
+		.td-promo__cta {
+			@apply mt-5;
+		}
+		/* The mark would sit under the words at this width; the gradient alone
+		   carries the brand. */
+		@media (width < 48rem) {
+			.td-promo__art {
+				@apply hidden;
+			}
+		}
+		/* WooCommerce's own purple, kept light: this is a setting about
+		   WooCommerce sitting among settings that are not, and the logo alone
+		   is too small to say so at a glance. */
+		.td-woo {
+			@apply flex items-start gap-3 rounded-md border p-4;
+			border-color: color-mix(in srgb, #7f54b3 30%, transparent);
+			background-color: color-mix(in srgb, #7f54b3 6%, #fff);
+		}
+		.td-woo__logo {
+			@apply w-9 h-9 shrink-0 object-contain;
+		}
+		/* The other kind of note: not something to paste into your site, but
+		   something the account already is. Plain, so the two stacked in one
+		   column do not read as one long blue block - and white rather than
+		   tinted, or the slate chips inside it would have nothing to sit
+		   against. */
+		.td-info--plain {
+			@apply border-slate-200 bg-white;
+		}
+		.td-info--plain .td-info__icon {
+			@apply text-slate-400;
+		}
+		/* A tile, because there can be several side by side and they have to
+		   read as separate things rather than as rows of one list. */
+		.td-plugin {
+			@apply flex items-center gap-3 rounded-md border border-slate-200 bg-white p-3;
+		}
+		/* The letter is the floor, the icon sits on top of it. wordpress.org
+		   serves the icon, so nothing is bundled and nothing is fetched
+		   server-side - and a slug with no PNG there, or a site that cannot
+		   reach it, simply keeps the letter. */
+		.td-plugin__logo {
+			@apply relative flex items-center justify-center w-10 h-10 shrink-0 overflow-hidden rounded;
+			@apply bg-slate-200 text-slate-500 text-base font-semibold;
+		}
+		.td-plugin__logo::before {
+			content: attr(data-letter);
+		}
+		.td-plugin__icon {
+			@apply absolute inset-0 w-full h-full object-cover;
+		}
+		/* Said once, at the top, rather than repeated beside every control it
+		   applies to. */
+		.td-notice {
+			@apply flex items-start gap-3 rounded-md border p-4 text-sm;
+		}
+		.td-notice--warn {
+			@apply border-amber-300 bg-amber-50 text-amber-900;
+		}
+		.td-notice__icon {
+			@apply shrink-0 mt-0.5 text-amber-500;
+		}
+		.td-multiselect {
+			@apply relative;
+		}
+		.td-multiselect.is-enhanced .td-multiselect__source {
+			@apply hidden;
+		}
+		.td-multiselect__toggle {
+			@apply flex items-center justify-between gap-2 w-full text-left rounded border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-800 cursor-pointer transition;
+			@apply hover:border-slate-400;
+		}
+		.td-multiselect__toggle[aria-expanded="true"] {
+			@apply border-blue-500;
+		}
+		.td-multiselect__toggle:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+		.td-multiselect__caret {
+			@apply shrink-0 text-slate-400 transition;
+		}
+		.td-multiselect__toggle[aria-expanded="true"] .td-multiselect__caret {
+			@apply rotate-180;
+		}
+		.td-multiselect__panel {
+			@apply absolute z-100 mt-1 w-full rounded border border-slate-300 bg-white shadow-lg;
+		}
+		.td-multiselect__search {
+			@apply block w-full border-0 border-b border-slate-200! rounded-none px-3 py-2 text-sm;
+		}
+		.td-multiselect__list {
+			@apply m-0! p-0! list-none max-h-56 overflow-y-auto;
+		}
+		.td-multiselect__option {
+			@apply flex items-center gap-2 px-3 py-1.5 text-sm text-slate-700 cursor-pointer;
+			@apply hover:bg-slate-50;
+		}
+		.td-multiselect__path {
+			@apply ml-auto pl-3 shrink-0 max-w-[50%] truncate text-[11px] text-gray-400;
+		}
+		.td-multiselect__empty {
+			@apply px-3 py-3 text-sm text-gray-400;
+		}
+		.td-multiselect__footer {
+			@apply flex items-center justify-between gap-2 border-t border-slate-200 px-3 py-2;
+		}
+		.td-multiselect__clear {
+			@apply border-0 bg-transparent p-0 text-[12px] text-blue-600 cursor-pointer;
+			@apply hover:underline disabled:text-slate-300 disabled:cursor-default disabled:no-underline;
+		}
+		/* Outline action: present without competing with a primary button. */
+		.btn-ghost {
+			@apply inline-flex items-center gap-1.5 rounded border border-slate-300 bg-transparent px-4 py-2 text-sm font-medium transition no-underline;
+			@apply text-slate-700! hover:bg-slate-50 hover:border-slate-400 hover:text-slate-900!;
+		}
+		/* The ghost button's solid twin, same metrics so the two line up when a
+		   card offers both. Colour is forced because these are used on <a>:
+		   WordPress styles admin links from an ID selector that outranks any
+		   utility class, so an unforced label renders link-blue on black. */
+		.btn-solid {
+			@apply inline-flex items-center gap-1.5 rounded border px-4 py-2 text-sm font-semibold transition no-underline;
+			@apply border-slate-900 bg-slate-900 text-white! hover:border-slate-800 hover:bg-slate-800 hover:text-white!;
+		}
+		/* A modifier for either button, for where one sits in a row with a name
+		   rather than at the foot of a card. The icon comes from a shared
+		   partial at a fixed 14px, so it is scaled here rather than by giving
+		   the partial a size argument nothing else would use. */
+		.btn-sm {
+			@apply gap-1 px-2.5 py-1 text-[12px];
+		}
+		.btn-sm svg {
+			width: 12px;
+			height: 12px;
+		}
+		.btn-solid:focus-visible {
+			@apply outline-2 outline-offset-2 outline-slate-900;
+		}
+		.btn-ghost:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+
+		/* Video poster. The mockup inside it is drawn, not a remote thumbnail:
+		   the embed host's thumbnail URL is not something to guess at, and a
+		   broken image is worse than no photograph. */
+		.td-video {
+			@apply relative flex items-center justify-center w-full aspect-video overflow-hidden rounded-md border-0 cursor-pointer p-0;
+			background: linear-gradient(135deg, #1e3a8a 0%, #3858e9 60%, #6366f1 100%);
+		}
+		.td-video__mockup {
+			@apply absolute inset-0 flex items-center justify-center;
+			padding: 7% 11% 13%;
+		}
+		.td-video__mockup svg {
+			filter: drop-shadow(0 10px 24px rgb(15 23 42 / 0.35));
+		}
+		.td-video:hover .td-video__play {
+			@apply scale-110;
+		}
+		.td-video:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+		.td-video__play {
+			@apply relative z-10 flex items-center justify-center w-16 h-16 rounded-full bg-white text-blue-700 shadow-xl transition;
+			/* nudged right: an optical centre, since the glyph's mass sits left */
+			padding-left: 4px;
+		}
+		/* Stacked beside the other cards in the narrow column, it matches them
+		   rather than the row it came from: the same 96x80 block their images
+		   use, on the left, with the words to its right. */
+		.td-video.is-thumb {
+			@apply w-24 h-20 shrink-0 mt-1 aspect-auto rounded;
+		}
+		.td-video.is-thumb .td-video__play {
+			@apply w-7 h-7 shadow-md;
+			padding-left: 2px;
+		}
+		.td-video.is-thumb .td-video__play svg {
+			width: 13px;
+			height: 13px;
+		}
+		/* The drawn mockup is mud at this size, and reads as dirt on the
+		   gradient rather than as a screen. The play badge is the whole
+		   affordance here. */
+		.td-video.is-thumb .td-video__mockup {
+			@apply hidden;
+		}
+
+		/* A box for the frame. Nothing here touches the assistant itself - it
+		   renders inside the frame exactly as it does on the front end. */
+		.td-assistant-preview {
+			@apply relative w-full overflow-hidden rounded-md border border-slate-200;
+			height: 680px;
+			background-color: var(--color-slate-100);
+			/* A dot grid, so an empty preview reads as a surface waiting for
+			   something rather than as a blank panel that failed to load. */
+			background-image: radial-gradient(var(--color-slate-300) 1px, transparent 1px);
+			background-size: 16px 16px;
+			background-position: -8px -8px;
+		}
+		/* Absolute, so the frame below it fills the box rather than being pushed
+		   down by a heading. */
+		.td-assistant-preview iframe {
+			@apply absolute inset-0 block w-full h-full border-0;
+			background: transparent;
+		}
+		.td-assistant-preview__pill {
+			@apply absolute top-3 left-3 z-10 inline-block rounded-full border border-slate-200 bg-white px-3 py-1;
+			@apply text-[11px] font-semibold uppercase tracking-wider text-slate-400;
+			box-shadow: 0 1px 2px rgb(15 23 42 / 0.06);
+		}
+		.td-assistant-preview__empty {
+			@apply absolute inset-0 m-0! flex items-center justify-center px-6 text-center text-gray-400;
+		}
+		/* The bar spans the screen; its contents line up with the tabs.
+		   .td-tabs is max-width 1200px centred inside a p-10 wrapper, so the
+		   same content box is 1200px of content plus that 40px of padding -
+		   1280px, centred - which lands identically at every width, including
+		   the narrow ones where neither is capped at all. */
+		.td-toolbar {
+			@apply bg-white border-b border-slate-200;
+		}
+		.td-toolbar__inner {
+			@apply flex items-center flex-wrap gap-x-3 gap-y-2 mx-auto py-4 px-10;
+			max-width: 1280px;
+		}
+		/* Colours forced: WordPress styles admin links from an ID selector
+		   (#3858E9) that outranks any plain class here, and these are chrome
+		   rather than links to follow. */
+		.td-toolbar__link {
+			@apply inline-flex items-center rounded px-2.5 py-1.5 text-sm border-0 bg-transparent cursor-pointer transition no-underline;
+			@apply text-slate-600! hover:bg-slate-100 hover:text-slate-900!;
+		}
+		.td-toolbar__cta {
+			@apply inline-flex items-center gap-1.5 rounded px-3 py-1.5 text-sm font-medium border border-slate-300 bg-white transition no-underline;
+			@apply text-slate-700! hover:bg-slate-50 hover:text-slate-900!;
+		}
+		.td-toolbar__link:focus-visible,
+		.td-toolbar__cta:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500;
+		}
+		.td-fullscreen {
+			min-height: calc(100vh - var(--wp-admin--admin-bar--height, 0px));
+		}
+		.td-split {
+			@apply grid grid-cols-1 w-full;
+			max-width: 35rem;
+			transition: max-width .25s ease;
+		}
+		.td-split.is-open {
+			max-width: 54rem;
+		}
+		/* In a grid column rather than alone on a screen: the column is the
+		   width constraint, and a card capped at 35rem inside a wider one
+		   leaves a gap that reads as a layout fault. */
+		.td-split.is-inline,
+		.td-split.is-inline.is-open {
+			max-width: none;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.td-split {
+				transition: none;
+			}
+		}
+		.td-aside {
+			@apply bg-slate-50 border-t border-slate-200;
+		}
+		.td-aside-toggle {
+			@apply flex items-center justify-center gap-2 w-full p-3 border-0 bg-transparent cursor-pointer transition;
+			@apply text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:text-blue-600;
+		}
+		.td-aside-panel {
+			@apply hidden;
+		}
+		.td-aside-close {
+			@apply inline-flex items-center shrink-0 p-0 border-0 bg-transparent text-slate-400 cursor-pointer transition;
+			@apply hover:text-blue-600;
+		}
+		.td-split.is-open .td-aside-toggle {
+			@apply hidden;
+		}
+		/* flex-1 so the panel fills the rail it sits in: the aside stays a flex
+		   container when open, and without this the panel would size to its own
+		   content and leave the terms line short of the bottom. */
+		.td-split.is-open .td-aside-panel {
+			@apply flex flex-col gap-4 p-8 flex-1;
+		}
+		@media (width >= 48rem) {
+			.td-split {
+				grid-template-columns: 1fr 40px;
+			}
+			.td-split.is-open {
+				grid-template-columns: 3fr 2fr;
+			}
+			/* flex, so the rail stretches to the column without a percentage
+			   height. `height: 100%` here resolved against the stretched grid row
+			   while also being one of the things sizing that row, and the card
+			   ended up tracking the viewport instead of its own content. */
+			.td-aside {
+				@apply flex border-t-0 border-l;
+			}
+			.td-aside-toggle {
+				writing-mode: vertical-rl;
+				@apply w-10 p-0 whitespace-nowrap;
+			}
+		}
+		.td-ip-row {
+			@apply flex items-center gap-1.5;
+		}
+		/* WP admin styles <code> from an #id selector, which outranks a utility
+		   class, so the reset lives here rather than on the element. */
+		.td-ip-row code {
+			@apply bg-transparent! p-0! text-slate-700;
+		}
+		.td-copy {
+			@apply inline-flex items-center shrink-0 p-0 border-0 bg-transparent text-slate-400 cursor-pointer transition;
+			@apply hover:text-blue-600;
+		}
+		/* No hover chrome, but a keyboard user still needs to see where they are. */
+		.td-copy:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500 rounded-xs;
+		}
+		.td-copy .td-copy-done,
+		.td-copy.is-copied .td-copy-idle {
+			@apply hidden;
+		}
+		.td-copy.is-copied,
+		.td-copy.is-copied:hover {
+			@apply text-green-600;
+		}
+		.td-copy.is-copied .td-copy-done {
+			@apply inline-flex;
+		}
 		.td-steps {
 			@apply mb-2 flex space-x-1;
 			> span {
@@ -55,10 +615,202 @@
 				@apply w-6 bg-green-400;
 			}
 		}
-		#td-excluded-routes{
-			max-width: 100%;
+		/* What a tab shows before there is an account: one column, centred,
+		   because there is nothing to compare it against. */
+		.td-empty {
+			@apply flex flex-col items-center text-center py-14 px-6;
+		}
+		.td-empty__icon {
+			@apply flex items-center justify-center w-14 h-14 mb-4 rounded-full bg-slate-100 text-slate-400;
+		}
+		.td-empty__actions {
+			@apply flex flex-col items-center gap-3 mt-6 w-full max-w-md;
+		}
+		.td-empty__actions > div {
+			@apply w-full;
+		}
+		/* A button that reads as a link. Colour and size both need forcing:
+		   WordPress styles admin controls from ID selectors that outrank a
+		   utility class. */
+		.td-empty__link {
+			@apply p-0 border-0 bg-transparent underline cursor-pointer;
+			@apply text-[13px]! text-slate-500! hover:text-blue-600!;
+		}
+		.td-empty__link:focus-visible {
+			@apply outline-2 outline-offset-2 outline-blue-500 rounded-xs;
+		}
+		/* Arriving a line at a time, once, when the workspace card is filled in
+		   after connecting. `both` holds the from-state before the delay
+		   elapses, or every row would flash in and then animate. */
+		.td-reveal {
+			animation: td-reveal .45s cubic-bezier(.2, .7, .3, 1) both;
+		}
+		/* Three passes of one second - see TD_CELEBRATE_MS in admin.js, which
+		   waits for this to finish before reloading. Relative, so the glow is
+		   painted over the cards beside it rather than under them. */
+		.td-card.is-celebrating {
+			@apply relative z-10;
+			animation: td-celebrate 1s linear 3;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.td-reveal,
+			.td-card.is-celebrating {
+				animation: none;
+			}
 		}
 	}
+}
+
+/* A custom property has to be registered as an <angle> before it can be
+   animated at all - an unregistered one is a string, and strings do not
+   interpolate. Browsers without @property ignore this block and the ring
+   renders static, which is the intended fallback rather than a broken one. */
+@property --td-ring-angle {
+	syntax: '<angle>';
+	initial-value: 0deg;
+	inherits: false;
+}
+
+@keyframes td-ring-spin {
+	to {
+		--td-ring-angle: 360deg;
+	}
+}
+
+/* Top level, not nested: @keyframes is not a style rule, and nesting it inside
+   a selector does not scope it to one - it only risks the name not being
+   registered at all. */
+@keyframes td-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+		filter: blur(3px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+}
+
+/* The colours are the confetti's, in the same order, so the card and the burst
+   read as one event rather than two things that happened at once. */
+@keyframes td-celebrate {
+	0% {
+		box-shadow: 0 0 0 1px rgb(56 88 233 / 0.55), 0 0 22px 3px rgb(56 88 233 / 0.45);
+	}
+	20% {
+		box-shadow: 0 0 0 1px rgb(37 99 235 / 0.55), 0 0 26px 6px rgb(37 99 235 / 0.45);
+	}
+	40% {
+		box-shadow: 0 0 0 1px rgb(34 197 94 / 0.55), 0 0 26px 6px rgb(34 197 94 / 0.45);
+	}
+	60% {
+		box-shadow: 0 0 0 1px rgb(245 158 11 / 0.55), 0 0 26px 6px rgb(245 158 11 / 0.45);
+	}
+	80% {
+		box-shadow: 0 0 0 1px rgb(236 72 153 / 0.55), 0 0 26px 6px rgb(236 72 153 / 0.45);
+	}
+	100% {
+		box-shadow: 0 0 0 1px rgb(139 92 246 / 0.55), 0 0 22px 3px rgb(139 92 246 / 0.45);
+	}
+}
+
+/* Sized in plain CSS. A <dialog> carries UA width and max-width rules
+   that a utility class loses to, which is why this opened at a fraction
+   of the screen with the player letterboxed inside it. */
+.td-video-modal {
+width: min(94vw, 1280px);
+max-width: min(94vw, 1280px);
+max-height: 92vh;
+padding: 0;
+border: 0;
+border-radius: 10px;
+background: #000;
+overflow: hidden;
+box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
+}
+.td-video-modal::backdrop {
+background: rgb(0 0 0 / 0.75);
+}
+.td-video-modal__frame {
+display: block;
+width: 100%;
+aspect-ratio: 16 / 9;
+border: 0;
+}
+.td-video-modal__close {
+position: absolute;
+top: 10px;
+right: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+width: 36px;
+height: 36px;
+padding: 0;
+border: 0;
+border-radius: 999px;
+color: #fff;
+cursor: pointer;
+background: rgb(0 0 0 / 0.55);
+}
+.td-video-modal__close:hover {
+background: rgb(0 0 0 / 0.8);
+}
+
+/* SweetAlert2 renders into <body>, outside the .thrivedesk scope, so its
+   container is styled here rather than with the components above.
+   Its default z-index is 1060, which puts a top-end toast underneath both the
+   admin bar (99999) and the confetti canvas (100000). Padding clears the bar
+   so the toast is not sitting on top of it either. */
+.td-toast.swal2-container {
+	z-index: 100001;
+	padding-top: calc(var(--wp-admin--admin-bar--height, 0px) + 1rem);
+}
+
+/* The consequence list inside the disconnect dialog, in that same <body>
+   scope. An icon column instead of bullets, so the three things that stop and
+   the one thing that does not are told apart before the sentences are read;
+   the rule above the last row is what marks the turn from loss to
+   reassurance. Sentences are left-aligned - SweetAlert2 centers its body, and
+   centered prose in four unequal lines is the thing that made this hard to
+   read. */
+.td-consequences {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-align: left;
+}
+.td-consequence {
+	display: grid;
+	grid-template-columns: 18px 1fr;
+	gap: 0.625rem;
+	align-items: start;
+	margin: 0;
+	padding: 0.375rem 0;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: #334155;
+}
+.td-consequence svg {
+	/* The stroke sits high in a 24-box; this drops it onto the text baseline. */
+	width: 18px;
+	height: 18px;
+	margin-top: 0.15rem;
+}
+/* Matched to confirmButtonColor in admin.js: the marks and the button that
+   causes them are the same red. */
+.td-consequence.is-stops svg {
+	color: #e11d48;
+}
+.td-consequence.is-keeps {
+	margin-top: 0.375rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid #e2e8f0;
+}
+.td-consequence.is-keeps svg {
+	color: #16a34a;
 }
 
 /* Reset wp  */

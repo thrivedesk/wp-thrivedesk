@@ -1,0 +1,120 @@
+# The plugin bench: one WordPress, one database, and the two tool containers the
+# test suites run in. Nothing is installed on the host but Docker.
+#
+# Paths are relative to this file, which sits one level below the plugin it
+# mounts, so the mount source is `..` — this repository *is* the plugin.
+#
+# The project name is deliberately specific. Compose treats every container
+# carrying a project label as belonging to that project, so a generic name here
+# would adopt (and offer to remove) containers from anything else on the machine
+# using it.
+name: thrivedesk-plugin
+
+services:
+  mariadb:
+    # Same line CI runs (.github/workflows/phpunit.yml), so a failure you see
+    # here is a failure CI can see too.
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+    volumes:
+      - db:/var/lib/mysql
+    healthcheck:
+      # WordPress starting before the database is ready is the classic first-boot
+      # failure: the install runs, cannot connect, and leaves a half-made site.
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  wordpress:
+    build:
+      context: .
+      args:
+        WORDPRESS_IMAGE: ${TD_WP_IMAGE:-wordpress:php8.4-apache}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "${TD_BIND_IP:-127.0.0.1}:${TD_PORT:-8888}:80"
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DEBUG: 1
+      # `$$` escapes Compose's own interpolation; PHP sees a single `$`.
+      WORDPRESS_CONFIG_EXTRA: |
+        /* The site answers on two names: localhost from your browser, and the
+           service name from the Playwright container on this network. A fixed
+           WP_HOME would make WordPress redirect one of them to the other and
+           break it, so the address is the address the request arrived on. The
+           pattern is a whitelist rather than a sanitiser because this value ends
+           up in every URL WordPress prints; anything unrecognised (WP-CLI, where
+           there is no request at all) falls back to the published port. */
+        $$td_host = isset( $$_SERVER['HTTP_HOST'] ) ? (string) $$_SERVER['HTTP_HOST'] : '';
+        if ( ! preg_match( '/^[A-Za-z0-9.-]+(:[0-9]+)?$/', $$td_host ) ) {
+            $$td_host = 'localhost:${TD_PORT:-8888}';
+        }
+        define( 'WP_HOME', 'http://' . $$td_host );
+        define( 'WP_SITEURL', WP_HOME );
+
+        /* Errors go to the log, never to the screen. A white page therefore
+           means an uncaught throw, and wp-content/debug.log names the file and
+           line — `scripts/dev.sh logs` shows it. */
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_DEBUG_DISPLAY', false );
+        @ini_set( 'display_errors', 0 );
+
+        define( 'WP_ENVIRONMENT_TYPE', 'local' );
+        define( 'SCRIPT_DEBUG', false );
+    volumes:
+      # WordPress itself lives in a volume; only the plugin comes from disk, so
+      # an edit in this repository is live with no copy step and no sync.
+      - wp:/var/www/html
+      - ..:/var/www/html/wp-content/plugins/thrivedesk
+
+  # The two tool containers. `profiles` keeps them out of `up`: they exist to be
+  # run once and thrown away, and `docker compose run` starts what they depend on
+  # by itself.
+  node:
+    profiles: [tools]
+    image: ${TD_NODE_IMAGE:-node:22}
+    working_dir: /repo
+    volumes:
+      - ..:/repo
+    environment:
+      HOME: /tmp
+      npm_config_cache: /tmp/.npm
+
+  playwright:
+    profiles: [tools]
+    # Pinned to the @playwright/test version in package.json; scripts/dev.sh
+    # derives this from package.json so the two cannot drift. A mismatch is the
+    # classic "browser not found" failure — the image ships one browser build and
+    # the client asks for another by revision.
+    image: ${TD_PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.62.1-noble}
+    depends_on:
+      - wordpress
+    working_dir: /repo
+    volumes:
+      - ..:/repo
+    environment:
+      HOME: /tmp
+      npm_config_cache: /tmp/.npm
+      # The service name, not localhost: this container is on the bench network,
+      # and WP_HOME follows whatever host the request carries.
+      WP_BASE_URL: http://wordpress
+      WP_ADMIN_USER: ${TD_ADMIN_USER:-admin}
+      WP_ADMIN_PASSWORD: ${TD_ADMIN_PASS:-password}
+      WP_CUSTOMER_USER: ${TD_CUSTOMER_USER:-customer}
+      WP_CUSTOMER_PASSWORD: ${TD_CUSTOMER_PASS:-password}
+      WP_PORTAL_PATH: ${TD_PORTAL_PATH:-/thrivedesk-support-portal/}
+      CI: ${CI:-}
+
+volumes:
+  db:
+  wp:

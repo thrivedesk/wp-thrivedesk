@@ -25,7 +25,16 @@ temp
 ######################
 **.DS_Store*
 ehthumbs.db
-Icon?
+# NOT `Icon?`, which is what this was. macOS names its custom-folder-icon file
+# "Icon" plus a carriage return, and `?` was there to match it - but `?` matches
+# any fifth character, and git on a Mac is case-insensitive, so the pattern also
+# swallowed includes/views/icons/. The view in there was never committed: every
+# screen that rendered it worked locally and died in CI.
+#
+# The real name cannot be written here - git strips a trailing carriage return
+# from every .gitignore line - so this catches the plain name and lets the
+# exotic one show up in `git status`, which is the safer way round.
+Icon
 Thumbs.db
 ._*
 
@@ -71,9 +80,18 @@ assets/img/.DS_Store
 releases
 svn
 
+# Claude Code #
+##########
+# git worktrees live under here
+.claude/
+
 # Testing #
 ##########
 .phpunit.result.cache
 playwright-report/
 test-results/
 e2e/.auth/
+
+# Local development bench
+/docker/compose.override.yml
+/plugins/

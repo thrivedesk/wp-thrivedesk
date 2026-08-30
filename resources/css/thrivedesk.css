@@ -1446,6 +1446,26 @@
 		padding: 0.5rem;
 	}
 
+	/* where the CTA lands when a search came back with nothing */
+	.td-empty-state-cta:empty {
+		display: none;
+	}
+	/* the nudge beside the footer CTA, shown only when there are results */
+	.td-modal-footer-note {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		margin-right: auto;
+		font-size: 0.8125rem;
+		color: hsl(var(--muted-foreground));
+	}
+	.td-modal-footer-note[hidden] {
+		display: none;
+	}
+	.td-modal-footer-note svg {
+		width: 0.875rem;
+		height: 0.875rem;
+	}
 	/* footer mirrors the portal-actions row, right-aligned CTA */
 	.td-modal-footer {
 		padding: 0.875rem 1.5rem;
@@ -1553,6 +1573,226 @@
 		animation: td-spin 0.7s linear infinite;
 	}
 
+	/* business hours
+	   Two things, deliberately apart. The open/closed line is a status and sits
+	   beside the filters, where the eye already is when someone is deciding
+	   whether to wait or to write. A holiday is an announcement and takes the
+	   full width at the top. Both are collapsed until conversation.js has worked
+	   out what they say - everything on them is a countdown, so there is no
+	   correct state to render server side. */
+	.td-tabs-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
+		/* Wraps rather than pushing the status into the tabs, which scroll
+		   horizontally on mobile and would carry it out of sight. */
+		flex-wrap: wrap;
+	}
+
+	.td-hours {
+		display: none;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-left: auto;
+		font-size: 0.8125rem;
+		line-height: 1.25rem;
+		color: hsl(var(--muted-foreground));
+	}
+	.td-hours.is-ready { display: flex; }
+	/* Once it has wrapped onto its own row there is no longer a right-hand side
+	   to sit on, and a right-aligned line under left-aligned tabs reads as a
+	   mistake rather than as alignment. */
+	@container (max-width: 639px) {
+		.td-hours { margin-left: 0; }
+		/* The separator only separates while the two halves share a line. Once
+		   the note has wrapped below, a leading middot reads as a stray bullet. */
+		.td-hours__note::before { display: none; }
+	}
+
+	/* One glyph at a time. The markup carries both so the state class can swap
+	   them without the script knowing anything about icons. */
+	.td-hours__dot,
+	.td-hours__clock { display: none; flex: none; }
+	.td-hours.is-open .td-hours__dot { display: inline-block; }
+	.td-hours.is-closed .td-hours__clock { display: inline-flex; }
+
+	.td-hours__dot {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 999px;
+		background: currentColor;
+	}
+
+	/* Darker than the --success token, which is tuned for a solid fill and does
+	   not clear 4.5:1 as text. */
+	/* Both states are pills on the filter row, so they read as one control that
+	   changes colour rather than as two different things. Compact, not banners -
+	   the full-width bar at the top of the page belongs to the holiday. */
+	.td-hours.is-open,
+	.td-hours.is-closed {
+		padding: 0.25rem 0.625rem;
+		border-radius: 999px;
+		border: 1px solid transparent;
+	}
+
+	/* A heavier tint than the amber below it at the same alpha would give:
+	   --success sits at 45% lightness against --warning's 50%, and is far less
+	   saturated, so an identical alpha reads as barely-there grey-green. Matched
+	   by eye against the offline pill rather than by number. */
+	.td-hours.is-open {
+		border-color: hsl(var(--success) / 0.45);
+		background: hsl(var(--success) / 0.16);
+		color: hsl(142 71% 24%);
+	}
+	/* A slow pulse, so "online" reads as now rather than as a label someone left
+	   switched on. */
+	.td-hours.is-open .td-hours__dot {
+		animation: td-hours-pulse 2.4s ease-in-out infinite;
+	}
+
+	.td-hours.is-closed {
+		border-color: hsl(var(--warning) / 0.4);
+		background: hsl(var(--warning) / 0.15);
+		color: hsl(38 92% 26%);
+	}
+
+	/* The hands turn, the minute hand twelve times faster than the hour hand as
+	   on a real clock. That ratio is what makes it read as a clock running rather
+	   than as a spinner. */
+	.td-hours__clock svg { display: block; }
+	.td-hours__hand { transform-origin: 8px 8px; }
+	.td-hours__hand--minute { animation: td-clock-hand 3s linear infinite; }
+	.td-hours__hand--hour { animation: td-clock-hand 36s linear infinite; }
+
+	/* Both animations are decoration - the countdown is in the text, and the
+	   text keeps updating either way. */
+	@media (prefers-reduced-motion: reduce) {
+		.td-hours.is-open .td-hours__dot,
+		.td-hours__hand { animation: none; }
+	}
+
+	/* Recessive but tonally part of the line: it inherits the state colour and
+	   steps back rather than introducing a third one. Out of the layout entirely
+	   while the desk is open, when there is nothing to reassure anyone about. */
+	/* Tabular figures because the countdown reruns every second, and
+	   proportional digits are different widths, so without them the pill
+	   twitches sideways on every tick. */
+	.td-hours__text { font-variant-numeric: tabular-nums; }
+
+	/* Only the running figure is weighted. The sentence around it does not
+	   change and does not need to compete with the part that does. */
+	.td-hours__timer { font-weight: 500; }
+
+	.td-hours__note { opacity: 0.8; }
+	.td-hours__note:empty { display: none; }
+	.td-hours__note::before {
+		content: '·';
+		margin-right: 0.5rem;
+		opacity: 0.6;
+	}
+
+	/* A holiday, drawn the way ThriveDesk draws one in its own settings: a
+	   tear-off calendar leaf, the name with a status chip beside it, and the
+	   dates underneath. Same object in both places, so nobody has to work out
+	   that they are looking at the same thing. */
+	.td-holiday {
+		display: none;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		margin-bottom: 1rem;
+		padding: 0.875rem 1rem;
+		border: 1px solid hsl(var(--warning) / 0.35);
+		border-radius: var(--radius);
+		/* A wash rather than a fill: this has to read as an alert at a glance
+		   without turning the calendar leaf and the chip inside it into things
+		   fighting a colour. */
+		background: hsl(var(--warning) / 0.1);
+		color: hsl(var(--card-foreground));
+	}
+	.td-holiday.is-ready { display: flex; }
+
+	.td-holiday__leaf {
+		flex: none;
+		display: flex;
+		flex-direction: column;
+		min-width: 3.25rem;
+		text-align: center;
+		overflow: hidden;
+		border: 1px solid hsl(var(--warning) / 0.3);
+		border-radius: calc(var(--radius) - 2px);
+		/* Left white so it lifts off the wash instead of dissolving into it. */
+		background: hsl(var(--background));
+	}
+	.td-holiday__month {
+		padding: 0.1875rem 0.5rem;
+		background: hsl(var(--muted));
+		color: hsl(var(--muted-foreground));
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		line-height: 1.4;
+	}
+	.td-holiday__day {
+		padding: 0.125rem 0.5rem 0.25rem;
+		font-size: 1.375rem;
+		font-weight: 700;
+		line-height: 1.25;
+		color: hsl(var(--foreground));
+	}
+
+	.td-holiday__body { min-width: 0; }
+
+	.td-holiday__head {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.td-holiday__name {
+		font-size: 0.9375rem;
+		font-weight: 600;
+		color: hsl(var(--foreground));
+	}
+	.td-holiday__chip {
+		padding: 0.0625rem 0.5rem;
+		border-radius: 999px;
+		background: hsl(var(--warning) / 0.22);
+		color: hsl(38 92% 26%);
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	.td-holiday__meta {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.375rem;
+		margin-top: 0.25rem;
+		font-size: 0.8125rem;
+		color: hsl(var(--muted-foreground));
+	}
+	.td-holiday__meta svg { flex: none; }
+
+	/* Pushed to the far end of a card that is otherwise mostly air on the right,
+	   which is where the reassurance belongs: read last, after the what and the
+	   when. */
+	.td-holiday__note {
+		margin-left: auto;
+		font-size: 0.8125rem;
+		color: hsl(var(--muted-foreground));
+	}
+	.td-holiday__note:empty { display: none; }
+
+	@container (max-width: 639px) {
+		.td-holiday__note { margin-left: 0; }
+	}
+
 	/* portal-unavailable notice */
 	.td-portal-notice {
 		padding: 2.5rem 1.5rem;
@@ -1587,6 +1827,18 @@
 
 /* keyframe has to live at the top level , PostCSS/cssnano can't
    pick it up from inside the #thrivedesk block */
+/* Top level, like td-spin above it: @keyframes nested inside a style rule
+   is not valid CSS, and the minifier does not merely drop the at-rule - it
+   takes the token block at the top of this file with it. */
+@keyframes td-clock-hand {
+	to { transform: rotate(360deg); }
+}
+
+@keyframes td-hours-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.35; }
+}
+
 @keyframes td-spin {
 	to { transform: rotate(360deg); }
 }

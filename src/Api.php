@@ -4,7 +4,6 @@ namespace ThriveDesk;
 
 use ThriveDesk\Api\ApiResponse;
 use WC_Product_Query;
-use WC_Order_Item_Product;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -43,6 +42,14 @@ final class Api {
 		'extra',
 		'query',
 	];
+
+	/**
+	 * Upper bound on a line item's quantity for the inbound add-item and
+	 * quantity-update actions. An agent is correcting an order from the panel,
+	 * not placing a wholesale one, so a four-figure quantity is a mistake or an
+	 * abuse of a leaked signature rather than a real request.
+	 */
+	private const MAX_ITEM_QUANTITY = 999;
 
 	/**
 	 * The single instance of this class
@@ -120,53 +127,70 @@ final class Api {
 	 * @since 0.0.1
 	 */
 	public function api_listener(): void {
+		// The listener flag only decides whether the request is ours at all; it
+		// is part of the signed contract too, so a forged one still has to get
+		// past verify_token() below.
 		$listener = sanitize_key( $_GET['listener'] ?? '' );
-		if ( ! isset( $listener ) || 'thrivedesk' !== $listener ) {
+		if ( 'thrivedesk' !== $listener ) {
 			return;
 		}
 
-		try {
-			$action = strtolower( sanitize_key( $_GET['action'] ?? '' ) );
-			$plugin = strtolower( sanitize_key( $_GET['plugin'] ?? 'edd' ) );
+		// Response state is per-request and this is the request entry point.
+		$this->apiResponse = new ApiResponse();
 
-			$this->order_id     = sanitize_key( $_GET['order_id'] ?? '' );
-			$this->order_status = sanitize_key( $_GET['order_status'] ?? '' );
-			$this->quantity     = sanitize_key( $_GET['quantity'] ?? '' );
-			$this->item         = sanitize_key( $_GET['item'] ?? '' );
-			$this->item_id      = sanitize_key( $_GET['item_id'] ?? '' );
-			$this->coupon       = sanitize_key( $_GET['coupon'] ?? '' );
-			$this->amount       = sanitize_key( $_GET['amount'] ?? '' );
-			$this->reason       = sanitize_key( $_GET['reason'] ?? '' );
+		try {
+			// One array for the whole request: verify_token() hashes exactly
+			// this and every handler reads exactly this, so the payload that
+			// was signed is always the payload that runs.
+			$contract = $this->contract();
+
+			$action = strtolower( sanitize_key( $this->contract_string( 'action' ) ) );
+			$plugin = strtolower( sanitize_key( $this->contract_string( 'plugin' ) ) ) ?: 'edd';
+
+			$this->order_id     = sanitize_key( $this->contract_string( 'order_id' ) );
+			$this->order_status = sanitize_key( $this->contract_string( 'order_status' ) );
+			$this->quantity     = sanitize_key( $this->contract_string( 'quantity' ) );
+			$this->item         = sanitize_key( $this->contract_string( 'item' ) );
+			$this->item_id      = sanitize_key( $this->contract_string( 'item_id' ) );
+			$this->coupon       = sanitize_key( $this->contract_string( 'coupon' ) );
+			$this->amount       = sanitize_key( $this->contract_string( 'amount' ) );
+			$this->reason       = sanitize_key( $this->contract_string( 'reason' ) );
 			// subscription_status is a status key with a dash (e.g. 'cancelled',
 			// 'pending-cancel') and order_types a comma list ('parent,renewal'),
-			// so sanitize_text_field instead of sanitize_key for both.
-			$this->subscription_status = sanitize_text_field( wp_unslash( $_GET['subscription_status'] ?? '' ) );
-			$this->order_types         = sanitize_text_field( wp_unslash( $_GET['order_types'] ?? '' ) );
+			// so sanitize_text_field instead of sanitize_key for both. contract()
+			// already unslashed the values, so no wp_unslash() here.
+			$this->subscription_status = sanitize_text_field( $this->contract_string( 'subscription_status' ) );
+			$this->order_types         = sanitize_text_field( $this->contract_string( 'order_types' ) );
 
-			// Plugin invalid response
-			if ( ! in_array( $plugin, array_keys( $this->_available_plugins() ) ) ) {
-				$this->apiResponse->error( 401, 'Plugin is invalid or not available now.' );
+			// Everything before verify_token() answers the same way. The
+			// activation check used to run first, so four unauthenticated
+			// requests (?plugin=woocommerce, edd, fluentcrm, autonami) told an
+			// anonymous caller exactly which commerce and CRM stack the store
+			// runs. An unknown plugin key is folded into the same answer.
+			$plugin_name       = $this->_available_plugins()[ $plugin ] ?? null;
+			$plugin_class_name = null !== $plugin_name ? 'ThriveDesk\\Plugins\\' . $plugin_name : null;
+
+			if ( null === $plugin_class_name || ! class_exists( $plugin_class_name ) ) {
+				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
-			$plugin_name       = $this->_available_plugins()[ $plugin ] ?? 'EDD';
-			$plugin_class_name = 'ThriveDesk\\Plugins\\' . $plugin_name;
-
-			if ( ! class_exists( $plugin_class_name ) ) {
-				$this->apiResponse->error( 500, "Class not found for the '{$plugin_name}' plugin" );
-			}
-
+			// Constructing the singleton has to happen first — verify_token()
+			// needs get_plugin_data('api_token') — but every integration's
+			// constructor is a no-op, so this introspects nothing.
 			$this->plugin = $plugin_class_name::instance();
 
+			if ( ! $this->verify_token( $contract ) ) {
+				$this->apiResponse->error( 401, 'Request unauthorized' );
+			}
+
+			// Past this point the caller holds the integration's shared secret,
+			// so a specific diagnosis is no longer a disclosure.
 			if ( ! method_exists( $this->plugin, 'is_plugin_active' ) ) {
-				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in class '{$plugin_class_name}'" );
+				$this->apiResponse->error( 500, "Method 'is_plugin_active' not exist in class '{$plugin_class_name}'" );
 			}
 
 			if ( ! $this->plugin->is_plugin_active() ) {
 				$this->apiResponse->error( 500, "The plugin '{$plugin_name}' isn't installed or active." );
-			}
-
-			if ( ! $this->verify_token() ) {
-				$this->apiResponse->error( 401, 'Request unauthorized' );
 			}
 
 			// Only connect/disconnect may run before the integration is
@@ -187,7 +211,8 @@ final class Api {
 			} elseif ( isset( $action ) && 'handle_autonami' === $action ) {
 				$this->autonami_handler();
 			} elseif ( isset( $action ) && 'get_wppostsync_data' === $action ) {
-				$remote_query_string = strtolower( $_GET['query'] ?? '' );
+				// The one contract param that used to reach a handler unsanitized.
+				$remote_query_string = strtolower( sanitize_text_field( $this->contract_string( 'query' ) ) );
 				$this->wp_postsync_data_handler( $remote_query_string );
 			} elseif ( isset( $action ) && 'get_woocommerce_product_list' === $action ) {
 				$this->get_woocommerce_product_list();
@@ -210,7 +235,19 @@ final class Api {
 			} else {
 				$this->plugin_data_action_handler();
 			}
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
+			// \Throwable, not \Exception: dereferencing a missing order or
+			// handing a scalar to a method that declares `array` raises an
+			// \Error, which `catch (\Exception)` let escape as a white screen
+			// with no JSON body at all.
+			//
+			// wp_send_json() ends the request via wp_die(), which the WordPress
+			// test suite turns into a throwable. That is a finished response,
+			// not a failure — let it through rather than answering twice.
+			if ( $this->apiResponse->has_responded() ) {
+				throw $e;
+			}
+
 			$this->apiResponse->error( 500, 'Can\'t not prepare data' );
 		}
 
@@ -221,11 +258,11 @@ final class Api {
 	 * handler autonami action
 	 */
 	public function autonami_handler() {
-		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
-		$this->plugin->customer_email = sanitize_email( $_GET['email'] ?? '' );
+		$syncType                     = strtolower( sanitize_key( $this->contract_string( 'sync_type' ) ) );
+		$this->plugin->customer_email = sanitize_email( $this->contract_string( 'email' ) );
 
 		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_autonami( $syncType, $_REQUEST['extra'] ?? [] );
+			$this->plugin->sync_conversation_with_autonami( $syncType, $this->contract_extra() );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 				$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
@@ -247,10 +284,10 @@ final class Api {
 	 * @since 0.9.0
 	 */
 	public function get_woocommerce_order_status() {
-		$email    = sanitize_email( $_REQUEST['email'] ?? '' );
+		$email    = sanitize_email( $this->contract_string( 'email' ) );
 		// Use sanitize_text_field instead of sanitize_key because custom order numbers
 		// can contain characters like slashes, dashes, or spaces (e.g., "2025/001").
-		$order_id = sanitize_text_field( wp_unslash( $_REQUEST['order_id'] ?? '' ) );
+		$order_id = sanitize_text_field( $this->contract_string( 'order_id' ) );
 
 		if ( ! $order_id ) {
 			$this->apiResponse->error( 400, 'order_id is required.' );
@@ -321,30 +358,46 @@ final class Api {
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $item
+	 * Add a product to an existing order as a new line item.
+	 *
+	 * @param string $order_id
+	 * @param string $item     Product (or variation) id to add.
 	 *
 	 * @return void
 	 */
 	public function wc_order_add_new_item( string $order_id, $item ) {
-		$this->guard_order_ownership( $order_id );
+		// The quantity is a property of the request, so it is checked before the
+		// store is touched. sanitize_key() keeps '-', so quantity=-10 used to
+		// arrive intact and produce a negative line total that drove the order
+		// total *down* — a discount anyone holding a signature could mint.
+		$quantity = (int) $this->quantity;
 
-		$product = wc_get_product_object( 'line_item', $item );
+		if ( $quantity <= 0 ) {
+			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
+		}
 
-		$item = new WC_Order_Item_Product();
-		$item->set_name( $product->name );
-		$item->set_quantity( $this->quantity );
-		$item->set_product_id( $product->id );
-		$item->set_subtotal( $product->price ?? 0 );
-		$item->set_total( $product->price * $this->quantity ?? 0 );
-		
-		// if(is_plugin_active('wt-woocommerce-sequential-order-numbers-pro/wt-advanced-order-number-pro.php')) 
-		// {
-		// 	if customer use this type of plugin, wc doesn't have the same order number as the plugin.
-		// }
+		if ( $quantity > self::MAX_ITEM_QUANTITY ) {
+			$this->apiResponse->error( 400, 'Quantity must not exceed ' . self::MAX_ITEM_QUANTITY . '.' );
+		}
 
-		$order = wc_get_order( $order_id );
-		$order->add_item( $item );
+		$order = $this->guard_order_ownership( $order_id );
+
+		// wc_get_product_object( 'line_item', … ) has no 'line_item' product
+		// type, so it silently handed back a blank WC_Product_Simple for any id
+		// — including ids that are not products at all. wc_get_product() returns
+		// false instead, which is checkable.
+		$product = wc_get_product( absint( $item ) );
+
+		if ( ! $product || ! $product->is_purchasable() ) {
+			$this->apiResponse->error( 400, 'Product is not available for purchase.' );
+		}
+
+		// WC_Order::add_product() is the API for this. The hand-built
+		// WC_Order_Item_Product passed the *unit* price to set_subtotal() while
+		// set_total() got the line price, so every added line looked
+		// pre-discounted by (quantity - 1) units; it also skipped the tax class
+		// and the variation's attributes.
+		$order->add_product( $product, $quantity );
 		$order->calculate_totals();
 
 		$this->apiResponse->success( 200, [], 'Success' );
@@ -357,9 +410,7 @@ final class Api {
 	 * @return void
 	 */
 	public function wc_order_remove_item( string $order_id, string $product_id ) {
-		$this->guard_order_ownership( $order_id );
-
-		$order = wc_get_order( $order_id );
+		$order = $this->guard_order_ownership( $order_id );
 
 		foreach ( $order->get_items() as $item_id => $item ) {
 			if ( $item["product_id"] == $product_id ) {
@@ -389,7 +440,16 @@ final class Api {
 		// The panel sends the customer-facing order number, which on stores
 		// running sequential order numbering differs from the post ID. The
 		// plugin resolves it and reports a miss instead of a blind success.
-		if ( ! $this->plugin->update_order_status( $order_id, $orderStatus ) ) {
+		// It also refuses a status the store does not offer: WooCommerce
+		// silently coerces an unknown status to 'pending' and allows 'trash',
+		// so forwarding an arbitrary string was a way to reset or bin an order.
+		try {
+			$updated = $this->plugin->update_order_status( $order_id, $orderStatus );
+		} catch ( \InvalidArgumentException $e ) {
+			$this->apiResponse->error( 400, $e->getMessage() );
+		}
+
+		if ( ! $updated ) {
 			$this->apiResponse->error( 404, 'Order not found.' );
 		}
 
@@ -437,27 +497,55 @@ final class Api {
 	}
 
 	/**
-	 * @param $order_id
-	 * @param $product_id
-	 * @param $quantity
+	 * Change the quantity of one line item on an order, keeping the line's
+	 * money in step with it.
+	 *
+	 * @param string $order_id
+	 * @param string $product_id
+	 * @param string $quantity
 	 *
 	 * @return void
 	 */
 	public function woocommerce_order_quantity_update( string $order_id, string $product_id, string $quantity ) {
-		$this->guard_order_ownership( $order_id );
+		// Validate the request's own scalars before resolving the order: the
+		// guard answers 404 for a missing order, and a bad quantity has to stay
+		// reported as a bad quantity. Nothing here observes the store.
+		$quantity = (int) $quantity;
 
-		if ( (int) $quantity <= 0 ) {
+		if ( $quantity <= 0 ) {
 			$this->apiResponse->error( 400, 'Quantity must be greater than zero.' );
 		}
 
-		$order = wc_get_order( $order_id );
-		foreach ( $order->get_items() as $item_id => $item ) {
-
-			if ( $item["product_id"] == (string) $product_id ) {
-				wc_update_order_item_meta( $item_id, '_qty', $quantity );
-				$order->calculate_totals();
-			}
+		if ( $quantity > self::MAX_ITEM_QUANTITY ) {
+			$this->apiResponse->error( 400, 'Quantity must not exceed ' . self::MAX_ITEM_QUANTITY . '.' );
 		}
+
+		$order = $this->guard_order_ownership( $order_id );
+
+		foreach ( $order->get_items() as $item ) {
+			if ( (string) $item->get_product_id() !== (string) $product_id ) {
+				continue;
+			}
+
+			// Write through the item API, not wc_update_order_item_meta( '_qty' ).
+			// That wrote the quantity straight to meta and left _line_subtotal /
+			// _line_total untouched, so calculate_totals() re-summed the stale
+			// line money: an order bumped to 1000 units still charged for one.
+			//
+			// Scale from the line's own unit price so the customer keeps the
+			// price they originally paid rather than today's catalogue price.
+			$old_quantity = max( 1, (int) $item->get_quantity() );
+			$unit_subtotal = (float) $item->get_subtotal() / $old_quantity;
+			$unit_total    = (float) $item->get_total() / $old_quantity;
+
+			$item->set_quantity( $quantity );
+			$item->set_subtotal( $unit_subtotal * $quantity );
+			$item->set_total( $unit_total * $quantity );
+			$item->save();
+		}
+
+		$order->calculate_totals();
+
 		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
@@ -468,19 +556,22 @@ final class Api {
 	 * @return void
 	 */
 	public function woocommerce_order_apply_coupon( string $order_id, string $coupon ) {
-		$this->guard_order_ownership( $order_id );
-
-		$order = wc_get_order( $order_id );
-
-		if ( $coupon ) {
-			$res = $order->apply_coupon( $coupon );
-			if ( isset( $res->errors ) ) {
-				$this->apiResponse->error( 404, "Coupon does not exist!." );
-			} else {
-				$this->apiResponse->success( 200, [], 'Success' );
-			}
+		// An empty coupon used to fall off the end of the method: no branch was
+		// taken, no response was sent, and the request ended at wp_die() with an
+		// empty 200 body the panel could not tell from a success.
+		if ( '' === trim( $coupon ) ) {
+			$this->apiResponse->error( 400, 'coupon is required.' );
 		}
 
+		$order = $this->guard_order_ownership( $order_id );
+
+		$res = $order->apply_coupon( $coupon );
+
+		if ( isset( $res->errors ) ) {
+			$this->apiResponse->error( 404, "Coupon does not exist!." );
+		}
+
+		$this->apiResponse->success( 200, [], 'Success' );
 	}
 
 	/**
@@ -490,11 +581,11 @@ final class Api {
 	 * @since 0.7.0
 	 */
 	public function fluentcrm_handler(): void {
-		$syncType                     = strtolower( sanitize_key( $_REQUEST['sync_type'] ?? '' ) );
-		$this->plugin->customer_email = sanitize_email( $_REQUEST['email'] ?? '' );
+		$syncType                     = strtolower( sanitize_key( $this->contract_string( 'sync_type' ) ) );
+		$this->plugin->customer_email = sanitize_email( $this->contract_string( 'email' ) );
 
 		if ( $syncType ) {
-			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $_REQUEST['extra'] ?? [] );
+			$this->plugin->sync_conversation_with_fluentcrm( $syncType, $this->contract_extra() );
 		} else {
 			if ( ! method_exists( $this->plugin, 'prepare_fluentcrm_data' ) ) {
 				$this->apiResponse->error( 500, "Method 'prepare_fluentcrm_data' not exist in plugin" );
@@ -554,8 +645,14 @@ final class Api {
 	 */
 	public function plugin_data_action_handler() {
 
-		$email          = sanitize_email( $_REQUEST['email'] ?? '' );
-		$enableShipping = isset($_REQUEST['shipping_param']) == 1 ? true : false;
+		$email = sanitize_email( $this->contract_string( 'email' ) );
+
+		// isset() == 1 is true for *any* value the key holds, so a signed
+		// shipping_param=false still switched shipping lookups on. Read the
+		// value. wp_validate_boolean() takes 'false' and '0' as false, which is
+		// what the SaaS sends, and verify_token() has already coerced a literal
+		// "true"/"false" for hashing.
+		$enableShipping = wp_validate_boolean( $this->contract()['shipping_param'] ?? false );
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
 			$this->apiResponse->error( 500, "Method 'prepare_data' not exist in plugin" );
@@ -577,37 +674,111 @@ final class Api {
 	 * Reject an inbound WooCommerce mutation whose signed customer email does
 	 * not match the target order's billing email. The SaaS signs `email` on
 	 * every mutator request, so this is a second factor on top of the HMAC.
+	 *
+	 * Returns the resolved order so the caller never has to look it up again.
+	 * The guard used to let "order not found" fall through for the mutator to
+	 * report, but four of the six then called wc_get_order() and dereferenced
+	 * `false` — an \Error, which the dispatcher's `catch (\Exception)` could not
+	 * catch. Resolving here answers the 404 once, in one place.
+	 *
+	 * @param string $order_id Customer-facing order number or post ID.
+	 *
+	 * @return \WC_Order
 	 */
-	private function guard_order_ownership( string $order_id ): void {
-		if ( ! method_exists( $this->plugin, 'order_belongs_to_customer' ) ) {
+	private function guard_order_ownership( string $order_id ) {
+		if ( ! method_exists( $this->plugin, 'order_belongs_to_customer' )
+			|| ! method_exists( $this->plugin, 'get_order_by_number_or_id' ) ) {
 			// Can't verify ownership without the WooCommerce resolver: fail closed.
 			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
 		}
 
-		$email = sanitize_email( $_REQUEST['email'] ?? '' );
+		$email = sanitize_email( $this->contract_string( 'email' ) );
 		$owns  = $this->plugin->order_belongs_to_customer( $order_id, $email );
 
-		// null = order not found; let the mutator emit its own 404 rather than a
-		// misleading ownership error. A definite false is a real mismatch.
+		// null = order not found, which is a 404 below rather than a misleading
+		// ownership error. A definite false is a real mismatch.
 		if ( false === $owns ) {
 			$this->apiResponse->error( 403, 'Order does not belong to this customer.' );
 		}
+
+		$order = $this->plugin->get_order_by_number_or_id( $order_id );
+
+		if ( ! $order ) {
+			$this->apiResponse->error( 404, 'Order not found.' );
+		}
+
+		return $order;
+	}
+
+	/**
+	 * The signed inbound contract: exactly the params the SaaS signs, read from
+	 * $_REQUEST (WordPress builds it as $_GET + $_POST in wp_magic_quotes(), so
+	 * this works whether the panel sends the payload on the query string or in
+	 * the body) and unslashed back to the raw values the SaaS hashed.
+	 *
+	 * Hash only these, never the whole $_REQUEST: a third-party plugin on the
+	 * store can add its own query var to every request (this hit a customer whose
+	 * WOOF plugin injected woof_parse_query), and folding that into the HMAC
+	 * breaks the signature the SaaS computed over the contract alone.
+	 *
+	 * Every handler reads through here and verify_token() hashes this same array,
+	 * so what was signed is always what runs. The dispatcher used to read $_GET
+	 * while the HMAC covered $_REQUEST, which let a POSTed `action=connect` sign a
+	 * query-string `action=disconnect`. This is a pure function of $_REQUEST, so
+	 * the array the signature was checked against and the array the handlers read
+	 * are the same array however often it is derived.
+	 *
+	 * @return array
+	 */
+	private function contract(): array {
+		return wp_unslash( array_intersect_key( $_REQUEST, array_flip( self::SIGNED_PARAMS ) ) );
+	}
+
+	/**
+	 * One contract param as a raw string. Anything the SaaS never sends as a
+	 * scalar (an array smuggled in as `order_id[]=…`) collapses to '' instead of
+	 * fataling the sanitizers, which all expect a string.
+	 *
+	 * @param string $key Contract param name.
+	 *
+	 * @return string
+	 */
+	private function contract_string( string $key ): string {
+		$value = $this->contract()[ $key ] ?? '';
+
+		return is_scalar( $value ) ? (string) $value : '';
+	}
+
+	/**
+	 * The `extra` conversation-sync payload, guaranteed to be an array.
+	 *
+	 * Both sync_conversation_with_*() methods declare `array $extra`, so a
+	 * signed scalar (`extra=1`) raised a TypeError — an \Error, which the
+	 * dispatcher could not catch. Answer 400 instead. The values inside are
+	 * still untrusted; ConversationSyncData::fromExtra() allowlists them.
+	 *
+	 * @return array
+	 */
+	private function contract_extra(): array {
+		$extra = $this->contract()['extra'] ?? [];
+
+		if ( ! is_array( $extra ) ) {
+			$this->apiResponse->error( 400, 'extra must be an object.' );
+		}
+
+		return $extra;
 	}
 
 	/**
 	 * Verify api request token
 	 *
+	 * @param array $contract The signed contract params, as built by contract().
+	 *
 	 * @return boolean
 	 * @since 0.0.4
 	 */
-	private function verify_token(): bool {
-		// Hash only the contract params, never the raw $_REQUEST: a third-party
-		// plugin on the store can add its own query var to every request (this hit
-		// a customer whose WOOF plugin injected woof_parse_query), and folding that
-		// into the HMAC breaks the signature the SaaS computed over the contract
-		// alone. The superglobals are left untouched, so the dispatcher below still
-		// reads the real values.
-		$payload = array_intersect_key( $_REQUEST, array_flip( self::SIGNED_PARAMS ) );
+	private function verify_token( array $contract ): bool {
+		$payload = $contract;
 
 		if ( $payload ) {
 			foreach ( $payload as $key => $value ) {
@@ -635,14 +806,22 @@ final class Api {
 			return false;
 		}
 
-		$signature = $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '';
+		$signature = (string) ( sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_TD_SIGNATURE'] ?? '' ) ) );
 		if (empty($signature)) {
 			return false;
 		}
 
-		$sanitized_payload = array_map(function($item) {
-			return is_string($item) ? sanitize_text_field($item) : $item;
-		}, $payload);
-		return hash_equals( $signature, hash_hmac( 'SHA1', wp_json_encode( $sanitized_payload ), $api_token ) );
+		// Hash the raw values. The SaaS signs what it sends, so running the
+		// payload through sanitize_text_field() first hashed a value the sender
+		// never signed and 401'd legitimate requests; worse, the handlers below
+		// sanitize with sanitize_key()/sanitize_email() instead, so the value
+		// that was hashed and the value that ran could differ ('%20123' hashes
+		// as '123' but executes as '20123'). Sanitizing happens at the point of
+		// use, after the signature has been checked.
+		$expected = hash_hmac( 'SHA1', wp_json_encode( $payload ), $api_token );
+
+		// Computed digest first: hash_equals()'s timing guarantee is on the
+		// length of the first argument, which must be the known-good value.
+		return hash_equals( $expected, $signature );
 	}
 }

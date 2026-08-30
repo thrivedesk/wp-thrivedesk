@@ -1,5 +1,6 @@
 import { useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 
 export const ThriveDeskConversationData = () => {
 	const [contactID, setContactID] = useState('');
@@ -27,11 +28,11 @@ export const ThriveDeskConversationData = () => {
 				<div className='bwf-table-table'>
 					<table>
 						<thead>
-							<th className='bwf-table-header'>ID</th>
-							<th className='bwf-table-header'>Title</th>
-							<th className='bwf-table-header'>Status</th>
-							<th className='bwf-table-header'>Submitted at</th>
-							<th className='bwf-table-header'>Action</th>
+							<th className='bwf-table-header'>{__('ID', 'thrivedesk')}</th>
+							<th className='bwf-table-header'>{__('Title', 'thrivedesk')}</th>
+							<th className='bwf-table-header'>{__('Status', 'thrivedesk')}</th>
+							<th className='bwf-table-header'>{__('Submitted at', 'thrivedesk')}</th>
+							<th className='bwf-table-header'>{__('Action', 'thrivedesk')}</th>
 						</thead>
 						<tbody>
 							{conversations.length > 0 ? (
@@ -57,7 +58,7 @@ export const ThriveDeskConversationData = () => {
 													}
 													href={conversation.action}
 													target='_blank'>
-													View Conversation
+													{__('View Conversation', 'thrivedesk')}
 												</a>
 											</td>
 										</tr>
@@ -68,7 +69,7 @@ export const ThriveDeskConversationData = () => {
 									<td
 										className='bwf-table-empty-item'
 										colSpan='5'>
-										No conversations found
+										{__('No conversations found', 'thrivedesk')}
 									</td>
 								</tr>
 							)}

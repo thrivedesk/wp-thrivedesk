@@ -5,24 +5,57 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 use ThriveDesk\Assistants\Assistant;
 use ThriveDesk\Inboxes\Inbox;
 use ThriveDesk\KnowledgeBase\KnowledgeBase;
+use ThriveDesk\Services\BusinessHoursService;
 use ThriveDesk\Services\PortalService;
 use ThriveDesk\Plugins\WPPostSync;
+use ThriveDesk\Plugins\WooCommerce;
 
 $td_helpdesk_selected_option = get_td_helpdesk_settings();
 $td_selected_post_types      = (array) ($td_helpdesk_selected_option['td_helpdesk_post_types'] ?? []);
 $td_selected_post_sync       = (array) ($td_helpdesk_selected_option['td_helpdesk_post_sync'] ?? []);
 
 
-$td_assistants               = Assistant::assistants();
-$td_inboxes                  = Inbox::inboxes();
-$td_knowledgebase            = KnowledgeBase::knowledgebase();
-$td_api_key                  = isset($_GET['token']) ? sanitize_text_field($_GET['token']) : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
+/*
+ * Live Chat and Portal are both windows onto a ThriveDesk account; without one
+ * they render as a screen of empty selects. See partials/connect-empty.
+ *
+ * The flag is read before the four lookups below rather than after, because
+ * every one of them is an HTTP request to ThriveDesk and none of them can
+ * succeed without a working key. Fetching anyway meant an install that had not
+ * connected yet - or whose key had just been rejected - paid for a round of
+ * failing requests on every admin page load, and the failures are not cached.
+ */
+$td_connected                = thrivedesk_is_connected();
+
+// Everything on the search card describes what happens on the way to a ticket
+// form, so none of it means anything until there is one. See the
+// #td-search-card gate in admin.js, which keeps this in step as the select
+// changes without a save.
+$td_has_ticket_page          = !empty($td_helpdesk_selected_option['td_helpdesk_page_id']);
+
+$td_assistants               = $td_connected ? Assistant::assistants() : [];
+$td_inboxes                  = $td_connected ? Inbox::inboxes() : [];
+$td_knowledgebase            = $td_connected ? KnowledgeBase::knowledgebase() : [];
+// A ?token= only counts when it came back from an authorization this site
+// started; see \ThriveDesk\Admin::connect_return_token(). Otherwise the key on
+// file is the key.
+$td_connect_token            = \ThriveDesk\Admin::connect_return_token();
+$td_api_key                  = '' !== $td_connect_token ? $td_connect_token : ($td_helpdesk_selected_option['td_helpdesk_api_key'] ?? '');
 $td_user_account_pages       = get_option('td_user_account_pages');
-$has_portal_access           = (new PortalService())->has_portal_access();
+$has_portal_access           = $td_connected && (new PortalService())->has_portal_access();
+
+// Business hours are set in ThriveDesk and only mirrored here. The option is
+// offered disabled rather than hidden when the workspace has none, because an
+// admin who cannot see it cannot tell there is anything to go and switch on.
+$td_business_hours_profiles  = $td_connected ? BusinessHoursService::profiles() : [];
+$td_business_hours_ready     = [] !== $td_business_hours_profiles;
+$td_business_hours_profile   = (string) ($td_helpdesk_selected_option['td_helpdesk_business_hours_profile'] ?? '');
 $wppostsync                  = WPPostSync::instance();
 
-$show_api_key_alert  = empty($td_api_key) ? '' : 'hidden';
-$show_portal         = empty($has_portal_access) ? 'hidden' : '';
+// What the admin is shown in place of the key. Enough to recognise which key
+// is on file, not enough to use it.
+$td_api_key_preview  = '' === $td_api_key ? '' : substr($td_api_key, 0, 4) . str_repeat('*', 20);
+
 
 $td_selected_user_account_pages = (array) ($td_helpdesk_selected_option['td_user_account_pages'] ?? []);
 $td_helpdesk_selected_option['td_knowledgebase_url'] = THRIVEDESK_KB_API_ENDPOINT;
@@ -38,7 +71,14 @@ $wp_post_sync_types = array_filter(get_post_types(array(
 $knowledge_base_wp_post_types = array_filter(get_post_types(['public' => true]), function ($type) {
     return $type !== 'attachment';
 });
-$woo_plugin_installed = defined('WC_VERSION');
+/*
+ * Connected, not merely installed. The Support tab is only worth offering once
+ * WooCommerce is talking to ThriveDesk: the tab shows a customer their tickets,
+ * and until the integration is connected there is nothing behind it to show.
+ * An active-but-unconnected store would get a switch that turns on a blank tab.
+ */
+$td_woo               = WooCommerce::instance();
+$woo_plugin_connected = $td_woo && $td_woo->is_plugin_active() && $td_woo->get_plugin_data('connected');
 $td_user_account_pages = array(
     'woocommerce' => __('Add to WooCommerce', 'thrivedesk')
 );
@@ -61,293 +101,631 @@ $current_user = wp_get_current_user();
 
 <form class="space-y-6" id="td_helpdesk_form" action="#" method="POST">
     <?php wp_nonce_field('thrivedesk-nonce', 'td_nonce'); ?>
-    <!-- inbox selection -->
-    <div class="space-y-1" style="display:none;">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Select your inbox', 'thrivedesk'); ?></div>
-            <p><?php esc_html_e('Choose which inbox tickets to show in your portal. This helps filter conversations based on your preferred inbox.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card space-y-2">
-            <?php if (!empty($td_inboxes)) : 
-                //dd($td_inboxes, $td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? 'X');
-                ?>
-                <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Inbox', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
-                        <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
-                        <?php foreach ($td_inboxes as $inbox) : ?>
-                            <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
-                                <?php echo esc_html($inbox['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            <?php else : ?>
-                <p class="text-lg flex flex-col items-center">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
-                            <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12C22 15.7712 22 17.6569 20.8284 18.8284C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8284C2 17.6569 2 15.7712 2 12Z" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="M6 8L8.1589 9.79908C9.99553 11.3296 10.9139 12.0949 12 12.0949C13.0861 12.0949 14.0045 11.3296 15.8411 9.79908L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg></span>
-                    <span><?php
-                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
-                        printf(esc_html__('No inboxes found. Please %1$screate a new inbox%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/inboxes') . '" target="_blank">', '</a>'); ?></span>
-                </p>
-            <?php endif; ?>
-        </div>
+    <?php
+    /*
+     * Panels, not sections. The React app adopts each of these into a tab on
+     * mount, which is why they carry ids and start hidden.
+     *
+     * They stay inside the form so a save still submits from one place, and
+     * they can leave it without consequence when adopted: the submit handler
+     * reads every field by id rather than serialising the form, so DOM
+     * containment is not what makes saving work.
+     */
+    ?>
+    <?php // Overview leads: what this site is connected to, and the key that connects it. ?>
+    <div id="td-panel-overview" hidden>
+        <?php thrivedesk_view( 'partials/overview', [
+            'td_api_key_preview' => $td_api_key_preview,
+            'td_connect_token'   => $td_connect_token,
+        ] ); ?>
     </div>
 
-    <!-- assistant  -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
-            <p><?php
-                /* translators: %1$s: opening link tag, %2$s: closing link tag */
-                printf(esc_html__('Add live chat assistant to your website. To create your assistant click %1$shere%2$s. And you can choose the routes where the assistant should not be visible.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></p>
+
+    <div id="td-panel-livechat" hidden>
+    <?php if ( ! $td_connected ) : ?>
+        <?php thrivedesk_view( 'partials/connect-empty', [
+            'td_empty_title' => __( 'Live Chat needs a ThriveDesk account', 'thrivedesk' ),
+            'td_empty_text'  => __( 'The chat widget is configured from the assistants in your workspace, so there is nothing to choose from until this site is connected.', 'thrivedesk' ),
+        ] ); ?>
+    <?php else : ?>
+    <?php // The settings are a handful of controls; the preview is the thing worth the room. ?>
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-6 items-start">
+    <div class="td-card space-y-6">
+
+        <div class="flex items-start gap-4 flex-wrap">
+            <div class="flex-1 min-w-[16rem]">
+                <div class="text-base font-bold"><?php esc_html_e('Live Chat Assistant', 'thrivedesk'); ?></div>
+                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('Show a chat widget on your site so visitors can start a conversation without leaving the page.', 'thrivedesk'); ?></p>
+            </div>
+            <a class="td-toolbar__cta shrink-0" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/chat/assistants'); ?>" target="_blank">
+                <span><?php esc_html_e('Manage assistants', 'thrivedesk'); ?></span>
+                <?php thrivedesk_view( 'icons/external' ); ?>
+            </a>
         </div>
-        <div class="td-card space-y-2">
-            <?php if (!empty($td_assistants)) : ?>
-                <div class="space-y-2">
-                    <label class="font-medium text-black text-sm"><?php esc_html_e('Select Assistant', 'thrivedesk'); ?></label>
-                    <select class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" id="td-assistants" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
+
+        <?php if (!empty($td_assistants)) : ?>
+            <div class="space-y-5 pt-5 border-t border-slate-200">
+
+                <div class="td-field">
+                    <label for="td-assistants"><?php esc_html_e('Assistant', 'thrivedesk'); ?></label>
+                    <select id="td-assistants" class="w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5" <?php echo empty($td_api_key) ? 'disabled' : ''; ?>>
                         <option value=""><?php esc_html_e('Select an assistant', 'thrivedesk'); ?></option>
                         <?php foreach ($td_assistants as $assistant) : ?>
-                            <option value="<?php echo esc_attr($assistant['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_assistant_id'] == $assistant['id']) ? 'selected' : ''; ?>>
+                            <option value="<?php echo esc_attr($assistant['id']); ?>" <?php echo (($td_helpdesk_selected_option['td_helpdesk_assistant_id'] ?? '') == $assistant['id']) ? 'selected' : ''; ?>>
                                 <?php echo esc_html($assistant['name']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <p class="td-field-help"><?php esc_html_e('Which assistant this site loads.', 'thrivedesk'); ?></p>
                 </div>
 
-                <div class="space-y-2">
-                        <label class="font-medium text-black text-sm"><?php esc_html_e('Exclude Pages', 'thrivedesk'); ?></label>
-                        <select name="td_excluded_routes[]" id="td-excluded-routes" class="mt-1 bg-gray-50 border border-gray-300 rounded px-2 py-1 w-full max-w-full" multiple>
+                <div class="td-field">
+                    <label for="td-excluded-routes"><?php esc_html_e('Hide on these pages', 'thrivedesk'); ?></label>
+                    <?php
+                    /*
+                     * Still a multiple <select>, and still the source of truth:
+                     * the save handler reads $('#td-excluded-routes').val() and
+                     * relies on getting an array back. admin.js builds a
+                     * dropdown over it and writes selections straight onto these
+                     * options, so the contract never changes - and if that script
+                     * fails to run, what is left is a working list box rather
+                     * than a control with no UI.
+                     */
+                    ?>
+                    <div
+                        class="td-multiselect"
+                        data-td-multiselect
+                        data-td-empty="<?php esc_attr_e( 'Shown on every page', 'thrivedesk' ); ?>"
+                        data-td-many="<?php
+                            /* translators: %d: how many pages the widget is hidden on. */
+                            esc_attr_e( '%d pages hidden', 'thrivedesk' );
+                        ?>"
+                    >
+                        <select name="td_excluded_routes[]" id="td-excluded-routes" size="6" multiple class="td-multiselect__source w-full max-w-full bg-white border border-slate-300! rounded px-2 py-1.5">
                             <?php
                             $selected_routes = (array)( $td_helpdesk_selected_option['td_assistant_route_list'] ?? []);
-                            foreach ($routes as $route) : ?>
-                                <option class="hover:text-blue-700" value="<?php echo esc_attr($route); ?>" <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
-                                    <?php echo esc_html($route); ?>
+
+                            /*
+                             * The value stays the permalink: Assistant::should_render()
+                             * compares it against the current URL, so changing it would
+                             * stop every saved exclusion matching. Only the label changes.
+                             *
+                             * The path rides along in a data attribute because two pages
+                             * can share a title, and "Support" twice with nothing to tell
+                             * them apart is worse than the URLs were.
+                             */
+                            foreach ($routes as $route_id => $route) :
+                                $route_title = get_the_title($route_id);
+                                $route_path  = wp_parse_url($route, PHP_URL_PATH);
+                                ?>
+                                <option
+                                    value="<?php echo esc_attr($route); ?>"
+                                    data-td-path="<?php echo esc_attr($route_path ? $route_path : $route); ?>"
+                                    <?php echo in_array($route, $selected_routes) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html('' !== $route_title ? $route_title : $route); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
+                    <p class="td-field-help">
+                        <?php esc_html_e('The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way. Leave empty to show it everywhere.', 'thrivedesk'); ?>
+                    </p>
+                </div>
 
-                    <!-- Guidance for selecting multiple options -->
-                    <small class="text-gray-600 block mt-1">
-                        <?php echo wp_kses_post(__('Hold down the <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) key to select multiple routes.', 'thrivedesk')); ?>
-                    </small>
-                
-            <?php else : ?>
-                <p class="text-lg flex flex-col items-center">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" color="#000" fill="none">
-                            <path opacity=".4" d="M2 10h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M2 17h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path opacity=".4" d="M2 3h17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M19.6 18.6 22 21m-1.2-6.6a5.4 5.4 0 1 0-10.8 0 5.4 5.4 0 0 0 10.8 0Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg></span>
-                    <span><?php
-                        /* translators: %1$s: opening link tag, %2$s: closing link tag */
-                        printf(esc_html__('No Assistant found. Please %1$screate a new Assistant%2$s and return at a later time.', 'thrivedesk'), '<a href="' . esc_url(THRIVEDESK_APP_URL . '/chat/assistants') . '" target="_blank">', '</a>'); ?></span>
-                </p>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php else : ?>
+            <?php // An empty state with the way out of it, rather than a sentence explaining that nothing is here. ?>
+            <div class="flex flex-col items-center text-center gap-3 py-10 border-t border-slate-200">
+                <span class="text-slate-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" fill="none" aria-hidden="true">
+                        <path d="M12 21c4.97 0 9-3.582 9-8s-4.03-8-9-8-9 3.582-9 8c0 1.6.53 3.09 1.44 4.34L3.5 21l4.03-1.2A10.2 10.2 0 0 0 12 21Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M8.5 12h.01M12 12h.01M15.5 12h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <div class="text-base font-semibold text-slate-700"><?php esc_html_e('No assistant yet', 'thrivedesk'); ?></div>
+                <p class="m-0! text-gray-500 max-w-sm"><?php esc_html_e('Create one in ThriveDesk, then come back here to choose which assistant this site loads.', 'thrivedesk'); ?></p>
+                <a class="btn btn-primary text-white! mt-1" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/chat/assistants'); ?>" target="_blank">
+                    <?php esc_html_e('Create an assistant', 'thrivedesk'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+
     </div>
 
-    <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-        <!-- WP Post Sync  -->
-        <div class="space-y-1">
-            <div class="td-card-heading">
-                <div class="text-base font-bold"><?php esc_html_e('WP Post Sync', 'thrivedesk'); ?></div>
-                <p><?php esc_html_e('Sync your WordPress posts with ThriveDesk for faster support', 'thrivedesk'); ?></p>
+        <?php
+        /*
+         * The preview runs in an iframe, not on this page. The admin screen has
+         * already called Assistant("init") with ThriveDesk's own support widget
+         * - that is what the toolbar Support link opens - and the bootloader
+         * keeps one queue per window, so a second init here would fight it. An
+         * iframe gets its own window, which is also what makes the widget sit
+         * inside the box rather than floating over the whole screen.
+         */
+        ?>
+        <?php // Not a card: the preview is a surface, and a white box with a shadow
+              // around it was one frame too many. ?>
+        <div>
+
+            <div
+                class="td-assistant-preview"
+                data-td-assistant-preview
+                data-bootloader="<?php echo esc_url( THRIVEDESK_ASSISTANT_URL . '/bootloader.js' ); ?>"
+                data-name="<?php echo esc_attr( $current_user->display_name ); ?>"
+                data-email="<?php echo esc_attr( $current_user->user_email ); ?>"
+            >
+                <span class="td-assistant-preview__pill"><?php esc_html_e( 'Preview', 'thrivedesk' ); ?></span>
+                <p class="td-assistant-preview__empty"><?php esc_html_e( 'Choose an assistant to preview it.', 'thrivedesk' ); ?></p>
             </div>
-            <div class="td-card">
-                <div class="flex space-x-4" id="td_post_sync">
-                    <div class="flex-1">
-                        <div class="space-y-2">
-                            <div class="flex items-center space-x-2">
-                                <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
-                                    <?php foreach ($wp_post_sync_types as $post_sync) : ?>
-                                        <div>
-                                            <input class="td_helpdesk_post_sync" type="checkbox" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($post_sync); ?>" <?php echo in_array($post_sync, $td_selected_post_sync) ? 'checked' : ''; ?>>
-                                            <label for="<?php echo esc_attr($post_sync); ?>"> <?php echo esc_html(ucfirst($post_sync)); ?> </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else : ?>
-                                    <div class="w-full text-center text-base tab-link">
-                                        <?php esc_html_e('You need to install WordPress Post Sync app to get this feature', 'thrivedesk'); ?>
-                                        <?php $nonce = wp_create_nonce('thrivedesk-plugin-action'); ?>
-                                        <a data-target="tab-integrations" href="#integrations" class="inline-block py-1 px-3 btn bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white">
-                                            <?php esc_html_e('Connect Now', 'thrivedesk'); ?>
-                                        </a>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    </div>
+
+    <div id="td-panel-portal" hidden>
+    <?php if ( ! $td_connected ) : ?>
+        <?php thrivedesk_view( 'partials/connect-empty', [
+            'td_empty_title' => __( 'Portal needs a ThriveDesk account', 'thrivedesk' ),
+            'td_empty_text'  => __( 'Portal serves your inboxes and knowledge base on your own site, so it has nothing to serve until this site is connected.', 'thrivedesk' ),
+        ] ); ?>
+    <?php else : ?>
+    <?php // The inbox select is hidden but must stay in the DOM: the save handler reads it by id. ?>
+    <div style="display:none;">
+        <select id="td-inboxes" data-selected="<?php echo esc_attr($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? ''); ?>">
+            <option value=""><?php esc_html_e('All inboxes', 'thrivedesk'); ?></option>
+            <?php foreach ($td_inboxes as $inbox) : ?>
+                <option value="<?php echo esc_attr($inbox['id']); ?>" <?php echo ($td_helpdesk_selected_option['td_helpdesk_inbox_id'] ?? '') == $inbox['id'] ? 'selected' : ''; ?>>
+                    <?php echo esc_html($inbox['name']); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <div class="space-y-6">
+
+        <?php if (!$has_portal_access) : ?>
+            <?php // The one thing worth saying before any of the settings: none of them do anything on this plan. ?>
+            <div class="td-notice td-notice--warn" id="portal_feature_alert">
+                <span class="td-notice__icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M12 8.5v4.5M12 16.5h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10.24 4.03 3.1 16.4C2.4 17.6 3.27 19.1 4.66 19.1h14.28c1.39 0 2.26-1.5 1.56-2.7L13.36 4.03c-.7-1.2-2.43-1.2-3.12 0Z" stroke="currentColor" stroke-width="1.5"/></svg>
+                </span>
+                <div>
+                    <?php esc_html_e('Portal is part of the Plus plan and above. The settings below are saved, but nothing is served until the plan covers it.', 'thrivedesk'); ?>
+                    <a class="td-inline-link" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php esc_html_e('Compare plans', 'thrivedesk'); ?></a>
                 </div>
             </div>
+        <?php endif; ?>
+
+        <?php // Where the portal lives, and how to put it there. ?>
+        <div class="td-card space-y-6" id="td_portal">
+
+            <div class="flex items-start gap-4 flex-wrap">
+                <div class="flex-1 min-w-[16rem]">
+                    <div class="text-base font-bold"><?php esc_html_e('Portal', 'thrivedesk'); ?></div>
+                    <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('A help center on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain.', 'thrivedesk'); ?></p>
+                </div>
+                <?php if ($has_portal_access) : ?>
+                    <button type="button" id="thrivedesk_clear_cache_btn" class="btn-ghost shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="M3.5 7.5h17M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M6 7.5l.8 11a2.5 2.5 0 0 0 2.5 2.3h5.4a2.5 2.5 0 0 0 2.5-2.3l.8-11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        <span><?php esc_html_e('Clear portal cache', 'thrivedesk'); ?></span>
+                    </button>
+                <?php endif; ?>
+            </div>
+
+            <?php // The form on the left, and what to paste where beside it. ?>
+            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-6 items-start pt-5 border-t border-slate-200">
+
+                <div class="space-y-5">
+
+                    <div class="td-field">
+                        <label for="td_helpdesk_page_id"><?php esc_html_e('Ticket creation form', 'thrivedesk'); ?></label>
+                        <select id="td_helpdesk_page_id" class="w-full bg-white border border-slate-300! rounded px-2 py-1.5">
+                            <option value=""><?php esc_html_e('Select the page with your ticket form', 'thrivedesk'); ?></option>
+                            <?php foreach (get_pages() as $page) : ?>
+                                <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($page->post_title); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="td-field-help">
+                            <?php esc_html_e('You can use your existing form plugin, or any free one, to build the ticket page. All you have to do is set a ThriveDesk inbox address as the form\'s submission email.', 'thrivedesk'); ?>
+                            <a class="td-inline-link" href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank"><?php esc_html_e('How to build one', 'thrivedesk'); ?></a>
+                        </p>
+                    </div>
+
+                <?php $td_form_plugins = thrivedesk_detected_form_plugins(); ?>
+                <?php if ($td_form_plugins) : ?>
+                    <?php
+                    /*
+                     * The step above says "use your existing form plugin". Most sites
+                     * have one, so rather than leave that as an instruction, what is
+                     * here is named - with the button that opens its builder wherever
+                     * we know where that lives.
+                     *
+                     * All of them, not the best one: a site with three form plugins
+                     * has three because someone chose each of them, and picking a
+                     * winner would hide the one they actually build with.
+                     */
+                    ?>
+                    <?php // Leads the grid rather than following it: it is the instruction the tiles carry out, and the field above has already said what the form is for. ?>
+                    <p class="td-field-help"><?php esc_html_e('Build it with one of these, then select its page above.', 'thrivedesk'); ?></p>
+
+                    <?php // Two abreast once there is more than one; a lone tile in a two column grid is a tile and a hole. ?>
+                    <div class="grid grid-cols-1 <?php echo count($td_form_plugins) > 1 ? 'sm:grid-cols-2' : ''; ?> gap-3 mt-3">
+                        <?php foreach ($td_form_plugins as $td_form_plugin) : ?>
+                            <div class="td-plugin">
+                                <?php
+                                // The letter shows through when none of the candidate
+                                // icons load - a plugin whose icon wordpress.org does
+                                // not have, or a site that cannot reach it at all. See
+                                // the img error handler in admin.js, which walks
+                                // data-td-icons.
+                                ?>
+                                <span class="td-plugin__logo" data-letter="<?php echo esc_attr(mb_strtoupper(mb_substr($td_form_plugin['name'], 0, 1))); ?>">
+                                    <img
+                                        class="td-plugin__icon"
+                                        src="<?php echo esc_url($td_form_plugin['icons'][0]); ?>"
+                                        data-td-icons="<?php echo esc_attr(wp_json_encode(array_slice($td_form_plugin['icons'], 1))); ?>"
+                                        alt=""
+                                        width="40"
+                                        height="40"
+                                    >
+                                </span>
+            
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-sm font-semibold text-slate-800 truncate" title="<?php echo esc_attr($td_form_plugin['name']); ?>"><?php echo esc_html($td_form_plugin['name']); ?></div>
+                                    <div class="text-[12px] <?php echo $td_form_plugin['active'] ? 'text-green-600' : 'text-gray-500'; ?>">
+                                        <?php echo $td_form_plugin['active']
+                                            ? esc_html__('Active', 'thrivedesk')
+                                            : esc_html__('Not active', 'thrivedesk'); ?>
+                                    </div>
+                                </div>
+            
+                                <?php if (!$td_form_plugin['active']) : ?>
+                                    <a class="btn-ghost btn-sm shrink-0" href="<?php echo esc_url(admin_url('plugins.php?s=' . rawurlencode($td_form_plugin['slug']) . '&plugin_status=all')); ?>">
+                                        <?php esc_html_e('Activate', 'thrivedesk'); ?>
+                                    </a>
+                                <?php elseif ($td_form_plugin['new_form_url']) : ?>
+                                    <?php
+                                    /*
+                                     * A new tab, because building a form is a long
+                                     * detour away from a page in the middle of being
+                                     * set up. The external icon says so before it is
+                                     * clicked - the same one every other new-tab link
+                                     * on this screen carries.
+                                     */
+                                    ?>
+                                    <a class="btn-solid btn-sm shrink-0" href="<?php echo esc_url(admin_url($td_form_plugin['new_form_url'])); ?>" target="_blank" rel="noopener">
+                                        <span><?php esc_html_e('Create a form', 'thrivedesk'); ?></span>
+                                        <?php thrivedesk_view('icons/external'); ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+            
+                    <?php endif; ?>
+
+
+                <?php
+                /*
+                 * WooCommerce only, and only while it is running: the tab is added to
+                 * its My Account page, so with WooCommerce inactive there is no page to
+                 * add it to. It used to render disabled with a title explaining why,
+                 * which is a row of screen spent on something most sites cannot use.
+                 */
+                ?>
+                <?php if ($woo_plugin_connected && !empty($td_user_account_pages)) : ?>
+                    <div class="td-woo">
+                        <img class="td-woo__logo" src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/woo.svg'); ?>" alt="WooCommerce" width="36" height="36">
+                        <div class="min-w-0">
+                            <?php foreach ($td_user_account_pages as $td_account_key => $td_account_page) : ?>
+                                <label class="td-check" for="td-account-<?php echo esc_attr($td_account_key); ?>">
+                                    <input class="td_user_account_pages" type="checkbox" id="td-account-<?php echo esc_attr($td_account_key); ?>" name="td_user_account_pages[]" value="<?php echo esc_attr($td_account_key); ?>" <?php checked(in_array($td_account_key, $td_selected_user_account_pages, true)); ?>>
+                                    <span class="font-medium"><?php esc_html_e('Add a Support tab to the WooCommerce My Account page', 'thrivedesk'); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                            <p class="td-field-help"><?php
+                            printf(
+                                wp_kses(
+                                    /* translators: %1$s: opening <strong> tag, %2$s: closing </strong> tag */
+                                    __( 'Customers reach their tickets where they already are - and with this on you do not need the %1$sshortcode%2$s anywhere, because the tab is the portal.', 'thrivedesk' ),
+                                    [ 'strong' => [] ]
+                                ),
+                                '<strong>',
+                                '</strong>'
+                            );
+                            ?></p>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php
+                /*
+                 * Business hours are read from ThriveDesk, never set here. The desk
+                 * already routes and auto-replies on them, so a second place to edit
+                 * them from WordPress would be a second answer to the same question.
+                 *
+                 * Disabled rather than hidden when the workspace has none: an admin who
+                 * cannot see the option cannot tell there is something to go and switch
+                 * on. The tooltip says so, and the help text below it says where.
+                 */
+                ?>
+                <div class="td-field">
+                    <label
+                        class="td-check<?php echo $td_business_hours_ready ? '' : ' is-disabled'; ?>"
+                        for="td_helpdesk_business_hours"
+                        <?php if (!$td_business_hours_ready) : ?>title="<?php esc_attr_e('Set your business hours in ThriveDesk first, then you can show them here.', 'thrivedesk'); ?>"<?php endif; ?>
+                    >
+                        <input type="checkbox" id="td_helpdesk_business_hours" name="td_helpdesk_business_hours" value="1" <?php checked(!empty($td_helpdesk_selected_option['td_helpdesk_business_hours'])); ?> <?php disabled(!$td_business_hours_ready); ?>>
+                        <span><?php esc_html_e('Show business hours on the portal', 'thrivedesk'); ?></span>
+                    </label>
+
+                    <p class="td-field-help">
+                        <?php if ($td_business_hours_ready) : ?>
+                            <?php esc_html_e('A bar at the top of the portal saying whether you are open and how long until that changes. Holidays announce themselves.', 'thrivedesk'); ?>
+                        <?php else : ?>
+                            <?php esc_html_e('This workspace has no business hours set yet.', 'thrivedesk'); ?>
+                            <a class="td-inline-link" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/business-hours'); ?>" target="_blank"><?php esc_html_e('Set them in ThriveDesk', 'thrivedesk'); ?></a>
+                        <?php endif; ?>
+                    </p>
+                </div>
+
+                <?php
+                /*
+                 * Only once there is a choice to make. A select holding the single
+                 * profile every ordinary workspace has is not a choice, it is a
+                 * label - and one more thing to read on a screen that already has
+                 * plenty.
+                 *
+                 * A sibling of the checkbox rather than nested inside it: .td-field
+                 * styles its own direct-child label, and a .td-field within a
+                 * .td-field would apply that twice.
+                 */
+                ?>
+                <?php if (count($td_business_hours_profiles) > 1) : ?>
+                    <div class="td-field">
+                        <label for="td_helpdesk_business_hours_profile"><?php esc_html_e('Which hours', 'thrivedesk'); ?></label>
+                        <select id="td_helpdesk_business_hours_profile" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5">
+                            <?php foreach ($td_business_hours_profiles as $td_hours_profile) : ?>
+                                <option value="<?php echo esc_attr($td_hours_profile['id'] ?? ''); ?>" <?php selected($td_business_hours_profile, (string) ($td_hours_profile['id'] ?? '')); ?>>
+                                    <?php echo esc_html($td_hours_profile['name'] ?? __('Unnamed schedule', 'thrivedesk')); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="td-field-help"><?php esc_html_e('This workspace has more than one schedule. The portal counts down against this one.', 'thrivedesk'); ?></p>
+                    </div>
+                <?php endif; ?>
+                </div>
+
+                <?php // Notes, not fields: nothing in this column is set, it is read and pasted somewhere else. ?>
+                <div class="space-y-4">
+
+                <aside class="td-info">
+                    <div class="td-info__title">
+                        <span class="td-info__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9.25" stroke="currentColor" stroke-width="1.5"/><path d="M12 16.5v-5M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <?php esc_html_e('Portal shortcode', 'thrivedesk'); ?>
+                    </div>
+
+                    <div class="td-ip-row mt-3">
+                        <code class="td-key">[thrivedesk_portal]</code>
+                        <button
+                            type="button"
+                            class="td-copy"
+                            data-td-copy="[thrivedesk_portal]"
+                            title="<?php esc_attr_e('Copy the portal shortcode', 'thrivedesk'); ?>"
+                            aria-label="<?php esc_attr_e('Copy the portal shortcode', 'thrivedesk'); ?>"
+                        >
+                            <span class="td-copy-idle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M15 6V5.5A2.5 2.5 0 0 0 12.5 3h-6A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                            <span class="td-copy-done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                        </button>
+                    </div>
+
+                    <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Put this on any page to turn it into the help center. Only logged-in visitors can see it.', 'thrivedesk'); ?></p>
+                </aside>
+
+                <?php
+                /*
+                 * The address a ticket form has to submit to, beside the shortcode
+                 * because both are things read here and pasted somewhere else. The
+                 * mailbox connected to the inbox where there is one, the
+                 * ThriveDesk-hosted address otherwise - see thrivedesk_inbox_address().
+                 */
+                $td_addressed = array_filter($td_inboxes, static function ($td_inbox) {
+                    return '' !== thrivedesk_inbox_address((array) $td_inbox);
+                });
+                ?>
+                <?php if ($td_addressed) : ?>
+                    <aside class="td-info td-info--plain">
+                        <div class="td-info__title">
+                            <span class="td-info__icon" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><path d="M2 12c0-3.771 0-5.657 1.172-6.828C4.343 4 6.229 4 10 4h4c3.771 0 5.657 0 6.828 1.172C22 6.343 22 8.229 22 12c0 3.771 0 5.657-1.172 6.828C19.657 20 17.771 20 14 20h-4c-3.771 0-5.657 0-6.828-1.172C2 17.657 2 15.771 2 12Z" stroke="currentColor" stroke-width="1.5"/><path d="m6 8 2.159 1.799c1.836 1.53 2.755 2.296 3.841 2.296 1.086 0 2.005-.765 3.841-2.296L18 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                            </span>
+                            <?php esc_html_e('Your inbox addresses', 'thrivedesk'); ?>
+                        </div>
+                
+                        <?php // Name over address rather than beside it: this column is narrow and an address is long. ?>
+                        <ul class="mt-3! mb-0! p-0! list-none space-y-2">
+                            <?php foreach ($td_addressed as $td_inbox) : ?>
+                                <?php
+                                $td_inbox         = (array) $td_inbox;
+                                $td_inbox_address = thrivedesk_inbox_address($td_inbox);
+                                ?>
+                                <li>
+                                    <div class="text-[12px] font-medium text-slate-700"><?php echo esc_html($td_inbox['name'] ?? ''); ?></div>
+                                    <div class="td-ip-row">
+                                        <code class="td-key"><?php echo esc_html($td_inbox_address); ?></code>
+                                        <button
+                                            type="button"
+                                            class="td-copy"
+                                            data-td-copy="<?php echo esc_attr($td_inbox_address); ?>"
+                                            title="<?php echo esc_attr(
+                                                /* translators: %s: the value being copied, such as an IP address or an email address */
+                                                sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
+                                            ); ?>"
+                                            aria-label="<?php echo esc_attr(
+                                                /* translators: %s: the value being copied, such as an IP address or an email address */
+                                                sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
+                                            ); ?>"
+                                        >
+                                            <span class="td-copy-idle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M15 6V5.5A2.5 2.5 0 0 0 12.5 3h-6A2.5 2.5 0 0 0 4 5.5v6A2.5 2.5 0 0 0 6.5 14H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                                            <span class="td-copy-done"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                                        </button>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                
+                        <p class="mt-3! mb-0! text-[12px] text-slate-600"><?php esc_html_e('Point your form at one of these and its submissions become conversations.', 'thrivedesk'); ?></p>
+                    </aside>
+                <?php endif; ?>
+
+                </div>
+
+            </div>
+
+            <?php
+            /*
+             * Not a portal setting, and the card it lived in has gone. It stays on
+             * this tab rather than being dropped: the save handler reads these by
+             * class, so a field that stops rendering does not stop being saved - it
+             * saves empty, and quietly wipes whatever was chosen.
+             */
+            ?>
+            <?php if ($wppostsync && $wppostsync->get_plugin_data('connected')) : ?>
+                <div class="td-field" id="td_post_sync">
+                    <span class="td-field__label"><?php esc_html_e('Sync posts to ThriveDesk', 'thrivedesk'); ?></span>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                        <?php foreach ($wp_post_sync_types as $td_sync_type) : ?>
+                            <label class="td-check" for="td-sync-<?php echo esc_attr($td_sync_type); ?>">
+                                <input class="td_helpdesk_post_sync" type="checkbox" id="td-sync-<?php echo esc_attr($td_sync_type); ?>" name="td_helpdesk_post_sync[]" value="<?php echo esc_attr($td_sync_type); ?>" <?php checked(in_array($td_sync_type, $td_selected_post_sync, true)); ?>>
+                                <span><?php echo esc_html(ucfirst($td_sync_type)); ?></span>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="td-field-help"><?php esc_html_e('Agents can search these from inside a conversation without leaving ThriveDesk.', 'thrivedesk'); ?></p>
+                </div>
+            <?php endif; ?>
+
+            <?php // Announces a copy to screen readers; the icon swap alone is silent. ?>
+            <span id="td-copy-status" class="sr-only" role="status" aria-live="polite"></span>
         </div>
-    <?php endif; ?>
 
-    <!-- portal  -->
-    <div class="space-y-1">
-        <div class="td-card-heading flex items-center">
-            <div class="flex-1 pr-4">
-                <div class="text-base font-bold"><?php esc_html_e('Portal', 'thrivedesk'); ?></div>
-                <p><?php esc_html_e('Integrate a help center directly into your website. Customers can easily create tickets, access the knowledge base, and much more.', 'thrivedesk'); ?></p>
-            </div>
-            <?php if($has_portal_access):?>
-                <button id="thrivedesk_clear_cache_btn" class="flex items-center space-x-2 bg-white border py-2 px-4 rounded shadow-sm text-sm hover:bg-rose-50 hover:text-rose-500 ml-auto">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" color="#000" fill="none">
-                            <path d="M19.518 11.302c.654-.667 1.197-1.221 1.57-1.72.392-.525.662-1.073.662-1.732s-.27-1.207-.662-1.732c-.372-.499-.915-1.053-1.568-1.72l-.816-.835c-.662-.676-1.21-1.238-1.705-1.623-.52-.406-1.07-.69-1.736-.69-.666 0-1.215.284-1.736.689-.494.385-1.044.946-1.705 1.622L9.325 6.11c-.194.198-.29.297-.29.42 0 .122.096.22.29.42l6.795 6.945c.202.206.303.309.429.309s.227-.103.429-.31l2.54-2.593Z" fill="currentColor" />
-                            <path opacity=".4" d="M14.739 15.345c.193.198.29.297.29.42 0 .122-.097.22-.29.419l-1.794 1.833c-.556.569-.937.959-1.402 1.226-.27.154-.557.276-.856.361-.516.147-1.16.147-1.95.147-.788 0-1.432 0-1.948-.147a3.837 3.837 0 0 1-.856-.361c-.465-.267-.846-.657-1.402-1.226-.558-.57-1.274-1.302-1.603-1.726-.345-.445-.6-.907-.66-1.465a2.885 2.885 0 0 1 0-.626c.06-.558.315-1.02.66-1.465.33-.424.793-.899 1.352-1.47L7.086 8.4c.202-.206.302-.31.429-.31.126 0 .227.104.428.31l6.796 6.946Z" fill="currentColor" />
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.75 21.75a1 1 0 0 1 1-1h11a1 1 0 1 1 0 2h-11a1 1 0 0 1-1-1Z" fill="currentColor" />
-                        </svg></span>
-                    <span><?php esc_html_e('Clear portal cache', 'thrivedesk') ?></span>
-                </button>
-            <?php endif;?>
-        </div>
-        <div class="td-card">
-            <div class="text-center text-base <?php echo esc_attr($show_api_key_alert); ?>" id="api_key_alert">
-                <?php esc_html_e('Please insert or verify your ThriveDesk API key to use the Portal feature.', 'thrivedesk'); ?>
+        <?php // What the portal searches before it lets anyone open a ticket. ?>
+        <div class="td-card space-y-6 td-gated<?php echo $td_has_ticket_page ? '' : ' is-locked'; ?>" id="td-search-card">
+
+            <div>
+                <div class="text-base font-bold"><?php esc_html_e('Connect with Help Center', 'thrivedesk'); ?></div>
+                <p class="mt-1! mb-0! text-gray-500"><?php esc_html_e('Anyone opening a ticket is asked to search first. The better your Help Center is stocked, the fewer tickets reach you.', 'thrivedesk'); ?></p>
             </div>
 
-            <div class="alert alert-danger text-center <?php echo ($show_portal == "hidden") ? '' : 'hidden' ?>" id="portal_feature_alert">
-                <?php esc_html_e('Portal feature is available for Plus and upper plan. For plans details click', 'thrivedesk'); ?>
-                <a class="text-blue-500" href="https://www.thrivedesk.com/pricing/" target="_blank"><?php esc_html_e('here', 'thrivedesk'); ?></a>.
-            </div>
+            <?php
+            /*
+             * Said once, at the top, rather than as a tooltip on each control
+             * someone has already tried to use. Hidden rather than absent so
+             * the gate can be opened without a reload - see admin.js.
+             */
+            ?>
+            <p class="td-gated__hint"<?php echo $td_has_ticket_page ? ' hidden' : ''; ?>>
+                <?php esc_html_e('Select a ticket creation form above to set this up.', 'thrivedesk'); ?>
+            </p>
 
-            <div class="<?php echo esc_attr($show_portal); ?>" id="td_portal">
-                <div class="md:flex md:space-x-4">
-                    <div class="space-y-4 flex-1">
-                        <!-- ticket form page selection  -->
-	                        <div class="bg-gray-50 border p-4 rounded">
-	                            <label for="td_helpdesk_page_id" class="font-medium text-black text-base"><?php esc_html_e('Ticket Submission Form Page', 'thrivedesk'); ?></label>
-	                            <div class="text-sm"><?php echo wp_kses_post(__('Create a dedicated page with your ticket form using any form plugin, then select that exact page here. Do not select your general Support or Contact page unless the actual ticket form is embedded on it. Learn how to create the ticket form page <a href="https://help.thrivedesk.com/en/wpportal#create-ticket-page" target="_blank">here</a>.', 'thrivedesk')) ?></div>
-	                            <div class="text-sm mt-2 px-3 py-2 rounded bg-blue-50 border border-blue-200 text-slate-700"><?php esc_html_e('Select the page that contains the embedded ticket form visitors will submit.', 'thrivedesk'); ?></div>
-	                            <select id="td_helpdesk_page_id" class="mt-3 bg-white border rounded px-2 py-1 w-2/3">
-	                                <option value=""> <?php esc_html_e('Select the page with your ticket form', 'thrivedesk'); ?> </option>
-	                                <?php foreach (get_pages() as $key => $page) : ?>
-	                                    <option value="<?php echo esc_attr($page->ID); ?>" <?php echo (array_key_exists('td_helpdesk_page_id', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_helpdesk_page_id'] == $page->ID) ? 'selected' : ''; ?>>
-	                                        <?php echo esc_html($page->post_title); ?>
+            <?php // The two selects on the left, what they add up to on the right. ?>
+            <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-6 items-start pt-5 border-t border-slate-200">
+
+                <div class="space-y-5">
+                    <div class="td-field">
+                        <label for="td_knowledgebase_slug"><?php esc_html_e('Help Center', 'thrivedesk'); ?></label>
+                        <select id="td_knowledgebase_slug" class="w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
+                            <option value=""><?php esc_html_e('Do not search a Help Center', 'thrivedesk'); ?></option>
+                            <?php foreach ($td_knowledgebase as $value) : ?>
+                                <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
+                                    <?php echo esc_html($value['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="td-field-help"><?php esc_html_e('Which ThriveDesk Help Center the portal searches.', 'thrivedesk'); ?></p>
+                    </div>
+
+                    <div class="td-field">
+                        <label for="td_helpdesk_post_types"><?php esc_html_e('WordPress content', 'thrivedesk'); ?></label>
+                        <?php
+                        /*
+                         * Same shape as "Hide on these pages": a real multiple <select> that
+                         * stays the source of truth, with admin.js building a dropdown over
+                         * it. The save handler reads $('#td_helpdesk_post_types').val() and
+                         * relies on getting an array back, so the contract never changes -
+                         * and if that script fails to run, what is left is a working list box
+                         * rather than a control with no UI.
+                         */
+                        ?>
+                        <div
+                            class="td-multiselect max-w-md"
+                            data-td-multiselect
+                            data-td-empty="<?php esc_attr_e( 'Help Center only', 'thrivedesk' ); ?>"
+                            data-td-many="<?php
+                                /* translators: %d: how many post types are searched alongside the Help Center. */
+                                esc_attr_e( '%d content types', 'thrivedesk' );
+                            ?>"
+                        >
+                            <select name="td_helpdesk_post_types[]" id="td_helpdesk_post_types" size="6" multiple class="td-multiselect__source w-full max-w-md bg-white border border-slate-300! rounded px-2 py-1.5" <?php disabled(!$td_has_ticket_page); ?>>
+                                <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
+                                    <?php
+                                    // The label the site itself uses - "Posts", "Products" -
+                                    // rather than the slug with a capital letter on it.
+                                    $td_type_object = get_post_type_object($post_type);
+                                    $td_type_label  = $td_type_object && !empty($td_type_object->labels->name)
+                                        ? $td_type_object->labels->name
+                                        : ucfirst($post_type);
+                                    ?>
+                                    <option value="<?php echo esc_attr($post_type); ?>" <?php selected(in_array($post_type, $td_selected_post_types, true)); ?>>
+                                        <?php echo esc_html($td_type_label); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <!-- search provider -->
-                        <div class="bg-gray-50 border p-4 rounded">
-                            <label for="td_helpdesk_post_types" class="font-medium text-black text-base"><?php esc_html_e('Search Provider', 'thrivedesk'); ?></label>
-                            <div class="text-sm"><?php esc_html_e('When someone tries to create a ticket from the portal, they will be prompted to search first. You can choose to search from the ThriveDesk knowledge base, post types, or both.', 'thrivedesk'); ?></div>
-                            <div class="text-sm mt-1"><?php esc_html_e('Having a well-documented knowledge base and blog posts can help decrease the number of tickets you receive.', 'thrivedesk'); ?></div>
-                            <hr class="mt-3">
-                            <div class="flex flex-col mt-3 space-y-3">
-                                <label for="td_knowledgebase_slug" class="font-medium text-black text-sm"><?php esc_html_e('Knowledge Base ', 'thrivedesk'); ?></label>
-                                <select id="td_knowledgebase_slug" class="bg-white border rounded px-2 py-1 w-2/3">
-                                    <option value=""> <?php esc_html_e('Select knowledgebase', 'thrivedesk'); ?> </option>
-                                    <?php foreach ($td_knowledgebase as $value) : ?>
-                                        <option value="<?php echo esc_attr($value['slug']); ?>" <?php echo (array_key_exists('td_knowledgebase_slug', $td_helpdesk_selected_option) && $td_helpdesk_selected_option['td_knowledgebase_slug'] == $value['slug']) ? 'selected' : ''; ?>>
-                                            <?php echo esc_html($value['name']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div class="flex flex-col mt-3 space-y-3">
-                                <label class="font-medium text-black text-sm"><?php esc_html_e('WordPress Post Types ', 'thrivedesk'); ?></label>
-                                <?php foreach ($knowledge_base_wp_post_types as $post_type) : ?>
-                                    <div>
-                                        <label for="<?php echo esc_attr($post_type); ?>">
-                                            <input class="td_helpdesk_post_types" type="checkbox" id="<?php echo esc_attr($post_type); ?>" name="td_helpdesk_post_types[]" value="<?php echo esc_attr($post_type); ?>" <?php echo in_array($post_type, $td_selected_post_types) ? 'checked' : ''; ?>>
-                                            <?php echo esc_html(ucfirst($post_type)); ?>
-                                        </label>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                        <!-- add support tab to woo/edd page  -->
-                        <?php if (!empty($td_user_account_pages)) : ?>
-                            <div class="bg-gray-50 border p-4 rounded">
-                                <label for="td_user_account_pages" class="font-medium text-black text-base"><?php esc_html_e('Add Support Tab', 'thrivedesk'); ?></label>
-                                <div class="text-sm"><?php esc_html_e('You can add a Support tab to the WooCommerce and Easy Digital Downloads My Account page depending on the availability of the plugin', 'thrivedesk'); ?></div>
-                                <div class="mt-3">
-                                    <?php foreach ($td_user_account_pages as $key => $page) : ?>
-                                        <div class="mb-1" <?php echo !$woo_plugin_installed ? 'title="' . esc_attr__('You must install and activate WooCommerce plugin to use this feature', 'thrivedesk') . '"' : ''; ?>>
-                                            <input class="td_user_account_pages" type="checkbox" name="td_user_account_pages[]" value="<?php echo esc_attr($key); ?>" <?php echo in_array($key, $td_selected_user_account_pages) ? 'checked ' : ''; ?> <?php echo !$woo_plugin_installed ? 'disabled' : ''; ?>>
-                                            <label for="<?php echo esc_attr($page); ?>"> <?php echo esc_html($page); ?> </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
+                        <p class="td-field-help"><?php esc_html_e('Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only.', 'thrivedesk'); ?></p>
                     </div>
-                    <div class="md:w-64 mt-4 md:mt-0">
-                        <div class="p-4 bg-green-50 border border-green-300 rounded space-y-2">
-                            <div class="text-base font-semibold"><?php esc_html_e('Portal Shortcode', 'thrivedesk'); ?></div>
-                            <code class="inline-block bg-green-200 rounded">[thrivedesk_portal]</code>
-                            <p><?php esc_html_e('Utilize this shortcode on any page to transform it into a help center.', 'thrivedesk'); ?>.</p>
-                            <p><?php esc_html_e('The portal is accessible only to logged-in users.', 'thrivedesk'); ?>.</p>
-                        </div>
+
+                    <div class="td-field">
+                        <label class="td-check<?php echo $td_has_ticket_page ? '' : ' is-disabled'; ?>" for="td_helpdesk_search_required">
+                            <input type="checkbox" id="td_helpdesk_search_required" name="td_helpdesk_search_required" value="1" <?php checked(!empty($td_helpdesk_selected_option['td_helpdesk_search_required'])); ?> <?php disabled(!$td_has_ticket_page); ?>>
+                            <span><?php esc_html_e('Make searching compulsory', 'thrivedesk'); ?></span>
+                        </label>
+                        <p class="td-field-help"><?php esc_html_e('Hides the new ticket button until a search has run. People who find their answer never open the ticket; people who do not still can.', 'thrivedesk'); ?></p>
                     </div>
                 </div>
+
+                <?php
+                /*
+                 * Deliberately not a .td-field, so the gate does not dim it:
+                 * while this card is locked the explanation is the only part
+                 * of it still worth reading.
+                 */
+                ?>
+                <aside class="td-info">
+                    <div class="td-info__title">
+                        <span class="td-info__icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none"><circle cx="12" cy="12" r="9.25" stroke="currentColor" stroke-width="1.5"/><path d="M12 16.5v-5M12 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <?php esc_html_e('What this does', 'thrivedesk'); ?>
+                    </div>
+
+                    <p class="mt-3! mb-0! text-[12px] text-slate-600">
+                        <?php esc_html_e('With a Help Center and some post types chosen, anyone opening a ticket on the portal is asked to search first, and ThriveDesk shows the answer if it is already published in either place.', 'thrivedesk'); ?>
+                    </p>
+                    <p class="mt-2! mb-0! text-[12px] text-slate-600">
+                        <?php esc_html_e('The ones who find it never open the ticket, which is the point: fewer of the same question, asked and answered again.', 'thrivedesk'); ?>
+                    </p>
+                </aside>
+
             </div>
         </div>
+
+    </div>
+    <?php endif; ?>
     </div>
 
-    <!-- connection  -->
-    <div class="space-y-1">
-        <div class="td-card-heading">
-            <div class="text-base font-bold"><?php esc_html_e('Connection Details', 'thrivedesk'); ?></div>
-            <p><?php esc_html_e('Update your api token to change or update the connection to ThriveDesk.', 'thrivedesk'); ?></p>
-        </div>
-        <div class="td-card">
-            <div class="space-y-2">
-                <label for="td_helpdesk_api_key" class="block mb-2 text-sm font-medium text-gray-900"><?php esc_html_e('API Key', 'thrivedesk'); ?></label>
-                <span>
-                    <?php esc_html_e('Login to ThriveDesk app and get your API key from ', 'thrivedesk'); ?>
-                    <a class="text-blue-500" href="<?php echo esc_url(THRIVEDESK_APP_URL . '/settings/company/api-key'); ?>" target="_blank">
-                        <?php esc_html_e('here', 'thrivedesk'); ?>
-                    </a>
-                </span>
-                <div class="flex items-center api-key-preview">
-                    <input class="truncate w-2/3 bg-gray-50" type="password" disabled value="<?php echo esc_attr($td_api_key); ?>" />
-                    <span class="text-green-500 underline hover:text-green-600 px-2 cursor-pointer trigger"><?php esc_html_e('Update', 'thrivedesk'); ?></span>
-                </div>
-                <div class="api-key-editable hidden">
-                    <input type="password" id="td_helpdesk_api_key" name="td_helpdesk_api_key" value="<?php echo esc_attr($td_api_key); ?>" class="block p-2.5 w-full text-sm" />
 
-                    <button type="button" class="btn btn-primary py-1.5 mt-3 bg-green-500 hover:bg-green-600" id="td-api-verification-btn">
-                        <?php esc_html_e('Verify', 'thrivedesk'); ?>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <button type="submit" id="td_setting_btn_submit" class="btn btn-primary">
-        <?php esc_html_e('Save', 'thrivedesk'); ?>
-    </button>
 </form>
-
-<script>
-    ! function(t, e, n) {
-        function s() {
-            var t = e.getElementsByTagName("script")[0],
-                n = e.createElement("script");
-            n.type = "text/javascript", n.async = !0, n.src = "<?php echo esc_url_raw(THRIVEDESK_ASSISTANT_URL); ?>/bootloader.js?" + Date.now(),
-                t.parentNode.insertBefore(n, t)
-        }
-        if (t.Assistant = n = function(e, n, s) {
-                t.Assistant.readyQueue.push({
-                    method: e,
-                    options: n,
-                    data: s
-                })
-            },
-            n.readyQueue = [], "complete" === e.readyState) return s();
-        t.attachEvent ? t.attachEvent("onload", s) : t.addEventListener("load", s, !1)
-    }
-    (window, document, window.Assistant || function() {}), window.Assistant("init", "966fdf96-802e-4bf7-8692-78e01b503819");
-    Assistant('identify', {
-        name: '<?php echo esc_js($current_user->user_login); ?>',
-        email: '<?php echo esc_js($current_user->user_email); ?>',
-    })
-</script>

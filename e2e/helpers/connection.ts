@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test';
 
-import { API_VERIFY_URL, gotoSettings, readStoredApiKey } from './wp';
+import { API_VERIFY_URL, gotoSettings } from './wp';
 
 /**
  * Everything the settings form owns. td_save_helpdesk_form() replaces the whole
@@ -9,7 +9,6 @@ import { API_VERIFY_URL, gotoSettings, readStoredApiKey } from './wp';
  * test disturbs has to be captured up front and posted back in one save.
  */
 export interface ConnectionState {
-	apiKey: string;
 	assistantId: string;
 	inboxId: string;
 	knowledgebaseSlug: string;
@@ -47,7 +46,6 @@ export async function captureConnection(page: Page): Promise<ConnectionState> {
 	await gotoSettings(page);
 
 	return {
-		apiKey: await readStoredApiKey(page),
 		assistantId: await selectValue(page, '#td-assistants'),
 		inboxId: await selectValue(page, '#td-inboxes'),
 		knowledgebaseSlug: await selectValue(page, '#td_knowledgebase_slug'),
@@ -119,9 +117,11 @@ export async function restoreConnection(page: Page, state: ConnectionState): Pro
 
 	const handle = await ajaxHandle(page);
 
-	// Stores the key alongside every other setting in one save.
+	// The key is deliberately never rendered into the page, so it cannot be read
+	// back and does not need to be: td_save_helpdesk_form() reads an empty key as
+	// "unchanged" and keeps the stored one.
 	const saved = await postAjax(page, 'thrivedesk_helpdesk_form', handle, {
-		td_helpdesk_api_key: state.apiKey,
+		td_helpdesk_api_key: '',
 		td_helpdesk_assistant: state.assistantId,
 		td_helpdesk_inbox_id: state.inboxId,
 		td_knowledgebase_slug: state.knowledgebaseSlug,
@@ -134,10 +134,9 @@ export async function restoreConnection(page: Page, state: ConnectionState): Pro
 
 	expect(saved, 'restoring the settings failed').toContain('success');
 
-	// Re-fetches the account's system info, which also marks the key verified.
-	const info = await postAjax(page, 'thrivedesk_system_info', handle, {
-		td_helpdesk_api_key: state.apiKey,
-	});
-
-	expect(info, 'restoring the system info failed').toContain('"status":"true"');
+	// What this cannot put back is td_helpdesk_verified. Only a successful
+	// verification sets it, thrivedesk_system_info refuses an empty key, and the
+	// stored key is unreadable by design. So a spec that clears the verified flag
+	// leaves it cleared, which is why the one that does runs in its own project,
+	// after every other admin spec (see playwright.config.ts).
 }

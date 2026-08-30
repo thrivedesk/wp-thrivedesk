@@ -10,6 +10,12 @@ needs the URL and two logins.
 
 ## Running
 
+The quickest way to get a site these can run against is the bench:
+`scripts/dev.sh up`, `scripts/dev.sh connect <api-key>`, pick an assistant and an
+inbox on the settings screen, then `scripts/dev.sh e2e` (`e2e-ui` to watch it,
+`e2e-report` for the last run). It supplies every variable below, so the rest of
+this section is for pointing the suite at a site of your own.
+
 ```
 npm install
 npx playwright install chromium   # skip if the browsers are already present
@@ -51,8 +57,16 @@ not include the WP Portal.
   it, and storing it clears the assistant, inbox and knowledge base. Any spec
   that verifies has to restore.
 - **Prefer the ids already in the markup** (`#td_helpdesk_api_key`,
-  `#td-assistants`, `#td_setting_btn_submit`, `button.connect[data-plugin]`)
-  over adding new hooks.
+  `#td-assistants`, `#td_helpdesk_page_id`, `#td-search-card`, `.td-toast`,
+  `[data-plugin]` on an integration card)
+  over adding new hooks. The integrations grid is React, so its card carries
+  `data-plugin` and `data-connected` and its buttons carry
+  `data-test="integration-connect"` / `"integration-disconnect"`.
+- **The screen is tabbed.** A React `TabPanel` moves each `#td-panel-*` out of
+  the settings form on mount, so the form itself never becomes visible and a
+  field is only on screen when its tab is. Reach a tab with
+  `gotoSettings(page, 'livechat' | 'portal' | 'integrations')` rather than
+  clicking through the strip.
 - **Assertions go through the UI.** A spec that reaches around the interface to
   make its assertions stops describing what a user can do. Teardown is the one
   exception — `helpers/connection.ts` posts to the plugin's own admin-ajax

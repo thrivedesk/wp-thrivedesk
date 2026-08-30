@@ -4,7 +4,16 @@
      attribute, tailwind's preflight sets [hidden]{display:none!important}
      which would beat the .is-open{display:flex} rule and keep JS from
      ever showing it. -->
-<div class="td-modal-container" id="tdConversationModal" aria-modal="true" role="dialog" aria-labelledby="td-modal-title">
+<?php
+/*
+ * Whether a search has to happen before a ticket can be opened. Read here and
+ * handed to the JS on the container rather than localised, because this view is
+ * where the modal is, and conversation.js already has to find the container.
+ */
+$td_settings        = get_td_helpdesk_settings();
+$td_search_required = ! empty( $td_settings['td_helpdesk_search_required'] );
+?>
+<div class="td-modal-container" id="tdConversationModal" aria-modal="true" role="dialog" aria-labelledby="td-modal-title" data-td-search-required="<?php echo $td_search_required ? '1' : '0'; ?>">
 	<div class="td-modal" role="document">
 
 		<!-- Header -->
@@ -81,6 +90,16 @@
 						</div>
 						<div class="td-empty-state-title"><?php esc_html_e('No matches', 'thrivedesk'); ?></div>
 						<div class="td-empty-state-text"><?php esc_html_e("We couldn't find anything for that query. Try a different term or open a new ticket.", 'thrivedesk'); ?></div>
+						<?php
+						/*
+						 * Where the new ticket button goes when a search came
+						 * back with nothing. It is moved here rather than
+						 * duplicated - two of them would be two ids, and the
+						 * one in the footer is the one everything else refers
+						 * to. See placeTicketCta() in conversation.js.
+						 */
+						?>
+						<div class="td-empty-state-cta" id="td-search-empty-cta"></div>
 					</div>
 				</div>
 
@@ -91,8 +110,19 @@
 		<!-- Footer -->
 		<footer class="td-modal-footer">
 			<?php
-			$settings          = get_td_helpdesk_settings();
-			$page_id           = absint($settings['td_helpdesk_page_id'] ?? 0);
+			/*
+			 * Shown only once results are on screen: an invitation to open a
+			 * ticket anyway, pointing at the button it sits beside. Before a
+			 * search there is nothing to be unhappy with, and on an empty
+			 * result the button has moved up into the message.
+			 */
+			?>
+			<span class="td-modal-footer-note" id="td-modal-footer-note" hidden>
+				<?php esc_html_e( 'Not happy with the results? Create a ticket', 'thrivedesk' ); ?>
+				<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+			</span>
+			<?php
+			$page_id           = absint($td_settings['td_helpdesk_page_id'] ?? 0);
 			// empty string when no ticket page is set so empty()
 			// detects the disabled state. '#' would always be truthy.
 			$new_ticket_url      = $page_id ? get_page_link($page_id) : '';

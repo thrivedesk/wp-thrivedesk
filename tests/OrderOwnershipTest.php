@@ -107,6 +107,21 @@ class OrderOwnershipTest extends TD_Ajax_TestCase {
 		$this->assertSame( self::REJECTED, $body['message'] ?? null, "$action must reject a request with no email" );
 	}
 
+	/**
+	 * The guard deliberately let "order not found" through so the mutator could
+	 * report it, but four of the six then called wc_get_order() and dereferenced
+	 * `false`. That is an \Error, which the dispatcher's `catch (\Exception)`
+	 * could not catch, so the request died with no JSON body at all. The guard
+	 * now resolves the order once and answers 404 for every mutator.
+	 *
+	 * @dataProvider mutator_actions
+	 */
+	public function test_mutator_reports_a_missing_order_instead_of_fataling( string $action, array $extra ) {
+		$body = $this->dispatch( $this->mutator_payload( $action, $extra, '99999999', self::OWNER ) );
+
+		$this->assertSame( 'Order not found.', $body['message'] ?? null, "$action must 404 a missing order" );
+	}
+
 	public function test_mutator_applies_the_change_for_the_owning_customer() {
 		$order_id = $this->make_order( self::OWNER );
 

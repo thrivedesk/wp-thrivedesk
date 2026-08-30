@@ -21,27 +21,29 @@ interface ConnectPayload {
  * rather than depending on how the site was left.
  */
 async function disconnected(page: Page, plugin: string): Promise<Locator> {
-	await gotoSettings(page);
+	await gotoSettings(page, 'integrations');
 
-	const button = page.locator(`button.connect[data-plugin="${plugin}"]`);
-	await expect(button).toBeVisible();
-	await expect(button).toBeEnabled();
+	const card = page.locator(`[data-plugin="${plugin}"]`);
+	await expect(card).toBeVisible();
 
-	if ((await button.getAttribute('data-connected')) === '1') {
-		// The disconnect path confirms through a native alert, then reloads.
-		page.once('dialog', (dialog) => dialog.accept());
+	if ((await card.getAttribute('data-connected')) === '1') {
+		// Disconnect posts, then reloads the page itself — no confirm dialog.
 		await Promise.all([
 			page.waitForResponse(
 				(candidate) =>
 					candidate.url().includes('admin-ajax.php') &&
 					(candidate.request().postData() ?? '').includes('action=thrivedesk_disconnect_plugin'),
 			),
-			button.click(),
+			card.locator('[data-test="integration-disconnect"]').click(),
 		]);
 
-		await gotoSettings(page);
-		await expect(button).toHaveAttribute('data-connected', '0');
+		await gotoSettings(page, 'integrations');
+		await expect(card).toHaveAttribute('data-connected', '0');
 	}
+
+	const button = card.locator('[data-test="integration-connect"]');
+	await expect(button).toBeVisible();
+	await expect(button).toBeEnabled();
 
 	return button;
 }
@@ -56,41 +58,59 @@ async function disconnected(page: Page, plugin: string): Promise<Locator> {
  * WordPress is the URL it produced, and that is what this asserts.
  */
 async function connectPayload(page: Page, plugin: string): Promise<ConnectPayload> {
+	// Buffer the body in a route handler rather than reading it off the Response
+	// afterwards. The React card sets window.location the instant its fetch
+	// resolves, and a navigation discards the response body — "No resource with
+	// given identifier found" — before a later read can get to it. Intercepting
+	// means the bytes are already in hand when that happens.
+	let captured = '';
+
+	await page.route('**/admin-ajax.php', async (route) => {
+		if (!(route.request().postData() ?? '').includes('action=thrivedesk_connect_plugin')) {
+			await route.continue();
+
+			return;
+		}
+
+		const response = await route.fetch();
+		captured = (await response.text()).trim();
+
+		expect(response.status(), 'the connect action did not return 200').toBe(200);
+
+		await route.fulfill({ response, body: captured });
+	});
+
 	const button = await disconnected(page, plugin);
 
-	const [response] = await Promise.all([
-		page.waitForResponse(
-			(candidate) =>
-				candidate.url().includes('admin-ajax.php') &&
-				(candidate.request().postData() ?? '').includes('action=thrivedesk_connect_plugin'),
-		),
-		button.click(),
-	]);
+	await button.click();
 
-	expect(response.status(), 'the connect action did not return 200').toBe(200);
+	// Wait for the hand-off to LAND, not merely to be requested. waitForRequest
+	// returns the moment the navigation starts, leaving it in flight — and the
+	// next connect attempt's goto then dies as "interrupted by another
+	// navigation". beforeEach answers it with a blank 200, so this settles.
+	await page.waitForURL(new RegExp(`/apps/${plugin}\\?connect=`));
 
-	// Read the body before anything navigates: the response resource belongs to
-	// the current document and is discarded the moment one is attempted.
-	const redirect = (await response.text()).trim();
+	await page.unroute('**/admin-ajax.php');
 
-	// Then wait for the hand-off to be attempted (and refused, see beforeEach)
-	// before handing control back. A navigation still pending here would abort
-	// whatever this page is asked to do next.
-	await page.waitForRequest((candidate) => candidate.url().includes(`/apps/${plugin}?connect=`));
-
-	const connect = new URL(redirect).searchParams.get('connect') ?? '';
-	expect(connect, `no connect param in the redirect the plugin built: ${redirect}`).not.toBe('');
+	const connect = new URL(captured).searchParams.get('connect') ?? '';
+	expect(connect, `no connect param in the redirect the plugin built: ${captured}`).not.toBe('');
 
 	return JSON.parse(Buffer.from(connect, 'base64').toString('utf8')) as ConnectPayload;
 }
 
 test.beforeEach(async ({ page }) => {
-	// Three quarters of a second after the ajax call the plugin sends the browser
-	// to ThriveDesk. Refuse the hand-off: the contract under test is the URL
-	// WordPress built, and following it would depend on an app that isn't
-	// necessarily served wherever this suite runs. An aborted navigation leaves
-	// the settings screen exactly where it is.
-	await page.route('**/apps/**', (route) => route.abort());
+	// The card sends the browser to ThriveDesk as soon as the ajax call returns.
+	// Answer the hand-off with a blank page instead of following it: the contract
+	// under test is the URL WordPress built, and following it would depend on an
+	// app that isn't necessarily served wherever this suite runs.
+	//
+	// Fulfilled rather than aborted. An abort lands the tab on
+	// chrome-error://chromewebdata, and that navigation is still settling when
+	// the next connect attempt calls goto — which then fails as "interrupted by
+	// another navigation". A 200 completes cleanly and leaves nothing in flight.
+	await page.route('**/apps/**', (route) =>
+		route.fulfill({ status: 200, contentType: 'text/html', body: '' }),
+	);
 });
 
 /**

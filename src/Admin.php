@@ -19,9 +19,47 @@ final class Admin
     private const REVERIFY_TIMEOUT = 10;
 
     /**
+     * Transient holding the one-time state value for an authorization round
+     * trip this site started. Its presence is what makes a returning ?token=
+     * believable.
+     */
+    private const CONNECT_STATE_TRANSIENT = 'thrivedesk_connect_state';
+
+    /**
+     * 15 minutes. The round trip through app.thrivedesk.com is a handful of
+     * clicks, not a session, and a long-lived state is a long-lived window in
+     * which a planted ?token= link would be honoured.
+     */
+    private const CONNECT_STATE_TTL = 900;
+
+    /**
+     * Id of the support portal page this plugin created, so it is never
+     * re-created and never confused with an unrelated page of the same title.
+     */
+    public const PORTAL_PAGE_OPTION = 'thrivedesk_portal_page_id';
+
+    /**
      * The single instance of this class
      */
     private static $instance = null;
+
+    /**
+     * State issued during this request, so the two connect buttons on a page
+     * both carry the value the transient actually holds.
+     *
+     * @var string|null
+     */
+    private static $issued_connect_state = null;
+
+    /**
+     * Memoised result of connect_return_token(). The pending state is consumed
+     * on the first read, so every later caller in the same request - the view
+     * that pre-fills the field, load_pages() choosing which view to render -
+     * has to be told the same answer.
+     *
+     * @var string|null
+     */
+    private static $connect_return_token = null;
 
     /**
      * Construct Admin class.
@@ -33,7 +71,7 @@ final class Admin
     {
         add_action('admin_menu', [$this, 'admin_menu'], 10);
 
-        add_action('activated_plugin', [$this, 'create_portal_page'], 10);
+        add_action('activated_plugin', [$this, 'create_portal_page'], 10, 1);
 
         add_action('admin_enqueue_scripts', [$this, 'admin_scripts']);
 
@@ -42,6 +80,8 @@ final class Admin
         add_action('wp_ajax_thrivedesk_connect_plugin', [$this, 'ajax_connect_plugin']);
 
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
+
+        add_action('wp_ajax_thrivedesk_disconnect_account', [$this, 'ajax_disconnect_account']);
 
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
@@ -66,9 +106,11 @@ final class Admin
         global $wpdb;
         $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_%thrivedesk%'));
         $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s", '_transient_timeout_%thrivedesk%'));
-    
-        // Flush the server cache
-        wp_cache_flush();
+
+        // Deliberately no wp_cache_flush() here. On a site with a persistent
+        // object cache (Redis/Memcached) that empties the entire cache -
+        // core's and every other plugin's entries included - to clean up
+        // transients the two DELETEs above have already removed.
     }
 
 	public function remove_wp_footer_text() {
@@ -86,6 +128,21 @@ final class Admin
 	 * @return void
 	 */
 	public function redirect_to_getting_started_page(): void {
+
+		// admin_init also fires on admin-ajax.php, on cron and on REST
+		// requests. Without these guards an unauthenticated visitor hitting any
+		// nopriv endpoint consumes the one-shot activation flag - so the admin
+		// who just activated never gets the welcome screen - and receives a 302
+		// where the caller expected JSON.
+		if ( wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			return;
+		}
+
+		// The welcome screen is a manage_options page; nobody else has any
+		// business consuming the flag on the way to it.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
 
 		if (isset($_GET['activate-multi']) || is_network_admin()) {
 			return;
@@ -150,7 +207,11 @@ final class Admin
         $args  = array(
             'title'                  => $page_title,
             'post_type'              => $post_type,
-            'post_status'            => get_post_status(),
+            // Was get_post_status() with no argument, which reads the global
+            // $post - absent here, so it returned false and the filter never
+            // did what it reads as. 'any' is what core's own get_page_by_title()
+            // effectively used.
+            'post_status'            => 'any',
             'posts_per_page'         => 1,
             'update_post_term_cache' => false,
             'update_post_meta_cache' => false,
@@ -168,19 +229,65 @@ final class Admin
         return get_post( $pages[0], $output );
     }
 
-    public function create_portal_page()
+    /**
+     * Create the support portal page on activation.
+     *
+     * 'activated_plugin' fires for EVERY plugin activation on the site, and
+     * this ignored the $plugin argument entirely, so activating anything at
+     * all could publish a ThriveDesk page.
+     *
+     * @param string $plugin Plugin file of the plugin that was just activated.
+     *
+     * @return void
+     */
+    public function create_portal_page($plugin = '')
     {
+        if (plugin_basename(THRIVEDESK_FILE) !== $plugin) {
+            return;
+        }
+
+        // Publishing a page is a privileged action; activation normally runs
+        // as an admin, but the hook is reachable from anywhere that activates
+        // a plugin programmatically.
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
         $title = "Thrivedesk Support Portal";
-        $my_post = array(
+
+        // The created page is tracked by id rather than by title. Matching on
+        // the title meant an unrelated page that happened to share it was
+        // silently adopted, and renaming the real one produced a duplicate on
+        // the next activation.
+        $existing = (int) get_option(self::PORTAL_PAGE_OPTION);
+
+        if ($existing && ($post = get_post($existing)) && 'trash' !== $post->post_status) {
+            return;
+        }
+
+        if (!$existing) {
+            // Installs from before the id was recorded still have the page the
+            // old title match created; adopt it instead of making a second one.
+            $legacy = $this->get_page_by_title($title);
+
+            if ($legacy instanceof \WP_Post) {
+                update_option(self::PORTAL_PAGE_OPTION, $legacy->ID);
+
+                return;
+            }
+        }
+
+        $page_id = wp_insert_post(array(
             'post_type'     => 'page',
             'post_title'    => $title,
             'post_content'  => '[thrivedesk_portal]',
             'post_status'   => 'publish',
-            'post_author'   => 1
-        );
+            // post_author => 1 assumes user 1 exists and is the right owner.
+            'post_author'   => get_current_user_id(),
+        ));
 
-        if($this->get_page_by_title($title) == null){
-            wp_insert_post( $my_post );
+        if ($page_id && !is_wp_error($page_id)) {
+            update_option(self::PORTAL_PAGE_OPTION, $page_id);
         }
     }
 
@@ -198,7 +305,7 @@ final class Admin
             
             wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', [], $css_version);
             wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery', 'wp-i18n'], $js_version);
-            wp_set_script_translations('thrivedesk-js', 'thrivedesk');
+            wp_set_script_translations('thrivedesk-js', 'thrivedesk', THRIVEDESK_DIR . '/languages');
 
             if (current_user_can( 'manage_options' )) {
                 echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
@@ -219,6 +326,8 @@ final class Admin
                     'kb_url' => $knowledgebase_url,
                 )
             );
+
+            $this->enqueue_admin_app();
         }
 
         if (class_exists('BWF_Contacts')) {
@@ -226,6 +335,65 @@ final class Admin
 
             wp_enqueue_script('thrivedesk-autonami-script', THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-autonami-tab.js', $asset_file['dependencies'], $asset_file['version'] ?? THRIVEDESK_VERSION);
         }
+    }
+
+    /**
+     * The React settings screen, built with @wordpress/components.
+     *
+     * wp-components arrives as a WordPress-provided script and style, so the
+     * design system costs no npm dependency - the build lists it as an
+     * external and WordPress serves it. The generated .asset.php is the
+     * authority on which handles this build actually needs; hardcoding them
+     * here would drift the first time an import changes.
+     *
+     * Everything the app paints on first load is passed in rather than fetched,
+     * so the tabs do not flash empty while a request is in flight.
+     *
+     * @return void
+     */
+    private function enqueue_admin_app(): void
+    {
+        $asset_path = THRIVEDESK_PLUGIN_ASSETS_PATH . '/js/wp-scripts/thrivedesk-admin-app.asset.php';
+
+        if (! file_exists($asset_path)) {
+            return;
+        }
+
+        $asset = include $asset_path;
+
+        wp_enqueue_style('wp-components');
+        wp_enqueue_style(
+            'thrivedesk-admin-app',
+            THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/style-thrivedesk-admin-app.css',
+            ['wp-components'],
+            $asset['version'] ?? THRIVEDESK_VERSION
+        );
+
+        wp_enqueue_script(
+            'thrivedesk-admin-app',
+            THRIVEDESK_PLUGIN_ASSETS . '/js/wp-scripts/thrivedesk-admin-app.js',
+            $asset['dependencies'] ?? [],
+            $asset['version'] ?? THRIVEDESK_VERSION,
+            true
+        );
+
+        wp_set_script_translations('thrivedesk-admin-app', 'thrivedesk', THRIVEDESK_DIR . '/languages');
+
+        wp_localize_script(
+            'thrivedesk-admin-app',
+            'thrivedeskAdmin',
+            [
+                'ajaxUrl'           => admin_url('admin-ajax.php'),
+                // The same nonce action the connect and disconnect handlers
+                // verify against; see ajax_connect_plugin().
+                'pluginActionNonce' => wp_create_nonce('thrivedesk-plugin-action'),
+                'integrations'      => thrivedesk_integrations(),
+                // Locks the integration cards rather than hiding them: what
+                // ThriveDesk connects to is most of the reason to connect at
+                // all, so it stays readable before there is a key.
+                'connected'         => thrivedesk_is_connected(),
+            ]
+        );
     }
 
     public function load_pages(){
@@ -252,7 +420,9 @@ final class Admin
 
         // Essential logging only
         if (empty($td_api_key)) {
-            error_log('ThriveDesk: No API key found in settings');
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log('ThriveDesk: No API key found in settings');
+            }
         }
 
         // The second: a transient network failure while DNS/SSL settle on the
@@ -268,19 +438,128 @@ final class Admin
             }
         }
 
-        if($td_api_key && $api_status){
-            thrivedesk_view('setting');
-        }
-        elseif($td_api_key == '' || isset($_GET['token'])){
-            thrivedesk_view('pages/api-verify');
-        }
-        else{
-            thrivedesk_view('pages/welcome');
-        }
+        /*
+         * One destination, connected or not. This used to fork into a
+         * fullscreen setup screen and a welcome screen, which meant a new
+         * install saw nothing of the plugin until it had a key - no tour, no
+         * integrations, nothing to read while deciding. The tabs render either
+         * way now: the Overview tab leads with the same connect card those
+         * screens used to be, and every tab that needs an account says so.
+         *
+         * See thrivedesk_is_connected(), which is what the views branch on.
+         */
+        thrivedesk_view('setting');
     }
 
     public function verification_page(){
                     thrivedesk_view('pages/api-verify');
+    }
+
+    /**
+     * Start an authorization round trip: mint a one-time state, remember it,
+     * and hand it to the caller to put on the return URL.
+     *
+     * Memoised per request so the "Create New Account" and "Connect Existing
+     * Account" buttons rendered on the same screen both carry the value the
+     * transient actually holds.
+     */
+    public static function issue_connect_state(): string
+    {
+        if (null === self::$issued_connect_state) {
+            self::$issued_connect_state = wp_generate_password(32, false);
+
+            set_transient(self::CONNECT_STATE_TRANSIENT, self::$issued_connect_state, self::CONNECT_STATE_TTL);
+        }
+
+        return self::$issued_connect_state;
+    }
+
+    /**
+     * Build the app.thrivedesk.com URL one of the connect buttons points at.
+     *
+     * auth_return_url carries a query string of its own, so it has to be
+     * rawurlencode()d. Un-encoded, `page` and `auth_platform` detach and
+     * arrive at app.thrivedesk.com as top-level parameters instead of as part
+     * of the URL the user is supposed to be sent back to.
+     *
+     * @param string $path '/auth/authorize' or '/auth/register'.
+     */
+    public static function connect_url(string $path): string
+    {
+        $return_url = add_query_arg(
+            [
+                'page'          => 'thrivedesk',
+                'auth_platform' => 'WordPress',
+                'state'         => self::issue_connect_state(),
+            ],
+            admin_url('admin.php')
+        );
+
+        return THRIVEDESK_APP_URL . $path . '?auth_return_url=' . rawurlencode($return_url);
+    }
+
+    /**
+     * The API key handed back by an authorization round trip, or '' when there
+     * isn't a believable one.
+     *
+     * A bare ?token= in the URL is attacker-suppliable: anyone could mail an
+     * admin `admin.php?page=td-api&token=<their own key>` and a single click on
+     * "Complete Setup" would repoint the whole helpdesk - every portal
+     * visitor's email and ticket body - at their ThriveDesk tenant. So a token
+     * is only honoured when this site actually started the round trip, proven
+     * by the one-time state issue_connect_state() left behind.
+     *
+     * Two shapes are accepted for this release:
+     *
+     *  - `?token=...&state=...` where the state matches. This is the target
+     *    shape and the only one that survives the next release.
+     *  - `?token=...` on its own, accepted only while a connect this site
+     *    started is still pending. DEPRECATED: it exists solely because
+     *    app.thrivedesk.com does not echo `state` back yet, and it must be
+     *    dropped - along with this whole branch - once it does. Until then a
+     *    planted link still needs the admin to be mid-connect, which is a far
+     *    cry from "any admin, any time".
+     *
+     * The pending state is consumed either way, so a token is good for exactly
+     * one connect.
+     */
+    public static function connect_return_token(): string
+    {
+        if (null !== self::$connect_return_token) {
+            return self::$connect_return_token;
+        }
+
+        self::$connect_return_token = '';
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- the
+        // state below is what authenticates this redirect; a nonce cannot make
+        // the round trip through app.thrivedesk.com.
+        $token = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
+
+        if ('' === $token) {
+            return self::$connect_return_token;
+        }
+
+        $expected = get_transient(self::CONNECT_STATE_TRANSIENT);
+
+        // Nothing on this site asked for a token, so this is somebody else's
+        // link. Ignore it entirely and fall through to the key on file.
+        if (!is_string($expected) || '' === $expected) {
+            return self::$connect_return_token;
+        }
+
+        delete_transient(self::CONNECT_STATE_TRANSIENT);
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- see above.
+        $state = isset($_GET['state']) ? sanitize_text_field(wp_unslash($_GET['state'])) : '';
+
+        if ('' !== $state && !hash_equals($expected, $state)) {
+            return self::$connect_return_token;
+        }
+
+        self::$connect_return_token = $token;
+
+        return self::$connect_return_token;
     }
 
     private static function stored_api_key(): string
@@ -356,6 +635,90 @@ final class Admin
      *
      * @return void
      */
+    /**
+     * Forget the ThriveDesk account this site is connected to.
+     *
+     * @return void
+     */
+    public function ajax_disconnect_account(): void
+    {
+        if (
+            ! current_user_can('manage_options')
+            || ! wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['data']['nonce'] ?? '')), 'thrivedesk-plugin-action')
+        ) {
+            wp_send_json_error(['message' => __('Unauthorized', 'thrivedesk')], 403);
+        }
+
+        self::forget_account();
+
+        wp_send_json_success(['message' => __('Disconnected from ThriveDesk.', 'thrivedesk')]);
+    }
+
+    /**
+     * Undo everything connecting did, and nothing else.
+     *
+     * Two halves, and the second is the one that is easy to miss. Clearing the
+     * API key stops *this site* from calling ThriveDesk - but each connected
+     * integration holds its own `api_token`, issued to the org id in
+     * td_helpdesk_system_info, and Api::api_listener() honours that token on
+     * its own without ever consulting the helpdesk key. A disconnect that left
+     * them in place would still be answering the old workspace's requests for
+     * orders, subscriptions, contacts and posts. So they are revoked here, and
+     * the confirmation says so before anyone agrees to it.
+     *
+     * What survives is what describes this site rather than the workspace:
+     * which page hosts the portal, which post types sync, which routes hide
+     * the widget. All of it is still true after reconnecting, and none of it
+     * is worth making someone set up twice.
+     *
+     * @return void
+     */
+    public static function forget_account(): void
+    {
+        $settings = get_option('td_helpdesk_settings');
+        $settings = is_array($settings) ? $settings : [];
+        $api_key  = (string) ($settings['td_helpdesk_api_key'] ?? '');
+
+        foreach (['td_helpdesk_api_key', 'td_helpdesk_assistant_id', 'td_helpdesk_inbox_id', 'td_knowledgebase_slug'] as $key) {
+            unset($settings[$key]);
+        }
+
+        update_option('td_helpdesk_settings', $settings);
+
+        self::set_api_verification_status(false);
+        delete_option('td_helpdesk_system_info');
+
+        $integrations = get_option('thrivedesk_options', []);
+
+        if (is_array($integrations)) {
+            foreach ($integrations as $slug => $integration) {
+                if (! is_array($integration)) {
+                    continue;
+                }
+
+                $integrations[$slug] = ['api_token' => '', 'connected' => false];
+            }
+
+            update_option('thrivedesk_options', $integrations);
+        }
+
+        // Both are stale the moment the key is gone, and they are stored
+        // differently: the summary is an option, so the transient sweep below
+        // does not reach it.
+        \ThriveDesk\Services\WorkspaceService::flush();
+
+        // By name first. The sweep below reads the options table, and under an
+        // external object cache transients never go there - these two are keyed
+        // by the departing API key, so this is the only moment they can be
+        // named at all.
+        if ('' !== $api_key) {
+            delete_transient('thrivedesk_assistants_' . md5($api_key));
+            delete_transient('thrivedesk_inboxes_' . md5($api_key));
+        }
+
+        remove_thrivedesk_all_cache();
+    }
+
     public function ajax_disconnect_plugin(): void
     {
         if (

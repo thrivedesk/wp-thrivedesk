@@ -60,7 +60,11 @@ class MigrationScript {
 	 * re-activate. Gated on the stored version so it is a no-op once caught up.
 	 */
 	private function migrate_schema() {
-		if ( (float) get_option( (string) OPTION_THRIVEDESK_DB_VERSION ) >= (float) THRIVEDESK_DB_VERSION ) {
+		// version_compare over a version string, not a (float) cast: float
+		// formatting is locale-sensitive on PHP 7.4, and a locale that renders
+		// 1.2 as "1,2" casts back to 1.0, leaving this gate permanently open.
+		// It also cannot tell 1.10 from 1.1.
+		if ( version_compare( (string) get_option( (string) OPTION_THRIVEDESK_DB_VERSION ), (string) THRIVEDESK_DB_VERSION, '>=' ) ) {
 			return;
 		}
 

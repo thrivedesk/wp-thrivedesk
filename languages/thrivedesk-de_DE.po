@@ -1,0 +1,1462 @@
+# Translation of the ThriveDesk plugin.
+# This file is distributed under the same license as the plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: ThriveDesk\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/thrivedesk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: thrivedesk\n"
+
+#. Plugin Name of the plugin
+#: thrivedesk.php
+msgid "Agentic Help Desk Plugin for WordPress - Live Chat, AI Chatbot & Ticketing - ThriveDesk"
+msgstr "Agentisches Helpdesk-Plugin für WordPress – Live-Chat, KI-Chatbot und Ticketing – ThriveDesk"
+
+#. Plugin URI of the plugin
+#: thrivedesk.php
+msgid "https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash"
+msgstr ""
+
+#. Description of the plugin
+#: thrivedesk.php
+msgid "ThriveDesk is a help desk plugin for WordPress that brings live chat, AI chatbot, support ticketing, and a knowledge base into one place. Built for WooCommerce stores and eCommerce businesses. Resolve customer support tickets faster with shared inbox, automation, and AI-powered replies."
+msgstr "ThriveDesk ist ein Helpdesk-Plugin für WordPress, das Live-Chat, KI-Chatbot, Support-Tickets und eine Wissensdatenbank an einem Ort vereint. Entwickelt für WooCommerce-Shops und E-Commerce-Unternehmen. Bearbeiten Sie Support-Tickets schneller – mit gemeinsamem Posteingang, Automatisierung und KI-gestützten Antworten."
+
+#. Author of the plugin
+#: thrivedesk.php
+#: Hooks/FluentCrmHooks.php:60
+#: src/Admin.php:188
+#: resources/js/wp-scripts/thrivedesk-autonami-tab.js:8
+msgid "ThriveDesk"
+msgstr ""
+
+#. Author URI of the plugin
+#: thrivedesk.php
+msgid "https://profiles.wordpress.org/thrivedesk/"
+msgstr ""
+
+#: Hooks/FluentCrmHooks.php:59
+msgid "Support Tickets by ThriveDesk"
+msgstr "Support-Tickets von ThriveDesk"
+
+#: Hooks/FluentCrmHooks.php:142
+msgid "View conversation"
+msgstr "Konversation ansehen"
+
+#: includes/helper.php:37
+msgid "View not found"
+msgstr "Ansicht nicht gefunden"
+
+#: includes/helper.php:344
+msgid "WooCommerce"
+msgstr ""
+
+#: includes/helper.php:346
+msgid "Show orders, subscriptions and shipping details beside every conversation."
+msgstr "Zeigen Sie Bestellungen, Abonnements und Versanddetails neben jeder Konversation an."
+
+#: includes/helper.php:352
+msgid "Easy Digital Downloads"
+msgstr ""
+
+#: includes/helper.php:354
+msgid "Pull up a customer’s purchases, licenses and order history while you reply."
+msgstr "Rufen Sie Käufe, Lizenzen und Bestellhistorie eines Kunden ab, während Sie antworten."
+
+#: includes/helper.php:360
+msgid "FluentCRM"
+msgstr ""
+
+#: includes/helper.php:362
+msgid "See the contact’s lists, tags and lifetime value without leaving the inbox."
+msgstr "Sehen Sie Listen, Tags und Lifetime Value des Kontakts, ohne den Posteingang zu verlassen."
+
+#: includes/helper.php:368
+msgid "WordPress Post Sync"
+msgstr "WordPress-Beitragssynchronisierung"
+
+#: includes/helper.php:370
+msgid "Search your published posts and drop a link to one straight into a reply."
+msgstr "Durchsuchen Sie Ihre veröffentlichten Beiträge und fügen Sie einen Link direkt in eine Antwort ein."
+
+#: includes/helper.php:376
+msgid "FunnelKit"
+msgstr ""
+
+#: includes/helper.php:378
+msgid "Bring FunnelKit Automations contacts, lists and tags into the conversation sidebar."
+msgstr "Holen Sie Kontakte, Listen und Tags aus FunnelKit Automations in die Seitenleiste der Konversation."
+
+#: includes/helper.php:397
+msgid "Ecommerce"
+msgstr "E-Commerce"
+
+#: includes/helper.php:398
+msgid "CRM"
+msgstr ""
+
+#: includes/helper.php:399
+msgid "Content"
+msgstr "Inhalte"
+
+#: includes/helper.php:418
+msgid "View SureCart orders, subscriptions and refunds against the customer you are helping."
+msgstr "Sehen Sie SureCart-Bestellungen, -Abonnements und -Rückerstattungen des Kunden, dem Sie gerade helfen."
+
+#: includes/helper.php:419
+msgid "Look up Freemius licenses, payments and plan changes right from a ticket."
+msgstr "Schlagen Sie Freemius-Lizenzen, -Zahlungen und -Tarifwechsel direkt im Ticket nach."
+
+#: includes/helper.php:448
+msgid "Unknown time"
+msgstr "Unbekannter Zeitpunkt"
+
+#. translators: %d: a number of years. One part of a relative time, e.g. "3 years ago".
+#: includes/helper.php:463
+#, php-format
+msgid "%d year"
+msgid_plural "%d years"
+msgstr[0] "%d Jahr"
+msgstr[1] "%d Jahre"
+
+#. translators: %d: a number of months. One part of a relative time, e.g. "3 months ago".
+#: includes/helper.php:468
+#, php-format
+msgid "%d month"
+msgid_plural "%d months"
+msgstr[0] "%d Monat"
+msgstr[1] "%d Monate"
+
+#. translators: %d: a number of weeks. One part of a relative time, e.g. "3 weeks ago".
+#: includes/helper.php:473
+#, php-format
+msgid "%d week"
+msgid_plural "%d weeks"
+msgstr[0] "%d Woche"
+msgstr[1] "%d Wochen"
+
+#. translators: %d: a number of days. One part of a relative time, e.g. "3 days ago".
+#: includes/helper.php:478
+#, php-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] "%d Tag"
+msgstr[1] "%d Tage"
+
+#. translators: %d: a number of hours. One part of a relative time, e.g. "3 hours ago".
+#: includes/helper.php:483
+#, php-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d Stunde"
+msgstr[1] "%d Stunden"
+
+#. translators: %d: a number of minutes. One part of a relative time, e.g. "3 minutes ago".
+#: includes/helper.php:488
+#, php-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d Minute"
+msgstr[1] "%d Minuten"
+
+#. translators: %d: a number of seconds. One part of a relative time, e.g. "3 seconds ago".
+#: includes/helper.php:493
+#, php-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d Sekunde"
+msgstr[1] "%d Sekunden"
+
+#: includes/helper.php:499
+msgid "just now"
+msgstr "gerade eben"
+
+#. translators: %s: a length of time, e.g. "2 hours"
+#: includes/helper.php:503
+#: includes/views/partials/overview.php:170
+#, php-format
+msgid "%s ago"
+msgstr "vor %s"
+
+#: includes/helper.php:519
+#: includes/views/partials/settings.php:378
+#: includes/views/shortcode/conversations.php:160
+msgid "Active"
+msgstr "Aktiv"
+
+#: includes/helper.php:521
+#: includes/views/shortcode/conversations.php:164
+msgid "Pending"
+msgstr "Ausstehend"
+
+#: includes/helper.php:523
+#: includes/views/shortcode/conversations.php:168
+#: resources/js/conversation.js:771
+msgid "Closed"
+msgstr "Geschlossen"
+
+#: includes/helper.php:526
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: includes/helper.php:573
+msgid "Previous"
+msgstr "Zurück"
+
+#: includes/helper.php:573
+msgid "Next"
+msgstr "Weiter"
+
+#: includes/helper.php:862
+msgid "Invalid nonce"
+msgstr "Ungültige Nonce"
+
+#: includes/helper.php:866
+#: src/Admin.php:604
+#: src/Admin.php:649
+#: src/Admin.php:729
+#: src/Assistants/Assistant.php:28
+#: src/Conversations/Conversation.php:82
+#: src/Conversations/Conversation.php:118
+#: src/Conversations/Conversation.php:216
+#: src/Inboxes/Inbox.php:27
+#: src/Services/PortalService.php:72
+msgid "Unauthorized"
+msgstr "Nicht autorisiert"
+
+#: includes/views/partials/card-assistant.php:18
+msgid "What is Assistant?"
+msgstr "Was ist der Assistent?"
+
+#: includes/views/partials/card-assistant.php:19
+msgid "Live chat, knowledge base and a contact form in one widget, shown on the pages you choose."
+msgstr "Live-Chat, Wissensdatenbank und Kontaktformular in einem Widget – angezeigt auf den Seiten Ihrer Wahl."
+
+#: includes/views/partials/card-assistant.php:21
+#: includes/views/partials/card-portal.php:46
+#: includes/views/partials/overview.php:219
+msgid "Learn more"
+msgstr "Mehr erfahren"
+
+#: includes/views/partials/card-portal.php:41
+#: includes/views/partials/card-portal.php:64
+msgid "Overview of WPPortal"
+msgstr "WPPortal im Überblick"
+
+#: includes/views/partials/card-portal.php:43
+msgid "A help center on your own domain, where customers read your knowledge base and follow their tickets. Everything sits behind the login they already have, so nobody is handed off to a site that looks like somebody else's."
+msgstr "Ein Hilfecenter auf Ihrer eigenen Domain, in dem Kunden Ihre Wissensdatenbank lesen und ihre Tickets verfolgen. Alles liegt hinter dem Login, das sie ohnehin haben – niemand wird auf eine Website weitergeleitet, die nach jemand anderem aussieht."
+
+#: includes/views/partials/card-portal.php:66
+#: includes/views/partials/card-portal.php:67
+msgid "Watch the 40 second tour"
+msgstr "40-Sekunden-Tour ansehen"
+
+#: includes/views/partials/card-woo-promo.php:22
+msgid "A chatbot that answers from your own catalog"
+msgstr "Ein Chatbot, der aus Ihrem eigenen Katalog antwortet"
+
+#: includes/views/partials/card-woo-promo.php:23
+msgid "Refunds, order edits and shipping without leaving the chat"
+msgstr "Rückerstattungen, Bestelländerungen und Versand, ohne den Chat zu verlassen"
+
+#: includes/views/partials/card-woo-promo.php:24
+msgid "Agentic AI with real control over the store, not just replies"
+msgstr "Agentische KI mit echter Kontrolle über den Shop, nicht nur Antworten"
+
+#: includes/views/partials/card-woo-promo.php:25
+msgid "Subscriptions and order history beside every conversation"
+msgstr "Abonnements und Bestellhistorie neben jeder Konversation"
+
+#: includes/views/partials/card-woo-promo.php:42
+msgid "WooCommerce integration"
+msgstr "WooCommerce-Integration"
+
+#: includes/views/partials/card-woo-promo.php:44
+msgid "Run your store from the conversation"
+msgstr "Steuern Sie Ihren Shop aus der Konversation heraus"
+
+#: includes/views/partials/card-woo-promo.php:47
+msgid "Connect your store and every conversation arrives with the customer already known - what they bought, what they are paying for, and what is on its way."
+msgstr "Verbinden Sie Ihren Shop, und jede Konversation kommt mit bereits bekanntem Kunden an: was er gekauft hat, wofür er zahlt und was unterwegs ist."
+
+#: includes/views/partials/card-woo-promo.php:63
+msgid "Connect WooCommerce"
+msgstr "WooCommerce verbinden"
+
+#: includes/views/partials/connect-accounts.php:16
+msgid "Create New Account"
+msgstr "Neues Konto erstellen"
+
+#: includes/views/partials/connect-accounts.php:20
+msgid "Connect Existing Account"
+msgstr "Vorhandenes Konto verbinden"
+
+#: includes/views/partials/connect-card.php:26
+msgid "Just one last step!"
+msgstr "Nur noch ein letzter Schritt!"
+
+#: includes/views/partials/connect-card.php:27
+msgid "Add your API key to connect this site to ThriveDesk."
+msgstr "Fügen Sie Ihren API-Schlüssel hinzu, um diese Website mit ThriveDesk zu verbinden."
+
+#: includes/views/partials/connect-card.php:31
+msgid "API Key"
+msgstr "API-Schlüssel"
+
+#: includes/views/partials/connect-card.php:33
+msgid "Enter your API Key"
+msgstr "Geben Sie Ihren API-Schlüssel ein"
+
+#: includes/views/partials/connect-card.php:38
+#: resources/js/admin.js:1151
+msgid "Complete Setup"
+msgstr "Einrichtung abschließen"
+
+#: includes/views/partials/connect-card.php:45
+msgid "Don't have a key yet?"
+msgstr "Noch keinen Schlüssel?"
+
+#: includes/views/partials/connect-card.php:56
+msgid "Additional Info - click to expand"
+msgstr "Weitere Informationen – zum Aufklappen klicken"
+
+#: includes/views/partials/connect-card.php:64
+msgid "Allowlist our IP addresses"
+msgstr "Nehmen Sie unsere IP-Adressen in die Zulassungsliste auf"
+
+#: includes/views/partials/connect-card.php:66
+msgid "Collapse additional info"
+msgstr "Weitere Informationen einklappen"
+
+#: includes/views/partials/connect-card.php:70
+msgid "For a seamless integration, add these IP addresses to your server's firewall or security plugin."
+msgstr "Für eine reibungslose Integration fügen Sie diese IP-Adressen der Firewall Ihres Servers oder Ihrem Sicherheits-Plugin hinzu."
+
+#. translators: %s: the value being copied, such as an IP address or an email address
+#: includes/views/partials/connect-card.php:83
+#: includes/views/partials/connect-card.php:87
+#: includes/views/partials/settings.php:565
+#: includes/views/partials/settings.php:569
+#, php-format
+msgid "Copy %s"
+msgstr "%s kopieren"
+
+#. translators: %1$s: opening link tag, %2$s: closing link tag
+#: includes/views/partials/connect-card.php:102
+#, php-format
+msgid "Still stuck? Email us at %1$shelp@thrivedesk.com%2$s with your site URL and IP address."
+msgstr "Kommen Sie nicht weiter? Schreiben Sie uns an %1$shelp@thrivedesk.com%2$s mit Ihrer Website-URL und IP-Adresse."
+
+#. translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags
+#: includes/views/partials/connect-card.php:111
+#, php-format
+msgid "By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s."
+msgstr "Wenn Sie fortfahren, stimmen Sie den %1$sNutzungsbedingungen%2$s und der %3$sDatenschutzerklärung%4$s zu."
+
+#: includes/views/partials/connect-empty.php:19
+#: resources/js/wp-scripts/admin-app/Integrations.js:33
+msgid "Connect ThriveDesk first"
+msgstr "Verbinden Sie zuerst ThriveDesk"
+
+#: includes/views/partials/connect-empty.php:47
+msgid "Already have a key? Add it on the Overview tab"
+msgstr "Sie haben bereits einen Schlüssel? Fügen Sie ihn im Tab „Übersicht“ hinzu"
+
+#: includes/views/partials/overview.php:31
+#: includes/views/partials/workspace-card.php:45
+msgid "Not connected"
+msgstr "Nicht verbunden"
+
+#: includes/views/partials/overview.php:33
+msgid "Connected, with limits"
+msgstr "Verbunden, mit Einschränkungen"
+
+#: includes/views/partials/overview.php:35
+#: resources/js/wp-scripts/admin-app/Integrations.js:95
+msgid "Connected"
+msgstr "Verbunden"
+
+#: includes/views/partials/overview.php:113
+msgid "Connection details"
+msgstr "Verbindungsdetails"
+
+#: includes/views/partials/overview.php:114
+msgid "The API key that links this site to ThriveDesk."
+msgstr "Der API-Schlüssel, der diese Website mit ThriveDesk verbindet."
+
+#: includes/views/partials/overview.php:136
+msgid "Disconnect this site from ThriveDesk"
+msgstr "Diese Website von ThriveDesk trennen"
+
+#: includes/views/partials/overview.php:143
+#: resources/js/admin.js:701
+#: resources/js/wp-scripts/admin-app/Integrations.js:122
+msgid "Disconnect"
+msgstr "Trennen"
+
+#: includes/views/partials/overview.php:158
+msgid "API key"
+msgstr "API-Schlüssel"
+
+#: includes/views/partials/overview.php:161
+msgid "Replace"
+msgstr "Ersetzen"
+
+#: includes/views/partials/overview.php:165
+msgid "Last checked"
+msgstr "Zuletzt geprüft"
+
+#: includes/views/partials/overview.php:179
+msgid "New API key"
+msgstr "Neuer API-Schlüssel"
+
+#: includes/views/partials/overview.php:180
+msgid "Paste your API key"
+msgstr "Fügen Sie Ihren API-Schlüssel ein"
+
+#. translators: %1$s: opening link tag, %2$s: closing link tag
+#: includes/views/partials/overview.php:185
+#, php-format
+msgid "Find it in ThriveDesk under Settings, Company, API key. %1$sOpen ThriveDesk%2$s"
+msgstr "Sie finden ihn in ThriveDesk unter Einstellungen, Unternehmen, API-Schlüssel. %1$sThriveDesk öffnen%2$s"
+
+#: includes/views/partials/overview.php:194
+msgid "Verify and save"
+msgstr "Prüfen und speichern"
+
+#: includes/views/partials/overview.php:197
+#: resources/js/admin.js:702
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: includes/views/partials/overview.php:216
+msgid "Using Cloudflare?"
+msgstr "Verwenden Sie Cloudflare?"
+
+#: includes/views/partials/overview.php:217
+msgid "Add the ThriveDesk IP addresses to your Cloudflare allowlist. Without them, WooCommerce and the other integrations may not be reachable."
+msgstr "Fügen Sie die ThriveDesk-IP-Adressen Ihrer Cloudflare-Zulassungsliste hinzu. Ohne sie sind WooCommerce und die anderen Integrationen möglicherweise nicht erreichbar."
+
+#: includes/views/partials/settings.php:83
+msgid "Add to WooCommerce"
+msgstr "Zu WooCommerce hinzufügen"
+
+#: includes/views/partials/settings.php:127
+msgid "Live Chat needs a ThriveDesk account"
+msgstr "Live-Chat benötigt ein ThriveDesk-Konto"
+
+#: includes/views/partials/settings.php:128
+msgid "The chat widget is configured from the assistants in your workspace, so there is nothing to choose from until this site is connected."
+msgstr "Das Chat-Widget wird über die Assistenten in Ihrem Workspace konfiguriert – es gibt also nichts auszuwählen, solange diese Website nicht verbunden ist."
+
+#: includes/views/partials/settings.php:137
+msgid "Live Chat Assistant"
+msgstr "Live-Chat-Assistent"
+
+#: includes/views/partials/settings.php:138
+msgid "Show a chat widget on your site so visitors can start a conversation without leaving the page."
+msgstr "Zeigen Sie ein Chat-Widget auf Ihrer Website, damit Besucher eine Konversation beginnen können, ohne die Seite zu verlassen."
+
+#: includes/views/partials/settings.php:141
+msgid "Manage assistants"
+msgstr "Assistenten verwalten"
+
+#: includes/views/partials/settings.php:150
+msgid "Assistant"
+msgstr "Assistent"
+
+#: includes/views/partials/settings.php:152
+msgid "Select an assistant"
+msgstr "Assistenten auswählen"
+
+#: includes/views/partials/settings.php:159
+msgid "Which assistant this site loads."
+msgstr "Welchen Assistenten diese Website lädt."
+
+#: includes/views/partials/settings.php:163
+msgid "Hide on these pages"
+msgstr "Auf diesen Seiten ausblenden"
+
+#: includes/views/partials/settings.php:178
+msgid "Shown on every page"
+msgstr "Auf allen Seiten angezeigt"
+
+#. translators: %d: how many pages the widget is hidden on.
+#: includes/views/partials/settings.php:181
+#, php-format
+msgid "%d pages hidden"
+msgstr "%d Seiten ausgeblendet"
+
+#: includes/views/partials/settings.php:211
+msgid "The chat widget shows on every page of your site by default. Pick any pages it should stay off - checkout, account pages, or anywhere a chat bubble would get in the way. Leave empty to show it everywhere."
+msgstr "Standardmäßig erscheint das Chat-Widget auf allen Seiten Ihrer Website. Wählen Sie die Seiten, auf denen es ausgeblendet bleiben soll – Kasse, Kontoseiten oder überall dort, wo eine Chat-Blase stören würde. Leer lassen, um es überall anzuzeigen."
+
+#: includes/views/partials/settings.php:225
+msgid "No assistant yet"
+msgstr "Noch kein Assistent"
+
+#: includes/views/partials/settings.php:226
+msgid "Create one in ThriveDesk, then come back here to choose which assistant this site loads."
+msgstr "Erstellen Sie einen in ThriveDesk und kehren Sie dann hierher zurück, um auszuwählen, welchen Assistenten diese Website lädt."
+
+#: includes/views/partials/settings.php:228
+msgid "Create an assistant"
+msgstr "Assistenten erstellen"
+
+#: includes/views/partials/settings.php:256
+msgid "Preview"
+msgstr "Vorschau"
+
+#: includes/views/partials/settings.php:257
+msgid "Choose an assistant to preview it."
+msgstr "Wählen Sie einen Assistenten, um ihn in der Vorschau zu sehen."
+
+#: includes/views/partials/settings.php:267
+msgid "Portal needs a ThriveDesk account"
+msgstr "Das Portal benötigt ein ThriveDesk-Konto"
+
+#: includes/views/partials/settings.php:268
+msgid "Portal serves your inboxes and knowledge base on your own site, so it has nothing to serve until this site is connected."
+msgstr "Das Portal stellt Ihre Posteingänge und Ihre Wissensdatenbank auf Ihrer eigenen Website bereit – es hat also nichts bereitzustellen, solange diese Website nicht verbunden ist."
+
+#: includes/views/partials/settings.php:274
+#: resources/js/admin.js:1642
+msgid "All inboxes"
+msgstr "Alle Posteingänge"
+
+#: includes/views/partials/settings.php:292
+msgid "Portal is part of the Plus plan and above. The settings below are saved, but nothing is served until the plan covers it."
+msgstr "Das Portal ist Teil des Plus-Tarifs und höher. Die Einstellungen unten werden gespeichert, aber nichts wird ausgeliefert, solange der Tarif es nicht abdeckt."
+
+#: includes/views/partials/settings.php:293
+msgid "Compare plans"
+msgstr "Tarife vergleichen"
+
+#: includes/views/partials/settings.php:303
+#: resources/js/wp-scripts/admin-app/App.js:23
+msgid "Portal"
+msgstr "Portal"
+
+#: includes/views/partials/settings.php:304
+msgid "A help center on your own site: customers open tickets, read the knowledge base and follow their replies without leaving your domain."
+msgstr "Ein Hilfecenter auf Ihrer eigenen Website: Kunden eröffnen Tickets, lesen die Wissensdatenbank und verfolgen ihre Antworten, ohne Ihre Domain zu verlassen."
+
+#: includes/views/partials/settings.php:309
+msgid "Clear portal cache"
+msgstr "Portal-Cache leeren"
+
+#: includes/views/partials/settings.php:320
+msgid "Ticket creation form"
+msgstr "Formular zur Ticketerstellung"
+
+#: includes/views/partials/settings.php:322
+msgid "Select the page with your ticket form"
+msgstr "Wählen Sie die Seite mit Ihrem Ticketformular"
+
+#: includes/views/partials/settings.php:330
+msgid "You can use your existing form plugin, or any free one, to build the ticket page. All you have to do is set a ThriveDesk inbox address as the form's submission email."
+msgstr "Sie können Ihr vorhandenes Formular-Plugin oder ein beliebiges kostenloses verwenden, um die Ticketseite zu erstellen. Sie müssen lediglich eine ThriveDesk-Posteingangsadresse als Empfängeradresse des Formulars eintragen."
+
+#: includes/views/partials/settings.php:331
+msgid "How to build one"
+msgstr "So erstellen Sie eines"
+
+#: includes/views/partials/settings.php:350
+msgid "Build it with one of these, then select its page above."
+msgstr "Erstellen Sie es mit einem davon und wählen Sie dann oben dessen Seite aus."
+
+#: includes/views/partials/settings.php:379
+msgid "Not active"
+msgstr "Nicht aktiv"
+
+#: includes/views/partials/settings.php:385
+msgid "Activate"
+msgstr "Aktivieren"
+
+#: includes/views/partials/settings.php:398
+msgid "Create a form"
+msgstr "Formular erstellen"
+
+#: includes/views/partials/settings.php:424
+msgid "Add a Support tab to the WooCommerce My Account page"
+msgstr "Einen Support-Tab zur WooCommerce-Seite „Mein Konto“ hinzufügen"
+
+#. translators: %1$s: opening <strong> tag, %2$s: closing </strong> tag
+#: includes/views/partials/settings.php:431
+#, php-format
+msgid "Customers reach their tickets where they already are - and with this on you do not need the %1$sshortcode%2$s anywhere, because the tab is the portal."
+msgstr "Kunden erreichen ihre Tickets dort, wo sie ohnehin sind – und mit dieser Option brauchen Sie den %1$sShortcode%2$s nirgends, denn der Tab ist das Portal."
+
+#: includes/views/partials/settings.php:457
+msgid "Set your business hours in ThriveDesk first, then you can show them here."
+msgstr "Legen Sie Ihre Geschäftszeiten zuerst in ThriveDesk fest, danach können Sie sie hier anzeigen."
+
+#: includes/views/partials/settings.php:460
+msgid "Show business hours on the portal"
+msgstr "Geschäftszeiten im Portal anzeigen"
+
+#: includes/views/partials/settings.php:465
+msgid "A bar at the top of the portal saying whether you are open and how long until that changes. Holidays announce themselves."
+msgstr "Eine Leiste am oberen Rand des Portals, die anzeigt, ob Sie geöffnet haben und wie lange das noch so bleibt. Feiertage melden sich von selbst."
+
+#: includes/views/partials/settings.php:467
+msgid "This workspace has no business hours set yet."
+msgstr "Für diesen Workspace sind noch keine Geschäftszeiten festgelegt."
+
+#: includes/views/partials/settings.php:468
+msgid "Set them in ThriveDesk"
+msgstr "In ThriveDesk festlegen"
+
+#: includes/views/partials/settings.php:487
+msgid "Which hours"
+msgstr "Welche Zeiten"
+
+#: includes/views/partials/settings.php:491
+msgid "Unnamed schedule"
+msgstr "Unbenannter Zeitplan"
+
+#: includes/views/partials/settings.php:495
+msgid "This workspace has more than one schedule. The portal counts down against this one."
+msgstr "Dieser Workspace hat mehrere Zeitpläne. Das Portal zählt nach diesem herunter."
+
+#: includes/views/partials/settings.php:508
+msgid "Portal shortcode"
+msgstr "Portal-Shortcode"
+
+#: includes/views/partials/settings.php:517
+#: includes/views/partials/settings.php:518
+msgid "Copy the portal shortcode"
+msgstr "Portal-Shortcode kopieren"
+
+#: includes/views/partials/settings.php:525
+msgid "Put this on any page to turn it into the help center. Only logged-in visitors can see it."
+msgstr "Fügen Sie ihn auf einer beliebigen Seite ein, um sie zum Hilfecenter zu machen. Nur angemeldete Besucher können es sehen."
+
+#: includes/views/partials/settings.php:545
+msgid "Your inbox addresses"
+msgstr "Ihre Posteingangsadressen"
+
+#: includes/views/partials/settings.php:580
+msgid "Point your form at one of these and its submissions become conversations."
+msgstr "Richten Sie Ihr Formular auf eine davon aus, und seine Einsendungen werden zu Konversationen."
+
+#: includes/views/partials/settings.php:598
+msgid "Sync posts to ThriveDesk"
+msgstr "Beiträge mit ThriveDesk synchronisieren"
+
+#: includes/views/partials/settings.php:607
+msgid "Agents can search these from inside a conversation without leaving ThriveDesk."
+msgstr "Mitarbeiter können darin aus einer Konversation heraus suchen, ohne ThriveDesk zu verlassen."
+
+#: includes/views/partials/settings.php:619
+msgid "Connect with Help Center"
+msgstr "Mit dem Hilfecenter verbinden"
+
+#: includes/views/partials/settings.php:620
+msgid "Anyone opening a ticket is asked to search first. The better your Help Center is stocked, the fewer tickets reach you."
+msgstr "Wer ein Ticket eröffnet, wird zuerst zur Suche aufgefordert. Je besser Ihr Hilfecenter gefüllt ist, desto weniger Tickets erreichen Sie."
+
+#: includes/views/partials/settings.php:631
+msgid "Select a ticket creation form above to set this up."
+msgstr "Wählen Sie oben ein Formular zur Ticketerstellung aus, um dies einzurichten."
+
+#: includes/views/partials/settings.php:639
+#: includes/views/setting.php:32
+msgid "Help Center"
+msgstr "Hilfecenter"
+
+#: includes/views/partials/settings.php:641
+msgid "Do not search a Help Center"
+msgstr "Kein Hilfecenter durchsuchen"
+
+#: includes/views/partials/settings.php:648
+msgid "Which ThriveDesk Help Center the portal searches."
+msgstr "Welches ThriveDesk-Hilfecenter das Portal durchsucht."
+
+#: includes/views/partials/settings.php:652
+msgid "WordPress content"
+msgstr "WordPress-Inhalte"
+
+#: includes/views/partials/settings.php:666
+msgid "Help Center only"
+msgstr "Nur Hilfecenter"
+
+#. translators: %d: how many post types are searched alongside the Help Center.
+#: includes/views/partials/settings.php:669
+#, php-format
+msgid "%d content types"
+msgstr "%d Inhaltstypen"
+
+#: includes/views/partials/settings.php:688
+msgid "Post types on this site to search alongside the Help Center. Leave empty to search the Help Center only."
+msgstr "Inhaltstypen dieser Website, die zusätzlich zum Hilfecenter durchsucht werden. Leer lassen, um nur das Hilfecenter zu durchsuchen."
+
+#: includes/views/partials/settings.php:694
+msgid "Make searching compulsory"
+msgstr "Suche verpflichtend machen"
+
+#: includes/views/partials/settings.php:696
+msgid "Hides the new ticket button until a search has run. People who find their answer never open the ticket; people who do not still can."
+msgstr "Blendet die Schaltfläche für neue Tickets aus, bis eine Suche durchgeführt wurde. Wer seine Antwort findet, eröffnet gar kein Ticket; wer nicht, kann es weiterhin tun."
+
+#: includes/views/partials/settings.php:712
+msgid "What this does"
+msgstr "Was das bewirkt"
+
+#: includes/views/partials/settings.php:716
+msgid "With a Help Center and some post types chosen, anyone opening a ticket on the portal is asked to search first, and ThriveDesk shows the answer if it is already published in either place."
+msgstr "Mit einem ausgewählten Hilfecenter und einigen Inhaltstypen wird jeder, der im Portal ein Ticket eröffnet, zuerst zur Suche aufgefordert, und ThriveDesk zeigt die Antwort an, wenn sie an einer der beiden Stellen bereits veröffentlicht ist."
+
+#: includes/views/partials/settings.php:719
+msgid "The ones who find it never open the ticket, which is the point: fewer of the same question, asked and answered again."
+msgstr "Wer sie findet, eröffnet gar kein Ticket – und genau darum geht es: weniger Wiederholungen derselben Frage."
+
+#: includes/views/partials/workspace-card.php:18
+msgid "Account"
+msgstr "Konto"
+
+#: includes/views/partials/workspace-card.php:19
+msgid "Billing"
+msgstr "Abrechnung"
+
+#: includes/views/partials/workspace-card.php:20
+msgid "Assistants"
+msgstr "Assistenten"
+
+#: includes/views/partials/workspace-card.php:21
+msgid "Inboxes"
+msgstr "Posteingänge"
+
+#: includes/views/partials/workspace-card.php:22
+msgid "Knowledge base"
+msgstr "Wissensdatenbank"
+
+#: includes/views/partials/workspace-card.php:30
+msgid "Workspace"
+msgstr "Workspace"
+
+#: includes/views/partials/workspace-card.php:43
+msgid "Workspace:"
+msgstr "Workspace:"
+
+#: includes/views/partials/workspace-card.php:49
+msgid "Plan:"
+msgstr "Tarif:"
+
+#: includes/views/partials/workspace-card.php:60
+msgid "Portal:"
+msgstr "Portal:"
+
+#: includes/views/partials/workspace-card.php:63
+msgid "Included"
+msgstr "Enthalten"
+
+#: includes/views/partials/workspace-card.php:64
+msgid "Not included"
+msgstr "Nicht enthalten"
+
+#: includes/views/partials/workspace-card.php:68
+msgid "Subscription expired"
+msgstr "Abonnement abgelaufen"
+
+#: includes/views/partials/workspace-card.php:75
+msgid "API access"
+msgstr "API-Zugriff"
+
+#: includes/views/partials/workspace-card.php:95
+msgid "unreachable"
+msgstr "nicht erreichbar"
+
+#: includes/views/setting.php:28
+msgid "Version"
+msgstr "Version"
+
+#: includes/views/setting.php:33
+msgid "System Status"
+msgstr "Systemstatus"
+
+#: includes/views/setting.php:36
+msgid "Visit ThriveDesk"
+msgstr "ThriveDesk besuchen"
+
+#: includes/views/shortcode/conversation-details.php:45
+#: includes/views/shortcode/conversation-details.php:227
+msgid "Back to tickets"
+msgstr "Zurück zu den Tickets"
+
+#. translators: %s: relative time
+#: includes/views/shortcode/conversation-details.php:64
+#, php-format
+msgid "Updated %s"
+msgstr "Aktualisiert %s"
+
+#. translators: %d: number of messages in the conversation thread
+#: includes/views/shortcode/conversation-details.php:71
+#, php-format
+msgid "%d message"
+msgid_plural "%d messages"
+msgstr[0] "%d Nachricht"
+msgstr[1] "%d Nachrichten"
+
+#: includes/views/shortcode/conversation-details.php:123
+msgid "You"
+msgstr "Sie"
+
+#: includes/views/shortcode/conversation-details.php:124
+msgid "Agent"
+msgstr "Mitarbeiter"
+
+#: includes/views/shortcode/conversation-details.php:149
+msgid "No messages yet"
+msgstr "Noch keine Nachrichten"
+
+#: includes/views/shortcode/conversation-details.php:150
+msgid "Send the first reply below to start the conversation."
+msgstr "Senden Sie unten die erste Antwort, um die Konversation zu beginnen."
+
+#: includes/views/shortcode/conversation-details.php:171
+msgid "Your reply"
+msgstr "Ihre Antwort"
+
+#: includes/views/shortcode/conversation-details.php:172
+msgid "Goes to the agent assigned to this ticket."
+msgstr "Geht an den Mitarbeiter, der diesem Ticket zugewiesen ist."
+
+#: includes/views/shortcode/conversation-details.php:182
+msgid "Compose message"
+msgstr "Nachricht verfassen"
+
+#: includes/views/shortcode/conversation-details.php:187
+msgid "Reply is sent when you submit the form."
+msgstr "Die Antwort wird gesendet, wenn Sie das Formular absenden."
+
+#: includes/views/shortcode/conversation-details.php:190
+msgid "Send reply"
+msgstr "Antwort senden"
+
+#: includes/views/shortcode/conversation-details.php:213
+#: includes/views/shortcode/conversations.php:53
+msgid "Your subscription plan does not support the WP Portal feature. Please contact ThriveDesk for more information."
+msgstr "Ihr Abonnement unterstützt die WP-Portal-Funktion nicht. Bitte wenden Sie sich an ThriveDesk, um mehr zu erfahren."
+
+#: includes/views/shortcode/conversation-details.php:221
+msgid "Conversation not found"
+msgstr "Konversation nicht gefunden"
+
+#: includes/views/shortcode/conversation-details.php:222
+msgid "The requested conversation does not exist or you do not have permission to view it."
+msgstr "Die angeforderte Konversation existiert nicht oder Sie haben keine Berechtigung, sie anzusehen."
+
+#: includes/views/shortcode/conversation-details.php:231
+msgid "Unable to load conversation. Please try again later."
+msgstr "Die Konversation konnte nicht geladen werden. Bitte versuchen Sie es später erneut."
+
+#: includes/views/shortcode/conversations.php:30
+#: includes/views/shortcode/modal.php:132
+msgid "No ticket page is selected. Set one in ThriveDesk settings to enable creating new tickets."
+msgstr "Es ist keine Ticketseite ausgewählt. Legen Sie in den ThriveDesk-Einstellungen eine fest, um das Erstellen neuer Tickets zu ermöglichen."
+
+#: includes/views/shortcode/conversations.php:31
+#: includes/views/shortcode/modal.php:133
+msgid "Open the new ticket form"
+msgstr "Formular für neues Ticket öffnen"
+
+#: includes/views/shortcode/conversations.php:33
+msgid "New ticket (not configured)"
+msgstr "Neues Ticket (nicht konfiguriert)"
+
+#: includes/views/shortcode/conversations.php:34
+#: includes/views/shortcode/conversations.php:233
+#: includes/views/shortcode/conversations.php:241
+msgid "New ticket"
+msgstr "Neues Ticket"
+
+#: includes/views/shortcode/conversations.php:113
+msgid "Search tickets…"
+msgstr "Tickets durchsuchen…"
+
+#: includes/views/shortcode/conversations.php:114
+#: includes/views/shortcode/modal.php:41
+msgid "Clear search"
+msgstr "Suche zurücksetzen"
+
+#: includes/views/shortcode/conversations.php:122
+msgid "Reload tickets"
+msgstr "Tickets neu laden"
+
+#: includes/views/shortcode/conversations.php:129
+msgid "Reload"
+msgstr "Neu laden"
+
+#: includes/views/shortcode/conversations.php:154
+msgid "Filter by status"
+msgstr "Nach Status filtern"
+
+#: includes/views/shortcode/conversations.php:156
+msgid "All"
+msgstr "Alle"
+
+#: includes/views/shortcode/conversations.php:223
+msgid "No tickets yet"
+msgstr "Noch keine Tickets"
+
+#: includes/views/shortcode/conversations.php:224
+msgid "Open a new ticket to start a conversation with the team. We typically reply within a few hours during business days."
+msgstr "Eröffnen Sie ein neues Ticket, um eine Konversation mit dem Team zu beginnen. In der Regel antworten wir an Werktagen innerhalb weniger Stunden."
+
+#: includes/views/shortcode/conversations.php:254
+#: includes/views/shortcode/conversations.php:278
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:33
+msgid "Status"
+msgstr "Status"
+
+#: includes/views/shortcode/conversations.php:255
+#: includes/views/shortcode/conversations.php:283
+msgid "Subject"
+msgstr "Betreff"
+
+#: includes/views/shortcode/conversations.php:256
+#: includes/views/shortcode/conversations.php:294
+msgid "Last update"
+msgstr "Letzte Aktualisierung"
+
+#. translators: 1: ticket subject, 2: ticket ID
+#: includes/views/shortcode/conversations.php:275
+#, php-format
+msgid "Open ticket %2$s: %1$s"
+msgstr "Ticket %2$s öffnen: %1$s"
+
+#: includes/views/shortcode/conversations.php:310
+#: includes/views/shortcode/modal.php:91
+msgid "No matches"
+msgstr "Keine Treffer"
+
+#: includes/views/shortcode/conversations.php:311
+msgid "No tickets match your search. Try a different term or clear the search to see all tickets."
+msgstr "Keine Tickets entsprechen Ihrer Suche. Versuchen Sie einen anderen Begriff oder setzen Sie die Suche zurück, um alle Tickets zu sehen."
+
+#: includes/views/shortcode/conversations.php:324
+msgid "Powered by"
+msgstr "Bereitgestellt von"
+
+#: includes/views/shortcode/conversations.php:329
+msgid "Page navigation"
+msgstr "Seitennavigation"
+
+#: includes/views/shortcode/modal.php:22
+msgid "Search documentation"
+msgstr "Dokumentation durchsuchen"
+
+#: includes/views/shortcode/modal.php:23
+msgid "Find answers in our knowledge base or open a ticket."
+msgstr "Finden Sie Antworten in unserer Wissensdatenbank oder eröffnen Sie ein Ticket."
+
+#: includes/views/shortcode/modal.php:25
+msgid "Close (Esc)"
+msgstr "Schließen (Esc)"
+
+#: includes/views/shortcode/modal.php:26
+msgid "Esc"
+msgstr "Esc"
+
+#: includes/views/shortcode/modal.php:39
+msgid "Search articles, guides, and docs…"
+msgstr "Artikel, Anleitungen und Dokumentation durchsuchen…"
+
+#: includes/views/shortcode/modal.php:60
+msgid "Searching…"
+msgstr "Suche läuft…"
+
+#: includes/views/shortcode/modal.php:78
+msgid "Search before opening a ticket"
+msgstr "Suchen, bevor Sie ein Ticket eröffnen"
+
+#: includes/views/shortcode/modal.php:79
+msgid "Type at least one character to search our knowledge base. Most questions are already answered there."
+msgstr "Geben Sie mindestens ein Zeichen ein, um unsere Wissensdatenbank zu durchsuchen. Die meisten Fragen sind dort bereits beantwortet."
+
+#: includes/views/shortcode/modal.php:92
+msgid "We couldn't find anything for that query. Try a different term or open a new ticket."
+msgstr "Wir konnten dazu nichts finden. Versuchen Sie einen anderen Begriff oder eröffnen Sie ein neues Ticket."
+
+#: includes/views/shortcode/modal.php:121
+msgid "Not happy with the results? Create a ticket"
+msgstr "Nicht zufrieden mit den Ergebnissen? Ticket erstellen"
+
+#: includes/views/shortcode/modal.php:130
+msgid "Create a new ticket"
+msgstr "Neues Ticket erstellen"
+
+#: src/Admin.php:198
+#: src/Admin.php:199
+msgid "API Verify"
+msgstr "API-Prüfung"
+
+#: src/Admin.php:654
+msgid "Disconnected from ThriveDesk."
+msgstr "Von ThriveDesk getrennt."
+
+#: src/Conversations/Conversation.php:123
+msgid "Security check failed"
+msgstr "Sicherheitsprüfung fehlgeschlagen"
+
+#: src/Conversations/Conversation.php:132
+msgid "Please wait a moment before reloading again."
+msgstr "Bitte warten Sie einen Moment, bevor Sie erneut laden."
+
+#: src/Conversations/Conversation.php:143
+msgid "Tickets reloaded successfully"
+msgstr "Tickets neu geladen"
+
+#: src/Conversations/Conversation.php:148
+#: resources/js/conversation.js:63
+msgid "Failed to reload tickets"
+msgstr "Tickets konnten nicht neu geladen werden"
+
+#. translators: %s: the reason the request failed, as reported by ThriveDesk.
+#: src/Conversations/Conversation.php:289
+#, php-format
+msgid "Something went wrong: %s"
+msgstr "Etwas ist schiefgelaufen: %s"
+
+#: src/Conversations/Conversation.php:428
+msgid "Settings saved successfully"
+msgstr "Einstellungen gespeichert"
+
+#: src/Conversations/Conversation.php:432
+#: resources/js/admin.js:1145
+#: resources/js/admin.js:1465
+#: resources/js/admin.js:1479
+#: resources/js/admin.js:1518
+#: resources/js/admin.js:1599
+#: resources/js/admin.js:1660
+#: resources/js/admin.js:1705
+msgid "Something went wrong"
+msgstr "Etwas ist schiefgelaufen"
+
+#. translators: 1: opening link tag to the login screen, 2: closing link tag.
+#: src/Conversations/Conversation.php:542
+#, php-format
+msgid "You must be logged in to view the ticket or conversation. %1$sLog in%2$s to continue."
+msgstr "Sie müssen angemeldet sein, um das Ticket oder die Konversation zu sehen. %1$sMelden Sie sich an%2$s, um fortzufahren."
+
+#: src/Conversations/Conversation.php:746
+msgid "Reply text can not be empty."
+msgstr "Der Antworttext darf nicht leer sein."
+
+#: src/Conversations/Conversation.php:765
+msgid "Your reply could not be sent. Please try again."
+msgstr "Ihre Antwort konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
+
+#: src/Portal/UserAccountPages.php:153
+msgid "Support"
+msgstr "Support"
+
+#: src/RestRoute.php:110
+msgid "Invalid request format"
+msgstr "Ungültiges Anfrageformat"
+
+#: src/RestRoute.php:114
+msgid "FluentCRM is not available on this site."
+msgstr "FluentCRM ist auf dieser Website nicht verfügbar."
+
+#: src/RestRoute.php:122
+msgid "Contact does not exist."
+msgstr "Der Kontakt existiert nicht."
+
+#: resources/js/admin.js:315
+msgid "Filter"
+msgstr "Filtern"
+
+#: resources/js/admin.js:323
+msgid "Nothing matches that."
+msgstr "Dazu gibt es keine Treffer."
+
+#: resources/js/admin.js:381
+msgid "Clear"
+msgstr "Zurücksetzen"
+
+#: resources/js/admin.js:404
+msgid "Nothing selected"
+msgstr "Nichts ausgewählt"
+
+#. translators: %d: how many options are selected.
+#: resources/js/admin.js:406
+#, js-format
+msgid "%d selected"
+msgstr "%d ausgewählt"
+
+#. translators: %1$d: chosen count, %2$d: total available.
+#: resources/js/admin.js:424
+#, js-format
+msgid "%1$d of %2$d selected"
+msgstr "%1$d von %2$d ausgewählt"
+
+#: resources/js/admin.js:494
+msgid "Are you sure to disconnect this integration?"
+msgstr "Möchten Sie diese Integration wirklich trennen?"
+
+#: resources/js/admin.js:529
+msgid "Unable to connect with ThriveDesk. Make sure you are using this plugin on a live site."
+msgstr "Verbindung zu ThriveDesk nicht möglich. Stellen Sie sicher, dass Sie dieses Plugin auf einer Live-Website verwenden."
+
+#: resources/js/admin.js:586
+msgid "Disconnected from ThriveDesk"
+msgstr "Von ThriveDesk getrennt"
+
+#: resources/js/admin.js:587
+msgid "Your settings for this site were kept. Add a key to connect again."
+msgstr "Ihre Einstellungen für diese Website wurden beibehalten. Fügen Sie einen Schlüssel hinzu, um sich wieder zu verbinden."
+
+#: resources/js/admin.js:612
+msgid "Connected to ThriveDesk"
+msgstr "Mit ThriveDesk verbunden"
+
+#: resources/js/admin.js:613
+msgid "Your site is set up and ready to take conversations."
+msgstr "Ihre Website ist eingerichtet und bereit für Konversationen."
+
+#: resources/js/admin.js:688
+msgid "Disconnect this site?"
+msgstr "Diese Website trennen?"
+
+#: resources/js/admin.js:691
+msgid "This site stops sending conversations to ThriveDesk."
+msgstr "Diese Website sendet keine Konversationen mehr an ThriveDesk."
+
+#: resources/js/admin.js:692
+msgid "The chat widget stops appearing on your site."
+msgstr "Das Chat-Widget erscheint nicht mehr auf Ihrer Website."
+
+#: resources/js/admin.js:693
+msgid "Connected integrations are revoked and have to be reconnected."
+msgstr "Verbundene Integrationen werden widerrufen und müssen neu verbunden werden."
+
+#: resources/js/admin.js:694
+msgid "Nothing is deleted in your ThriveDesk account."
+msgstr "In Ihrem ThriveDesk-Konto wird nichts gelöscht."
+
+#: resources/js/admin.js:726
+msgid "Could not disconnect"
+msgstr "Trennen nicht möglich"
+
+#: resources/js/admin.js:727
+msgid "Something went wrong. Reload the page and try again."
+msgstr "Etwas ist schiefgelaufen. Laden Sie die Seite neu und versuchen Sie es erneut."
+
+#: resources/js/admin.js:799
+msgid "Close video"
+msgstr "Video schließen"
+
+#: resources/js/admin.js:897
+msgid "Assistant preview"
+msgstr "Assistenten-Vorschau"
+
+#: resources/js/admin.js:999
+msgid "Copy failed. Select the text and copy it manually."
+msgstr "Kopieren fehlgeschlagen. Markieren Sie den Text und kopieren Sie ihn manuell."
+
+#. translators: %s: an IP address.
+#: resources/js/admin.js:1008
+#, js-format
+msgid "Copied %s"
+msgstr "%s kopiert"
+
+#: resources/js/admin.js:1029
+#: resources/js/admin.js:1056
+#: resources/js/admin.js:1100
+#: resources/js/admin.js:1127
+#: resources/js/admin.js:1135
+#: resources/js/admin.js:1144
+#: resources/js/admin.js:1379
+#: resources/js/admin.js:1457
+#: resources/js/admin.js:1464
+#: resources/js/admin.js:1478
+#: resources/js/admin.js:1491
+#: resources/js/admin.js:1500
+#: resources/js/admin.js:1509
+#: resources/js/admin.js:1517
+#: resources/js/admin.js:1566
+#: resources/js/admin.js:1573
+#: resources/js/admin.js:1598
+#: resources/js/admin.js:1622
+#: resources/js/admin.js:1629
+#: resources/js/admin.js:1670
+#: resources/js/admin.js:1704
+msgid "Error"
+msgstr "Fehler"
+
+#: resources/js/admin.js:1030
+msgid "ThriveDesk configuration not loaded. Please refresh the page."
+msgstr "Die ThriveDesk-Konfiguration wurde nicht geladen. Bitte aktualisieren Sie die Seite."
+
+#: resources/js/admin.js:1057
+msgid "Invalid response from server"
+msgstr "Ungültige Antwort vom Server"
+
+#: resources/js/admin.js:1101
+msgid "Invalid response from helpdesk form submission"
+msgstr "Ungültige Antwort beim Absenden des Formulars"
+
+#. translators: %s: error message
+#: resources/js/admin.js:1137
+#, js-format
+msgid "Failed to save helpdesk form: %s"
+msgstr "Formular konnte nicht gespeichert werden: %s"
+
+#: resources/js/admin.js:1292
+msgid "Saving..."
+msgstr "Wird gespeichert…"
+
+#: resources/js/admin.js:1302
+#: resources/js/admin.js:1311
+msgid "Changes saved"
+msgstr "Änderungen gespeichert"
+
+#: resources/js/admin.js:1313
+msgid "Portal cache cleared."
+msgstr "Portal-Cache geleert."
+
+#: resources/js/admin.js:1314
+msgid "The portal cache could not be cleared."
+msgstr "Der Portal-Cache konnte nicht geleert werden."
+
+#: resources/js/admin.js:1326
+#: resources/js/admin.js:1334
+msgid "Could not save"
+msgstr "Speichern nicht möglich"
+
+#: resources/js/admin.js:1335
+#: resources/js/admin.js:1728
+msgid "Check your connection and try again."
+msgstr "Prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+
+#: resources/js/admin.js:1380
+msgid "API Key is required"
+msgstr "Ein API-Schlüssel ist erforderlich"
+
+#: resources/js/admin.js:1425
+msgid "Verified"
+msgstr "Geprüft"
+
+#: resources/js/admin.js:1433
+msgid "Success"
+msgstr "Erfolg"
+
+#: resources/js/admin.js:1458
+msgid "Form submition failed"
+msgstr "Formularübermittlung fehlgeschlagen"
+
+#: resources/js/admin.js:1501
+#: resources/js/admin.js:1567
+#: resources/js/admin.js:1623
+msgid "Invalid API Key"
+msgstr "Ungültiger API-Schlüssel"
+
+#: resources/js/admin.js:1510
+#: resources/js/admin.js:1574
+#: resources/js/admin.js:1630
+msgid "Server Error"
+msgstr "Serverfehler"
+
+#: resources/js/admin.js:1583
+msgid "Select Assistant"
+msgstr "Assistenten auswählen"
+
+#: resources/js/admin.js:1588
+msgid "No Assistant Found"
+msgstr "Kein Assistent gefunden"
+
+#: resources/js/admin.js:1653
+msgid "No Inbox Found"
+msgstr "Kein Posteingang gefunden"
+
+#: resources/js/admin.js:1662
+msgid "Request timed out. Please try again."
+msgstr "Zeitüberschreitung der Anfrage. Bitte versuchen Sie es erneut."
+
+#. translators: %s: error message
+#: resources/js/admin.js:1665
+#, js-format
+msgid "Error: %s"
+msgstr "Fehler: %s"
+
+#: resources/js/admin.js:1724
+msgid "Portal cache cleared"
+msgstr "Portal-Cache geleert"
+
+#: resources/js/admin.js:1727
+msgid "Could not clear the cache"
+msgstr "Cache konnte nicht geleert werden"
+
+#: resources/js/conversation.js:52
+msgid "Success!"
+msgstr "Erfolg!"
+
+#: resources/js/conversation.js:62
+#: resources/js/conversation.js:71
+msgid "Error!"
+msgstr "Fehler!"
+
+#: resources/js/conversation.js:72
+msgid "Failed to reload tickets. Please try again."
+msgstr "Tickets konnten nicht neu geladen werden. Bitte versuchen Sie es erneut."
+
+#: resources/js/conversation.js:283
+msgid "Knowledge Base"
+msgstr "Wissensdatenbank"
+
+#: resources/js/conversation.js:294
+msgid "WordPress"
+msgstr ""
+
+#: resources/js/conversation.js:509
+#: resources/js/conversation.js:538
+msgid "Oops..."
+msgstr "Hoppla…"
+
+#: resources/js/conversation.js:510
+msgid "Reply text can not be empty!"
+msgstr "Der Antworttext darf nicht leer sein!"
+
+#: resources/js/conversation.js:529
+msgid "Reply sent"
+msgstr "Antwort gesendet"
+
+#. translators: 1: hours, 2: minutes, 3: seconds. A countdown, e.g. "39h 08m 12s".
+#: resources/js/conversation.js:684
+#, js-format
+msgid "%1$sh %2$sm %3$ss"
+msgstr "%1$s Std. %2$s Min. %3$s Sek."
+
+#. translators: 1: minutes, 2: seconds. A countdown under an hour, e.g. "08m 12s".
+#: resources/js/conversation.js:689
+#, js-format
+msgid "%1$sm %2$ss"
+msgstr "%1$s Min. %2$s Sek."
+
+#. translators: %s: seconds. A countdown under a minute, e.g. "12s".
+#: resources/js/conversation.js:693
+#, js-format
+msgid "%ss"
+msgstr "%s Sek."
+
+#: resources/js/conversation.js:710
+msgid "You can still open a ticket"
+msgstr "Sie können weiterhin ein Ticket eröffnen"
+
+#: resources/js/conversation.js:761
+msgid "Holiday"
+msgstr "Feiertag"
+
+#. translators: %s: a number of days. How long a holiday runs, e.g. "3 days".
+#: resources/js/conversation.js:767
+#, js-format
+msgid "%s day"
+msgid_plural "%s days"
+msgstr[0] "%s Tag"
+msgstr[1] "%s Tage"
+
+#. translators: %s: a date, e.g. "September 2". When the desk reopens.
+#: resources/js/conversation.js:769
+#, js-format
+msgid "back on %s"
+msgstr "zurück am %s"
+
+#: resources/js/conversation.js:780
+msgid "Support is online around the clock"
+msgstr "Support rund um die Uhr erreichbar"
+
+#. translators: %s: how long until the desk closes, e.g. "2h 14m 03s".
+#: resources/js/conversation.js:791
+#, js-format
+msgid "Support is online — closes in %s"
+msgstr "Support ist online – schließt in %s"
+
+#: resources/js/conversation.js:804
+msgid "Support is offline"
+msgstr "Support ist offline"
+
+#. translators: %s: how long until the desk opens, e.g. "9h 22m 03s".
+#: resources/js/conversation.js:806
+#, js-format
+msgid "Support is offline — opens in %s"
+msgstr "Support ist offline – öffnet in %s"
+
+#: resources/js/wp-scripts/admin-app/App.js:20
+msgid "Overview"
+msgstr "Übersicht"
+
+#: resources/js/wp-scripts/admin-app/App.js:21
+msgid "Integrations"
+msgstr "Integrationen"
+
+#: resources/js/wp-scripts/admin-app/App.js:22
+msgid "Live Chat"
+msgstr "Live-Chat"
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:45
+msgid "ThriveDesk could not start the connection. Make sure this plugin is running on a live site."
+msgstr "ThriveDesk konnte die Verbindung nicht herstellen. Stellen Sie sicher, dass dieses Plugin auf einer Live-Website läuft."
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:91
+msgid "Locked"
+msgstr "Gesperrt"
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:99
+msgid "Not installed"
+msgstr "Nicht installiert"
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:116
+#: resources/js/wp-scripts/admin-app/Integrations.js:139
+msgid "Connect"
+msgstr "Verbinden"
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:136
+msgid "Install and activate this plugin first"
+msgstr "Installieren und aktivieren Sie zuerst dieses Plugin"
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:154
+msgid "No integrations are available."
+msgstr "Keine Integrationen verfügbar."
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:169
+msgid "Connect this site to ThriveDesk to link your store, CRM and posts. Everything below stays here waiting."
+msgstr "Verbinden Sie diese Website mit ThriveDesk, um Shop, CRM und Beiträge zu verknüpfen. Alles Weitere wartet hier auf Sie."
+
+#: resources/js/wp-scripts/admin-app/Integrations.js:178
+msgid "Add your API key"
+msgstr "Fügen Sie Ihren API-Schlüssel hinzu"
+
+#: resources/js/wp-scripts/admin-app/request.js:36
+msgid "Something went wrong. Please try again."
+msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:31
+msgid "ID"
+msgstr "ID"
+
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:32
+msgid "Title"
+msgstr "Titel"
+
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:34
+msgid "Submitted at"
+msgstr "Eingereicht am"
+
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:35
+msgid "Action"
+msgstr "Aktion"
+
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:61
+msgid "View Conversation"
+msgstr "Konversation ansehen"
+
+#: resources/js/wp-scripts/ThriveDeskConversationData.js:72
+msgid "No conversations found"
+msgstr "Keine Konversationen gefunden"

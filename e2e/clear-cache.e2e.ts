@@ -1,9 +1,18 @@
 import { expect, test } from '@playwright/test';
 
-import { confirmSwal, gotoSettings, swalText, swalTitle } from './helpers/wp';
+import { gotoSettings } from './helpers/wp';
 
+/**
+ * Clearing the cache changes nothing on this screen, so it reports in the same
+ * toast the saves use rather than a modal with an OK button and a reload behind
+ * it. There is nothing to acknowledge and nothing for a reload to show.
+ */
 test('clears the portal cache from the settings screen', async ({ page }) => {
-	await gotoSettings(page);
+	await gotoSettings(page, 'portal');
+
+	// The Portal tab owns the button, and every panel is rendered on every tab
+	// with only `hidden` toggling - so it has to be shown before it is clickable.
+	await page.locator('[role="tab"]', { hasText: 'Portal' }).click();
 
 	const button = page.locator('#thrivedesk_clear_cache_btn');
 
@@ -12,10 +21,11 @@ test('clears the portal cache from the settings screen', async ({ page }) => {
 
 	await button.click();
 
-	await expect(swalTitle(page)).toHaveText('Success');
-	await expect(swalText(page)).toHaveText('Cache Cleared');
+	const toast = page.locator('.td-toast').getByText('Portal cache cleared');
 
-	// Confirming reloads the settings screen.
-	await confirmSwal(page);
-	await expect(page.locator('#td_helpdesk_form')).toBeVisible();
+	await expect(toast).toBeVisible({ timeout: 15_000 });
+
+	// It dismisses itself, and the screen is still the screen: no reload, and
+	// nothing to click away.
+	await expect(toast).toBeHidden({ timeout: 15_000 });
 });

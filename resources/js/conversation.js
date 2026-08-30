@@ -1,5 +1,5 @@
 import Swal from "sweetalert2";
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 jQuery(document).ready(($) => {
     $('#openConversationModal').click(function (e) {
@@ -110,9 +110,61 @@ jQuery(document).ready(($) => {
     const tdModalEmpty = $('#td-search-empty');
     const tdModalSpinner = $('#td-search-spinner');
     const tdModalSearchClearBtn = $('#td-modal-search-clear');
+    const tdTicketCta = $('#td-new-ticket-url');
+    const tdFooterNote = $('#td-modal-footer-note');
+    const tdEmptyCtaSlot = $('#td-search-empty-cta');
+    const tdModalFooter = $('.td-modal-footer');
+    // Set in modal.php from td_helpdesk_search_required. Read as an attribute
+    // rather than through .data(), which coerces types and caches the first
+    // value it saw.
+    const tdSearchRequired =
+        '1' === ($('#tdConversationModal').attr('data-td-search-required') || '0');
 
     // tracks which overlay is currently shown in the body
     let currentModalState = 'initial';
+
+    /**
+     * Put the "new ticket" button where the current state wants it.
+     *
+     * Moved, never duplicated: a second copy would be a second element with
+     * the same id, and the one in the footer is what every other handler
+     * refers to. Moving a node does not detach its listeners.
+     *
+     *   empty   - after the "no matches" message, because that is where the
+     *             reader already is and what they now need.
+     *   results - back in the footer, with a line beside it offering the
+     *             ticket anyway. Before a search there is nothing to be
+     *             unhappy with, so the line only appears here.
+     *
+     * When searching is compulsory the button is hidden until a search has
+     * actually run. Hidden, not disabled: a disabled control invites
+     * clicking at it, and there is nothing wrong with the button - there is
+     * simply nothing to have read yet.
+     */
+    const placeTicketCta = (state) => {
+        if (!tdTicketCta.length) return;
+
+        const searched = state === 'results' || state === 'empty';
+
+        if (state === 'empty' && tdEmptyCtaSlot.length) {
+            tdEmptyCtaSlot.append(tdTicketCta);
+        } else if (tdModalFooter.length) {
+            tdModalFooter.append(tdTicketCta);
+        }
+
+        tdTicketCta.prop('hidden', tdSearchRequired && !searched);
+        tdFooterNote.prop('hidden', state !== 'results');
+    };
+
+    /*
+     * Apply it once at load.
+     *
+     * Everything else goes through setModalState(), which nothing calls until a
+     * search runs - so the button sat there in its server-rendered place until
+     * the first keystroke, which is exactly the moment the rule was supposed to
+     * be enforced before.
+     */
+    placeTicketCta(currentModalState);
 
     const updateModalClearBtn = () => {
         if (!tdModalSearchClearBtn.length) return;
@@ -132,12 +184,21 @@ jQuery(document).ready(($) => {
         tdModalInitial.prop('hidden', state !== 'initial');
         tdModalSpinner.prop('hidden', state !== 'loading');
         tdModalEmpty.prop('hidden', state !== 'empty');
+        placeTicketCta(state);
         updateModalClearBtn();
     };
 
     const escAttr = (str) => String(str == null ? '' : str)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // result links come from the kb api and the wp rest route, so they're
+    // only ever navigable http(s) urls (or a site-root path). anything else -
+    // javascript:, data: - gets dropped rather than rendered as an href.
+    const safeHref = (url) => {
+        const raw = String(url == null ? '' : url).trim();
+        return (/^https?:\/\//i.test(raw) || /^\/(?!\/)/.test(raw)) ? raw : '#';
+    };
 
     const buildSearchItem = (item, index, source) => {
         const link = source === 'kb'
@@ -147,7 +208,7 @@ jQuery(document).ready(($) => {
             ? item.categories.map(c => c && c.name).filter(Boolean).join(', ')
             : '';
         return `<li class="td-search-item" id="td-search-item-${source}-${index}">
-            <a target="_blank" rel="noopener" href="${escAttr(link)}">
+            <a target="_blank" rel="noopener" href="${escAttr(safeHref(link))}">
                 <span class="td-search-tag">${escAttr(cats)}</span>
                 <span class="td-search-title">${escAttr(item.title || '')}</span>
                 <span class="td-search-excerpt">${escAttr(item.excerpt || '')}</span>
@@ -277,7 +338,17 @@ jQuery(document).ready(($) => {
                 // route just gets appended. the ?rest_route= form works
                 // whether or not pretty permalinks are on, which the
                 // /wp-json/ path form doesn't.
-                url: td_objects.wp_json_url + "/td-search-query/docs",
+                url: td_objects.wp_json_url + "/thrivedesk/v1/docs",
+                // the route is logged-in only now. without this header
+                // wordpress's rest_cookie_check_errors() calls
+                // wp_set_current_user(0) on a cookie-authed rest request,
+                // and the permission callback sees an anonymous visitor
+                // even though the customer is signed in.
+                beforeSend: function (xhr) {
+                    if (td_objects.rest_nonce) {
+                        xhr.setRequestHeader('X-WP-Nonce', td_objects.rest_nonce);
+                    }
+                },
                 data: {
                     query_string: search_query,
                     action: 'td_search_query_docs',
@@ -472,4 +543,355 @@ jQuery(document).ready(($) => {
             );
         }
     });
+
+    // ---- business hours ----------------------------------------------------
+    //
+    // The bar above the portal header: open or closed, and how long until that
+    // changes. Everything about it is computed here rather than server side,
+    // because a countdown rendered into HTML starts being wrong the moment it
+    // is sent - and because the boundaries then look after themselves. When the
+    // last minute of the working day runs out the bar becomes "closed" on its
+    // own, with no request and no reload.
+    tdBusinessHours();
+
+    function tdBusinessHours() {
+        const bar = document.querySelector('.td-hours');
+
+        if (!bar) {
+            return;
+        }
+
+        let data;
+
+        try {
+            data = JSON.parse(bar.dataset.tdHours || 'null');
+        } catch (e) {
+            return;
+        }
+
+        if (!data) {
+            return;
+        }
+
+        const DAY = 86400;
+        const week = Array.isArray(data.week) ? data.week : [];
+        const holidays = Array.isArray(data.holidays) ? data.holidays : [];
+
+        // The visitor's clock is not evidence. Every comparison below is made
+        // against the server's, carried in the payload; this is the correction
+        // for a machine that is minutes - or hours - out. Without it we would
+        // tell someone with a wrong clock, with total confidence, the wrong
+        // time to expect a reply.
+        const skew = data.now * 1000 - Date.now();
+        const now = () => Date.now() + skew;
+
+        // Where an instant falls in the *schedule's* week, which is not
+        // necessarily the visitor's. Shifting by the offset and then reading
+        // the UTC parts is how you ask "what day and time is it there".
+        function parts(ms) {
+            const shifted = new Date(ms + data.offset * 1000);
+
+            return {
+                day: shifted.getUTCDay(),
+                secs:
+                    shifted.getUTCHours() * 3600 +
+                    shifted.getUTCMinutes() * 60 +
+                    shifted.getUTCSeconds(),
+            };
+        }
+
+        function windowAt(day, secs) {
+            return (week[day] || []).find(([start, end]) => secs >= start && secs < end) || null;
+        }
+
+        // Seconds until the desk closes. Follows a window that runs to midnight
+        // into the next day's, so an overnight shift - which the server splits
+        // at midnight so nothing here has to span days - counts down once
+        // rather than hitting zero at 00:00 and starting again.
+        function closesIn(day, secs) {
+            let elapsed = 0;
+            let d = day;
+            let s = secs;
+
+            for (let i = 0; i <= 7; i++) {
+                const open = windowAt(d, s);
+
+                if (!open) {
+                    return elapsed;
+                }
+
+                elapsed += open[1] - s;
+
+                if (open[1] < DAY) {
+                    return elapsed;
+                }
+
+                d = (d + 1) % 7;
+                s = 0;
+
+                const next = (week[d] || [])[0];
+
+                if (!next || next[0] !== 0) {
+                    return elapsed;
+                }
+            }
+
+            return elapsed;
+        }
+
+        // Seconds until the desk opens: later today if there is anything left
+        // today, otherwise the first window of the next day that has one.
+        function opensIn(day, secs) {
+            const later = (week[day] || []).find(([start]) => start > secs);
+
+            if (later) {
+                return later[0] - secs;
+            }
+
+            for (let i = 1; i <= 7; i++) {
+                const windows = week[(day + i) % 7] || [];
+
+                if (windows.length) {
+                    return DAY - secs + (i - 1) * DAY + windows[0][0];
+                }
+            }
+
+            return null;
+        }
+
+        function holidayAt(ms) {
+            const secs = ms / 1000;
+
+            return holidays.find((h) => secs >= h.from && secs < h.to) || null;
+        }
+
+        // A running clock, not a rounded-off estimate: it ticks every second, so
+        // it has to read as something counting down rather than as a label.
+        //
+        // Hours all the way up rather than rolling into days - "39h 08m" is a
+        // wait someone can weigh against their afternoon in a way "1d 15h" is
+        // not. Minutes and seconds are zero padded so the pill does not change
+        // width on every tick and shuffle itself sideways.
+        function duration(total) {
+            const s = Math.max(0, Math.round(total));
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            const pad = (n) => String(n).padStart(2, '0');
+
+            if (h) {
+                /* translators: 1: hours, 2: minutes, 3: seconds. A countdown, e.g. "39h 08m 12s". */
+                return sprintf(__('%1$sh %2$sm %3$ss', 'thrivedesk'), h, pad(m), pad(sec));
+            }
+
+            if (m) {
+                /* translators: 1: minutes, 2: seconds. A countdown under an hour, e.g. "08m 12s". */
+                return sprintf(__('%1$sm %2$ss', 'thrivedesk'), m, pad(sec));
+            }
+
+            /* translators: %s: seconds. A countdown under a minute, e.g. "12s". */
+            return sprintf(__('%ss', 'thrivedesk'), sec);
+        }
+
+        // Formatted in the schedule's timezone, not the reader's: a holiday
+        // ending at midnight in Dhaka is not a different date because the
+        // person reading about it is in Chicago.
+        function dayLabel(epochSecs) {
+            return new Date((epochSecs + data.offset) * 1000).toLocaleDateString(undefined, {
+                timeZone: 'UTC',
+                month: 'long',
+                day: 'numeric',
+            });
+        }
+
+        // Said whenever the desk is shut, and only then. Someone reading a
+        // closed sign needs to know the door is still open - the wait is on the
+        // reply, not on being able to ask.
+        const shutNote = () => __('You can still open a ticket', 'thrivedesk');
+
+        // A holiday is not a status, so it is answered separately and takes over
+        // the announcement bar. The countdown is deliberately not repeated
+        // alongside it: the next scheduled window may well fall inside the
+        // holiday, and a confident "opens in 4h" during a week the desk is shut
+        // is worse than saying nothing.
+        // Dates are read in the schedule's own zone, never the reader's: a
+        // holiday that ends at midnight in Dhaka is not a different date because
+        // the person reading about it is in Chicago.
+        function inZone(epochSecs) {
+            return new Date((epochSecs + data.offset) * 1000);
+        }
+
+        function partsOf(date, options) {
+            return date.toLocaleDateString(undefined, Object.assign({ timeZone: 'UTC' }, options));
+        }
+
+        // "August 5, 2026" for one day, "August 27 – 31, 2026" for a run of them,
+        // "August 27 – September 1, 2026" when the run crosses a month.
+        //
+        // formatRange does the collapsing, and does it per locale. Building the
+        // range by hand means asking toLocaleDateString for a day and a year
+        // without a month, which is not a date format any locale has - ICU
+        // answers "2026 (day: 31)".
+        function spanLabel(from, last) {
+            const options = { timeZone: 'UTC', month: 'long', day: 'numeric', year: 'numeric' };
+
+            if (from.getTime() === last.getTime()) {
+                return partsOf(from, options);
+            }
+
+            const formatter = new Intl.DateTimeFormat(undefined, options);
+
+            return 'function' === typeof formatter.formatRange
+                ? formatter.formatRange(from, last)
+                : partsOf(from, options) + ' – ' + partsOf(last, options);
+        }
+
+        function holidayState() {
+            const holiday = holidayAt(now());
+
+            if (!holiday) {
+                return null;
+            }
+
+            const from = inZone(holiday.from);
+            const last = inZone(holiday.to - DAY);
+            const days = Math.max(1, Math.round((holiday.to - holiday.from) / DAY));
+
+            return {
+                name: holiday.name || __('Holiday', 'thrivedesk'),
+                month: partsOf(from, { month: 'short' }).toUpperCase(),
+                day: String(from.getUTCDate()).padStart(2, '0'),
+                when: [
+                    spanLabel(from, last),
+                    /* translators: %s: a number of days. How long a holiday runs, e.g. "3 days". */
+                    sprintf(_n('%s day', '%s days', days, 'thrivedesk'), days),
+                    /* translators: %s: a date, e.g. "September 2". When the desk reopens. */
+                    sprintf(__('back on %s', 'thrivedesk'), dayLabel(holiday.to)),
+                ].join(' · '),
+                chip: __('Closed', 'thrivedesk'),
+                note: shutNote(),
+            };
+        }
+
+        function state() {
+            const ms = now();
+
+            if (data.always) {
+                return { cls: 'is-open', text: __('Support is online around the clock', 'thrivedesk'), timer: '', note: '' };
+            }
+
+            const { day, secs } = parts(ms);
+
+            if (windowAt(day, secs)) {
+                const left = duration(closesIn(day, secs));
+
+                return {
+                    cls: 'is-open',
+                    /* translators: %s: how long until the desk closes, e.g. "2h 14m 03s". */
+                    text: sprintf(__('Support is online — closes in %s', 'thrivedesk'), left),
+                    timer: left,
+                    note: '',
+                };
+            }
+
+            const until = opensIn(day, secs);
+            const away = null === until ? '' : duration(until);
+
+            return {
+                cls: 'is-closed',
+                text:
+                    '' === away
+                        ? __('Support is offline', 'thrivedesk')
+                        : /* translators: %s: how long until the desk opens, e.g. "9h 22m 03s". */
+                          sprintf(__('Support is offline — opens in %s', 'thrivedesk'), away),
+                timer: away,
+                note: shutNote(),
+            };
+        }
+
+        const label = bar.querySelector('.td-hours__text');
+        const note = bar.querySelector('.td-hours__note');
+
+        const holidayBar = document.querySelector('.td-holiday');
+        const holidayFields = {};
+
+        [ 'name', 'month', 'day', 'when', 'chip', 'note' ].forEach((key) => {
+            holidayFields[key] = holidayBar && holidayBar.querySelector('.td-holiday__' + key);
+        });
+
+        let shown = '';
+
+        function render() {
+            const holiday = holidayState();
+            const next = state();
+            const key = (holiday ? holiday.name + holiday.when : '') + next.cls + next.text + next.note;
+
+            if (key === shown) {
+                return;
+            }
+
+            shown = key;
+
+            if (holidayBar) {
+                holidayBar.classList.toggle('is-ready', !!holiday);
+
+                if (holiday) {
+                    Object.keys(holidayFields).forEach((key) => {
+                        if (holidayFields[key]) {
+                            holidayFields[key].textContent = holiday[key];
+                        }
+                    });
+                }
+            }
+
+            // While a holiday is up, the status line beside the filters would only
+            // repeat it - and would repeat it with a countdown that cannot be
+            // trusted. The announcement above is the whole answer.
+            bar.classList.remove('is-open', 'is-closed');
+
+            if (holiday) {
+                bar.classList.remove('is-ready');
+                return;
+            }
+
+            bar.classList.add(next.cls, 'is-ready');
+
+            paint(next.text, next.timer);
+
+            if (note) {
+                note.textContent = next.note;
+            }
+        }
+
+        /*
+         * The running figure is the only part set apart, because it is the part
+         * being read - the sentence around it does not change.
+         *
+         * Built as its own node rather than by wrapping the translated string in
+         * markup: the placeholder is at the end in English and need not be in
+         * any other language, and nothing here has to touch innerHTML.
+         */
+        function paint(text, timer) {
+            if (!label) {
+                return;
+            }
+
+            const at = timer ? text.lastIndexOf(timer) : -1;
+
+            if (-1 === at) {
+                label.textContent = text;
+                return;
+            }
+
+            const figure = document.createElement('span');
+            figure.className = 'td-hours__timer';
+            figure.textContent = timer;
+
+            label.textContent = '';
+            label.append(text.slice(0, at), figure, text.slice(at + timer.length));
+        }
+
+        render();
+        setInterval(render, 1000);
+    }
 });

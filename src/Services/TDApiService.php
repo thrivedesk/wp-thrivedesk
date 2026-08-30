@@ -20,19 +20,32 @@ class TDApiService {
         $this->api_token = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
     }
 
-    public function postRequest(string $url, array $data = []){
-
+    /**
+     * POST to the API.
+     *
+     * Returns the decoded body on success, or the same
+     * ['wp_error' => true, 'error_type' => ..., 'message' => ...] shape
+     * getRequest() returns on failure. Callers must check for it: this backs
+     * the customer's support reply, and reporting a reply that never left the
+     * site as "sent" loses it silently.
+     *
+     * @param string $url     Endpoint.
+     * @param array  $data    Request body.
+     * @param int    $timeout Request timeout in seconds.
+     *
+     * @return array
+     */
+    public function postRequest(string $url, array $data = [], int $timeout = self::DEFAULT_TIMEOUT): array
+    {
         $args     = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->api_token,
             ],
             'body'    => $data,
-            'timeout' => 90,
+            'timeout' => $timeout,
         ];
 
-        $response           = wp_remote_post($url, $args);
-        $body               = wp_remote_retrieve_body($response);
-        return json_decode($body, true);
+        return $this->handle_response(wp_remote_post($url, $args));
     }
 
     public function getRequest(string $url, int $timeout = self::DEFAULT_TIMEOUT)
@@ -46,10 +59,23 @@ class TDApiService {
 	        'timeout' => $timeout,
         ];
 
-        $response           = wp_remote_get($url, $args);
+        return $this->handle_response(wp_remote_get($url, $args));
+    }
 
+    /**
+     * Turn a wp_remote_* result into either the decoded body or a typed error.
+     *
+     * Shared by getRequest() and postRequest() so a failed POST cannot be
+     * mistaken for a success.
+     *
+     * @param array|\WP_Error $response Raw wp_remote_* return value.
+     *
+     * @return array
+     */
+    private function handle_response($response): array
+    {
         $response_code      = wp_remote_retrieve_response_code( $response );
-        $instruction_ip_whitelist = 'Please try to white list these IP addresses: 20.68.187.32, 20.68.186.235, 20.117.184.59';
+        $instruction_ip_whitelist = 'Please try to white list these IP addresses: ' . implode(', ', thrivedesk_service_ips());
 
 		if ( is_wp_error( $response ) ) {
             $error_message = $response->get_error_message();
@@ -108,7 +134,7 @@ class TDApiService {
     public function clearAllTransients()
     {
         delete_transient('thrivedesk_assistants');
-        delete_transient('thrivedesk_portal_access');
+        delete_transient(PortalService::PORTAL_ACCESS_TRANSIENT);
     }
 
 	public function setApiKey( $apiKey ): void {
