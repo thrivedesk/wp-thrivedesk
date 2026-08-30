@@ -150,7 +150,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
   runs `WordPress.WP.I18n` repo-wide (`composer phpcs-i18n`) — a separate ruleset for the
   same reason `phpcs-security.xml` is one: `phpcs.xml`'s path excludes also suppress the
   sniff, and those paths are where the strings live. `.github/workflows/i18n-pot-check.yml`
-  fails the PR when `resources/languages/thrivedesk.pot` drifts. And `tests/I18nSetupTest.php`
+  fails the PR when `languages/thrivedesk.pot` drifts. And `tests/I18nSetupTest.php`
   pins the plumbing — `Domain Path`, `load_plugin_textdomain()` on `init`, and the third
   argument to `wp_set_script_translations()`. All three of those were broken at once and
   nothing noticed, because the failure mode is an English UI rather than an error.

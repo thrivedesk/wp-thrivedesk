@@ -8,7 +8,7 @@
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
- * Domain Path:         /resources/languages
+ * Domain Path:         /languages
  * License:             GPLv2 or later
  * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -132,7 +132,7 @@ final class ThriveDesk {
 		load_plugin_textdomain(
 			'thrivedesk',
 			false,
-			dirname( plugin_basename( THRIVEDESK_FILE ) ) . '/resources/languages'
+			dirname( plugin_basename( THRIVEDESK_FILE ) ) . '/languages'
 		);
 	}
 

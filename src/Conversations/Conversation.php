@@ -471,7 +471,7 @@ class Conversation
         wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', $css_version);
 
         wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery', 'wp-i18n'], $js_version);
-        wp_set_script_translations('thrivedesk-conversations', 'thrivedesk', THRIVEDESK_DIR . '/resources/languages');
+        wp_set_script_translations('thrivedesk-conversations', 'thrivedesk', THRIVEDESK_DIR . '/languages');
 
 
         // Toggle the local WP docs search. off unless the admin picked at

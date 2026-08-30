@@ -20,6 +20,7 @@ build() {
   cp -vr ./database ./releases/thrivedesk
   cp -vr ./Hooks ./releases/thrivedesk
   cp -vr ./includes ./releases/thrivedesk
+  cp -vr ./languages ./releases/thrivedesk
   cp -vr ./resources ./releases/thrivedesk
   cp -vr ./src ./releases/thrivedesk
   cp -vr ./changelog.txt ./releases/thrivedesk

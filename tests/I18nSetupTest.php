@@ -52,7 +52,7 @@ class I18nSetupTest extends WP_UnitTestCase {
 
 	public function test_the_domain_path_ships_in_the_release() {
 		// resources/sass, /js, /css and /images are all excluded from the wp.org
-		// build. If resources/languages ever joins them the header would point
+		// build. If languages ever joins them the header would point
 		// at a directory that exists in the repo and not in the plugin.
 		$distignore = file_get_contents( THRIVEDESK_DIR . '/.distignore' );
 		$path       = ltrim( $this->headers()['DomainPath'], '/' );
@@ -146,7 +146,7 @@ class I18nSetupTest extends WP_UnitTestCase {
 					'wp_set_script_translations() needs a handle, a domain and a path, got: ' . trim( $args )
 				);
 				$this->assertStringContainsString(
-					'/resources/languages',
+					'/languages',
 					$args,
 					'the path must be the plugin\'s own Domain Path'
 				);
