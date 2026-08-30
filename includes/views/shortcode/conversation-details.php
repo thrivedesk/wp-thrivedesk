@@ -66,8 +66,8 @@ $updated_human  = diff_for_humans($conversation['updated_at'] ?? '');
                         <?php if ($event_count): ?>
                             <span class="td-meta-sep" aria-hidden="true">·</span>
                             <span><?php
-                                /* translators: %d: number of messages in the conversation thread */
                                 echo esc_html(sprintf(
+                                    /* translators: %d: number of messages in the conversation thread */
                                     _n('%d message', '%d messages', $event_count, 'thrivedesk'),
                                     $event_count
                                 ));

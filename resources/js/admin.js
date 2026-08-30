@@ -402,6 +402,7 @@ function tdEnhanceMultiselect( container ) {
 	 */
 	const summary = {
 		empty: container.dataset.tdEmpty || __( 'Nothing selected', 'thrivedesk' ),
+		/* translators: %d: how many options are selected. */
 		many: container.dataset.tdMany || __( '%d selected', 'thrivedesk' ),
 	};
 

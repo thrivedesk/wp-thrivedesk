@@ -79,11 +79,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                 class="td-copy"
                 data-td-copy="<?php echo esc_attr( $td_service_ip ); ?>"
                 title="<?php echo esc_attr(
-                  /* translators: %s: an IP address */
+                  /* translators: %s: the value being copied, such as an IP address or an email address */
                   sprintf( __( 'Copy %s', 'thrivedesk' ), $td_service_ip )
                 ); ?>"
                 aria-label="<?php echo esc_attr(
-                  /* translators: %s: an IP address */
+                  /* translators: %s: the value being copied, such as an IP address or an email address */
                   sprintf( __( 'Copy %s', 'thrivedesk' ), $td_service_ip )
                 ); ?>"
               >

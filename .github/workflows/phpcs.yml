@@ -37,3 +37,8 @@ jobs:
       # that read request input. See phpcs-security.xml.
       - name: Run PHPCS security sniffs
         run: composer phpcs-security
+
+      # Same reasoning, for translations: the paths phpcs.xml excludes are the
+      # ones that hold the strings. See phpcs-i18n.xml.
+      - name: Run PHPCS i18n sniffs
+        run: composer phpcs-i18n

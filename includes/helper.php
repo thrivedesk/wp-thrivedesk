@@ -34,7 +34,7 @@ if (!function_exists('thrivedesk_view')) {
              */
             require $file;
         } else {
-            wp_die('View not found');
+            wp_die(esc_html__('View not found', 'thrivedesk'));
         }
     }
 }
@@ -457,13 +457,41 @@ if (!function_exists('diff_for_humans')) {
 		$days = $diff->d - ($weeks * 7);
 
 		$parts = array();
-		if ($diff->y) { $parts[] = sprintf(_n('%d year', '%d years', $diff->y, 'thrivedesk'), $diff->y); }
-		if ($diff->m) { $parts[] = sprintf(_n('%d month', '%d months', $diff->m, 'thrivedesk'), $diff->m); }
-		if ($weeks)   { $parts[] = sprintf(_n('%d week', '%d weeks', $weeks, 'thrivedesk'), $weeks); }
-		if ($days)    { $parts[] = sprintf(_n('%d day', '%d days', $days, 'thrivedesk'), $days); }
-		if ($diff->h) { $parts[] = sprintf(_n('%d hour', '%d hours', $diff->h, 'thrivedesk'), $diff->h); }
-		if ($diff->i) { $parts[] = sprintf(_n('%d minute', '%d minutes', $diff->i, 'thrivedesk'), $diff->i); }
-		if ($diff->s) { $parts[] = sprintf(_n('%d second', '%d seconds', $diff->s, 'thrivedesk'), $diff->s); }
+
+		if ($diff->y) {
+			/* translators: %d: a number of years. One part of a relative time, e.g. "3 years ago". */
+			$parts[] = sprintf(_n('%d year', '%d years', $diff->y, 'thrivedesk'), $diff->y);
+		}
+
+		if ($diff->m) {
+			/* translators: %d: a number of months. One part of a relative time, e.g. "3 months ago". */
+			$parts[] = sprintf(_n('%d month', '%d months', $diff->m, 'thrivedesk'), $diff->m);
+		}
+
+		if ($weeks) {
+			/* translators: %d: a number of weeks. One part of a relative time, e.g. "3 weeks ago". */
+			$parts[] = sprintf(_n('%d week', '%d weeks', $weeks, 'thrivedesk'), $weeks);
+		}
+
+		if ($days) {
+			/* translators: %d: a number of days. One part of a relative time, e.g. "3 days ago". */
+			$parts[] = sprintf(_n('%d day', '%d days', $days, 'thrivedesk'), $days);
+		}
+
+		if ($diff->h) {
+			/* translators: %d: a number of hours. One part of a relative time, e.g. "3 hours ago". */
+			$parts[] = sprintf(_n('%d hour', '%d hours', $diff->h, 'thrivedesk'), $diff->h);
+		}
+
+		if ($diff->i) {
+			/* translators: %d: a number of minutes. One part of a relative time, e.g. "3 minutes ago". */
+			$parts[] = sprintf(_n('%d minute', '%d minutes', $diff->i, 'thrivedesk'), $diff->i);
+		}
+
+		if ($diff->s) {
+			/* translators: %d: a number of seconds. One part of a relative time, e.g. "3 seconds ago". */
+			$parts[] = sprintf(_n('%d second', '%d seconds', $diff->s, 'thrivedesk'), $diff->s);
+		}
 
 		if (!$full) $parts = array_slice($parts, 0, 1);
 
@@ -471,7 +499,7 @@ if (!function_exists('diff_for_humans')) {
 			return __('just now', 'thrivedesk');
 		}
 
-		/* translators: %s: human-readable time difference, e.g. "3 months" */
+		/* translators: %s: a length of time, e.g. "2 hours" */
 		return sprintf(__('%s ago', 'thrivedesk'), implode(', ', $parts));
 	}
 }

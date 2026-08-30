@@ -107,11 +107,11 @@ class RestRoute
 	public function get_thrivedesk_conversations($data)
 	{
 		if (!isset($data['id'])) {
-			return new \WP_REST_Response(['message' => 'Invalid request format'], 401);
+			return new \WP_REST_Response(['message' => __('Invalid request format', 'thrivedesk')], 401);
 		}
 
 		if (!class_exists('BWF_Contacts')) {
-			return new \WP_REST_Response(['message' => 'Class BWF_Contacts does not exists'], 401);
+			return new \WP_REST_Response(['message' => __('FluentCRM is not available on this site.', 'thrivedesk')], 401);
 		}
 
 		$contact_obj = \BWF_Contacts::get_instance();
@@ -119,7 +119,7 @@ class RestRoute
 		$contact = $contact_obj->get_contact_by('id', $data['id']);
 
 		if (!absint($contact->get_id()) > 0) {
-			return new \WP_REST_Response(['message' => 'Contact does not exists'], 401);
+			return new \WP_REST_Response(['message' => __('Contact does not exist.', 'thrivedesk')], 401);
 		}
 
 		$contact_email = $contact->get_email();

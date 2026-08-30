@@ -474,6 +474,11 @@ cmd_phpcs() {
         -e COMPOSER_HOME=/tmp/composer-cache \
         -w /var/www/html/wp-content/plugins/thrivedesk \
         wordpress composer phpcs-security
+    say "PHPCS — i18n"
+    "${COMPOSE[@]}" exec -T --user "$(id -u):$(id -g)" \
+        -e COMPOSER_HOME=/tmp/composer-cache \
+        -w /var/www/html/wp-content/plugins/thrivedesk \
+        wordpress composer phpcs-i18n
 }
 
 # The end-to-end suite.

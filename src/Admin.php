@@ -305,7 +305,7 @@ final class Admin
             
             wp_enqueue_style('thrivedesk-css', THRIVEDESK_PLUGIN_ASSETS . '/css/admin.css', [], $css_version);
             wp_enqueue_script('thrivedesk-js', THRIVEDESK_PLUGIN_ASSETS . '/js/admin.js', ['jquery', 'wp-i18n'], $js_version);
-            wp_set_script_translations('thrivedesk-js', 'thrivedesk');
+            wp_set_script_translations('thrivedesk-js', 'thrivedesk', THRIVEDESK_DIR . '/resources/languages');
 
             if (current_user_can( 'manage_options' )) {
                 echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
@@ -377,7 +377,7 @@ final class Admin
             true
         );
 
-        wp_set_script_translations('thrivedesk-admin-app', 'thrivedesk');
+        wp_set_script_translations('thrivedesk-admin-app', 'thrivedesk', THRIVEDESK_DIR . '/resources/languages');
 
         wp_localize_script(
             'thrivedesk-admin-app',

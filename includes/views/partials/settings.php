@@ -561,11 +561,11 @@ $current_user = wp_get_current_user();
                                             class="td-copy"
                                             data-td-copy="<?php echo esc_attr($td_inbox_address); ?>"
                                             title="<?php echo esc_attr(
-                                                /* translators: %s: an email address */
+                                                /* translators: %s: the value being copied, such as an IP address or an email address */
                                                 sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
                                             ); ?>"
                                             aria-label="<?php echo esc_attr(
-                                                /* translators: %s: an email address */
+                                                /* translators: %s: the value being copied, such as an IP address or an email address */
                                                 sprintf(__('Copy %s', 'thrivedesk'), $td_inbox_address)
                                             ); ?>"
                                         >

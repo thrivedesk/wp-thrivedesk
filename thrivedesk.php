@@ -8,7 +8,7 @@
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
- * Domain Path:         /languages
+ * Domain Path:         /resources/languages
  * License:             GPLv2 or later
  * License URI:         https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -110,6 +110,30 @@ final class ThriveDesk {
 	private function __construct() {
 		// Define constants.
 		$this->define_constants();
+
+		add_action( 'init', array( $this, 'load_textdomain' ) );
+	}
+
+	/**
+	 * Load the bundled translations.
+	 *
+	 * On `init` rather than at load time: since WordPress 6.7 a text domain
+	 * loaded before the locale is settled triggers a "translation loading
+	 * triggered too early" notice, and the strings it loads can be the wrong
+	 * language for the current user.
+	 *
+	 * Translations installed from wordpress.org land in WP_LANG_DIR and load on
+	 * their own. This is for the ones that ship inside the plugin, which is what
+	 * Domain Path names and what nothing was reading.
+	 *
+	 * @return void
+	 */
+	public function load_textdomain(): void {
+		load_plugin_textdomain(
+			'thrivedesk',
+			false,
+			dirname( plugin_basename( THRIVEDESK_FILE ) ) . '/resources/languages'
+		);
 	}
 
 	/**

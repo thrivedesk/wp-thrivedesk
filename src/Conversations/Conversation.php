@@ -285,7 +285,8 @@ class Conversation
 				'code' => 401,
 				'status' => 'error',
 				'data' => [
-					'message' =>  'Something went wrong: ' . ( $data['message'] ?? '' )
+					/* translators: %s: the reason the request failed, as reported by ThriveDesk. */
+					'message' => sprintf( __( 'Something went wrong: %s', 'thrivedesk' ), $data['message'] ?? '' ),
 				]
 			] );
 
@@ -424,11 +425,11 @@ class Conversation
             // Clear WordPress options cache for this specific option
             wp_cache_delete('td_helpdesk_settings', 'options');
             
-            echo wp_json_encode(['status' => 'success', 'message' => 'Settings saved successfully']);
+            echo wp_json_encode(['status' => 'success', 'message' => __('Settings saved successfully', 'thrivedesk')]);
             wp_die();
         }
 
-        echo wp_json_encode(['status' => 'error', 'message' => 'Something went wrong']);
+        echo wp_json_encode(['status' => 'error', 'message' => __('Something went wrong', 'thrivedesk')]);
         wp_die();
     }
 
@@ -470,7 +471,7 @@ class Conversation
         wp_enqueue_style('thrivedesk', THRIVEDESK_PLUGIN_ASSETS . '/css/thrivedesk.css', '', $css_version);
 
         wp_register_script('thrivedesk-conversations', THRIVEDESK_PLUGIN_ASSETS . '/js/conversation.js', ['jquery', 'wp-i18n'], $js_version);
-        wp_set_script_translations('thrivedesk-conversations', 'thrivedesk');
+        wp_set_script_translations('thrivedesk-conversations', 'thrivedesk', THRIVEDESK_DIR . '/resources/languages');
 
 
         // Toggle the local WP docs search. off unless the admin picked at
@@ -532,8 +533,16 @@ class Conversation
         global $wp;
         $redirect = home_url($wp->request);
     
-        return '<p>' . __('You must be logged in to view the ticket or conversation', 'thrivedesk') . 
-            '. Click <a class="text-blue-600" href="' . esc_url(wp_login_url($redirect)) . '">here</a> to login.</p>';
+        // One string, with the link as a placeholder. It used to be a translated
+        // fragment concatenated with untranslated English on both sides, which
+        // left a translator unable to move the link or translate half the
+        // sentence - and word order is exactly what changes between languages.
+        return '<p>' . sprintf(
+            /* translators: 1: opening link tag to the login screen, 2: closing link tag. */
+            esc_html__( 'You must be logged in to view the ticket or conversation. %1$sLog in%2$s to continue.', 'thrivedesk' ),
+            '<a class="text-blue-600" href="' . esc_url( wp_login_url( $redirect ) ) . '">',
+            '</a>'
+        ) . '</p>';
     }
     
 

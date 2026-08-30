@@ -54,6 +54,7 @@ composer install && npm install   # setup
 | Single test file | `vendor/bin/phpunit tests/HmacSignatureTest.php` |
 | Single test method | `vendor/bin/phpunit --filter test_name tests/HmacSignatureTest.php` |
 | Lint | `composer phpcs` |
+| i18n sniffs (repo-wide) | `composer phpcs-i18n` |
 | PHP 7.4 compat check | `composer phpcompat` |
 | E2E | `npm run e2e` (needs env vars, see `e2e/README.md`) |
 | Release zip | `npm run release` |
@@ -145,6 +146,14 @@ scripts/release.sh        Builds releases/thrivedesk.zip
 
 ## Conventions
 
+- **Translations are gated in three places, and all three matter.** `phpcs-i18n.xml`
+  runs `WordPress.WP.I18n` repo-wide (`composer phpcs-i18n`) — a separate ruleset for the
+  same reason `phpcs-security.xml` is one: `phpcs.xml`'s path excludes also suppress the
+  sniff, and those paths are where the strings live. `.github/workflows/i18n-pot-check.yml`
+  fails the PR when `resources/languages/thrivedesk.pot` drifts. And `tests/I18nSetupTest.php`
+  pins the plumbing — `Domain Path`, `load_plugin_textdomain()` on `init`, and the third
+  argument to `wp_set_script_translations()`. All three of those were broken at once and
+  nothing noticed, because the failure mode is an English UI rather than an error.
 - **PHPCS is incrementally adopted.** `phpcs.xml` excludes legacy paths one at a time; anything under `src/` *not* listed there is already clean and must stay clean. When you bring an excluded path up to WPCS, delete its exclude line.
 - **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. Intentional contract changes: regenerate with `TD_UPDATE_GOLDEN=1 vendor/bin/phpunit tests/ListenerGoldenTest.php` and review the diff.
 - **Test signing must mirror production.** `td_test_sign_payload()` in `tests/includes/listener-helpers.php` reimplements `Api::verify_token()`; keep them in step.
