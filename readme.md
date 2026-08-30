@@ -4,7 +4,7 @@ Contributors: thrivedesk
 Tags: live chat, helpdesk, chatbot, woocommerce support, support ticket
 Requires at least: 4.9
 Tested up to: 6.9
-Stable Tag: 2.6.0
+Stable Tag: 2.7.0
 Requires PHP: 7.4
 License: GNU General Public License v2.0 or later
 
@@ -373,6 +373,24 @@ Setup takes under 5 minutes. No coding required.
 - Easy setup: Setup your Shared Inbox in less than a minute.
 
 == Changelog ==
+
+= 2.7.0 =
+2026-08-29 - version 2.7.0
+* feat: The plugin screen has been rebuilt around four tabs - Overview, Integrations, Live Chat and Portal - so each part of the setup has a place of its own instead of one long page.
+* feat: Settings save as you change them. The Save button is gone, and a change on the Portal tab clears the portal cache for you rather than leaving you to find the button.
+* feat: The plugin screen works before there is an account. Connecting happens on the Overview tab, and everything that needs a connection is shown locked rather than hidden, so you can see what you are about to get.
+* feat: Overview shows your workspace, your plan, and which parts of the ThriveDesk API your key can actually reach - so a feature your plan does not cover is visible here instead of turning out to be missing later.
+* feat: You can disconnect this site from the plugin screen.
+* feat: Business hours from your ThriveDesk workspace can be shown on the portal: a live countdown beside the ticket filters saying whether support is online and how long until that changes, and an announcement when a holiday is on. Both say you can still open a ticket, so nobody is turned away outside hours.
+* feat: Searching can be made compulsory before a ticket is opened. With a ThriveDesk Help Center and some WordPress post types selected, anyone opening a ticket is asked to search first, and the new ticket button stays hidden until they have. The ones who find their answer never open the ticket.
+* feat: The Portal tab names the form plugins already installed on this site and links straight into each one's builder, so building the ticket form does not start with a hunt for the right screen.
+* feat: Your ThriveDesk inbox addresses are shown on the Portal tab with a copy button, beside the field that needs them - that address is what a ticket form has to submit to.
+* feat: The Support tab on the WooCommerce My Account page is set from the Portal tab now, and is only offered once WooCommerce is connected to ThriveDesk. With it on, the portal shortcode is not needed anywhere.
+* feat: The Live Chat tab previews the assistant beside its settings, and switching assistant takes effect without a save.
+* feat: "Hide on these pages" and the portal's content sources are dropdowns that list pages by title rather than by URL.
+* feat: The setup screen has been redesigned, and the IP addresses to allowlist can be copied rather than retyped.
+* fix: Integration categories on the Integrations tab were shipping as untranslated slugs.
+* dev: A local WordPress bench (./td up) for developing against a real site, dependency updates across the build toolchain, and the test suite grown to 421 tests covering every change above. None of it ships in the plugin.
 
 = 2.6.0 =
 2026-08-06 - version 2.6.0
