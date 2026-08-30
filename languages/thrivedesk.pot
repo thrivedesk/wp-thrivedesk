@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T09:43:57+00:00\n"
+"POT-Creation-Date: 2026-08-30T12:43:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -380,7 +380,7 @@ msgid "Connected, with limits"
 msgstr ""
 
 #: includes/views/partials/overview.php:35
-#: resources/js/wp-scripts/admin-app/Integrations.js:95
+#: resources/js/wp-scripts/admin-app/Integrations.js:99
 msgid "Connected"
 msgstr ""
 
@@ -398,7 +398,7 @@ msgstr ""
 
 #: includes/views/partials/overview.php:143
 #: resources/js/admin.js:731
-#: resources/js/wp-scripts/admin-app/Integrations.js:122
+#: resources/js/wp-scripts/admin-app/Integrations.js:133
 msgid "Disconnect"
 msgstr ""
 
@@ -1407,32 +1407,32 @@ msgstr ""
 msgid "ThriveDesk could not start the connection. Make sure this plugin is running on a live site."
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:91
+#: resources/js/wp-scripts/admin-app/Integrations.js:95
 msgid "Locked"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:99
+#: resources/js/wp-scripts/admin-app/Integrations.js:103
 msgid "Not installed"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:116
-#: resources/js/wp-scripts/admin-app/Integrations.js:139
+#: resources/js/wp-scripts/admin-app/Integrations.js:120
+#: resources/js/wp-scripts/admin-app/Integrations.js:151
 msgid "Connect"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:136
+#: resources/js/wp-scripts/admin-app/Integrations.js:148
 msgid "Install and activate this plugin first"
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:154
+#: resources/js/wp-scripts/admin-app/Integrations.js:166
 msgid "No integrations are available."
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:169
+#: resources/js/wp-scripts/admin-app/Integrations.js:181
 msgid "Connect this site to ThriveDesk to link your store, CRM and posts. Everything below stays here waiting."
 msgstr ""
 
-#: resources/js/wp-scripts/admin-app/Integrations.js:178
+#: resources/js/wp-scripts/admin-app/Integrations.js:190
 msgid "Add your API key"
 msgstr ""
 
