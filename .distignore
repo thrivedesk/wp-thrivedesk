@@ -67,7 +67,3 @@ temp/
 # Repo-only documentation
 /docs
 
-# Local development bench (OrbStack/Docker). Never ships.
-/docker
-/td
-/plugins

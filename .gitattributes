@@ -22,6 +22,3 @@
 
 # Shell scripts must keep LF endings so they run inside Linux containers.
 *.sh text eol=lf
-docker/ export-ignore
-td export-ignore
-plugins/ export-ignore

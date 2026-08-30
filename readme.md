@@ -392,7 +392,7 @@ Setup takes under 5 minutes. No coding required.
 * fix: Integration categories on the Integrations tab were shipping as untranslated slugs.
 * fix: The plugin can now actually be translated. It pointed at a translations folder that has never existed, never loaded the bundled translations at all, and gave WordPress no path for the JavaScript ones - so every string was marked up correctly and not one of them could have been translated. Translations now live in /languages, where WordPress looks for them.
 * feat: Ships with translations for French, German, Spanish (Spain, Mexico, Argentina, Chile, Colombia and Venezuela), and British and Canadian English. Translations installed from WordPress.org still take precedence over these, so a language pack always wins.
-* dev: A local WordPress bench (./td up) for developing against a real site, dependency updates across the build toolchain, translation sniffs enforced across the whole plugin rather than the fraction of it the formatting ruleset reaches, and the test suite grown to 428 tests covering every change above. None of it ships in the plugin.
+* dev: Dependency updates across the build toolchain, translation sniffs enforced across the whole plugin rather than the fraction of it the formatting ruleset reaches, and the test suite grown to 428 tests covering every change above. None of it ships in the plugin.
 
 = 2.6.0 =
 2026-08-06 - version 2.6.0

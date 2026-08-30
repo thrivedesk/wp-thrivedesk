@@ -13,34 +13,7 @@ PHP 7.4 minimum (enforced in CI). PSR-4 autoload maps `ThriveDesk\` → `src/`, 
 
 ## Commands
 
-### The bench (local WordPress, Docker/OrbStack)
-
-`./td` boots a real WordPress with this plugin active, at `https://thrivedesk.local`.
-Under OrbStack that name resolves to the container — no hosts file, no sudo, no host
-port. Everything is idempotent; re-run anything.
-
-| Task | Command |
-| --- | --- |
-| Boot it | `./td up` (admin / password) |
-| PHPUnit, in the bench | `./td test` (add any PHPUnit args) |
-| PHPCS + security sniffs | `./td phpcs` |
-| wp-cli | `./td cli plugin list` |
-| Point it at a ThriveDesk account | `./td connect <api-key>` |
-| Logs (apache + PHP + debug.log) | `./td logs` |
-| End-to-end | `./td e2e`, `./td e2e-ui`, `./td e2e-report` |
-| Wipe and start over | `./td reset` |
-| What's missing | `./td doctor` |
-
-`./td test` needs no WP test-library download — `wp-phpunit` is a dev dependency and
-`tests/bootstrap.php` finds it in `vendor/`; the bench only supplies a config naming the
-database. The bench runs MariaDB 11.4 while CI runs 10.11: if you are chasing a failure
-only CI sees, pin `docker/compose.yml` to 10.11 and `./td reset` to rule the database out.
-
-**The bench never ships.** `docker/`, `td` and `plugins/` are excluded in both `.distignore`
-(the wp.org manifest) and `.gitattributes`, and `scripts/release.sh` copies an explicit
-allowlist that does not include them.
-
-### Direct (no bench)
+### Commands
 
 ```bash
 composer install && npm install   # setup
@@ -59,7 +32,7 @@ composer install && npm install   # setup
 | E2E | `npm run e2e` (needs env vars, see `e2e/README.md`) |
 | Release zip | `npm run release` |
 
-PHPUnit needs a WordPress test environment: `wp-phpunit` is vendored, but `tests/bootstrap.php` still requires `WP_TESTS_DIR`/`WP_PHPUNIT__DIR` plus a `wp-tests-config.php` pointing at a MySQL/MariaDB database. `./td test` sets all of that up for you; see `.github/workflows/phpunit.yml` for how CI does it.
+PHPUnit needs a WordPress test environment: `wp-phpunit` is vendored, but `tests/bootstrap.php` still requires `WP_TESTS_DIR`/`WP_PHPUNIT__DIR` plus a `wp-tests-config.php` pointing at a MySQL/MariaDB database. `.github/workflows/phpunit.yml` shows a working setup end to end; this repository does not prescribe how you run WordPress locally.
 
 ## Architecture
 
@@ -135,8 +108,6 @@ Hooks/FluentCrmHooks.php  Registers ThriveDesk as a FluentCRM ticket provider
 database/                 Custom table migrations
 includes/helper.php       thrivedesk_view() renderer + shared helpers (registers hooks at file scope)
 includes/views/           PHP templates: pages/, partials/, shortcode/, icons/
-docker/                   The bench: compose.yml, Dockerfile.wp, Caddyfile (not shipped)
-td                        Bench CLI — ./td help (not shipped)
 resources/                Source js/css (mix input) + thrivedesk.pot
 assets/                   Built js/css — committed, do not hand-edit
 tests/                    PHPUnit; includes/ = shared test cases, stubs/ = fake plugin APIs, golden/ = snapshots
