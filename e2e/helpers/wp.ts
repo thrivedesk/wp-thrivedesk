@@ -88,21 +88,6 @@ export async function waitForHandlers(page: Page, selector: string): Promise<voi
 	}, selector);
 }
 
-/** The stored key, read off the settings form. Hidden until "Update" is clicked. */
-export async function readStoredApiKey(page: Page): Promise<string> {
-	const key = await page.locator('#td_helpdesk_api_key').inputValue();
-
-	expect(key, 'the site under test has no stored API key').not.toBe('');
-
-	return key;
-}
-
-/** Reveals the API key field on the settings page so it can be edited. */
-export async function revealApiKeyField(page: Page): Promise<void> {
-	await page.locator('.api-key-preview .trigger').click();
-	await expect(page.locator('#td_helpdesk_api_key')).toBeVisible();
-}
-
 export function swalTitle(page: Page): Locator {
 	return page.locator('.swal2-title');
 }

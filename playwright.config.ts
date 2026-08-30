@@ -31,10 +31,19 @@ export default defineConfig({
 		ignoreHTTPSErrors: true,
 	},
 
-	/* Portal first, admin last. Re-verifying an API key clears the cached portal
-	 * entitlement, and an account whose plan is read straight from ThriveDesk
-	 * gets it straight back — but one relying on the cached answer would not,
-	 * and the portal tests would skip for the rest of the run. */
+	/* Portal first, admin last, and the key-verifying specs after even those.
+	 * Re-verifying an API key clears the cached portal entitlement, and an
+	 * account whose plan is read straight from ThriveDesk gets it straight back
+	 * — but one relying on the cached answer would not, and the portal tests
+	 * would skip for the rest of the run. That applies inside the admin project
+	 * too: clear-cache and the post-type batching spec both need the portal
+	 * entitlement, and api-key-verify sorts ahead of them alphabetically.
+	 *
+	 * It cannot simply restore what it clears, either. Only a successful
+	 * verification sets td_helpdesk_verified, and the stored key is no longer
+	 * rendered into the page for a spec to re-submit, so the connection it
+	 * breaks stays broken for whatever runs next. Running it last is the
+	 * containment. */
 	projects: [
 		{ name: 'setup', testMatch: /auth\.setup\.ts/ },
 		{
@@ -51,8 +60,16 @@ export default defineConfig({
 		{
 			name: 'admin',
 			use: { ...devices['Desktop Chrome'], storageState: ADMIN_STATE },
-			dependencies: ['setup'],
-			testIgnore: /portal-.*\.e2e\.ts/,
+			// Portal first is a dependency, not an ordering convention: array
+			// order does not survive another project joining the graph.
+			dependencies: ['setup', 'anonymous', 'customer'],
+			testIgnore: /(portal-.*|api-key-verify)\.e2e\.ts/,
+		},
+		{
+			name: 'admin-verify',
+			use: { ...devices['Desktop Chrome'], storageState: ADMIN_STATE },
+			dependencies: ['admin'],
+			testMatch: /api-key-verify\.e2e\.ts/,
 		},
 	],
 });
