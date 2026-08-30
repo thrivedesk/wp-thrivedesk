@@ -375,7 +375,7 @@ Setup takes under 5 minutes. No coding required.
 == Changelog ==
 
 = 2.7.0 =
-2026-08-29 - version 2.7.0
+2026-08-30 - version 2.7.0
 * feat: The plugin screen has been rebuilt around four tabs - Overview, Integrations, Live Chat and Portal - so each part of the setup has a place of its own instead of one long page.
 * feat: Settings save as you change them. The Save button is gone, and a change on the Portal tab clears the portal cache for you rather than leaving you to find the button.
 * feat: The plugin screen works before there is an account. Connecting happens on the Overview tab, and everything that needs a connection is shown locked rather than hidden, so you can see what you are about to get.
