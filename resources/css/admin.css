@@ -769,6 +769,50 @@ background: rgb(0 0 0 / 0.8);
 	padding-top: calc(var(--wp-admin--admin-bar--height, 0px) + 1rem);
 }
 
+/* The consequence list inside the disconnect dialog, in that same <body>
+   scope. An icon column instead of bullets, so the three things that stop and
+   the one thing that does not are told apart before the sentences are read;
+   the rule above the last row is what marks the turn from loss to
+   reassurance. Sentences are left-aligned - SweetAlert2 centers its body, and
+   centered prose in four unequal lines is the thing that made this hard to
+   read. */
+.td-consequences {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	text-align: left;
+}
+.td-consequence {
+	display: grid;
+	grid-template-columns: 18px 1fr;
+	gap: 0.625rem;
+	align-items: start;
+	margin: 0;
+	padding: 0.375rem 0;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: #334155;
+}
+.td-consequence svg {
+	/* The stroke sits high in a 24-box; this drops it onto the text baseline. */
+	width: 18px;
+	height: 18px;
+	margin-top: 0.15rem;
+}
+/* Matched to confirmButtonColor in admin.js: the marks and the button that
+   causes them are the same red. */
+.td-consequence.is-stops svg {
+	color: #e11d48;
+}
+.td-consequence.is-keeps {
+	margin-top: 0.375rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid #e2e8f0;
+}
+.td-consequence.is-keeps svg {
+	color: #16a34a;
+}
+
 /* Reset wp  */
 #wpbody, #wpbody-content, #wpcontent, #wpwrap, body, html {
 	@apply h-full!;

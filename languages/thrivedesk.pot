@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T09:15:27+00:00\n"
+"POT-Creation-Date: 2026-08-30T09:43:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -316,7 +316,7 @@ msgid "Enter your API Key"
 msgstr ""
 
 #: includes/views/partials/connect-card.php:38
-#: resources/js/admin.js:1151
+#: resources/js/admin.js:1181
 msgid "Complete Setup"
 msgstr ""
 
@@ -397,7 +397,7 @@ msgid "Disconnect this site from ThriveDesk"
 msgstr ""
 
 #: includes/views/partials/overview.php:143
-#: resources/js/admin.js:701
+#: resources/js/admin.js:731
 #: resources/js/wp-scripts/admin-app/Integrations.js:122
 msgid "Disconnect"
 msgstr ""
@@ -433,7 +433,7 @@ msgid "Verify and save"
 msgstr ""
 
 #: includes/views/partials/overview.php:197
-#: resources/js/admin.js:702
+#: resources/js/admin.js:732
 msgid "Cancel"
 msgstr ""
 
@@ -528,7 +528,7 @@ msgid "Portal serves your inboxes and knowledge base on your own site, so it has
 msgstr ""
 
 #: includes/views/partials/settings.php:274
-#: resources/js/admin.js:1642
+#: resources/js/admin.js:1672
 msgid "All inboxes"
 msgstr ""
 
@@ -1032,13 +1032,13 @@ msgid "Settings saved successfully"
 msgstr ""
 
 #: src/Conversations/Conversation.php:432
-#: resources/js/admin.js:1145
-#: resources/js/admin.js:1465
-#: resources/js/admin.js:1479
-#: resources/js/admin.js:1518
-#: resources/js/admin.js:1599
-#: resources/js/admin.js:1660
-#: resources/js/admin.js:1705
+#: resources/js/admin.js:1175
+#: resources/js/admin.js:1495
+#: resources/js/admin.js:1509
+#: resources/js/admin.js:1548
+#: resources/js/admin.js:1629
+#: resources/js/admin.js:1690
+#: resources/js/admin.js:1735
 msgid "Something went wrong"
 msgstr ""
 
@@ -1124,176 +1124,176 @@ msgstr ""
 msgid "Your site is set up and ready to take conversations."
 msgstr ""
 
-#: resources/js/admin.js:688
+#: resources/js/admin.js:718
 msgid "Disconnect this site?"
 msgstr ""
 
-#: resources/js/admin.js:691
+#: resources/js/admin.js:721
 msgid "This site stops sending conversations to ThriveDesk."
 msgstr ""
 
-#: resources/js/admin.js:692
+#: resources/js/admin.js:722
 msgid "The chat widget stops appearing on your site."
 msgstr ""
 
-#: resources/js/admin.js:693
+#: resources/js/admin.js:723
 msgid "Connected integrations are revoked and have to be reconnected."
 msgstr ""
 
-#: resources/js/admin.js:694
+#: resources/js/admin.js:724
 msgid "Nothing is deleted in your ThriveDesk account."
 msgstr ""
 
-#: resources/js/admin.js:726
+#: resources/js/admin.js:756
 msgid "Could not disconnect"
 msgstr ""
 
-#: resources/js/admin.js:727
+#: resources/js/admin.js:757
 msgid "Something went wrong. Reload the page and try again."
 msgstr ""
 
-#: resources/js/admin.js:799
+#: resources/js/admin.js:829
 msgid "Close video"
 msgstr ""
 
-#: resources/js/admin.js:897
+#: resources/js/admin.js:927
 msgid "Assistant preview"
 msgstr ""
 
-#: resources/js/admin.js:999
+#: resources/js/admin.js:1029
 msgid "Copy failed. Select the text and copy it manually."
 msgstr ""
 
 #. translators: %s: an IP address.
-#: resources/js/admin.js:1008
+#: resources/js/admin.js:1038
 #, js-format
 msgid "Copied %s"
 msgstr ""
 
-#: resources/js/admin.js:1029
-#: resources/js/admin.js:1056
-#: resources/js/admin.js:1100
-#: resources/js/admin.js:1127
-#: resources/js/admin.js:1135
-#: resources/js/admin.js:1144
-#: resources/js/admin.js:1379
-#: resources/js/admin.js:1457
-#: resources/js/admin.js:1464
-#: resources/js/admin.js:1478
-#: resources/js/admin.js:1491
-#: resources/js/admin.js:1500
-#: resources/js/admin.js:1509
-#: resources/js/admin.js:1517
-#: resources/js/admin.js:1566
-#: resources/js/admin.js:1573
-#: resources/js/admin.js:1598
-#: resources/js/admin.js:1622
-#: resources/js/admin.js:1629
-#: resources/js/admin.js:1670
-#: resources/js/admin.js:1704
+#: resources/js/admin.js:1059
+#: resources/js/admin.js:1086
+#: resources/js/admin.js:1130
+#: resources/js/admin.js:1157
+#: resources/js/admin.js:1165
+#: resources/js/admin.js:1174
+#: resources/js/admin.js:1409
+#: resources/js/admin.js:1487
+#: resources/js/admin.js:1494
+#: resources/js/admin.js:1508
+#: resources/js/admin.js:1521
+#: resources/js/admin.js:1530
+#: resources/js/admin.js:1539
+#: resources/js/admin.js:1547
+#: resources/js/admin.js:1596
+#: resources/js/admin.js:1603
+#: resources/js/admin.js:1628
+#: resources/js/admin.js:1652
+#: resources/js/admin.js:1659
+#: resources/js/admin.js:1700
+#: resources/js/admin.js:1734
 msgid "Error"
 msgstr ""
 
-#: resources/js/admin.js:1030
+#: resources/js/admin.js:1060
 msgid "ThriveDesk configuration not loaded. Please refresh the page."
 msgstr ""
 
-#: resources/js/admin.js:1057
+#: resources/js/admin.js:1087
 msgid "Invalid response from server"
 msgstr ""
 
-#: resources/js/admin.js:1101
+#: resources/js/admin.js:1131
 msgid "Invalid response from helpdesk form submission"
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:1137
+#: resources/js/admin.js:1167
 #, js-format
 msgid "Failed to save helpdesk form: %s"
 msgstr ""
 
-#: resources/js/admin.js:1292
+#: resources/js/admin.js:1322
 msgid "Saving..."
 msgstr ""
 
-#: resources/js/admin.js:1302
-#: resources/js/admin.js:1311
+#: resources/js/admin.js:1332
+#: resources/js/admin.js:1341
 msgid "Changes saved"
 msgstr ""
 
-#: resources/js/admin.js:1313
+#: resources/js/admin.js:1343
 msgid "Portal cache cleared."
 msgstr ""
 
-#: resources/js/admin.js:1314
+#: resources/js/admin.js:1344
 msgid "The portal cache could not be cleared."
 msgstr ""
 
-#: resources/js/admin.js:1326
-#: resources/js/admin.js:1334
+#: resources/js/admin.js:1356
+#: resources/js/admin.js:1364
 msgid "Could not save"
 msgstr ""
 
-#: resources/js/admin.js:1335
-#: resources/js/admin.js:1728
+#: resources/js/admin.js:1365
+#: resources/js/admin.js:1758
 msgid "Check your connection and try again."
 msgstr ""
 
-#: resources/js/admin.js:1380
+#: resources/js/admin.js:1410
 msgid "API Key is required"
 msgstr ""
 
-#: resources/js/admin.js:1425
+#: resources/js/admin.js:1455
 msgid "Verified"
 msgstr ""
 
-#: resources/js/admin.js:1433
+#: resources/js/admin.js:1463
 msgid "Success"
 msgstr ""
 
-#: resources/js/admin.js:1458
+#: resources/js/admin.js:1488
 msgid "Form submition failed"
 msgstr ""
 
-#: resources/js/admin.js:1501
-#: resources/js/admin.js:1567
-#: resources/js/admin.js:1623
+#: resources/js/admin.js:1531
+#: resources/js/admin.js:1597
+#: resources/js/admin.js:1653
 msgid "Invalid API Key"
 msgstr ""
 
-#: resources/js/admin.js:1510
-#: resources/js/admin.js:1574
-#: resources/js/admin.js:1630
+#: resources/js/admin.js:1540
+#: resources/js/admin.js:1604
+#: resources/js/admin.js:1660
 msgid "Server Error"
 msgstr ""
 
-#: resources/js/admin.js:1583
+#: resources/js/admin.js:1613
 msgid "Select Assistant"
 msgstr ""
 
-#: resources/js/admin.js:1588
+#: resources/js/admin.js:1618
 msgid "No Assistant Found"
 msgstr ""
 
-#: resources/js/admin.js:1653
+#: resources/js/admin.js:1683
 msgid "No Inbox Found"
 msgstr ""
 
-#: resources/js/admin.js:1662
+#: resources/js/admin.js:1692
 msgid "Request timed out. Please try again."
 msgstr ""
 
 #. translators: %s: error message
-#: resources/js/admin.js:1665
+#: resources/js/admin.js:1695
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: resources/js/admin.js:1724
+#: resources/js/admin.js:1754
 msgid "Portal cache cleared"
 msgstr ""
 
-#: resources/js/admin.js:1727
+#: resources/js/admin.js:1757
 msgid "Could not clear the cache"
 msgstr ""
 

@@ -675,6 +675,36 @@ jQuery(document).ready(($) => {
 	});
 
 	/*
+	 * The consequence rows of the disconnect dialog. Three of the four are
+	 * losses and the fourth is a reassurance, which a bulleted list gives no
+	 * way to tell apart - every line looks like more bad news until it has been
+	 * read. The mark in front of each one says which it is first.
+	 *
+	 * Drawn here rather than pulled from includes/views/icons: SweetAlert2
+	 * renders into <body>, so nothing this plugin templates is in reach.
+	 */
+	const TD_MARK_STOPS =
+		'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>';
+	const TD_MARK_KEEPS =
+		'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+	/**
+	 * One row: a mark, then what it is about.
+	 *
+	 * @param {string} kind 'stops' for something that ends, 'keeps' for something that does not.
+	 * @param {string} text Already-translated sentence.
+	 * @return {string} The row's markup.
+	 */
+	function tdConsequence(kind, text) {
+		return (
+			'<li class="td-consequence is-' + kind + '">' +
+			('keeps' === kind ? TD_MARK_KEEPS : TD_MARK_STOPS) +
+			'<span>' + text + '</span>' +
+			'</li>'
+		);
+	}
+
+	/*
 	 * Disconnecting cannot be undone from this screen - the key has to be typed
 	 * back in - and one of its effects is invisible from here, so the
 	 * consequences are written out before it happens rather than reported
@@ -687,11 +717,11 @@ jQuery(document).ready(($) => {
 			icon: 'warning',
 			title: __('Disconnect this site?', 'thrivedesk'),
 			html:
-				'<ul style="text-align:left;margin:0;padding-left:1.1em;line-height:1.7">' +
-				'<li>' + __('This site stops sending conversations to ThriveDesk.', 'thrivedesk') + '</li>' +
-				'<li>' + __('The chat widget stops appearing on your site.', 'thrivedesk') + '</li>' +
-				'<li>' + __('Connected integrations are revoked and have to be reconnected.', 'thrivedesk') + '</li>' +
-				'<li>' + __('Nothing is deleted in your ThriveDesk account.', 'thrivedesk') + '</li>' +
+				'<ul class="td-consequences">' +
+				tdConsequence('stops', __('This site stops sending conversations to ThriveDesk.', 'thrivedesk')) +
+				tdConsequence('stops', __('The chat widget stops appearing on your site.', 'thrivedesk')) +
+				tdConsequence('stops', __('Connected integrations are revoked and have to be reconnected.', 'thrivedesk')) +
+				tdConsequence('keeps', __('Nothing is deleted in your ThriveDesk account.', 'thrivedesk')) +
 				'</ul>',
 			showCancelButton: true,
 			// The safe answer is the one under the cursor and the one Enter
