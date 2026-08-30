@@ -49,7 +49,8 @@ jobs:
           # arrives without its entry, before wp.org publishes it to every site.
           strays="$(cd "$dist" && find . \( \
             -name '*.sh' -o -name 'compose*.yml' -o -name 'Dockerfile' \
-            -o -path './docker/*' -o -path './scripts/*' \
+            -o -name 'CLAUDE.md' -o -name 'phpcs*.xml' \
+            -o -path './docker/*' -o -path './scripts/*' -o -path './resources/*' \
             -o -path './tests/*' -o -path './e2e/*' -o -path './.github/*' \
             \) -print)"
           if [ -n "$strays" ]; then
