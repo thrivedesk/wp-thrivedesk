@@ -13,7 +13,45 @@ PHP 7.4 minimum (enforced in CI). PSR-4 autoload maps `ThriveDesk\` → `src/`, 
 
 ## Commands
 
-### Commands
+### The bench (local WordPress, Docker)
+
+`scripts/dev.sh` boots a real WordPress with this plugin active at
+`http://localhost:8888` and runs both suites inside it. Docker is the only
+requirement, nothing is installed on the host, and everything is idempotent:
+re-run anything. `TD_PORT=9999 scripts/dev.sh up` moves it if 8888 is taken.
+
+| Task | Command |
+| --- | --- |
+| Boot it | `scripts/dev.sh up` (admin / password) |
+| PHPUnit, in the bench | `scripts/dev.sh test` (add any PHPUnit args) |
+| PHPCS, security and i18n sniffs | `scripts/dev.sh phpcs` |
+| Browser suite | `scripts/dev.sh e2e`, `e2e-ui`, `e2e-report` |
+| Assets | `scripts/dev.sh npm run build` |
+| wp-cli | `scripts/dev.sh cli plugin list` |
+| Point it at a ThriveDesk account | `scripts/dev.sh connect <api-key>` |
+| Logs (apache + PHP + debug.log) | `scripts/dev.sh logs` |
+| Wipe and start over | `scripts/dev.sh reset` |
+| What is missing | `scripts/dev.sh doctor` |
+
+`scripts/dev.sh test` needs no WP test-library download: `wp-phpunit` is a dev
+dependency and `tests/bootstrap.php` finds it in `vendor/`, so the bench only has
+to supply a database and a config naming it. It creates `wordpress_test` on every
+run rather than at first boot, so a bench built before the test command existed
+still gets one. WooCommerce is installed and active, and WPSubscription is
+installed but left inactive, so both integrations' tests run here exactly as they
+do in CI instead of skipping.
+
+The site answers on two names: your browser reaches it on localhost at the
+published port, and the Playwright container reaches it by service name over the
+Compose network. `WP_HOME` follows whichever host the request carried, so neither
+redirects to the other and the port survives into the admin canonical.
+
+**The bench never ships.** `docker/` and `scripts/` are excluded in both
+`.distignore` (the wp.org manifest) and `.gitattributes`, the deploy workflow
+fails the release if either reaches the package, and `scripts/release.sh` copies
+an explicit allowlist that does not include them.
+
+### Direct (no bench)
 
 ```bash
 composer install && npm install   # setup
@@ -32,7 +70,7 @@ composer install && npm install   # setup
 | E2E | `npm run e2e` (needs env vars, see `e2e/README.md`) |
 | Release zip | `npm run release` |
 
-PHPUnit needs a WordPress test environment: `wp-phpunit` is vendored, but `tests/bootstrap.php` still requires `WP_TESTS_DIR`/`WP_PHPUNIT__DIR` plus a `wp-tests-config.php` pointing at a MySQL/MariaDB database. `.github/workflows/phpunit.yml` shows a working setup end to end; this repository does not prescribe how you run WordPress locally.
+PHPUnit needs a WordPress test environment: `wp-phpunit` is vendored, but `tests/bootstrap.php` still requires `WP_TESTS_DIR`/`WP_PHPUNIT__DIR` plus a `wp-tests-config.php` pointing at a MySQL/MariaDB database. `scripts/dev.sh test` sets all of that up for you; `.github/workflows/phpunit.yml` shows the same thing assembled by hand.
 
 ## Architecture
 
@@ -112,6 +150,8 @@ resources/                Source js/css (mix input) + thrivedesk.pot
 assets/                   Built js/css — committed, do not hand-edit
 tests/                    PHPUnit; includes/ = shared test cases, stubs/ = fake plugin APIs, golden/ = snapshots
 e2e/                      Playwright specs against a real connected WP site
+docker/                   The bench: compose.yml + the image it builds (not shipped)
+scripts/dev.sh            The bench CLI: scripts/dev.sh help (not shipped)
 scripts/release.sh        Builds releases/thrivedesk.zip
 ```
 

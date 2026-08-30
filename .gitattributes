@@ -2,6 +2,8 @@
 /.github export-ignore
 /tests export-ignore
 /scripts export-ignore
+/docker export-ignore
+/plugins export-ignore
 /.idea export-ignore
 
 /.distignore export-ignore

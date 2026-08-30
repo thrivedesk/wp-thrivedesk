@@ -34,7 +34,7 @@ jobs:
       - name: Generate readme.txt for WordPress.org
         run: cp readme.md readme.txt
 
-      - name: Verify packaged plugin includes the Composer autoloader
+      - name: Verify the deploy package
         run: |
           dist="$(mktemp -d)"
           rsync -a --exclude-from=.distignore ./ "$dist/"
@@ -43,6 +43,21 @@ jobs:
             exit 1
           fi
           echo "Autoloader present in package: OK"
+
+          # Development tooling ships to nobody. Each of these is excluded in
+          # .distignore already; this is what says so out loud when a new one
+          # arrives without its entry, before wp.org publishes it to every site.
+          strays="$(cd "$dist" && find . \( \
+            -name '*.sh' -o -name 'compose*.yml' -o -name 'Dockerfile' \
+            -o -path './docker/*' -o -path './scripts/*' \
+            -o -path './tests/*' -o -path './e2e/*' -o -path './.github/*' \
+            \) -print)"
+          if [ -n "$strays" ]; then
+            echo "::error::development files reached the deploy package. Add them to .distignore:"
+            echo "$strays"
+            exit 1
+          fi
+          echo "No development files in package: OK"
 
       # Pinned to a commit SHA, not the mutable @stable tag: this step receives
       # the wp.org publishing credentials, and a moved tag would hand them to

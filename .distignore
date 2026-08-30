@@ -67,3 +67,6 @@ temp/
 # Repo-only documentation
 /docs
 
+# Local development bench (Docker). Never ships.
+/docker
+/plugins

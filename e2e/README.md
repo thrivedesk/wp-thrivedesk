@@ -10,6 +10,12 @@ needs the URL and two logins.
 
 ## Running
 
+The quickest way to get a site these can run against is the bench:
+`scripts/dev.sh up`, `scripts/dev.sh connect <api-key>`, pick an assistant and an
+inbox on the settings screen, then `scripts/dev.sh e2e` (`e2e-ui` to watch it,
+`e2e-report` for the last run). It supplies every variable below, so the rest of
+this section is for pointing the suite at a site of your own.
+
 ```
 npm install
 npx playwright install chromium   # skip if the browsers are already present
