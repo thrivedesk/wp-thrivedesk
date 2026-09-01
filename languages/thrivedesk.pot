@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T12:43:21+00:00\n"
+"POT-Creation-Date: 2026-09-01T07:27:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -227,6 +227,7 @@ msgstr ""
 #: src/Conversations/Conversation.php:118
 #: src/Conversations/Conversation.php:216
 #: src/Inboxes/Inbox.php:27
+#: src/Services/OAuth/Connection.php:203
 #: src/Services/PortalService.php:72
 msgid "Unauthorized"
 msgstr ""
@@ -307,42 +308,54 @@ msgstr ""
 msgid "Add your API key to connect this site to ThriveDesk."
 msgstr ""
 
-#: includes/views/partials/connect-card.php:31
+#: includes/views/partials/connect-card.php:32
+msgid "Connect with ThriveDesk"
+msgstr ""
+
+#: includes/views/partials/connect-card.php:35
+msgid "You approve this site inside ThriveDesk and choose which workspace it connects to."
+msgstr ""
+
+#: includes/views/partials/connect-card.php:40
+msgid "Or paste an API key"
+msgstr ""
+
+#: includes/views/partials/connect-card.php:45
 msgid "API Key"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:33
+#: includes/views/partials/connect-card.php:47
 msgid "Enter your API Key"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:38
+#: includes/views/partials/connect-card.php:52
 #: resources/js/admin.js:1181
 msgid "Complete Setup"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:45
+#: includes/views/partials/connect-card.php:59
 msgid "Don't have a key yet?"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:56
+#: includes/views/partials/connect-card.php:70
 msgid "Additional Info - click to expand"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:64
+#: includes/views/partials/connect-card.php:78
 msgid "Allowlist our IP addresses"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:66
+#: includes/views/partials/connect-card.php:80
 msgid "Collapse additional info"
 msgstr ""
 
-#: includes/views/partials/connect-card.php:70
+#: includes/views/partials/connect-card.php:84
 msgid "For a seamless integration, add these IP addresses to your server's firewall or security plugin."
 msgstr ""
 
 #. translators: %s: the value being copied, such as an IP address or an email address
-#: includes/views/partials/connect-card.php:83
-#: includes/views/partials/connect-card.php:87
+#: includes/views/partials/connect-card.php:97
+#: includes/views/partials/connect-card.php:101
 #: includes/views/partials/settings.php:565
 #: includes/views/partials/settings.php:569
 #, php-format
@@ -350,13 +363,13 @@ msgid "Copy %s"
 msgstr ""
 
 #. translators: %1$s: opening link tag, %2$s: closing link tag
-#: includes/views/partials/connect-card.php:102
+#: includes/views/partials/connect-card.php:116
 #, php-format
 msgid "Still stuck? Email us at %1$shelp@thrivedesk.com%2$s with your site URL and IP address."
 msgstr ""
 
 #. translators: %1$s, %3$s: opening link tags; %2$s, %4$s: closing link tags
-#: includes/views/partials/connect-card.php:111
+#: includes/views/partials/connect-card.php:125
 #, php-format
 msgid "By continuing, you agree to the %1$sTerms of Service%2$s and %3$sPrivacy Policy%4$s."
 msgstr ""
@@ -1001,6 +1014,7 @@ msgid "API Verify"
 msgstr ""
 
 #: src/Admin.php:654
+#: src/Services/OAuth/Connection.php:209
 msgid "Disconnected from ThriveDesk."
 msgstr ""
 
@@ -1070,6 +1084,45 @@ msgstr ""
 
 #: src/RestRoute.php:122
 msgid "Contact does not exist."
+msgstr ""
+
+#: src/Services/OAuth/Connection.php:83
+#: src/Services/OAuth/Connection.php:124
+msgid "You are not allowed to connect this site."
+msgstr ""
+
+#: src/Services/OAuth/Connection.php:143
+msgid "The connection was cancelled."
+msgstr ""
+
+#: src/Services/OAuth/Connection.php:144
+msgid "ThriveDesk refused the connection."
+msgstr ""
+
+#: src/Services/OAuth/Connection.php:151
+msgid "The connection response could not be matched to a request from this site."
+msgstr ""
+
+#: src/Services/OAuth/Connection.php:155
+msgid "The connection was started by a different user."
+msgstr ""
+
+#: src/Services/OAuth/Connection.php:185
+msgid "This site is now connected to ThriveDesk."
+msgstr ""
+
+#: src/Services/OAuth/OAuthClient.php:62
+msgid "ThriveDesk did not return a client id for this site."
+msgstr ""
+
+#: src/Services/OAuth/OAuthClient.php:145
+msgid "ThriveDesk did not return an access token."
+msgstr ""
+
+#. translators: 1: HTTP status code, 2: error identifier returned by ThriveDesk
+#: src/Services/OAuth/OAuthClient.php:184
+#, php-format
+msgid "ThriveDesk refused the request (HTTP %1$d) %2$s"
 msgstr ""
 
 #: resources/js/admin.js:315

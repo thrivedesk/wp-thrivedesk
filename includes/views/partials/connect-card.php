@@ -27,6 +27,20 @@ if ( ! defined( 'ABSPATH' ) ) {
           <p class="mt-2 text-gray-500"><?php esc_html_e( 'Add your API key to connect this site to ThriveDesk.', 'thrivedesk' ); ?></p>
         </div>
 
+        <?php // The primary path: one click, consent on ThriveDesk, no credential to copy. ?>
+        <a href="<?php echo esc_url( \ThriveDesk\Services\OAuth\Connection::start_url() ); ?>" class="btn btn-dark w-full justify-center">
+          <span><?php esc_html_e( 'Connect with ThriveDesk', 'thrivedesk' ); ?></span>
+          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#fff" fill="none" aria-hidden="true"><path d="m14.527 18-1.408-1.414L16.689 13H3.5v-2h13.189l-3.57-3.587L14.527 6l5.973 6-5.973 6Z" fill="currentColor"/></svg></span>
+        </a>
+        <p class="text-xs text-slate-500 m-0!"><?php esc_html_e( 'You approve this site inside ThriveDesk and choose which workspace it connects to.', 'thrivedesk' ); ?></p>
+
+        <?php // aria-hidden on the rules, not the wrapper: the label is real content. ?>
+        <div class="flex items-center gap-3">
+          <span class="h-px flex-1 bg-slate-200" aria-hidden="true"></span>
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><?php esc_html_e( 'Or paste an API key', 'thrivedesk' ); ?></span>
+          <span class="h-px flex-1 bg-slate-200" aria-hidden="true"></span>
+        </div>
+
         <div class="space-y-1.5">
           <label for="td_helpdesk_api_key" class="block text-sm font-semibold text-slate-700"><?php esc_html_e( 'API Key', 'thrivedesk' ); ?></label>
           <?php // Only a token from an authorization this site started pre-fills the field; see Admin::connect_return_token(). ?>
