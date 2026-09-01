@@ -22,7 +22,7 @@ jobs:
       # make-pot derives the Report-Msgid-Bugs-To slug from the directory
       # name, so check out into `thrivedesk` rather than the repo name or
       # every run reports a bogus one-line diff.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: thrivedesk
 
