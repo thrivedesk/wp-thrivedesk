@@ -38,6 +38,7 @@ use ThriveDesk\Portal\UserAccountPages;
 use ThriveDesk\RestRoute;
 use ThriveDesk\Conversations\Conversation;
 use ThriveDesk\KnowledgeBase\KnowledgeBase;
+use ThriveDesk\Services\OAuth\Connection as OAuthConnection;
 use ThriveDesk\Services\PortalService;
 use ThriveDeskDBMigrations\Scripts\MigrationScript;
 
@@ -159,6 +160,9 @@ final class ThriveDesk {
 
 			if ( is_admin() ) {
 				self::$instance->admin = Admin::instance();
+
+				// admin-only: both legs of the connect flow are admin page loads.
+				OAuthConnection::instance();
 			}
 
 			require_once THRIVEDESK_DIR . '/database/Scripts/MigrationScript.php';

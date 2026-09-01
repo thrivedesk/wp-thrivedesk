@@ -2,6 +2,9 @@
 
 namespace ThriveDesk\Services;
 
+use ThriveDesk\Services\OAuth\OAuthClient;
+use ThriveDesk\Services\OAuth\TokenStore;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -15,9 +18,64 @@ class TDApiService {
 
     private $api_token;
 
+    /**
+     * Whether the token in play came from the OAuth connection rather than a pasted key.
+     * Only an OAuth token can be refreshed, so only it is worth retrying a 401 for.
+     */
+    private $usingOAuth = false;
+
     public function __construct()
     {
-        $this->api_token = get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+        $this->api_token = $this->resolveToken();
+    }
+
+    /**
+     * The OAuth connection wins when the site has one; the pasted key stays as the fallback
+     * for sites that cannot receive a callback and for installs that never migrated.
+     */
+    private function resolveToken(): string
+    {
+        if (TokenStore::is_connected()) {
+            $this->usingOAuth = true;
+
+            if (TokenStore::needs_refresh()) {
+                $this->refreshAccessToken();
+            }
+
+            return TokenStore::access_token();
+        }
+
+        $this->usingOAuth = false;
+
+        return get_option('td_helpdesk_settings')['td_helpdesk_api_key'] ?? '';
+    }
+
+    /**
+     * Swap the refresh token for a new access token.
+     *
+     * A failure is deliberately quiet: the caller is mid-request and the retry path below
+     * treats a still-invalid token as the auth failure it is, rather than this being a second
+     * place that decides the connection is dead.
+     */
+    private function refreshAccessToken(): bool
+    {
+        $clientId     = TokenStore::client_id();
+        $refreshToken = TokenStore::refresh_token();
+
+        if ('' === $clientId || '' === $refreshToken) {
+            return false;
+        }
+
+        $token = (new OAuthClient())->refresh($clientId, $refreshToken);
+
+        if (is_wp_error($token)) {
+            return false;
+        }
+
+        TokenStore::save($token, $clientId);
+        $this->api_token = TokenStore::access_token();
+
+        return true;
     }
 
     /**
@@ -37,29 +95,61 @@ class TDApiService {
      */
     public function postRequest(string $url, array $data = [], int $timeout = self::DEFAULT_TIMEOUT): array
     {
-        $args     = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->api_token,
-            ],
-            'body'    => $data,
-            'timeout' => $timeout,
-        ];
-
-        return $this->handle_response(wp_remote_post($url, $args));
+        return $this->retryOnExpiredToken(
+            function () use ($url, $data, $timeout) {
+                return $this->handle_response(wp_remote_post($url, [
+                    'headers' => ['Authorization' => 'Bearer ' . $this->api_token],
+                    'body'    => $data,
+                    'timeout' => $timeout,
+                ]));
+            }
+        );
     }
 
     public function getRequest(string $url, int $timeout = self::DEFAULT_TIMEOUT)
     {
-        $args               = [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->api_token,
-                'Content-Type'  => 'application/json',
-                'Accept'        => 'application/json',
-            ],
-	        'timeout' => $timeout,
-        ];
+        return $this->retryOnExpiredToken(
+            function () use ($url, $timeout) {
+                return $this->handle_response(wp_remote_get($url, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->api_token,
+                        'Content-Type'  => 'application/json',
+                        'Accept'        => 'application/json',
+                    ],
+                    'timeout' => $timeout,
+                ]));
+            }
+        );
+    }
 
-        return $this->handle_response(wp_remote_get($url, $args));
+    /**
+     * Run a request, and on a genuine auth rejection refresh the OAuth token and run it once more.
+     *
+     * An hour-long access token will expire mid-session, and the alternative to this is the
+     * site silently reporting itself disconnected until an admin visits the settings page.
+     * Only 'auth' retries: a network blip or a 5xx says nothing about the token.
+     *
+     * @param callable $send
+     *
+     * @return array
+     */
+    private function retryOnExpiredToken(callable $send): array
+    {
+        $response = $send();
+
+        $isAuthFailure = isset($response['wp_error'], $response['error_type'])
+            && $response['wp_error']
+            && 'auth' === $response['error_type'];
+
+        if (! $isAuthFailure || ! $this->usingOAuth) {
+            return $response;
+        }
+
+        if (! $this->refreshAccessToken()) {
+            return $response;
+        }
+
+        return $send();
     }
 
     /**
@@ -140,5 +230,10 @@ class TDApiService {
 	public function setApiKey( $apiKey ): void {
         $this->clearAllTransients();
 		$this->api_token = $apiKey;
+
+		// An explicitly supplied key is being verified on its own merits. Leaving the OAuth
+		// flag set would make a 401 refresh the connection's token and retry with it, so the
+		// caller would be told a key authenticated when a different credential did.
+		$this->usingOAuth = false;
 	}
 }
