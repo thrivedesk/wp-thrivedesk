@@ -3,7 +3,7 @@
  * Plugin Name:         ThriveDesk – Live Chat, AI Chatbot, Helpdesk & Customer Support Ticket System
  * Description:         Help desk, live chat and AI chatbot for WordPress and WooCommerce. Every email, chat and support ticket in one shared inbox, with orders inside.
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Tags:                live chat, ai chatbot, helpdesk, customer support, support ticket
+ * Tags:                live chat, ai chatbot, helpdesk, customer support, chatbot
  * Version:             2.7.0
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
