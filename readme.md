@@ -1,6 +1,6 @@
 === ThriveDesk – Live Chat, AI Chatbot, Helpdesk & Customer Support Ticket System ===
 Contributors: thrivedesk, parvezvai
-Tags: live chat, ai chatbot, helpdesk, customer support, support ticket
+Tags: live chat, ai chatbot, helpdesk, customer support, chatbot
 Requires at least: 4.9
 Tested up to: 7.1
 Stable tag: 2.7.0
@@ -119,18 +119,6 @@ The plugin is free. Every ThriveDesk plan includes live chat, and every plan sta
 * [Help center](https://help.thrivedesk.com/) – setup guides for the plugin, live chat, the AI chatbot and every integration
 * [Support forum](https://wordpress.org/support/plugin/thrivedesk/) – ask here and the ThriveDesk team will answer
 * [Status page](https://status.thrivedesk.com/)
-
-### External services
-
-This plugin connects your site to the ThriveDesk service. It is not useful without a ThriveDesk account, and it sends data to ThriveDesk only after you connect it from the plugin screen.
-
-* **api.thrivedesk.com** – verifies your API key, loads your inboxes, conversations, assistants and plan, and creates tickets and replies from the portal. Requests carry your API key and, for the portal, the logged-in customer's email.
-* **assistant.thrivedesk.com** – serves the live chat widget on the pages you choose. When a logged-in user views a page with the widget, their display name and email are passed to the widget so they do not have to type them.
-* **thrivedeskdocs.com** – answers knowledge base searches from the portal.
-* **Inbound requests from ThriveDesk** – once an integration is connected, ThriveDesk reads customer and order data from your store through this plugin, and can update orders when an agent acts on a ticket. Every request is signed with a per-site secret and rejected otherwise.
-* **gravatar.com** – customer avatars on the portal.
-
-[Terms of service](https://www.thrivedesk.com/our/terms/) · [Privacy policy](https://www.thrivedesk.com/our/privacy/)
 
 == Installation ==
 
