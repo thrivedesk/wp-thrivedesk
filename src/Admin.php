@@ -83,6 +83,8 @@ final class Admin
 
         add_action('wp_ajax_thrivedesk_disconnect_account', [$this, 'ajax_disconnect_account']);
 
+        add_action('admin_notices', [$this, 'render_connection_notice']);
+
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
         // menu icon style 
@@ -565,6 +567,56 @@ final class Admin
     private static function stored_api_key(): string
     {
         return get_td_helpdesk_settings()['td_helpdesk_api_key'] ?? '';
+    }
+
+    /**
+     * Say so, on every admin screen, when the key on file has stopped
+     * authenticating.
+     *
+     * TDApiService clears the verified flag as soon as ThriveDesk rejects the
+     * key, but that happens on portal traffic and background calls the site
+     * owner never sees. What they do see is tickets and the assistant quietly
+     * failing to load, with the explanation sitting in error_log - so the
+     * plugin has to volunteer it where they already are.
+     *
+     * @return void
+     */
+    public function render_connection_notice(): void
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // No key at all is an install nobody has set up yet, not a connection
+        // that broke.
+        if ('' === self::stored_api_key() || self::get_api_verification_status()) {
+            return;
+        }
+
+        $on_plugin_screen = 'thrivedesk' === self::current_admin_page();
+
+        printf(
+            '<div class="notice notice-warning"><p><strong>%1$s</strong> %2$s</p>%3$s</div>',
+            esc_html__('ThriveDesk is disconnected.', 'thrivedesk'),
+            esc_html__('ThriveDesk rejected the API key saved on this site, so tickets, the support portal and the assistant have stopped loading. Re-verify the key to reconnect.', 'thrivedesk'),
+            // On the plugin's own screen the connect card is already the call
+            // to action; a button linking back to the current page is noise.
+            $on_plugin_screen ? '' : sprintf(
+                '<p><a class="button button-primary" href="%1$s">%2$s</a></p>',
+                esc_url(admin_url('admin.php?page=thrivedesk')),
+                esc_html__('Re-verify API key', 'thrivedesk')
+            )
+        );
+    }
+
+    /**
+     * Which admin screen is rendering, as WordPress routes them. Read for
+     * presentation only - nothing here acts on the value.
+     */
+    private static function current_admin_page(): string
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- menu routing, not a state change.
+        return isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
     }
 
     public static function set_api_verification_status($status = false): void

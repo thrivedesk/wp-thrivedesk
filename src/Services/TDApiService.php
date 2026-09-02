@@ -2,6 +2,8 @@
 
 namespace ThriveDesk\Services;
 
+use ThriveDesk\Admin;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -123,12 +125,43 @@ class TDApiService {
                 // "the token is invalid".
                 $error_type = in_array($response_code, [401, 403], true) ? 'auth' : 'server';
 
+                if ('auth' === $error_type) {
+                    $this->invalidate_stored_key_verification();
+                }
+
                 return ['wp_error' => true, 'error_type' => $error_type, 'message' => 'ThriveDesk - API request failed. Response Code:' . $response_code . '. Message: ' . $api_message];
             }
         }
 
         error_log( 'ThriveDesk - API Request Failed. Unknown error: ' . $response_code ); // Log the error
         return ['wp_error' => true, 'error_type' => 'server', 'message' => 'ThriveDesk - Unknown API request error. Response Code:' . $response_code];
+    }
+
+    /**
+     * Record that ThriveDesk itself rejected the key on file - revoked,
+     * expired, or no longer entitled to the API.
+     *
+     * Every caller degrades locally when a request fails, so nothing else in
+     * the plugin ever revisits the verified flag once the manual check set it.
+     * Without this a key that stopped working keeps reading as connected
+     * indefinitely, and the only trace of the failure is error_log.
+     *
+     * Only the key on file can lose its flag: the verify screen checks a
+     * submitted key before storing it, and that one being refused says nothing
+     * about the key already in use.
+     *
+     * @return void
+     */
+    private function invalidate_stored_key_verification(): void
+    {
+        $settings   = get_option('td_helpdesk_settings');
+        $stored_key = is_array($settings) ? ($settings['td_helpdesk_api_key'] ?? '') : '';
+
+        if ('' === $stored_key || $stored_key !== $this->api_token) {
+            return;
+        }
+
+        Admin::set_api_verification_status(false);
     }
 
     public function clearAllTransients()

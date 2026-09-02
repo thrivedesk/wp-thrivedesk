@@ -243,18 +243,11 @@ class Conversation
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
 
+        // The flag is not touched here. TDApiService clears it when the API
+        // rejects the key on file, and only then: a rejection of some other
+        // submitted key, or a network-level failure while one is being checked,
+        // leaves a working connection alone.
         if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
-
-            // The stored key is untouched on this path, so the flag still has
-            // to describe *that* key. A failure while checking some other
-            // submitted key says nothing about it. And even for the same key,
-            // only a genuine auth rejection (401/403) means the key is bad - a
-            // network-level failure (DNS/SSL/timeout, e.g. right after a domain
-            // migration while things are still settling) is a transient blip
-            // that must not cost the site its connection.
-            if ( $is_same_key && ( $data['error_type'] ?? '' ) === 'auth' ) {
-                Admin::set_api_verification_status();
-            }
 
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
                 error_log('ThriveDesk: API verification failed - ' . $data['message']);
