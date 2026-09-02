@@ -180,6 +180,44 @@ class HmacSignatureTest extends TD_Ajax_TestCase {
 		$this->assertSame( 'Request unauthorized', $body['message'] );
 	}
 
+	public function test_a_signed_boolean_string_verifies_as_the_string_it_was_sent_as() {
+		// The SaaS hashes exactly what it puts in the query string, and it does
+		// send boolean-looking values: WooCommerceService signs shipping_param
+		// as whatever the stored show_shipping_details setting stringifies to.
+		// verify_token() used to swap "true"/"false" for real booleans before
+		// hashing, so wp_json_encode() produced `true` where the sender had
+		// "true" and the request was rejected on a signature both sides had
+		// computed honestly.
+		$payload = [
+			'listener'       => 'thrivedesk',
+			'plugin'         => 'edd',
+			'action'         => 'connect',
+			'shipping_param' => 'true',
+		];
+
+		$body = $this->dispatch( $payload, hash_hmac( 'SHA1', wp_json_encode( $payload ), self::TOKEN ) );
+
+		$this->assertSame( 'Site connected successfully', $body['message'] ?? null );
+	}
+
+	public function test_a_signature_over_the_coerced_payload_is_rejected() {
+		// The mirror: nothing signs the coerced spelling, so it must not be a
+		// second signature that authorizes the same request.
+		$payload = [
+			'listener'       => 'thrivedesk',
+			'plugin'         => 'edd',
+			'action'         => 'connect',
+			'shipping_param' => 'true',
+		];
+
+		$coerced                   = $payload;
+		$coerced['shipping_param'] = true;
+
+		$body = $this->dispatch( $payload, hash_hmac( 'SHA1', wp_json_encode( $coerced ), self::TOKEN ) );
+
+		$this->assertSame( 'Request unauthorized', $body['message'] ?? null );
+	}
+
 	public function test_empty_api_token_rejects_forged_signature() {
 		// Active-but-never-connected and post-disconnect both leave api_token ''.
 		// hash_hmac() with an empty key is a value anyone can reproduce, so a
