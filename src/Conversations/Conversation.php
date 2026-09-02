@@ -609,9 +609,11 @@ class Conversation
 				'per-page'       => 15,
 			];
 
-			// Add inbox filtering if inbox is selected
+			// The API reads this filter as `inbox` - `inbox_id` is the column it
+			// compares against, not the parameter it accepts, so sending that
+			// name drops the filter and the portal lists every inbox.
 			if (!empty($inbox_id)) {
-				$query['inbox_id'] = $inbox_id;
+				$query['inbox'] = $inbox_id;
 			}
 
 			// http_build_query encodes every value, so nothing carried in on the
