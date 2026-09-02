@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-30T12:43:21+00:00\n"
+"POT-Creation-Date: 2026-09-02T08:53:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -32,7 +32,7 @@ msgstr ""
 #. Author of the plugin
 #: thrivedesk.php
 #: Hooks/FluentCrmHooks.php:60
-#: src/Admin.php:188
+#: src/Admin.php:190
 #: resources/js/wp-scripts/thrivedesk-autonami-tab.js:8
 msgid "ThriveDesk"
 msgstr ""
@@ -219,9 +219,9 @@ msgid "Invalid nonce"
 msgstr ""
 
 #: includes/helper.php:866
-#: src/Admin.php:604
-#: src/Admin.php:649
-#: src/Admin.php:729
+#: src/Admin.php:656
+#: src/Admin.php:701
+#: src/Admin.php:781
 #: src/Assistants/Assistant.php:28
 #: src/Conversations/Conversation.php:82
 #: src/Conversations/Conversation.php:118
@@ -995,12 +995,24 @@ msgstr ""
 msgid "Create a new ticket"
 msgstr ""
 
-#: src/Admin.php:198
-#: src/Admin.php:199
+#: src/Admin.php:200
+#: src/Admin.php:201
 msgid "API Verify"
 msgstr ""
 
-#: src/Admin.php:654
+#: src/Admin.php:600
+msgid "ThriveDesk is disconnected."
+msgstr ""
+
+#: src/Admin.php:601
+msgid "ThriveDesk rejected the API key saved on this site, so tickets, the support portal and the assistant have stopped loading. Re-verify the key to reconnect."
+msgstr ""
+
+#: src/Admin.php:607
+msgid "Re-verify API key"
+msgstr ""
+
+#: src/Admin.php:706
 msgid "Disconnected from ThriveDesk."
 msgstr ""
 
@@ -1022,16 +1034,16 @@ msgid "Failed to reload tickets"
 msgstr ""
 
 #. translators: %s: the reason the request failed, as reported by ThriveDesk.
-#: src/Conversations/Conversation.php:289
+#: src/Conversations/Conversation.php:282
 #, php-format
 msgid "Something went wrong: %s"
 msgstr ""
 
-#: src/Conversations/Conversation.php:428
+#: src/Conversations/Conversation.php:421
 msgid "Settings saved successfully"
 msgstr ""
 
-#: src/Conversations/Conversation.php:432
+#: src/Conversations/Conversation.php:425
 #: resources/js/admin.js:1175
 #: resources/js/admin.js:1495
 #: resources/js/admin.js:1509
@@ -1043,16 +1055,16 @@ msgid "Something went wrong"
 msgstr ""
 
 #. translators: 1: opening link tag to the login screen, 2: closing link tag.
-#: src/Conversations/Conversation.php:542
+#: src/Conversations/Conversation.php:535
 #, php-format
 msgid "You must be logged in to view the ticket or conversation. %1$sLog in%2$s to continue."
 msgstr ""
 
-#: src/Conversations/Conversation.php:746
+#: src/Conversations/Conversation.php:739
 msgid "Reply text can not be empty."
 msgstr ""
 
-#: src/Conversations/Conversation.php:765
+#: src/Conversations/Conversation.php:758
 msgid "Your reply could not be sent. Please try again."
 msgstr ""
 
