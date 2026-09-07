@@ -650,8 +650,8 @@ final class Api {
 		// isset() == 1 is true for *any* value the key holds, so a signed
 		// shipping_param=false still switched shipping lookups on. Read the
 		// value. wp_validate_boolean() takes 'false' and '0' as false, which is
-		// what the SaaS sends, and verify_token() has already coerced a literal
-		// "true"/"false" for hashing.
+		// what the SaaS sends. The contract is hashed and read as the raw strings
+		// it arrived as, so this is the one place the value is coerced.
 		$enableShipping = wp_validate_boolean( $this->contract()['shipping_param'] ?? false );
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
@@ -778,25 +778,6 @@ final class Api {
 	 * @since 0.0.4
 	 */
 	private function verify_token( array $contract ): bool {
-		$payload = $contract;
-
-		if ( $payload ) {
-			foreach ( $payload as $key => $value ) {
-				if ( ! is_string( $value ) ) {
-					continue;
-				}
-				switch ( strtolower( $value ) ) {
-					case "true":
-						$payload[ $key ] = true;
-						break;
-
-					case "false":
-						$payload[ $key ] = false;
-						break;
-				}
-			}
-		}
-
 		$api_token = $this->plugin->get_plugin_data( 'api_token' );
 
 		// An empty key is forgeable: hash_hmac() with '' yields a value anyone
@@ -811,14 +792,17 @@ final class Api {
 			return false;
 		}
 
-		// Hash the raw values. The SaaS signs what it sends, so running the
-		// payload through sanitize_text_field() first hashed a value the sender
-		// never signed and 401'd legitimate requests; worse, the handlers below
-		// sanitize with sanitize_key()/sanitize_email() instead, so the value
-		// that was hashed and the value that ran could differ ('%20123' hashes
-		// as '123' but executes as '20123'). Sanitizing happens at the point of
-		// use, after the signature has been checked.
-		$expected = hash_hmac( 'SHA1', wp_json_encode( $payload ), $api_token );
+		// Hash the values exactly as they arrived. The SaaS signs what it
+		// sends, so anything that rewrites them first hashes a value the sender
+		// never signed and 401s a legitimate request - sanitize_text_field()
+		// collapsing whitespace did it, and so did swapping the strings
+		// "true"/"false" for real booleans, which turned a signed
+		// shipping_param=true into `true` in the JSON. Worse for sanitizing:
+		// the handlers below use sanitize_key()/sanitize_email() instead, so
+		// the value that was hashed and the value that ran could differ
+		// ('%20123' hashes as '123' but executes as '20123'). Sanitizing
+		// happens at the point of use, after the signature has been checked.
+		$expected = hash_hmac( 'SHA1', wp_json_encode( $contract ), $api_token );
 
 		// Computed digest first: hash_equals()'s timing guarantee is on the
 		// length of the first argument, which must be the known-good value.
