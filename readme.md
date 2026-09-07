@@ -3,7 +3,7 @@ Contributors: thrivedesk, parvezvai
 Tags: live chat, ai chatbot, helpdesk, customer support, chatbot
 Requires at least: 4.9
 Tested up to: 7.1
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -190,6 +190,14 @@ Post in the [support forum](https://wordpress.org/support/plugin/thrivedesk/) fo
 6. The knowledge base editor, with categories, visibility and autosave.
 
 == Changelog ==
+
+= 2.7.1 =
+2026-09-07 - version 2.7.1
+* fix: The support portal lists tickets from the inbox this site is set to use, instead of from every inbox on the account.
+* fix: The plugin says so when ThriveDesk stops accepting the API key saved on this site. A revoked or expired key used to keep reading as connected while tickets, the support portal and the assistant quietly stopped loading, with the reason left in the error log. A warning now appears on every admin screen, with a button that goes straight to re-verifying the key.
+* fix: A key ThriveDesk still accepts, but will not let into one particular feature, no longer counts as a broken connection. A site whose plan does not cover something stays connected instead of looking like it has failed altogether.
+* fix: Store requests carrying a true or false setting, such as whether to show shipping details, are no longer rejected as unauthorized. Turning shipping details off now actually leaves them out, where before any value at all switched them on.
+* dev: The wordpress.org listing has been rewritten around the terms people search for, and the build toolchain's development dependencies have been updated. Neither changes how the plugin behaves.
 
 = 2.7.0 =
 2026-08-30 - version 2.7.0
