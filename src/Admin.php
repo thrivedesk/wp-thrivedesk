@@ -3,6 +3,7 @@
 namespace ThriveDesk;
 use WP_Query;
 use ThriveDesk\Conversations\Conversation;
+use ThriveDesk\Services\ConnectionState;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -12,11 +13,19 @@ if (!defined('ABSPATH')) {
 final class Admin
 {
     /**
-     * Seconds to wait on the re-verification probe in load_pages(). This one
-     * runs inside a page render, so it has to give up long before PHP's
-     * max_execution_time does.
+     * Seconds to wait on the re-verification probe in settle_connection_state().
+     * That one runs inside a page render, so it has to give up long before
+     * PHP's max_execution_time does.
      */
     private const REVERIFY_TIMEOUT = 10;
+
+    /**
+     * Throttles the re-verification probe. Named for what it records rather
+     * than what sets it, and deliberately unchanged from the value shipped
+     * before: renaming it would let every site mid-throttle probe again on the
+     * first load after the update.
+     */
+    private const REVERIFY_TRANSIENT = 'thrivedesk_reverify_attempted';
 
     /**
      * Transient holding the one-time state value for an authorization round
@@ -82,6 +91,8 @@ final class Admin
         add_action('wp_ajax_thrivedesk_disconnect_plugin', [$this, 'ajax_disconnect_plugin']);
 
         add_action('wp_ajax_thrivedesk_disconnect_account', [$this, 'ajax_disconnect_account']);
+
+        add_action('admin_notices', [$this, 'render_connection_notice']);
 
 		//remove wp footer text and version
 	    add_action( 'admin_init', [$this, 'remove_wp_footer_text'] );
@@ -184,7 +195,7 @@ final class Admin
      */
     public function admin_menu(): void
     {
-        add_menu_page( 
+        $hook = add_menu_page( 
             __( 'ThriveDesk', 'thrivedesk' ),
             'ThriveDesk',
             'manage_options',
@@ -193,6 +204,14 @@ final class Admin
             THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg',
             100
         ); 
+
+        // Core fires load-<hook> before admin-header.php, which is what emits
+        // admin_notices, and well before the page callback. Settling the
+        // connection there is what keeps the disconnected warning and the
+        // connect card underneath it from describing different connections on
+        // the same page load.
+        add_action( "load-{$hook}", [ $this, 'settle_connection_state' ] );
+
         add_submenu_page(
             'thrivedesk',
             __( 'API Verify', 'thrivedesk' ),
@@ -401,41 +420,9 @@ final class Admin
             echo '<style>.update-nag, .updated, .error, .is-dismissible { display: none; }</style>';
         }
 
-        $td_api_key = self::stored_api_key();
-        $api_status = self::get_api_verification_status();
-
-        // Anything short of "connected" gets a second look before it is acted
-        // on, because a domain migration has two ways of faking it. The first:
-        // restoring a DB dump onto a host whose Redis/Memcached still holds the
-        // previous install's options leaves the cache disagreeing with the
-        // database. Both options are autoloaded, so they are cached under the
-        // shared 'alloptions' entry rather than their own keys - that entry is
-        // what has to go to force a fresh read.
-        if (!$td_api_key || !$api_status) {
-            wp_cache_delete('alloptions', 'options');
-
-            $td_api_key = self::stored_api_key();
-            $api_status = self::get_api_verification_status();
-        }
-
-        // Essential logging only
-        if (empty($td_api_key)) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log('ThriveDesk: No API key found in settings');
-            }
-        }
-
-        // The second: a transient network failure while DNS/SSL settle on the
-        // new domain cleared the flag on a key that still works. Ask ThriveDesk
-        // directly rather than sending the site owner through a brand new
-        // authorization. Throttled to once a minute, and on a short timeout, so
-        // a dead key or an unreachable API can't stall this page on every load.
-        if ($td_api_key && !$api_status && false === get_transient('thrivedesk_reverify_attempted')) {
-            set_transient('thrivedesk_reverify_attempted', true, MINUTE_IN_SECONDS);
-
-            if (!empty(Conversation::get_system_info($td_api_key, self::REVERIFY_TIMEOUT))) {
-                $api_status = self::get_api_verification_status();
-            }
+        // settle_connection_state() has already run on 'load-<page_hook>'.
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG && '' === self::stored_api_key() ) {
+            error_log('ThriveDesk: No API key found in settings');
         }
 
         /*
@@ -567,16 +554,148 @@ final class Admin
         return get_td_helpdesk_settings()['td_helpdesk_api_key'] ?? '';
     }
 
+    /**
+     * Make the verified flag describe the key on file before anything renders
+     * it.
+     *
+     * Two things can leave it lying, and a domain migration produces both.
+     * Restoring a DB dump onto a host whose Redis/Memcached still holds the
+     * previous install's options leaves the cache disagreeing with the
+     * database; both options are autoloaded, so they sit in the shared
+     * 'alloptions' entry rather than under their own keys, and that entry is
+     * what has to go to force a fresh read. And a key can lose its flag while
+     * still working - a /v1/me that answered 200 with no company on it, a
+     * backup taken before the key was ever verified - so ask ThriveDesk
+     * directly rather than sending the site owner through a brand new
+     * authorization.
+     *
+     * Hooked on 'load-<page_hook>': core fires that before admin-header.php
+     * emits admin_notices, so the warning and the connect card underneath it
+     * cannot disagree about the same connection on the same page load.
+     *
+     * @return void
+     */
+    public function settle_connection_state(): void
+    {
+        // Anything short of connected gets a second look, exactly as this did
+        // when it lived in load_pages(): one screen, one extra read.
+        if (!self::connected_on_paper()) {
+            wp_cache_delete('alloptions', 'options');
+        }
+
+        $td_api_key = self::stored_api_key();
+
+        // Throttled to once a minute, and on a short timeout, so a dead key or
+        // an unreachable API can't stall this screen on every load.
+        if (
+            '' !== $td_api_key
+            && !self::get_api_verification_status()
+            && false === get_transient(self::REVERIFY_TRANSIENT)
+        ) {
+            set_transient(self::REVERIFY_TRANSIENT, true, MINUTE_IN_SECONDS);
+
+            // Sets the flag itself when the key still authenticates.
+            Conversation::get_system_info($td_api_key, self::REVERIFY_TIMEOUT);
+        }
+    }
+
+    /**
+     * Does the stored state say this site is connected?
+     *
+     * "On paper" because both options are autoloaded and a stale cache can
+     * answer for them - see settle_connection_state().
+     */
+    private static function connected_on_paper(): bool
+    {
+        return '' !== trim(self::stored_api_key()) && self::get_api_verification_status();
+    }
+
+    /**
+     * A key on file that is not verified. No key at all is an install nobody
+     * has set up yet, not a connection that broke.
+     */
+    private static function connection_looks_broken(): bool
+    {
+        // trim() to match thrivedesk_is_connected(): a whitespace-only key is
+        // not a connection that broke, it is not a key.
+        return '' !== trim(self::stored_api_key()) && !self::get_api_verification_status();
+    }
+
+    /**
+     * Say so, on every admin screen, when the key on file has stopped
+     * authenticating.
+     *
+     * TDApiService clears the verified flag as soon as ThriveDesk refuses the
+     * key, but that happens on portal traffic and background calls the site
+     * owner never sees. What they do see is tickets and the assistant quietly
+     * failing to load, with the explanation sitting in error_log - so the
+     * plugin has to volunteer it where they already are.
+     *
+     * @return void
+     */
+    public function render_connection_notice(): void
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        // Read as cached. A stale 'alloptions' entry can invent a broken
+        // connection, but dropping that entry evicts every autoloaded option on
+        // the site and this runs on every admin screen - for a genuinely dead
+        // key, "broken" is the steady state, so reconciling here would pay that
+        // on every single page load. settle_connection_state() does it on the
+        // plugin's own screen instead, which is where this notice's button
+        // leads, so the worst a stale cache costs is one warning that clicking
+        // it clears.
+        if (!self::connection_looks_broken()) {
+            return;
+        }
+
+        $on_plugin_screen = 'thrivedesk' === self::current_admin_page();
+
+        printf(
+            // td-connection-notice so a site can style or hide this one notice
+            // without reaching for every notice-warning on the screen, and so a
+            // test can find it without matching on copy that is translated.
+            '<div class="notice notice-warning td-connection-notice"><p><strong>%1$s</strong> %2$s</p>%3$s</div>',
+            esc_html__('ThriveDesk is disconnected.', 'thrivedesk'),
+            // "could not be verified", not "was rejected": the flag is a
+            // boolean and does not carry a reason. It is also false for a site
+            // restored from a backup taken before the key was verified, and for
+            // a /v1/me that came back without a company on it. Re-verifying is
+            // the answer to all of them, so that is what the copy asks for.
+            esc_html__('ThriveDesk could not verify the API key saved on this site, so tickets, the support portal and the assistant have stopped loading. Re-verify the key to reconnect.', 'thrivedesk'),
+            // On the plugin's own screen the connect card is already the call
+            // to action; a button linking back to the current page is noise.
+            $on_plugin_screen ? '' : sprintf(
+                '<p><a class="button button-primary" href="%1$s">%2$s</a></p>',
+                esc_url(admin_url('admin.php?page=thrivedesk')),
+                esc_html__('Re-verify API key', 'thrivedesk')
+            )
+        );
+    }
+
+    /**
+     * Which admin screen is rendering, as WordPress routes them. Read for
+     * presentation only - nothing here acts on the value.
+     *
+     * Core has already resolved this into $plugin_page (wp-admin/admin.php runs
+     * $_GET['page'] through plugin_basename() before any of the admin hooks
+     * fire), so there is no superglobal to sanitise here.
+     */
+    private static function current_admin_page(): string
+    {
+        return (string) ($GLOBALS['plugin_page'] ?? '');
+    }
+
     public static function set_api_verification_status($status = false): void
     {
-        // set the api key to the database
-        update_option('td_helpdesk_verified', $status);
+        ConnectionState::set((bool) $status);
     }
 
     public static function get_api_verification_status(): bool
     {
-        // get the api verification status from the database
-        return get_option('td_helpdesk_verified', false);
+        return ConnectionState::verified();
     }
 
     /**

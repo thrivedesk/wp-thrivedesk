@@ -4,10 +4,15 @@
  * the database, but the local 'td_helpdesk_verified' flag can end up stale
  * (a persistent object cache that wasn't flushed as part of the migration,
  * or a transient network hiccup while DNS/SSL settle on the new domain).
- * Admin::load_pages() must not treat that as a dead token and push the site
- * owner through a brand new authorization when the saved key still works -
+ * Opening the plugin screen must not treat that as a dead token and push the
+ * site owner through a brand new authorization when the saved key still works -
  * it should transparently re-verify the saved key first, and must not do so
  * on every page load once the key really is dead.
+ *
+ * The healing pass sits on 'load-<page_hook>' rather than in the page callback,
+ * because admin-header.php emits admin_notices in between the two and the
+ * disconnected warning must not fire on a key that is about to be healed. So
+ * these drive both, in the order WordPress does.
  *
  * @package ThriveDesk\Tests
  */
@@ -21,7 +26,13 @@ class AdminSelfHealVerificationTest extends WP_UnitTestCase {
 		parent::tear_down();
 	}
 
+	/**
+	 * One request to the plugin screen: core fires 'load-<page_hook>' and then
+	 * the page callback, so anything asserted about the screen has to see both.
+	 */
 	private function load_pages(): string {
+		\ThriveDesk\Admin::instance()->settle_connection_state();
+
 		ob_start();
 		\ThriveDesk\Admin::instance()->load_pages();
 

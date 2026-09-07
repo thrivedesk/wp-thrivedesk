@@ -243,18 +243,12 @@ class Conversation
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
 
+        // No flag change on a failed request: TDApiService already cleared it
+        // if ThriveDesk refused the key on file, and only then. A rejection of
+        // some other submitted key, a 403 on a key that still works, and a
+        // network-level failure while one is being checked all leave a working
+        // connection alone.
         if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
-
-            // The stored key is untouched on this path, so the flag still has
-            // to describe *that* key. A failure while checking some other
-            // submitted key says nothing about it. And even for the same key,
-            // only a genuine auth rejection (401/403) means the key is bad - a
-            // network-level failure (DNS/SSL/timeout, e.g. right after a domain
-            // migration while things are still settling) is a transient blip
-            // that must not cost the site its connection.
-            if ( $is_same_key && ( $data['error_type'] ?? '' ) === 'auth' ) {
-                Admin::set_api_verification_status();
-            }
 
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
                 error_log('ThriveDesk: API verification failed - ' . $data['message']);
@@ -272,7 +266,9 @@ class Conversation
 
         if(!isset($data['company'])){
 
-            // Same reasoning as above: only the key on file can lose its flag.
+            // A 200 with no company on it is not a refusal, so TDApiService
+            // saw nothing to act on - but the key plainly cannot serve this
+            // site either. Only the key on file can lose its flag.
             if ( $is_same_key ) {
                 Admin::set_api_verification_status();
             }
