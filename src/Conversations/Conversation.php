@@ -243,10 +243,11 @@ class Conversation
 
 		$data = $apiService->getRequest( THRIVEDESK_API_URL . '/v1/me' );
 
-        // The flag is not touched here. TDApiService clears it when the API
-        // rejects the key on file, and only then: a rejection of some other
-        // submitted key, or a network-level failure while one is being checked,
-        // leaves a working connection alone.
+        // No flag change on a failed request: TDApiService already cleared it
+        // if ThriveDesk refused the key on file, and only then. A rejection of
+        // some other submitted key, a 403 on a key that still works, and a
+        // network-level failure while one is being checked all leave a working
+        // connection alone.
         if ( isset( $data['wp_error'] ) && $data['wp_error'] ) {
 
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -265,7 +266,9 @@ class Conversation
 
         if(!isset($data['company'])){
 
-            // Same reasoning as above: only the key on file can lose its flag.
+            // A 200 with no company on it is not a refusal, so TDApiService
+            // saw nothing to act on - but the key plainly cannot serve this
+            // site either. Only the key on file can lose its flag.
             if ( $is_same_key ) {
                 Admin::set_api_verification_status();
             }

@@ -8,9 +8,11 @@
  *
  * The outbound layer sees each rejection and is the only place that sees all
  * of them, so that is where the flag is cleared. Which rejections count is the
- * whole substance of it: a 401/403 is ThriveDesk refusing the key, while a
- * timeout, a 5xx or a Cloudflare block says nothing about the key and must not
- * cost a working site its connection.
+ * whole substance of it, and 401 is the only one: that is ThriveDesk refusing
+ * the credential - revoked, expired, or an org that has lost API access. A 403
+ * is a key the API accepted being turned away from one endpoint, and a timeout,
+ * a 5xx or a Cloudflare block says nothing about the key at all. None of those
+ * may cost a working site its connection.
  *
  * @package ThriveDesk\Tests
  */
@@ -59,13 +61,24 @@ class RuntimeAuthFailureTest extends WP_UnitTestCase {
 		);
 	}
 
-	public function test_a_forbidden_response_also_clears_it() {
-		$this->connected_with( 'KEY-A' );
-		$this->answer_with( self::response( 403, [ 'message' => 'You are not authorized to access this resource.' ] ) );
+	public function test_a_forbidden_response_leaves_a_working_connection_alone() {
+		// 403 is not a refused credential, and this is the regression guard for
+		// the whole change. ThriveDesk answers 403 when a key it accepted is not
+		// allowed at one endpoint - a key minted with a narrowed capability set
+		// authenticates fine, because /v1/me has no capability behind it, and
+		// then 403s on what its grant leaves out. The settings screen reads
+		// /v1/inboxes on every render, so reading that as "the key is dead"
+		// would disconnect a working site, and the /v1/me re-verification would
+		// reconnect it, over and over.
+		$this->connected_with( 'RESTRICTED-KEY' );
+		$this->answer_with( self::response( 403, [ 'message' => 'This action is unauthorized.' ] ) );
 
 		$this->fetch();
 
-		$this->assertFalse( \ThriveDesk\Admin::get_api_verification_status() );
+		$this->assertTrue(
+			thrivedesk_is_connected(),
+			'a key without one capability is still the key this site connects with'
+		);
 	}
 
 	public function test_a_server_error_leaves_a_working_connection_alone() {
@@ -104,12 +117,15 @@ class RuntimeAuthFailureTest extends WP_UnitTestCase {
 			]
 		);
 
-		$this->fetch();
+		$result = ( new \ThriveDesk\Services\TDApiService() )->getRequest( THRIVEDESK_API_URL . '/v1/me' );
 
 		$this->assertTrue(
 			\ThriveDesk\Admin::get_api_verification_status(),
 			'an edge block is not the API rejecting the key'
 		);
+		// Asserting only the flag would pass with the Cloudflare sniff deleted,
+		// now that no 403 clears it. The typing is the thing under test.
+		$this->assertSame( 'network', $result['error_type'], 'an edge block must not be typed as an auth failure' );
 	}
 
 	public function test_a_rejection_of_some_other_key_leaves_the_stored_one_alone() {
@@ -125,6 +141,40 @@ class RuntimeAuthFailureTest extends WP_UnitTestCase {
 		$this->assertTrue(
 			\ThriveDesk\Admin::get_api_verification_status(),
 			'only the key on file can lose its verified flag'
+		);
+	}
+
+	public function test_the_reply_path_asks_for_json_so_a_401_can_reach_it() {
+		// The test below fakes a 401 on the reply path. Without this header the
+		// real request can never receive one: the API renders its JSON 401 only
+		// for a request that asked for JSON, and answers anything else with a
+		// 302 to the login page. wp_remote_post() follows that as a GET, the
+		// login page returns 200 text/html, and handle_response() reads a
+		// non-JSON 200 as an empty success - so the dead key went undetected
+		// and the customer was told a reply had been sent that never left.
+		$this->connected_with( 'KEY-A' );
+
+		$headers = null;
+		add_filter(
+			'pre_http_request',
+			static function ( $pre, $args ) use ( &$headers ) {
+				$headers = $args['headers'] ?? [];
+
+				return self::response( 401, [ 'message' => 'Unauthenticated' ] );
+			},
+			10,
+			2
+		);
+
+		( new \ThriveDesk\Services\TDApiService() )->postRequest(
+			THRIVEDESK_API_URL . '/v1/customer/conversations/abc-123/reply',
+			[ 'message' => 'hello' ]
+		);
+
+		$this->assertSame(
+			'application/json',
+			$headers['Accept'] ?? null,
+			'without Accept: application/json the API answers 302, not 401, and the failure becomes invisible'
 		);
 	}
 
