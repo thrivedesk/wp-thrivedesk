@@ -650,8 +650,8 @@ final class Api {
 		// isset() == 1 is true for *any* value the key holds, so a signed
 		// shipping_param=false still switched shipping lookups on. Read the
 		// value. wp_validate_boolean() takes 'false' and '0' as false, which is
-		// what the SaaS sends, and verify_token() has already coerced a literal
-		// "true"/"false" for hashing.
+		// what the SaaS sends. The contract is hashed and read as the raw strings
+		// it arrived as, so this is the one place the value is coerced.
 		$enableShipping = wp_validate_boolean( $this->contract()['shipping_param'] ?? false );
 
 		if ( ! method_exists( $this->plugin, 'prepare_data' ) ) {
