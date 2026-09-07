@@ -135,6 +135,27 @@ class ConversationRequestScopingTest extends TD_Ajax_TestCase {
 		$this->assertSame( 'success', $body['status'] ?? null );
 	}
 
+	public function test_a_configured_inbox_reaches_the_api_as_the_inbox_filter() {
+		$this->login_subscriber( 'me@example.com' );
+		update_option( 'td_helpdesk_settings', [ 'td_helpdesk_inbox_id' => '42' ] );
+
+		\ThriveDesk\Conversations\Conversation::get_conversations();
+
+		$query = $this->first_request_query();
+		$this->assertSame( '42', $query['inbox'] ?? null, 'the API reads the filter as `inbox`; `inbox_id` is its column, not its parameter' );
+		$this->assertArrayNotHasKey( 'inbox_id', $query, 'a parameter the API never reads leaves the portal showing every inbox' );
+	}
+
+	public function test_no_inbox_filter_is_sent_when_none_is_configured() {
+		$this->login_subscriber( 'me@example.com' );
+		update_option( 'td_helpdesk_settings', [ 'td_helpdesk_inbox_id' => '' ] );
+
+		\ThriveDesk\Conversations\Conversation::get_conversations();
+
+		$query = $this->first_request_query();
+		$this->assertArrayNotHasKey( 'inbox', $query, 'no inbox chosen means every inbox, not an empty filter' );
+	}
+
 	public function test_get_conversation_rejects_an_unusable_id() {
 		$this->login_subscriber( 'me@example.com' );
 
