@@ -654,7 +654,10 @@ final class Admin
         $on_plugin_screen = 'thrivedesk' === self::current_admin_page();
 
         printf(
-            '<div class="notice notice-warning"><p><strong>%1$s</strong> %2$s</p>%3$s</div>',
+            // td-connection-notice so a site can style or hide this one notice
+            // without reaching for every notice-warning on the screen, and so a
+            // test can find it without matching on copy that is translated.
+            '<div class="notice notice-warning td-connection-notice"><p><strong>%1$s</strong> %2$s</p>%3$s</div>',
             esc_html__('ThriveDesk is disconnected.', 'thrivedesk'),
             // "could not be verified", not "was rejected": the flag is a
             // boolean and does not carry a reason. It is also false for a site

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-07T07:13:32+00:00\n"
+"POT-Creation-Date: 2026-09-07T07:35:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: thrivedesk\n"
@@ -219,9 +219,9 @@ msgid "Invalid nonce"
 msgstr ""
 
 #: includes/helper.php:866
-#: src/Admin.php:720
-#: src/Admin.php:765
-#: src/Admin.php:845
+#: src/Admin.php:723
+#: src/Admin.php:768
+#: src/Admin.php:848
 #: src/Assistants/Assistant.php:28
 #: src/Conversations/Conversation.php:82
 #: src/Conversations/Conversation.php:118
@@ -1000,19 +1000,19 @@ msgstr ""
 msgid "API Verify"
 msgstr ""
 
-#: src/Admin.php:658
+#: src/Admin.php:661
 msgid "ThriveDesk is disconnected."
 msgstr ""
 
-#: src/Admin.php:664
+#: src/Admin.php:667
 msgid "ThriveDesk could not verify the API key saved on this site, so tickets, the support portal and the assistant have stopped loading. Re-verify the key to reconnect."
 msgstr ""
 
-#: src/Admin.php:670
+#: src/Admin.php:673
 msgid "Re-verify API key"
 msgstr ""
 
-#: src/Admin.php:770
+#: src/Admin.php:773
 msgid "Disconnected from ThriveDesk."
 msgstr ""
 

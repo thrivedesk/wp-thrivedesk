@@ -47,6 +47,7 @@ class AdminConnectionNoticeTest extends WP_UnitTestCase {
 		$html = $this->notice();
 
 		$this->assertStringContainsString( 'notice-warning', $html );
+		$this->assertStringContainsString( 'td-connection-notice', $html, 'the hook a site or a browser test finds this by' );
 		$this->assertStringContainsString( 'admin.php?page=thrivedesk', $html, 'the warning has to lead somewhere it can be fixed' );
 	}
 
