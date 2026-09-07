@@ -4,7 +4,7 @@
  * Description:         Help desk, live chat and AI chatbot for WordPress and WooCommerce. Every email, chat and support ticket in one shared inbox, with orders inside.
  * Plugin URI:          https://www.thrivedesk.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Tags:                live chat, ai chatbot, helpdesk, customer support, chatbot
- * Version:             2.7.0
+ * Version:             2.7.1
  * Author:              ThriveDesk
  * Author URI:          https://profiles.wordpress.org/thrivedesk/
  * Text Domain:         thrivedesk
@@ -64,7 +64,7 @@ final class ThriveDesk {
 	 *
 	 * @var string
 	 */
-	public $version = '2.7.0';
+	public $version = '2.7.1';
 
 	/**
 	 * The single instance of this class
