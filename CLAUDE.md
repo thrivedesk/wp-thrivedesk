@@ -13,64 +13,26 @@ PHP 7.4 minimum (enforced in CI). PSR-4 autoload maps `ThriveDesk\` → `src/`, 
 
 ## Commands
 
-### The bench (local WordPress, Docker)
-
-`scripts/dev.sh` boots a real WordPress with this plugin active at
-`http://localhost:8888` and runs both suites inside it. Docker is the only
-requirement, nothing is installed on the host, and everything is idempotent:
-re-run anything. `TD_PORT=9999 scripts/dev.sh up` moves it if 8888 is taken.
+Everything runs through `td wp ...` in the ThriveDesk workspace; the verbs are in the `td-cli` skill, or `td wp --help`.
 
 | Task | Command |
 | --- | --- |
-| Boot it | `scripts/dev.sh up` (admin / password) |
-| PHPUnit, in the bench | `scripts/dev.sh test` (add any PHPUnit args) |
-| PHPCS, security and i18n sniffs | `scripts/dev.sh phpcs` |
-| Browser suite | `scripts/dev.sh e2e`, `e2e-ui`, `e2e-report` |
-| Assets | `scripts/dev.sh npm run build` |
-| wp-cli | `scripts/dev.sh cli plugin list` |
-| Point it at a ThriveDesk account | `scripts/dev.sh connect <api-key>` |
-| Logs (apache + PHP + debug.log) | `scripts/dev.sh logs` |
-| Wipe and start over | `scripts/dev.sh reset` |
-| What is missing | `scripts/dev.sh doctor` |
+| Build assets | `td wp build` |
+| Watch assets | `td wp watch` |
+| Any npm script | `td wp npm <args>` |
+| PHP tests | `td wp test` (PHPUnit args pass through, e.g. `--filter test_name tests/HmacSignatureTest.php`) |
+| Lint | `td wp phpcs` |
+| Browser suite | `td wp e2e` (needs env vars, see `e2e/README.md`) |
+| wp-cli | `td wp cli plugin list` |
+| Logs (apache + PHP + debug.log) | `td wp logs` |
+| Users | `td wp user ls`, `td wp user passwd <login>` |
+| Wipe and start over | `td wp reset` |
 
-`scripts/dev.sh test` needs no WP test-library download: `wp-phpunit` is a dev
-dependency and `tests/bootstrap.php` finds it in `vendor/`, so the bench only has
-to supply a database and a config naming it. It creates `wordpress_test` on every
-run rather than at first boot, so a bench built before the test command existed
-still gets one. WooCommerce is installed and active, and WPSubscription is
-installed but left inactive, so both integrations' tests run here exactly as they
-do in CI instead of skipping.
+Composer scripts with no verb (`phpcs-i18n`, `phpcompat`) and `npm run release` run inside `td wp shell`.
 
-The site answers on two names: your browser reaches it on localhost at the
-published port, and the Playwright container reaches it by service name over the
-Compose network. `WP_HOME` follows whichever host the request carried, so neither
-redirects to the other and the port survives into the admin canonical.
+`td wp test` needs no WP test-library download: `wp-phpunit` is a dev dependency and `tests/bootstrap.php` finds it in `vendor/`. WooCommerce is installed and active, and WPSubscription is installed but left inactive, so both integrations' tests run exactly as they do in CI instead of skipping. `.github/workflows/phpunit.yml` shows the same environment assembled by hand.
 
-**The bench never ships.** `docker/` and `scripts/` are excluded in both
-`.distignore` (the wp.org manifest) and `.gitattributes`, the deploy workflow
-fails the release if either reaches the package, and `scripts/release.sh` copies
-an explicit allowlist that does not include them.
-
-### Direct (no bench)
-
-```bash
-composer install && npm install   # setup
-```
-
-| Task | Command |
-| --- | --- |
-| Build assets | `npm run build` (mix production + wp-scripts) |
-| Watch | `npm run watch` |
-| PHP tests | `composer test` (or `vendor/bin/phpunit`) |
-| Single test file | `vendor/bin/phpunit tests/HmacSignatureTest.php` |
-| Single test method | `vendor/bin/phpunit --filter test_name tests/HmacSignatureTest.php` |
-| Lint | `composer phpcs` |
-| i18n sniffs (repo-wide) | `composer phpcs-i18n` |
-| PHP 7.4 compat check | `composer phpcompat` |
-| E2E | `npm run e2e` (needs env vars, see `e2e/README.md`) |
-| Release zip | `npm run release` |
-
-PHPUnit needs a WordPress test environment: `wp-phpunit` is vendored, but `tests/bootstrap.php` still requires `WP_TESTS_DIR`/`WP_PHPUNIT__DIR` plus a `wp-tests-config.php` pointing at a MySQL/MariaDB database. `scripts/dev.sh test` sets all of that up for you; `.github/workflows/phpunit.yml` shows the same thing assembled by hand.
+**The bench never ships.** `scripts/dev.sh` is the standalone bench for contributors working outside the ThriveDesk workspace. `docker/` and `scripts/` are excluded in both `.distignore` (the wp.org manifest) and `.gitattributes`, the deploy workflow fails the release if either reaches the package, and `scripts/release.sh` copies an explicit allowlist that does not include them.
 
 ## Architecture
 
@@ -106,7 +68,7 @@ generated `.asset.php` for the handles rather than hardcoding them.
 
 `TabPanel` owns the page: Overview, Integrations, Live Chat, Portal. Integrations
 is fully ported and renders from `thrivedesk_integrations()`, bootstrapped into
-`window.thrivedeskAdmin`. The other four are still server-rendered PHP in
+`window.thrivedeskAdmin`. The other three are still server-rendered PHP in
 `includes/views/partials/overview.php` and
 `includes/views/partials/settings.php`, split into `#td-panel-*` divs that
 `HostedPanel` adopts into their tab — a staging device, not the end state.
@@ -132,13 +94,14 @@ uninstall.php             Drops table + options on delete
 src/
   Api.php                 Inbound ?listener=thrivedesk dispatcher + HMAC verification
   Admin.php               Admin menu, settings pages, connect/disconnect AJAX
-  RestRoute.php           REST: thrivedesk/v1/conversations/contact/{id}, td-search-query/docs
+  RestRoute.php           REST: thrivedesk/v1/conversations/contact/{id} and thrivedesk/v1/docs
   Abstracts/Plugin.php    Base class for every integration
   Api/ApiResponse.php     JSON success/error envelope for listener replies
   Plugins/                EDD, WooCommerce, FluentCRM, WPPostSync, Autonami
   Conversations/          Ticket list/detail, [thrivedesk_portal] shortcode, most helpdesk AJAX
   Services/TDApiService.php   Outbound HTTP to api.thrivedesk.com
   Services/PortalService.php  Plan allowlist gating WP Portal access
+  Services/BusinessHoursService.php, ConnectionState.php, WorkspaceService.php
   Portal/UserAccountPages.php WooCommerce my-account "Support" tab + rewrite rules
   Assistants/, Inboxes/, KnowledgeBase/   Fetch + render SaaS-side resources
   Data/ConversationSyncData.php  Allowlisted decode of SaaS sync payloads
@@ -146,12 +109,14 @@ Hooks/FluentCrmHooks.php  Registers ThriveDesk as a FluentCRM ticket provider
 database/                 Custom table migrations
 includes/helper.php       thrivedesk_view() renderer + shared helpers (registers hooks at file scope)
 includes/views/           PHP templates: pages/, partials/, shortcode/, icons/
-resources/                Source js/css (mix input) + thrivedesk.pot
+resources/                Source js/css (mix input)
+languages/                thrivedesk.pot + translations
 assets/                   Built js/css — committed, do not hand-edit
 tests/                    PHPUnit; includes/ = shared test cases, stubs/ = fake plugin APIs, golden/ = snapshots
+docs/                     Security audit notes
 e2e/                      Playwright specs against a real connected WP site
 docker/                   The bench: compose.yml + the image it builds (not shipped)
-scripts/dev.sh            The bench CLI: scripts/dev.sh help (not shipped)
+scripts/dev.sh            Standalone bench CLI: scripts/dev.sh help (not shipped)
 scripts/release.sh        Builds releases/thrivedesk.zip
 ```
 
@@ -166,7 +131,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
   argument to `wp_set_script_translations()`. All three of those were broken at once and
   nothing noticed, because the failure mode is an English UI rather than an error.
 - **PHPCS is incrementally adopted.** `phpcs.xml` excludes legacy paths one at a time; anything under `src/` *not* listed there is already clean and must stay clean. When you bring an excluded path up to WPCS, delete its exclude line.
-- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. Intentional contract changes: regenerate with `TD_UPDATE_GOLDEN=1 vendor/bin/phpunit tests/ListenerGoldenTest.php` and review the diff.
+- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. Intentional contract changes: regenerate with `TD_UPDATE_GOLDEN=1 vendor/bin/phpunit tests/ListenerGoldenTest.php` inside `td wp shell` and review the diff.
 - **Test signing must mirror production.** `td_test_sign_payload()` in `tests/includes/listener-helpers.php` reimplements `Api::verify_token()`; keep them in step.
 - **E2E is serial and destructive** — one shared site, specs must restore whatever they change. Read `e2e/README.md` before writing one.
 - **Version lives in four places** and they must match: the plugin header and `$version` in `thrivedesk.php`, `package.json`, and `Stable tag` in `readme.md` (the wp.org asset workflow greps that exact casing). `readme.md` is copied to `readme.txt` at release; `changelog.txt` drives the GitHub release notes via `.github/scripts/parse-changelog.js`.
