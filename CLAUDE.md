@@ -22,15 +22,15 @@ Everything runs through `td wp ...` in the ThriveDesk workspace; the verbs are i
 | Any npm script | `td wp npm <args>` |
 | PHP tests | `td wp test` (PHPUnit args pass through, e.g. `--filter test_name tests/HmacSignatureTest.php`) |
 | Lint | `td wp phpcs` |
-| Browser suite | `td wp e2e` (needs env vars, see `e2e/README.md`) |
+| Browser suite | `td wp e2e` (provisions its own isolated stack; the env vars in `e2e/README.md` are for standalone runs) |
 | wp-cli | `td wp cli plugin list` |
 | Logs (apache + PHP + debug.log) | `td wp logs` |
 | Users | `td wp user ls`, `td wp user passwd <login>` |
 | Wipe and start over | `td wp reset` |
 
-Composer scripts with no verb (`phpcs-i18n`, `phpcompat`) and `npm run release` run inside `td wp shell`.
+Composer scripts with no verb (`phpcs-i18n`, `phpcompat`) run inside `td wp shell`; `npm run release` runs as `td wp npm run release`.
 
-`td wp test` needs no WP test-library download: `wp-phpunit` is a dev dependency and `tests/bootstrap.php` finds it in `vendor/`. WooCommerce is installed and active, and WPSubscription is installed but left inactive, so both integrations' tests run exactly as they do in CI instead of skipping. `.github/workflows/phpunit.yml` shows the same environment assembled by hand.
+`td wp test` runs the suite against an ephemeral MySQL and the WP test library that `td setup` installs, and needs the stack up. WooCommerce is installed and active in that WordPress. `.github/workflows/phpunit.yml` shows the same environment assembled by hand.
 
 **The bench never ships.** `scripts/dev.sh` is the standalone bench for contributors working outside the ThriveDesk workspace. `docker/` and `scripts/` are excluded in both `.distignore` (the wp.org manifest) and `.gitattributes`, the deploy workflow fails the release if either reaches the package, and `scripts/release.sh` copies an explicit allowlist that does not include them.
 
@@ -131,7 +131,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
   argument to `wp_set_script_translations()`. All three of those were broken at once and
   nothing noticed, because the failure mode is an English UI rather than an error.
 - **PHPCS is incrementally adopted.** `phpcs.xml` excludes legacy paths one at a time; anything under `src/` *not* listed there is already clean and must stay clean. When you bring an excluded path up to WPCS, delete its exclude line.
-- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. Intentional contract changes: regenerate with `TD_UPDATE_GOLDEN=1 vendor/bin/phpunit tests/ListenerGoldenTest.php` inside `td wp shell` and review the diff.
+- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. Intentional contract changes: regenerate by running `tests/ListenerGoldenTest.php` with `TD_UPDATE_GOLDEN=1` and review the diff. td has no verb that passes that variable (`td wp test` takes no env), so there is no td route for this today.
 - **Test signing must mirror production.** `td_test_sign_payload()` in `tests/includes/listener-helpers.php` reimplements `Api::verify_token()`; keep them in step.
 - **E2E is serial and destructive** — one shared site, specs must restore whatever they change. Read `e2e/README.md` before writing one.
 - **Version lives in four places** and they must match: the plugin header and `$version` in `thrivedesk.php`, `package.json`, and `Stable tag` in `readme.md` (the wp.org asset workflow greps that exact casing). `readme.md` is copied to `readme.txt` at release; `changelog.txt` drives the GitHub release notes via `.github/scripts/parse-changelog.js`.
