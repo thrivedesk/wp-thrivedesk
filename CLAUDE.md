@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What this is
 
 WordPress plugin that connects a WP site to the ThriveDesk SaaS help desk. Two directions of traffic:
@@ -22,15 +20,15 @@ Everything runs through `td wp ...` in the ThriveDesk workspace; the verbs are i
 | Any npm script | `td wp npm <args>` |
 | PHP tests | `td wp test` (PHPUnit args pass through, e.g. `--filter test_name tests/HmacSignatureTest.php`) |
 | Lint | `td wp phpcs` |
-| Browser suite | `td wp e2e` (provisions its own isolated stack; the env vars in `e2e/README.md` are for standalone runs) |
+| Translation sniffs (`phpcs-i18n.xml`) | `td exec wordpress composer -d /var/www/html/wp-content/plugins/thrivedesk phpcs-i18n` |
+| PHP 7.4 compatibility | `td exec wordpress composer -d /var/www/html/wp-content/plugins/thrivedesk phpcompat` |
+| Browser suite | `td wp e2e` (the env vars in `e2e/README.md` are for standalone runs) |
 | wp-cli | `td wp cli plugin list` |
 | Logs (apache + PHP + debug.log) | `td wp logs` |
 | Users | `td wp user ls`, `td wp user passwd <login>` |
 | Wipe and start over | `td wp reset` |
 
-Composer scripts with no verb (`phpcs-i18n`, `phpcompat`) run inside `td wp shell`; `npm run release` runs as `td wp npm run release`.
-
-`td wp test` runs the suite against an ephemeral MySQL and the WP test library that `td setup` installs, and needs the stack up. WooCommerce is installed and active in that WordPress. `.github/workflows/phpunit.yml` shows the same environment assembled by hand.
+Under `td wp test` WooCommerce is active and WPSubscription is not, so `tests/SubscriptionCancelWPSubscriptionTest.php` skips locally; `.github/workflows/phpunit.yml` provisions WPSubscription and runs it.
 
 **The bench never ships.** `scripts/dev.sh` is the standalone bench for contributors working outside the ThriveDesk workspace. `docker/` and `scripts/` are excluded in both `.distignore` (the wp.org manifest) and `.gitattributes`, the deploy workflow fails the release if either reaches the package, and `scripts/release.sh` copies an explicit allowlist that does not include them.
 
@@ -67,11 +65,11 @@ external and costs no npm dependency — `Admin::enqueue_admin_app()` reads the
 generated `.asset.php` for the handles rather than hardcoding them.
 
 `TabPanel` owns the page: Overview, Integrations, Live Chat, Portal. Integrations
-is fully ported and renders from `thrivedesk_integrations()`, bootstrapped into
-`window.thrivedeskAdmin`. The other three are still server-rendered PHP in
+renders from `thrivedesk_integrations()`, bootstrapped into
+`window.thrivedeskAdmin`. Overview, Live Chat and Portal are server-rendered PHP in
 `includes/views/partials/overview.php` and
 `includes/views/partials/settings.php`, split into `#td-panel-*` divs that
-`HostedPanel` adopts into their tab — a staging device, not the end state.
+`HostedPanel` adopts into their tab.
 
 Two things that will bite if changed carelessly: every panel is rendered on every
 tab with only `hidden` toggling, because unmounting a `HostedPanel` destroys the
@@ -123,7 +121,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
 ## Conventions
 
 - **Translations are gated in three places, and all three matter.** `phpcs-i18n.xml`
-  runs `WordPress.WP.I18n` repo-wide (`composer phpcs-i18n`) — a separate ruleset for the
+  runs `WordPress.WP.I18n` repo-wide (the translation-sniffs row under Commands) — a separate ruleset for the
   same reason `phpcs-security.xml` is one: `phpcs.xml`'s path excludes also suppress the
   sniff, and those paths are where the strings live. `.github/workflows/i18n-pot-check.yml`
   fails the PR when `languages/thrivedesk.pot` drifts. And `tests/I18nSetupTest.php`
@@ -131,7 +129,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
   argument to `wp_set_script_translations()`. All three of those were broken at once and
   nothing noticed, because the failure mode is an English UI rather than an error.
 - **PHPCS is incrementally adopted.** `phpcs.xml` excludes legacy paths one at a time; anything under `src/` *not* listed there is already clean and must stay clean. When you bring an excluded path up to WPCS, delete its exclude line.
-- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. Intentional contract changes: regenerate by running `tests/ListenerGoldenTest.php` with `TD_UPDATE_GOLDEN=1` and review the diff. td has no verb that passes that variable (`td wp test` takes no env), so td has no route for it.
+- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. After an intentional contract change, regenerate them with `td exec wordpress env TD_UPDATE_GOLDEN=1 WP_TESTS_DIR=/tmp/wordpress-tests-lib phpunit -c /var/www/html/wp-content/plugins/thrivedesk/phpunit.xml --filter ListenerGoldenTest` and review the diff.
 - **Test signing must mirror production.** `td_test_sign_payload()` in `tests/includes/listener-helpers.php` reimplements `Api::verify_token()`; keep them in step.
 - **E2E is serial and destructive** — one shared site, specs must restore whatever they change. Read `e2e/README.md` before writing one.
 - **Version lives in four places** and they must match: the plugin header and `$version` in `thrivedesk.php`, `package.json`, and `Stable tag` in `readme.md` (the wp.org asset workflow greps that exact casing). `readme.md` is copied to `readme.txt` at release; `changelog.txt` drives the GitHub release notes via `.github/scripts/parse-changelog.js`.
