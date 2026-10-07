@@ -20,8 +20,8 @@ Everything runs through `td wp ...` in the ThriveDesk workspace; the verbs are i
 | Any npm script | `td wp npm <args>` |
 | PHP tests | `td wp test` (PHPUnit args pass through, e.g. `--filter test_name tests/HmacSignatureTest.php`) |
 | Lint | `td wp phpcs` |
-| Translation sniffs (`phpcs-i18n.xml`) | `td exec wordpress composer -d /var/www/html/wp-content/plugins/thrivedesk phpcs-i18n` |
-| PHP 7.4 compatibility | `td exec wordpress composer -d /var/www/html/wp-content/plugins/thrivedesk phpcompat` |
+| Translation sniffs (`phpcs-i18n.xml`) | `td wp phpcs --standard=phpcs-i18n.xml src includes Hooks database resources thrivedesk.php uninstall.php` |
+| PHP 7.4 compatibility | `td wp phpcs -n --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php src includes Hooks database thrivedesk.php uninstall.php` |
 | Browser suite | `td wp e2e` (the env vars in `e2e/README.md` are for standalone runs) |
 | wp-cli | `td wp cli plugin list` |
 | Logs (apache + PHP + debug.log) | `td wp logs` |
@@ -129,7 +129,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
   argument to `wp_set_script_translations()`. All three of those were broken at once and
   nothing noticed, because the failure mode is an English UI rather than an error.
 - **PHPCS is incrementally adopted.** `phpcs.xml` excludes legacy paths one at a time; anything under `src/` *not* listed there is already clean and must stay clean. When you bring an excluded path up to WPCS, delete its exclude line.
-- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. After an intentional contract change, regenerate them with `td exec wordpress env TD_UPDATE_GOLDEN=1 WP_TESTS_DIR=/tmp/wordpress-tests-lib phpunit -c /var/www/html/wp-content/plugins/thrivedesk/phpunit.xml --filter ListenerGoldenTest` and review the diff.
+- **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. After an intentional contract change, regenerate them with `td exec wordpress env TD_UPDATE_GOLDEN=1 phpunit -c wp-content/plugins/thrivedesk/phpunit.xml --filter ListenerGoldenTest` and review the diff. This needs the WP test library that `td setup` or `td wp reset` installs; `td wp test` cannot set the variable.
 - **Test signing must mirror production.** `td_test_sign_payload()` in `tests/includes/listener-helpers.php` reimplements `Api::verify_token()`; keep them in step.
 - **E2E is serial and destructive** — one shared site, specs must restore whatever they change. Read `e2e/README.md` before writing one.
 - **Version lives in four places** and they must match: the plugin header and `$version` in `thrivedesk.php`, `package.json`, and `Stable tag` in `readme.md` (the wp.org asset workflow greps that exact casing). `readme.md` is copied to `readme.txt` at release; `changelog.txt` drives the GitHub release notes via `.github/scripts/parse-changelog.js`.
