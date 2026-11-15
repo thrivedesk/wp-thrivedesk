@@ -322,7 +322,7 @@ $open_count = $counts['active'] + $counts['open'];
                 <div class="td-portal-footer">
                     <a class="td-powered" href="<?php echo esc_url('https://www.thrivedesk.com/wordpress?utm_source=wpportal&utm_medium=' . get_site_url() . '&utm_campaign=powered-by'); ?>" target="_blank" rel="noopener">
                         <span><?php esc_html_e('Powered by', 'thrivedesk'); ?></span>
-                        <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk">
+                        <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/logo-type.svg'); ?>" alt="ThriveDesk">
                     </a>
 
                     <?php if ($links): ?>

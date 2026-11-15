@@ -201,7 +201,7 @@ final class Admin
             'manage_options',
             'thrivedesk',
             array( $this, 'load_pages' ),
-            THRIVEDESK_PLUGIN_ASSETS . '/' . 'images/td-icon.svg',
+            'none',
             100
         ); 
 
@@ -900,7 +900,16 @@ final class Admin
 	 */
 	public function menu_icon_style() {
 		echo '<style>
-            #toplevel_page_thrivedesk img{ max-width:20px;opacity:.9!important;} 
+            #toplevel_page_thrivedesk .wp-menu-image:before {
+                content: "";
+                display: block;
+                width: 20px;
+                height: 20px;
+                margin: 7px 8px;
+                padding: 0;
+                background-color: currentColor;
+                mask: url("' . esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/td-icon.svg') . '") center / contain no-repeat;
+            }
             #toplevel_page_thrivedesk li.wp-first-item{ display:none }
             #toplevel_page_thrivedesk .wp-submenu{display:none}
             </style>';

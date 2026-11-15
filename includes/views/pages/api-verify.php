@@ -5,7 +5,7 @@
   <div class="flex flex-col td-fullscreen items-center justify-center relative p-10">
 
     <a href="https://www.thrivedesk.com/" target="_blank" class="mb-10">
-      <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/thrivedesk.png'); ?>" alt="ThriveDesk logo" class="w-48">
+      <img src="<?php echo esc_url(THRIVEDESK_PLUGIN_ASSETS . '/images/logo-type.svg'); ?>" alt="ThriveDesk logo" class="w-48">
     </a>
 
     <?php thrivedesk_view( 'partials/connect-card' ); ?>
