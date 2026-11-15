@@ -41,7 +41,7 @@
 	"overrides": {
 		"webpack": "~5.106.2",
 		"webpack-dev-server": "^5.2.6",
-		"adm-zip": "^0.6.0",
+		"adm-zip": "^0.6.1",
 		"linkify-it": "^5.0.2",
 		"markdown-it": "^14.2.0",
 		"serialize-javascript": "^7.1.0",
