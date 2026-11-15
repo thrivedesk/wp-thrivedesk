@@ -1,5 +1,9 @@
 *** WooCommerce Extension Changelog ***
 
+2026-11-15 - version 2.7.2
+* feat: The plugin screen, the API key screen and the support portal footer carry ThriveDesk's new logo, and the admin menu icon and the wordpress.org listing icon have been refreshed to match.
+* dev: The build toolchain's dependencies and the release workflow's GitHub Actions have been updated. Neither changes how the plugin behaves.
+
 2026-09-07 - version 2.7.1
 * fix: The support portal lists tickets from the inbox this site is set to use, instead of from every inbox on the account.
 * fix: The plugin says so when ThriveDesk stops accepting the API key saved on this site. A revoked or expired key used to keep reading as connected while tickets, the support portal and the assistant quietly stopped loading, with the reason left in the error log. A warning now appears on every admin screen, with a button that goes straight to re-verifying the key.
