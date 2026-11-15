@@ -3,7 +3,7 @@ Contributors: thrivedesk, parvezvai
 Tags: live chat, ai chatbot, helpdesk, customer support, chatbot
 Requires at least: 4.9
 Tested up to: 7.1
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -190,6 +190,11 @@ Post in the [support forum](https://wordpress.org/support/plugin/thrivedesk/) fo
 6. The knowledge base editor, with categories, visibility and autosave.
 
 == Changelog ==
+
+= 2.7.2 =
+2026-11-15 - version 2.7.2
+* feat: The plugin screen, the API key screen and the support portal footer carry ThriveDesk's new logo, and the admin menu icon and the wordpress.org listing icon have been refreshed to match.
+* dev: The build toolchain's dependencies and the release workflow's GitHub Actions have been updated. Neither changes how the plugin behaves.
 
 = 2.7.1 =
 2026-09-07 - version 2.7.1

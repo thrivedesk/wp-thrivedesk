@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ThriveDesk – Live Chat, AI Chatbot, Helpdesk & Customer Support Ticket System 2.7.1\n"
+"Project-Id-Version: ThriveDesk – Live Chat, AI Chatbot, Helpdesk & Customer Support Ticket System 2.7.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/thrivedesk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
