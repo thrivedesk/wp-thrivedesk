@@ -126,8 +126,7 @@ scripts/release.sh        Builds releases/thrivedesk.zip
   sniff, and those paths are where the strings live. `.github/workflows/i18n-pot-check.yml`
   fails the PR when `languages/thrivedesk.pot` drifts. And `tests/I18nSetupTest.php`
   pins the plumbing — `Domain Path`, `load_plugin_textdomain()` on `init`, and the third
-  argument to `wp_set_script_translations()`. All three of those were broken at once and
-  nothing noticed, because the failure mode is an English UI rather than an error.
+  argument to `wp_set_script_translations()`. A break in any of them is silent: the failure mode is an English UI rather than an error.
 - **PHPCS is incrementally adopted.** `phpcs.xml` excludes legacy paths one at a time; anything under `src/` *not* listed there is already clean and must stay clean. When you bring an excluded path up to WPCS, delete its exclude line.
 - **Listener behaviour is pinned by golden files.** `tests/ListenerGoldenTest.php` snapshots the JSON bodies in `tests/golden/listener/`. After an intentional contract change, regenerate them with `TD_UPDATE_GOLDEN=1 td wp test --filter=ListenerGoldenTest` and review the diff.
 - **Test signing must mirror production.** `td_test_sign_payload()` in `tests/includes/listener-helpers.php` reimplements `Api::verify_token()`; keep them in step.
